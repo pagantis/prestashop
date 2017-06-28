@@ -1,6 +1,6 @@
 {
-    "name": "pagantis/pagamastarde-prestashop",
-    "description": "Module for prestashop, enables pagamastarde payment method",
+    "name": "pagamastarde/prestashop",
+    "description": "Prestashop module to add PagaMasTarde Edit",
     "type": "module",
     "authors": [
         {
@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "pagantis/autoindex": "dev-master",
-        "pagantis/shopper-library": "dev-master"
+        "pagamastarde/autoindex": "^1.0",
+        "pagamastarde/shopper-library": "^1.0"
     }
 }
