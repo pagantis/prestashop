@@ -1,0 +1,100 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "b951aee620b4b3602dcbae90a45ed898",
+    "packages": [
+        {
+            "name": "pagantis/autoindex",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pagantis/autoindex.git",
+                "reference": "902819186e57ffe95e0c126d4e9ee16037faf981"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pagantis/autoindex/zipball/902819186e57ffe95e0c126d4e9ee16037faf981",
+                "reference": "902819186e57ffe95e0c126d4e9ee16037faf981",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "module",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Digital Origin",
+                    "email": "cromero@digitalorigin.com"
+                }
+            ],
+            "description": "Generate index.php file in all directories that does not contain index.php file. This is helpful for prestashop",
+            "homepage": "https://github.com/pagantis/autoindex",
+            "keywords": [
+                "autoindex",
+                "index",
+                "module",
+                "prestashop"
+            ],
+            "time": "2017-06-20 07:44:54"
+        },
+        {
+            "name": "pagantis/shopper-library",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pagantis/shopperLibrary.git",
+                "reference": "fd6c4a250e9e17790c9b2b6199db6acf429e7ffd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pagantis/shopperLibrary/zipball/fd6c4a250e9e17790c9b2b6199db6acf429e7ffd",
+                "reference": "fd6c4a250e9e17790c9b2b6199db6acf429e7ffd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ShopperLibrary\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "DigitalOrigin",
+                    "email": "cromero@digitalorigin.com"
+                }
+            ],
+            "description": "Library with the models of the shop modules",
+            "time": "2017-06-26 14:17:50"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "pagantis/autoindex": 20,
+        "pagantis/shopper-library": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

@@ -1,0 +1,15 @@
+{
+    "name": "pagantis/pagamastarde-prestashop",
+    "description": "Module for prestashop, enables pagamastarde payment method",
+    "type": "module",
+    "authors": [
+        {
+            "name": "DigitalOrigin",
+            "email": "cromero@digitalorigin.com"
+        }
+    ],
+    "require": {
+        "pagantis/autoindex": "dev-master",
+        "pagantis/shopper-library": "dev-master"
+    }
+}
