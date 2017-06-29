@@ -1,8 +1,17 @@
 module.exports = function(grunt) {
     grunt.initConfig({
         shell: {
-            target: {
-                command: 'php vendor/pagantis/autoindex/index.php .'
+            autoindex: {
+                command: 'php vendor/pagamastarde/autoindex/index.php .'
+            },
+            composerProd: {
+                command: 'composer install --no-dev'
+            },
+            composerDev: {
+                command: 'composer install'
+            },
+            phpunitRunTest: {
+                command: 'vendor/bin/phpunit'
             }
         },
         cssmin: {
@@ -52,5 +61,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.registerTask('default', ['shell','cssmin','compress']);
+    grunt.registerTask('default', ['shell:composerDev','shell:phpunitRunTest','shell:composerProd','cssmin','compress','shell:composerDev']);
 };

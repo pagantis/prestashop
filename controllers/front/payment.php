@@ -54,41 +54,36 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign('iframe', $iframe);
 
+        $customerAddress = new \ShopperLibrary\ObjectModule\Properties\Base\Address();
+        $customerAddress->setStreet('Mi calle');
+        $customerAddress->setCity('Barcelona');
+        $customerAddress->setZipCode('08008');
+
         $prestashopObjectModule = new PrestashopObjectModule();
-        $prestashopObjectModule->requiredConfig
-            ->setPublicKey($paylaterPublicKey)
-            ->setPrivateKey($paylaterPrivateKey)
-            ->setCurrency($currency->iso_code)
-            ->setOrderId($cart->id)
-            ->setAmount((int) ($cart->getOrderTotal() * 100))
-            ->setCancelUrl($cancelUrl)
-            ->setDiscount($discount)
-            ->setIFrame($iframe)
-            ->setCallbackUrl($callbackUrl)
-            ->setOkUrl($okUrl)
-            ->setKoUrl($koUrl)
-            ->setName($customer->firstname.' '.$customer->lastname)
-            ->setEmail($customer->email)
-        ;
-
-        $prestashopObjectModule->customerConfig
-            ->setBirthDate(new \DateTime(date('y-m-d', $customer->birthday)))
-            ->setIsCustomer($customer->isGuest())
-            ->setGender($customer->id_gender)
-            ->setMemberSince(new \DateTime(date('y-m-d', $customer->date_add)))
-        ;
-
-        $prestashopObjectModule->setIncludeSimulator($includeSimulator);
-        $prestashopObjectModule->setCart($cart);
-        $prestashopObjectModule->setCustomer($customer);
+        $prestashopObjectModule     ->setPublicKey($paylaterPublicKey);
+        $prestashopObjectModule     ->setPrivateKey($paylaterPrivateKey);
+        $prestashopObjectModule     ->setCurrency($currency->iso_code);
+        $prestashopObjectModule     ->setAmount((int) ($cart->getOrderTotal() * 100));
+        $prestashopObjectModule     ->setIFrame(true);
+        $prestashopObjectModule     ->setOrderId($cart->id);
+        $prestashopObjectModule     ->setCancelledUrl($cancelUrl);
+        $prestashopObjectModule     ->setCallbackUrl($callbackUrl);
+        $prestashopObjectModule     ->setOkUrl($okUrl);
+        $prestashopObjectModule     ->setNokUrl($koUrl);
+        $prestashopObjectModule     ->setFullName($customer->firstname.' '.$customer->lastname);
+        $prestashopObjectModule     ->setEmail($customer->email);
+        $prestashopObjectModule     ->setDateOfBirth(new \DateTime(date('y-m-d', $customer->birthday)));
+        $prestashopObjectModule     ->setLoginCustomerGender($customer->id_gender);
+        $prestashopObjectModule     ->setLoginCustomerMemberSince(new \DateTime(date('y-m-d', $customer->date_add)));
+        $prestashopObjectModule     ->setIncludeSimulator($includeSimulator);
+        $prestashopObjectModule     ->setCart($cart);
+        $prestashopObjectModule     ->setCustomer($customer);
+        $prestashopObjectModule     ->setAddress($customerAddress);
 
         $shopperClient = new ShopperClient('http://shopper.localhost/prestashop/');
         $shopperClient->setObjectModule($prestashopObjectModule);
         $paymentForm = $shopperClient->getPaymentForm();
         $paymentForm = json_decode($paymentForm);
-
-        //print_r($paymentForm);
-        //die;
 
         $this->context->smarty->assign([
             'form' => $paymentForm->data->form,
