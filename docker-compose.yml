@@ -1,0 +1,36 @@
+version: "2"
+
+services:
+  web:
+    image: prestashop/prestashop
+    depends_on:
+      - db
+    environment:
+      - PS_DEV_MODE=0
+      - PS_COUNTRY=es
+      - PS_DOMAIN=prestashop.localhost:83
+      - PS_FOLDER_ADMIN=adminTest
+      - PS_FOLDER_INSTALL=installTest
+      - PS_HANDLE_DYNAMIC_DOMAIN=1
+      - PS_INSTALL_AUTO=1
+      - DB_SERVER=db
+      - DB_PASSWD=password
+    networks:
+      - internal
+      - public
+    volumes:
+      - ./:/var/www/html/modules/paylater
+    ports:
+      - "83:80"
+      - "84:443"
+  db:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=prestashop
+    networks:
+      - internal
+
+networks:
+  internal:
+  public:
