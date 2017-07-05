@@ -8,7 +8,7 @@ services:
     environment:
       - PS_DEV_MODE=0
       - PS_COUNTRY=es
-      - PS_DOMAIN=prestashop.localhost:83
+      - PS_DOMAIN=prestashop.docker:84
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
@@ -21,8 +21,7 @@ services:
     volumes:
       - ./:/var/www/html/modules/paylater
     ports:
-      - "83:80"
-      - "84:443"
+      - "84:80"
   db:
     image: mysql
     environment:
@@ -30,6 +29,8 @@ services:
       - MYSQL_DATABASE=prestashop
     networks:
       - internal
+    ports:
+      - "2033:3306"
 
 networks:
   internal:
