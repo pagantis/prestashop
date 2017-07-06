@@ -4,24 +4,16 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require _PS_ROOT_DIR_ . '/modules/paylater/vendor/autoload.php';
+define('_PS_PAYLATER_DIR', _PS_MODULE_DIR_. 'paylater');
+define('PAYLATER_PROD_STATUS', [0 => 'TEST', 1 => 'PROD']);
+
+require _PS_PAYLATER_DIR.'/vendor/autoload.php';
 
 /**
  * Class Paylater
  */
 class Paylater extends PaymentModule
 {
-    /** Directory PATH of the module */
-    const _PS_PAYLATER_DIR = _PS_MODULE_DIR_.'paylater/';
-
-    /**
-     * Array of possible status of variable PAYLATER_PROD
-     */
-    const PAYLATER_PROD_STATUS = [
-        0 => 'TEST',
-        1 => 'PROD'
-    ];
-
     /**
      * @var string
      */
@@ -160,26 +152,35 @@ class Paylater extends PaymentModule
         $orderTotal             = $cart->getOrderTotal();
         $link                   = $this->context->link;
         $paylaterProd           = Configuration::get('PAYLATER_PROD');
-        $paylaterMode           = self::PAYLATER_PROD_STATUS[(int)$paylaterProd];
-        $paylatarePublicKey     = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
+        $paylaterMode           = PAYLATER_PROD_STATUS[(int)$paylaterProd];
+        $paylaterPublicKey     = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
         $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
         $paylaterAddSimulator   = Configuration::get('PAYLATER_ADD_SIMULATOR');
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign([
-            'PAYLATER_DISCOUNT'         => $paylaterDiscount,
-            'AMOUNT'                    => $orderTotal,
-            'PAYLATER_PUBLIC_KEY'       => $paylatarePublicKey,
-            'PAYLATER_ADD_SIMULATOR'    => $paylaterAddSimulator,
+            'discount'      => $paylaterDiscount,
+            'amount'        => $orderTotal,
+            'publicKey'     => $paylaterPublicKey,
+            'expanded'      => $paylaterAddSimulator,
         ]);
 
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
-            ->setCallToActionText($this->l('Pay with Paga+Tarde'))
+            ->setCallToActionText($this->l('Financiar con Paga+Tarde'))
             ->setAction($link->getModuleLink('paylater', 'payment'))
-            ->setLogo(Media::getMediaPath(self::_PS_PAYLATER_DIR.'logo.gif'))
-            ->setAdditionalInformation($this->fetch('module:paylater/views/templates/hook/checkout.tpl'))
+            ->setLogo(Media::getMediaPath(_PS_PAYLATER_DIR . '/logo.gif'))
         ;
+
+        if (_PS_VERSION_ >= 1.7) {
+            $paymentOption    ->setAdditionalInformation(
+                $this->fetch('module:paylater/views/templates/hook/checkout-17.tpl')
+            );
+        } else {
+            $paymentOption    ->setAdditionalInformation(
+                $this->fetch('module:paylater/views/templates/hook/checkout-15.tpl')
+            );
+        }
 
         return [$paymentOption];
     }
@@ -414,61 +415,80 @@ class Paylater extends PaymentModule
         }
 
         /** @var Cart $cart */
-        $cart = $params['cart'];
+        $cart = $this->context->cart;
+
+        if (!$cart->id) {
+            Tools::redirect('index.php?controller=order');
+        }
+
         /** @var Customer $customer */
         $customer = $this->context->customer;
-        $discount = Configuration::get('PAYLATER_DISCOUNT');
         $link = $this->context->link;
         $query = [
-            'id_cart' => $this->context->cart->id,
-            'key' => $this->context->cart->secure_key,
+            'id_cart' => $cart->id,
+            'key' => $cart->secure_key,
         ];
+
+        $discount = Configuration::get('PAYLATER_DISCOUNT');
         $currency = new Currency($cart->id_currency);
         $callbackUrl = $link->getModuleLink('paylater', 'notify', $query);
         $cancelUrl = $link->getPageLink('order');
         $paylaterProd = Configuration::get('PAYLATER_PROD');
-        $paylaterMode = self::PAYLATER_PROD_STATUS[(int)$paylaterProd];
+        $paylaterMode = PAYLATER_PROD_STATUS[(int) $paylaterProd];
         $paylaterPublicKey = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
         $paylaterPrivateKey = Configuration::get('PAYLATER_PRIVATE_KEY_'.$paylaterMode);
         $iframe = Configuration::get('PAYLATER_IFRAME');
         $includeSimulator = Configuration::get('PAYLATER_ADD_SIMULATOR');
+        $okUrl = $link->getModuleLink('paylater', 'notify', $query);
+        $koUrl = $link->getPageLink('checkout');
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign('iframe', $iframe);
 
+        $customerAddress = new \ShopperLibrary\ObjectModule\Properties\Base\Address();
+        $customerAddress->setStreet('Mi calle');
+        $customerAddress->setCity('Barcelona');
+        $customerAddress->setZipCode('08008');
+
         $prestashopObjectModule = new \ShopperLibrary\ObjectModule\PrestashopObjectModule();
-        $prestashopObjectModule
-            ->setIncludeSimulator($includeSimulator)
-            ->setCustomer($customer)
-            ->setCart($cart)
-        ;
+        $prestashopObjectModule     ->setPublicKey($paylaterPublicKey);
+        $prestashopObjectModule     ->setPrivateKey($paylaterPrivateKey);
+        $prestashopObjectModule     ->setCurrency($currency->iso_code);
+        $prestashopObjectModule     ->setAmount((int) ($cart->getOrderTotal() * 100));
+        $prestashopObjectModule     ->setIFrame($iframe);
+        $prestashopObjectModule     ->setOrderId($cart->id);
+        $prestashopObjectModule     ->setCancelledUrl($cancelUrl);
+        $prestashopObjectModule     ->setCallbackUrl($callbackUrl);
+        $prestashopObjectModule     ->setOkUrl($okUrl);
+        $prestashopObjectModule     ->setNokUrl($koUrl);
+        $prestashopObjectModule     ->setFullName($customer->firstname.' '.$customer->lastname);
+        $prestashopObjectModule     ->setEmail($customer->email);
+        $prestashopObjectModule     ->setDateOfBirth(new \DateTime(date('y-m-d', $customer->birthday)));
+        $prestashopObjectModule     ->setLoginCustomerGender($customer->id_gender);
+        $prestashopObjectModule     ->setLoginCustomerMemberSince(new \DateTime(date('y-m-d', $customer->date_add)));
+        $prestashopObjectModule     ->setIncludeSimulator($includeSimulator);
+        $prestashopObjectModule     ->setCart($cart);
+        $prestashopObjectModule     ->setCustomer($customer);
+        $prestashopObjectModule     ->setAddress($customerAddress);
 
-        $prestashopObjectModule->requiredConfig
-            ->setPublicKey($paylaterPublicKey)
-            ->setPrivateKey($paylaterPrivateKey)
-            ->setCurrency($currency->iso_code)
-            ->setOrderId($cart->id)
-            ->setAmount((int) ($cart->getOrderTotal() * 100))
-            ->setCancelUrl($cancelUrl)
-            ->setDiscount($discount)
-            ->setIFrame($iframe)
-            ->setCallbackUrl($callbackUrl)
-        ;
-
-        $prestashopObjectModule->customerConfig
-            ->setName($customer->firstname)
-            ->setEmail($customer->email)
-            ->setBirthDate(new \DateTime(date('y-m-d', $customer->birthday)))
-            ->setIsCustomer($customer->isGuest())
-            ->setGender($customer->id_gender)
-            ->setMemberSince(new \DateTime(date('y-m-d', $customer->date_add)))
-        ;
-
-        $shopperClient = new \ShopperLibrary\ShopperClient();
+        $shopperClient = new \ShopperLibrary\ShopperClient('http://shopper.localhost/prestashop/');
         $shopperClient->setObjectModule($prestashopObjectModule);
         $paymentForm = $shopperClient->getPaymentForm();
+        $paymentForm = json_decode($paymentForm);
 
-        $this->context->smarty->assign('form', $paymentForm);
+        $spinner = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/img/spinner.gif');
+        $css = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/css/paylater.css');
 
-        return $this->display(__FILE__, 'payment.tpl');
+        $this->context->smarty->assign([
+            'form'      => $paymentForm->data->form,
+            'spinner'   => $spinner,
+            'iframe'    => $iframe,
+            'css'       => $css,
+        ]);
+
+        if (_PS_VERSION_ > 1.7) {
+            return $this->display(__FILE__, 'payment-15.tpl');
+        } else {
+            return $this->display(__FILE__, 'payment-17.tpl');
+        }
     }
 }

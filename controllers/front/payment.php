@@ -8,17 +8,6 @@ use ShopperLibrary\ShopperClient;
  */
 class PaylaterPaymentModuleFrontController extends ModuleFrontController
 {
-    /** Directory PATH of the module */
-    const _PS_PAYLATER_DIR = _PS_MODULE_DIR_.'paylater/';
-
-    /**
-     * Array of possible status of variable PAYLATER_PROD
-     */
-    const PAYLATER_PROD_STATUS = [
-        0 => 'TEST',
-        1 => 'PROD'
-    ];
-
     /**
      * Process Post Request
      */
@@ -44,13 +33,13 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         $callbackUrl = $link->getModuleLink('paylater', 'notify', $query);
         $cancelUrl = $link->getPageLink('order');
         $paylaterProd = Configuration::get('PAYLATER_PROD');
-        $paylaterMode = self::PAYLATER_PROD_STATUS[(int) $paylaterProd];
+        $paylaterMode = PAYLATER_PROD_STATUS[(int) $paylaterProd];
         $paylaterPublicKey = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
         $paylaterPrivateKey = Configuration::get('PAYLATER_PRIVATE_KEY_'.$paylaterMode);
         $iframe = Configuration::get('PAYLATER_IFRAME');
         $includeSimulator = Configuration::get('PAYLATER_ADD_SIMULATOR');
-        $okUrl =  $link->getPageLink('order-confirmation', null, null, $query);
-        $koUrl = $link->getPageLink('order');
+        $okUrl = $link->getModuleLink('paylater', 'notify', $query);
+        $koUrl = $link->getPageLink('checkout');
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign('iframe', $iframe);
 
@@ -64,7 +53,7 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         $prestashopObjectModule     ->setPrivateKey($paylaterPrivateKey);
         $prestashopObjectModule     ->setCurrency($currency->iso_code);
         $prestashopObjectModule     ->setAmount((int) ($cart->getOrderTotal() * 100));
-        $prestashopObjectModule     ->setIFrame(true);
+        $prestashopObjectModule     ->setIFrame($iframe);
         $prestashopObjectModule     ->setOrderId($cart->id);
         $prestashopObjectModule     ->setCancelledUrl($cancelUrl);
         $prestashopObjectModule     ->setCallbackUrl($callbackUrl);
@@ -85,8 +74,14 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         $paymentForm = $shopperClient->getPaymentForm();
         $paymentForm = json_decode($paymentForm);
 
+        $spinner = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/img/spinner.gif');
+        $css = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/css/paylater.css');
+
         $this->context->smarty->assign([
-            'form' => $paymentForm->data->form,
+            'form'      => $paymentForm->data->form,
+            'spinner'   => $spinner,
+            'iframe'    => $iframe,
+            'css'       => $css,
         ]);
 
         if (_PS_VERSION_ < 1.7) {
