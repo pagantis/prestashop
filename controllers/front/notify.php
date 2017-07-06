@@ -9,10 +9,19 @@ use \PagaMasTarde\Model\Charge;
 class PaylaterNotifyModuleFrontController extends ModuleFrontController
 {
     /**
-     * @param $message
-     * @param $error
+     * @var string $message
      */
-    protected function response($message, $error = false)
+    protected $message;
+
+    /**
+     * @var bool $error
+     */
+    protected $error = false;
+
+    /**
+     * Send a jsonResponse
+     */
+    protected function jsonResponse()
     {
         $cartId = Tools::getValue('id_cart');
         $secureKey = Tools::getValue('key');
@@ -21,12 +30,11 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
             'timestamp' => time(),
             'order_id' => $cartId,
             'secure_key' => $secureKey,
-            'result' => $message,
+            'result' => $this->message,
         ]);
 
-        if ($error) {
+        if ($this->error) {
             header('HTTP/1.1 400 Bad Request', true, 400);
-
         } else {
             header('HTTP/1.1 200 Ok', true, 200);
         }
@@ -42,58 +50,13 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
+        $this->processValidation();
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $message = json_encode($this->processNotification());
+            $this->jsonResponse();
         } else {
-            $message = json_encode($this->processRedirection());
+            $this->redirect();
         }
-        header('HTTP/1.1 200 Ok', true, 200);
-        header('Content-Type: application/json', true);
-        header('Content-Length: ' . strlen($message));
-
-        exit($message);
-    }
-
-    /**
-     * We receive a notification:
-     *
-     * we have to handle it, change the order status if all is correct
-     * then we can inform paga+tarde that all worked fine on our side.
-     */
-    protected function processNotification()
-    {
-        if (!Module::isEnabled('paylater')) {
-            $this->response('Paylater is not enabled', true);
-        }
-        $cartId = Tools::getValue('id_cart');
-        $secureKey = Tools::getValue('key');
-
-        if (!$secureKey) {
-            $this->response('Missing required fields', true);
-        }
-
-        try {
-            $cart = new Cart((int) $cartId);
-            if (!Validate::isLoadedObject($cart)) {
-                $this->response('Cart does not exists or does not have an order', true);
-            }
-
-            $this->module->validateOrder(
-                $cartId,
-                Configuration::get('PS_OS_PAYMENT'),
-                $cart->getOrderTotal(true),
-                $this->module->displayName,
-                null,
-                null,
-                null,
-                false,
-                $secureKey
-            );
-        } catch (\Exception $e) {
-            $this->response('Cart does not exists or does not have an order', true);
-        }
-
-        return 'Payment Validated';
     }
 
     /**
@@ -103,7 +66,34 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
      * the cart. So we will ask directly paga+tarde for it. Then if
      * true we will validate the order with the payment details.
      */
-    protected function processRedirection()
+    protected function redirect()
+    {
+        $cartId = Tools::getValue('id_cart');
+        $secureKey = Tools::getValue('key');
+        $cart = new Cart((int) $cartId);
+
+        $query = [
+            'id_cart' => $cartId,
+            'key' => $secureKey,
+            'id_module' => $this->module->id,
+            'id_order' => isset($cart) ? $cart->id : ''
+        ];
+
+        if ($this->error) {
+            $link = $this->context->link;
+            $redirectUrl = $link->getPageLink('checkout');
+            Tools::redirect($redirectUrl);
+        } else {
+            $link = $this->context->link;
+            $redirectUrl = $link->getPageLink('order-confirmation', null, null, $query);
+            Tools::redirect($redirectUrl);
+        }
+    }
+
+    /**
+     * Process validation vs API of pmt
+     */
+    protected function processValidation()
     {
         $cartId = Tools::getValue('id_cart');
         $secureKey = Tools::getValue('key');
@@ -114,13 +104,19 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         if ($secureKey && $cartId && Module::isEnabled('paylater')) {
             $pmtClient = new PmtApiClient($privateKey);
             $charge = $pmtClient->charge()->getChargeByOrderId($cartId);
+            if ($charge instanceof Charge && $charge->getPaid() === true) {
+                $this->message = 'Payment not existing in PMT';
+                $this->error = true;
+                return;
+            }
+
             $cart = new Cart((int) $cartId);
             if (Validate::isLoadedObject($cart) &&
-                $cart->OrderExists() == false &&
-                $charge instanceof Charge &&
-                $charge->getPaid() === true
+                $cart->OrderExists() == false
             ) {
-                $this->module->validateOrder(
+                /** @var PaymentModule $paymentModule */
+                $paymentModule = $this->module;
+                $paymentModule->validateOrder(
                     $cartId,
                     Configuration::get('PS_OS_PAYMENT'),
                     $cart->getOrderTotal(true),
@@ -131,21 +127,16 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
                     false,
                     $secureKey
                 );
+                $this->message = 'Payment Validated';
+                return;
 
-                $query = [
-                    'id_cart' => $cartId,
-                    'key' => $secureKey,
-                    'id_module' => $this->module->id,
-                    'id_order' => isset($cart) ? $cart->id : ''
-                ];
-                $link = $this->context->link;
-                $redirectUrl = $link->getPageLink('order-confirmation', null, null, $query);
-                Tools::redirect($redirectUrl);
             }
+            $this->message = 'Order not found';
+            $this->error = true;
+            return;
         }
-
-        $link = $this->context->link;
-        $redirectUrl = $link->getPageLink('checkout');
-        Tools::redirect($redirectUrl);
+        $this->message = 'Bad request';
+        $this->error = true;
+        return;
     }
 }
