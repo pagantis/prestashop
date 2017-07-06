@@ -178,16 +178,16 @@
         },
         {
             "name": "pagamastarde/shopper-library",
-            "version": "v1.0.2",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PagaMasTarde/shopperLibrary.git",
-                "reference": "2a4a82b36ae7b26145527ae598b1919c9a532b64"
+                "reference": "cc357eee197b0672aac5099581fba35fb6cbf3c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/shopperLibrary/zipball/2a4a82b36ae7b26145527ae598b1919c9a532b64",
-                "reference": "2a4a82b36ae7b26145527ae598b1919c9a532b64",
+                "url": "https://api.github.com/repos/PagaMasTarde/shopperLibrary/zipball/cc357eee197b0672aac5099581fba35fb6cbf3c1",
+                "reference": "cc357eee197b0672aac5099581fba35fb6cbf3c1",
                 "shasum": ""
             },
             "require": {
@@ -212,8 +212,8 @@
                     "email": "cromero@digitalorigin.com"
                 }
             ],
-            "description": "Library with the models of the shop modules",
-            "time": "2017-06-27T16:18:00+00:00"
+            "description": "Library with the models of the shop modules and shopper client",
+            "time": "2017-07-06T17:07:07+00:00"
         }
     ],
     "packages-dev": [
@@ -1133,7 +1133,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.22",
+            "version": "v2.8.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",

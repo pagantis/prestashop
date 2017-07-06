@@ -19,6 +19,25 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
     protected $error = false;
 
     /**
+     * Controller index method: validate and choose response type
+     */
+    public function postProcess()
+    {
+        try {
+            $this->processValidation();
+        } catch (\Exception $exception) {
+            $this->message = $exception->getMessage();
+            $this->error = true;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $this->jsonResponse();
+        } else {
+            $this->redirect();
+        }
+    }
+
+    /**
      * Send a jsonResponse
      */
     protected function jsonResponse()
@@ -46,20 +65,6 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * Validate if the request is a notification or nor:
-     */
-    public function postProcess()
-    {
-        $this->processValidation();
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->jsonResponse();
-        } else {
-            $this->redirect();
-        }
-    }
-
-    /**
      * We receive a redirection
      *
      * we have to be sure that the payment has been successful for
@@ -80,9 +85,10 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         ];
 
         if ($this->error) {
+            //In case of error we can see the error in the header of the redirection:
             $link = $this->context->link;
-            $redirectUrl = $link->getPageLink('checkout');
-            Tools::redirect($redirectUrl);
+            $redirectUrl = $link->getPageLink('order');
+            Tools::redirect($redirectUrl, null, null, 'ErrorMessage: '.$this->message);
         } else {
             $link = $this->context->link;
             $redirectUrl = $link->getPageLink('order-confirmation', null, null, $query);
@@ -104,30 +110,33 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         if ($secureKey && $cartId && Module::isEnabled('paylater')) {
             $pmtClient = new PmtApiClient($privateKey);
             $charge = $pmtClient->charge()->getChargeByOrderId($cartId);
-            if ($charge instanceof Charge && $charge->getPaid() === true) {
+            if (!$charge instanceof Charge || $charge->getPaid() !== true) {
                 $this->message = 'Payment not existing in PMT';
                 $this->error = true;
                 return;
             }
 
             $cart = new Cart((int) $cartId);
-            if (Validate::isLoadedObject($cart) &&
-                $cart->OrderExists() == false
+            if (Validate::isLoadedObject($cart)
             ) {
-                /** @var PaymentModule $paymentModule */
-                $paymentModule = $this->module;
-                $paymentModule->validateOrder(
-                    $cartId,
-                    Configuration::get('PS_OS_PAYMENT'),
-                    $cart->getOrderTotal(true),
-                    $this->module->displayName,
-                    null,
-                    null,
-                    null,
-                    false,
-                    $secureKey
-                );
-                $this->message = 'Payment Validated';
+                if ($cart->OrderExists() == false) {
+                    /** @var PaymentModule $paymentModule */
+                    $paymentModule = $this->module;
+                    $paymentModule->validateOrder(
+                        $cartId,
+                        Configuration::get('PS_OS_PAYMENT'),
+                        $cart->getOrderTotal(true),
+                        $this->module->displayName,
+                        null,
+                        null,
+                        null,
+                        false,
+                        $secureKey
+                    );
+                    $this->message = 'Payment Validated';
+                    return;
+                }
+                $this->message = 'Payment already Validated';
                 return;
 
             }

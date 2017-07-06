@@ -2,7 +2,7 @@
 <div class="PmtSimulator"
      data-pmt-num-quota="4" data-pmt-max-ins="12" data-pmt-style="blue"
      data-pmt-type="2"
-     data-pmt-discount="{$discount}" data-pmt-amount="{$amount}" data-pmt-expanded="yes">
+     data-pmt-discount="{$discount}" data-pmt-amount="{$amount}" data-pmt-expanded="no">
 </div>
 <script type="text/javascript">
     (function(){

@@ -28,7 +28,7 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
             'key' => $cart->secure_key,
         ];
 
-        $discount = Configuration::get('PAYLATER_DISCOUNT');
+        $discount = Configuration::get('PAYLATER_DISCOUNT') ? 'true' : 'false';
         $currency = new Currency($cart->id_currency);
         $callbackUrl = $link->getModuleLink('paylater', 'notify', $query);
         $cancelUrl = $link->getPageLink('order');
@@ -49,25 +49,27 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         $customerAddress->setZipCode('08008');
 
         $prestashopObjectModule = new PrestashopObjectModule();
-        $prestashopObjectModule     ->setPublicKey($paylaterPublicKey);
-        $prestashopObjectModule     ->setPrivateKey($paylaterPrivateKey);
-        $prestashopObjectModule     ->setCurrency($currency->iso_code);
-        $prestashopObjectModule     ->setAmount((int) ($cart->getOrderTotal() * 100));
-        $prestashopObjectModule     ->setIFrame($iframe);
-        $prestashopObjectModule     ->setOrderId($cart->id);
-        $prestashopObjectModule     ->setCancelledUrl($cancelUrl);
-        $prestashopObjectModule     ->setCallbackUrl($callbackUrl);
-        $prestashopObjectModule     ->setOkUrl($okUrl);
-        $prestashopObjectModule     ->setNokUrl($koUrl);
-        $prestashopObjectModule     ->setFullName($customer->firstname.' '.$customer->lastname);
-        $prestashopObjectModule     ->setEmail($customer->email);
-        $prestashopObjectModule     ->setDateOfBirth(new \DateTime(date('y-m-d', $customer->birthday)));
-        $prestashopObjectModule     ->setLoginCustomerGender($customer->id_gender);
-        $prestashopObjectModule     ->setLoginCustomerMemberSince(new \DateTime(date('y-m-d', $customer->date_add)));
-        $prestashopObjectModule     ->setIncludeSimulator($includeSimulator);
-        $prestashopObjectModule     ->setCart($cart);
-        $prestashopObjectModule     ->setCustomer($customer);
-        $prestashopObjectModule     ->setAddress($customerAddress);
+        $prestashopObjectModule
+             ->setPublicKey($paylaterPublicKey)
+             ->setPrivateKey($paylaterPrivateKey)
+             ->setCurrency($currency->iso_code)
+             ->setAmount((int) ($cart->getOrderTotal() * 100))
+             ->setOrderId($cart->id)
+             ->setOkUrl($okUrl)
+             ->setNokUrl($koUrl)
+             ->setIFrame($iframe)
+             ->setCallbackUrl($callbackUrl)
+             ->setLoginCustomerGender($customer->id_gender)
+             ->setFullName($customer->firstname.' '.$customer->lastname)
+             ->setEmail($customer->email)
+             ->setCancelledUrl($cancelUrl)
+             ->setDateOfBirth(new \DateTime(date('y-m-d', $customer->birthday)))
+             ->setLoginCustomerMemberSince(new \DateTime(date('y-m-d', $customer->date_add)))
+             ->setIncludeSimulator($includeSimulator)
+             ->setCart($cart)
+             ->setCustomer($customer)
+             ->setAddress($customerAddress)
+        ;
 
         $shopperClient = new ShopperClient('http://shopper.localhost/prestashop/');
         $shopperClient->setObjectModule($prestashopObjectModule);
