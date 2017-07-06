@@ -402,13 +402,11 @@ class Paylater extends PaymentModule
     }
 
     /**
-     * Hook to show payment method, this only applies on prestashop >= 1.6
-     *
-     * @param $params
+     * Hook to show payment method, this only applies on prestashop <= 1.6
      *
      * @return string
      */
-    public function hookPayment($params)
+    public function hookPayment()
     {
         if (!$this->isPaymentMethodAvailable()) {
             return false;
@@ -429,7 +427,6 @@ class Paylater extends PaymentModule
             'key' => $cart->secure_key,
         ];
 
-        $discount = Configuration::get('PAYLATER_DISCOUNT');
         $currency = new Currency($cart->id_currency);
         $callbackUrl = $link->getModuleLink('paylater', 'notify', $query);
         $cancelUrl = $link->getPageLink('order');
@@ -450,26 +447,27 @@ class Paylater extends PaymentModule
         $customerAddress->setZipCode('08008');
 
         $prestashopObjectModule = new \ShopperLibrary\ObjectModule\PrestashopObjectModule();
-        $prestashopObjectModule     ->setPublicKey($paylaterPublicKey);
-        $prestashopObjectModule     ->setPrivateKey($paylaterPrivateKey);
-        $prestashopObjectModule     ->setCurrency($currency->iso_code);
-        $prestashopObjectModule     ->setAmount((int) ($cart->getOrderTotal() * 100));
-        $prestashopObjectModule     ->setIFrame($iframe);
-        $prestashopObjectModule     ->setOrderId($cart->id);
-        $prestashopObjectModule     ->setCancelledUrl($cancelUrl);
-        $prestashopObjectModule     ->setCallbackUrl($callbackUrl);
-        $prestashopObjectModule     ->setOkUrl($okUrl);
-        $prestashopObjectModule     ->setNokUrl($koUrl);
-        $prestashopObjectModule     ->setFullName($customer->firstname.' '.$customer->lastname);
-        $prestashopObjectModule     ->setEmail($customer->email);
-        $prestashopObjectModule     ->setDateOfBirth(new \DateTime(date('y-m-d', $customer->birthday)));
-        $prestashopObjectModule     ->setLoginCustomerGender($customer->id_gender);
-        $prestashopObjectModule     ->setLoginCustomerMemberSince(new \DateTime(date('y-m-d', $customer->date_add)));
-        $prestashopObjectModule     ->setIncludeSimulator($includeSimulator);
-        $prestashopObjectModule     ->setCart($cart);
-        $prestashopObjectModule     ->setCustomer($customer);
-        $prestashopObjectModule     ->setAddress($customerAddress);
-
+        $prestashopObjectModule
+            ->setPublicKey($paylaterPublicKey)
+            ->setPrivateKey($paylaterPrivateKey)
+            ->setCurrency($currency->iso_code)
+            ->setAmount((int) ($cart->getOrderTotal() * 100))
+            ->setOrderId($cart->id)
+            ->setOkUrl($okUrl)
+            ->setNokUrl($koUrl)
+            ->setIFrame($iframe)
+            ->setCallbackUrl($callbackUrl)
+            ->setLoginCustomerGender($customer->id_gender)
+            ->setFullName($customer->firstname.' '.$customer->lastname)
+            ->setEmail($customer->email)
+            ->setCancelledUrl($cancelUrl)
+            ->setDateOfBirth(new \DateTime(date('y-m-d', $customer->birthday)))
+            ->setLoginCustomerMemberSince(new \DateTime(date('y-m-d', $customer->date_add)))
+            ->setIncludeSimulator($includeSimulator)
+            ->setCart($cart)
+            ->setCustomer($customer)
+            ->setAddress($customerAddress)
+        ;
         $shopperClient = new \ShopperLibrary\ShopperClient('http://shopper.localhost/prestashop/');
         $shopperClient->setObjectModule($prestashopObjectModule);
         $paymentForm = $shopperClient->getPaymentForm();
@@ -486,9 +484,9 @@ class Paylater extends PaymentModule
         ]);
 
         if (_PS_VERSION_ > 1.7) {
-            return $this->display(__FILE__, 'payment-15.tpl');
-        } else {
             return $this->display(__FILE__, 'payment-17.tpl');
+        } else {
+            return $this->display(__FILE__, 'payment-15.tpl');
         }
     }
 }
