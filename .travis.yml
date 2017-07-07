@@ -14,9 +14,12 @@ services:
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
+  - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-ce
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/1.14.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+  - chmod +x /usr/local/bin/docker-compose > docker-compose
   - docker-compose --version
-  - docker-comspose up -d
+  - docker-comspose up -ds
 
 before_script: 'composer install'
 
