@@ -21,7 +21,7 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
   - docker-compose --version
-  - docker-comspose up -d
+  - docker-compose up -d
 
 before_script: 'composer install'
 
