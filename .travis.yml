@@ -1,5 +1,9 @@
 sudo: required
 
+addons:
+  hosts:
+    - prestashop.localhost
+
 env:
   - DOCKER_COMPOSE_VERSION=1.14.0
 
