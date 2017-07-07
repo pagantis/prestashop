@@ -3,7 +3,7 @@
 <link rel="stylesheet" type="text/css" media="all" href="{$css nofilter}">
 <div class="paylater-content">
     <!-- Title and spinner -->
-    <h3>{l s='Comenzando tu financiación' mod='paylater'}</h3>
+    <h3>{l s='Starting your financing process' mod='paylater'}</h3>
     <img src="{$spinner nofilter}">
     <!-- Iframe Div -->
     <div id="myModal" class="paylater_modal" style="display: none;">
@@ -15,11 +15,18 @@
     <!-- open payment button -->
     <div class="col-xs-12">
         <p class="payment_module paylater_payment_button" id="paylater_payment_button">
-            <a href="javascript:$('#paylater_form').submit();" title="Pay later" class="paylater_payment_link">
-                Abrir Paga+Tarde
+            <a href="javascript:$('#paylater_form').submit();" title="Paylater" class="paylater_payment_link">
+                {l s='Open Paylater' mod='paylater'}
             </a>
         </p>
-        <div class="PmtSimulator PmtSimulatorSelectable--claim" data-pmt-num-quota="4" data-pmt-style="grey" data-pmt-type="4" data-pmt-discount="0" data-pmt-amount="19.21" id="0"></div>
+        <div class="PmtSimulator PmtSimulatorSelectable--claim"
+             data-pmt-num-quota="4"
+             data-pmt-style="grey"
+             data-pmt-type="4"
+             data-pmt-discount="0"
+             data-pmt-amount="19.21"
+             id="0">
+        </div>
     </div>
     <!-- Payment Form Render -->
     {$form nofilter}

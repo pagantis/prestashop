@@ -1,8 +1,8 @@
 <p class="payment_module paylater_payment_button" id="paylater_payment_button">
-    <a href="javascript:$('#paylater_form').submit();" title="{l s='Pay later' mod='paylater'}">
+    <a href="javascript:$('#paylater_form').submit();" title="{l s='Paylater' mod='paylater'}">
         <img id="logo_pagamastarde" src="{$module_dir|escape:'htmlall':'UTF-8'}views/img/logo-86x49.png"
-             alt="{l s='Logo Paga Mas Tarde' mod='paylater'}" style="max-width: 80px"/>
-        {l s='Financing using Paga+Tarde' mod='paylater'}
+             alt="{l s='Paylater logo' mod='paylater'}" style="max-width: 80px"/>
+        {l s='Finance using Paylater' mod='paylater'}
     </a>
 </p>
 

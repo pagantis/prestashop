@@ -43,7 +43,7 @@ class Paylater extends PaymentModule
         $this->ps_versions_compliancy = ['min' => '1.3', 'max' => _PS_VERSION_];
         $this->displayName = $this->l('Paga+Tarde');
         $this->description = $this->l(
-            'Increase your sales with Paga+Tarde, a payment method that offers instant credit.'
+            'Instant, easy and effective financial tool for your customers'
         );
 
         parent::__construct();
@@ -102,7 +102,7 @@ class Paylater extends PaymentModule
     {
         $cart                       = $this->context->cart;
         $currency                   = new Currency($cart->id_currency);
-        $availableCurrencies        = ['EUR']; //@todo fetch valid currencies from API
+        $availableCurrencies        = ['EUR'];
         $paylaterMinAmount          = Configuration::get('PAYLATER_MIN_AMOUNT');
         $paylaterProd               = Configuration::get('PAYLATER_PROD');
         $paylaterPublicKeyTest      = Configuration::get('PAYLATER_PUBLIC_KEY_TEST');
@@ -167,7 +167,7 @@ class Paylater extends PaymentModule
 
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
-            ->setCallToActionText($this->l('Financiar con Paga+Tarde'))
+            ->setCallToActionText($this->l('Finance using Paylater'))
             ->setAction($link->getModuleLink('paylater', 'payment'))
             ->setLogo(Media::getMediaPath(_PS_PAYLATER_DIR . '/logo.gif'))
         ;
@@ -186,7 +186,7 @@ class Paylater extends PaymentModule
     }
 
     /**
-     * Get the form for editing the backoffice options of the module
+     * Get the form for editing the BackOffice options of the module
      *
      * @return array
      */
@@ -200,21 +200,20 @@ class Paylater extends PaymentModule
                 ),
                 'input' => array(
                     array(
-                        'type' => (_PS_VERSION_ >= 1.6) ? 'switch' : 'radio',
-                        'label' => $this->l('Production Mode'),
+                        'type' => 'radio',
+                        'label' => $this->l('Working Mode'),
                         'name' => 'PAYLATER_PROD',
                         'is_bool' => true,
-                        'desc' => $this->l('Set the module to prod or test'),
                         'values' => array(
                             array(
-                                'id' => 'prod',
+                                'id' => 'production',
                                 'value' => true,
-                                'label' => $this->l('Prodution'),
+                                'label' => $this->l('  Production'),
                             ),
                             array(
                                 'id' => 'test',
                                 'value' => false,
-                                'label' => $this->l('Testing'),
+                                'label' => $this->l('  Test'),
                             ),
                         ),
                     ),
@@ -222,7 +221,6 @@ class Paylater extends PaymentModule
                         'name' => 'PAYLATER_PUBLIC_KEY_TEST',
                         'type' => 'text',
                         'label' => $this->l('Public TEST API Key'),
-                        'desc' => $this->l('Public test API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
                         'col' => 4,
                     ),
@@ -230,7 +228,6 @@ class Paylater extends PaymentModule
                         'name' => 'PAYLATER_PRIVATE_KEY_TEST',
                         'type' => 'text',
                         'label' => $this->l('Private TEST API Key'),
-                        'desc' => $this->l('Private test API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
                         'col' => 4,
                     ),
@@ -238,7 +235,6 @@ class Paylater extends PaymentModule
                         'name' => 'PAYLATER_PUBLIC_KEY_PROD',
                         'type' => 'text',
                         'label' => $this->l('Public PROD API Key'),
-                        'desc' => $this->l('Public PROD API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
                         'col' => 4,
                     ),
@@ -246,78 +242,75 @@ class Paylater extends PaymentModule
                         'name' => 'PAYLATER_PRIVATE_KEY_PROD',
                         'type' => 'text',
                         'label' => $this->l('Private PROD API Key'),
-                        'desc' => $this->l('Private PROD API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
                         'col' => 4,
                     ),
                     array(
-                        'type' => 'select',
+                        'type' => 'radio',
+                        'label' => $this->l('The financial interests will be paid by'),
                         'name' => 'PAYLATER_DISCOUNT',
-                        'desc' => $this->l('The shop will pay the interests of the loans'),
                         'is_bool' => true,
-                        'label' => $this->l('Customer Free loans'),
-                        'options' => array(
-                            'query' => array(
-                                array(
-                                    'id_discount' => 'false',
-                                    'name' => $this->l('Disabled')
-                                ),
-                                array(
-                                    'id_discount' => 'true',
-                                    'name' => $this->l('Enabled')
-                                )
-                            ),
-                            'id' => 'id_discount',
-                            'name' => 'name'
-                        )
-                    ),
-                    array(
-                        'type' => (_PS_VERSION_ >= 1.6) ? 'switch' : 'radio',
-                        'label' => $this->l('Display mode'),
-                        'name' => 'PAYLATER_IFRAME',
-                        'is_bool' => true,
-                        'desc' => $this->l('Select the way to display the payment page'),
                         'values' => array(
                             array(
-                                'id' => 'iframe',
+                                'id' => 'true',
                                 'value' => true,
-                                'label' => $this->l('show the page in a modal'),
+                                'label' => $this->l('  The online commerce will cover the cost'),
                             ),
                             array(
-                                'id' => 'redirection',
+                                'id' => 'false',
                                 'value' => false,
-                                'label' => $this->l('redirect the user to the payment'),
+                                'label' => $this->l('  The end client who buys will cover the cost'),
                             ),
                         ),
                     ),
                     array(
-                        'type' => 'select',
-                        'name' => 'PAYLATER_ADD_SIMULATOR',
-                        'desc' => $this->l('Show the loan simulator'),
+                        'type' => 'radio',
+                        'label' => $this->l('Payment behavior'),
+                        'name' => 'PAYLATER_IFRAME',
                         'is_bool' => true,
-                        'label' => $this->l('Include simulator'),
-                        'options' => array(
-                            'query' => array(
-                                array(
-                                    'id_type' => 'true',
-                                    'name' => $this->l('Enabled')
-                                ),
-                                array(
-                                    'id_type' => 'false',
-                                    'name' => $this->l('Disabled')
-                                )
+                        'values' => array(
+                            array(
+                                'id' => 'iframe',
+                                'value' => true,
+                                'label' => $this->l('  open on iFrame inside the page'),
                             ),
-                            'id' => 'id_type',
-                            'name' => 'name'
-                        )
+                            array(
+                                'id' => 'redirection',
+                                'value' => false,
+                                'label' => $this->l('  redirect the user to the payment page'),
+                            ),
+                        ),
+                    ),
+                    array(
+                        'type' => 'radio',
+                        'label' => $this->l('Include simulator in checkout'),
+                        'name' => 'PAYLATER_ADD_SIMULATOR',
+                        'is_bool' => false,
+                        'values' => array(
+                            array(
+                                'id' => 'simulator',
+                                'value' => 0,
+                                'label' => $this->l('  Don\'t display')
+                            ),
+                            array(
+                                'id' => 'simulator',
+                                'value' => 1,
+                                'label' => $this->l('  Display small')
+                            ),
+                            array(
+                                'id' => 'simulator',
+                                'value' => 2,
+                                'label' => $this->l('  Display expanded')
+                            ),
+                        ),
                     ),
                     array(
                         'type' => 'text',
-                        'label' => $this->l('Minimum Finance Amount'),
+                        'label' => $this->l('MinAmount to display Paylater'),
                         'name' => 'PAYLATER_MIN_AMOUNT',
-                        'desc' => $this->l('Cart minimum amount to enable the finance method'),
                         'required' => false,
-                        'col' => 2,
+                        'prefix' => '<i class="icon icon-bank"></i>',
+                        'suffix' => '€'
                     ),
                 ),
                 'submit' => array(
