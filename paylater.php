@@ -201,6 +201,7 @@ class Paylater extends PaymentModule
                 'input' => array(
                     array(
                         'type' => 'radio',
+                        'prefix' => '<i class="icon icon-gears"></i>',
                         'label' => $this->l('Working Mode'),
                         'name' => 'PAYLATER_PROD',
                         'is_bool' => true,
@@ -220,6 +221,7 @@ class Paylater extends PaymentModule
                     array(
                         'name' => 'PAYLATER_PUBLIC_KEY_TEST',
                         'type' => 'text',
+                        'size' => 35,
                         'label' => $this->l('Public TEST API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
                         'col' => 4,
@@ -227,6 +229,7 @@ class Paylater extends PaymentModule
                     array(
                         'name' => 'PAYLATER_PRIVATE_KEY_TEST',
                         'type' => 'text',
+                        'size' => 35,
                         'label' => $this->l('Private TEST API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
                         'col' => 4,
@@ -234,6 +237,7 @@ class Paylater extends PaymentModule
                     array(
                         'name' => 'PAYLATER_PUBLIC_KEY_PROD',
                         'type' => 'text',
+                        'size' => 35,
                         'label' => $this->l('Public PROD API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
                         'col' => 4,
@@ -241,12 +245,14 @@ class Paylater extends PaymentModule
                     array(
                         'name' => 'PAYLATER_PRIVATE_KEY_PROD',
                         'type' => 'text',
+                        'size' => 35,
                         'label' => $this->l('Private PROD API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
                         'col' => 4,
                     ),
                     array(
                         'type' => 'radio',
+                        'prefix' => '<i class="icon icon-money"></i>',
                         'label' => $this->l('The financial interests will be paid by'),
                         'name' => 'PAYLATER_DISCOUNT',
                         'is_bool' => true,
@@ -267,6 +273,7 @@ class Paylater extends PaymentModule
                         'type' => 'radio',
                         'label' => $this->l('Payment behavior'),
                         'name' => 'PAYLATER_IFRAME',
+                        'prefix' => '<i class="icon icon-desktop"></i>',
                         'is_bool' => true,
                         'values' => array(
                             array(
@@ -285,6 +292,7 @@ class Paylater extends PaymentModule
                         'type' => 'radio',
                         'label' => $this->l('Include simulator in checkout'),
                         'name' => 'PAYLATER_ADD_SIMULATOR',
+                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
                         'is_bool' => false,
                         'values' => array(
                             array(
@@ -306,6 +314,8 @@ class Paylater extends PaymentModule
                     ),
                     array(
                         'type' => 'text',
+                        'size' => 3,
+                        'desc' => $this->l('ej: 20'),
                         'label' => $this->l('MinAmount to display Paylater'),
                         'name' => 'PAYLATER_MIN_AMOUNT',
                         'required' => false,
@@ -355,7 +365,7 @@ class Paylater extends PaymentModule
      */
     public function getContent()
     {
-        $output = '';
+        $confirmation = "";
         $settings = [];
         $settingsKeys = [
             'PAYLATER_PROD',
@@ -376,7 +386,7 @@ class Paylater extends PaymentModule
                 Configuration::updateValue($key, $value);
                 $settings[$key] = $value;
             }
-            $output .= $this->displayConfirmation($this->l('Se han guardado los cambios'));
+            $confirmation = $this->displayConfirmation($this->l('Se han guardado los cambios'));
         } else {
             foreach ($settingsKeys as $key) {
                 switch ($key) {
@@ -392,9 +402,16 @@ class Paylater extends PaymentModule
         }
 
         $logo = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/img/logo-229x130.png');
-        $this->context->smarty->assign(['logo' => $logo]);
-        $configInfo = $this->context->smarty->fetch($this->local_path.'views/templates/admin/config-info.tpl');
-        return $output.$configInfo.$this->renderForm($settings);
+        $css = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/css/paylater.css');
+        $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
+        $this->context->smarty->assign(array(
+            'logo' => $logo,
+            'form' => $this->renderForm($settings),
+            'confirmation' => $confirmation,
+            'css' => $css
+        ));
+
+        return $this->context->smarty->fetch($tpl);
     }
 
     /**

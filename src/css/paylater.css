@@ -4,7 +4,7 @@
     padding-top: 50px;
 }
 
-iframe {
+.paylater-content iframe {
     margin: 0;
     padding: 0;
     border: 0;
@@ -16,10 +16,6 @@ iframe {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-}
-
-body {
-    line-height: 1;
 }
 
 .paylater_modal {
@@ -133,4 +129,57 @@ body {
 
 .paylater_payment_link span {
     font-weight: normal;
+}
+
+.paylater-content-form {
+    overflow-x: hidden;
+    overflow-y: hidden;
+    text-align: center;
+    width: 800px;
+}
+
+.paylater-content-form input{
+    margin-left: 15px;
+}
+
+.paylater-content-form label{
+    margin-left: 15px;
+}
+
+.paylater-content-form img{
+    margin-top: 20px;
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+    width: 100px;
+}
+
+.paylater-content-form section{
+    min-height: 100px;
+}
+
+.paylater-content-form a{
+    line-height: 2;
+}
+
+.panel-heading {
+    text-align: left;
+}
+
+.form-wrapper {
+    margin-top: 10px;
+}
+
+.paylater-left-column {
+    float: left;
+}
+.paylater-right-column {
+    float: right;
+}
+.clear {
+    clear: both;
+}
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
 }
