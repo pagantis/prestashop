@@ -4,7 +4,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-define('_PS_PAYLATER_DIR', _PS_MODULE_DIR_. 'paylater');
+define('_PS_PAYLATER_DIR', _PS_MODULE_DIR_. '/paylater');
 define('PAYLATER_PROD_STATUS', [0 => 'TEST', 1 => 'PROD']);
 
 require _PS_PAYLATER_DIR.'/vendor/autoload.php';
@@ -398,7 +398,10 @@ class Paylater extends PaymentModule
             }
         }
 
-        return $output.$this->renderForm($settings);
+        $logo = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/img/logo-229x130.png');
+        $this->context->smarty->assign(['logo' => $logo]);
+        $configInfo = $this->context->smarty->fetch($this->local_path.'views/templates/admin/config-info.tpl');
+        return $output.$configInfo.$this->renderForm($settings);
     }
 
     /**

@@ -138,7 +138,6 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
                 }
                 $this->message = 'Payment already Validated';
                 return;
-
             }
             $this->message = 'Order not found';
             $this->error = true;

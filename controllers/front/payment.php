@@ -4,7 +4,7 @@ use ShopperLibrary\ObjectModule\PrestashopObjectModule;
 use ShopperLibrary\ShopperClient;
 
 /**
- * Class AplazameRedirectModuleFrontController
+ * Class PaylaterRedirectModuleFrontController
  */
 class PaylaterPaymentModuleFrontController extends ModuleFrontController
 {
@@ -28,7 +28,6 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
             'key' => $cart->secure_key,
         ];
 
-        $discount = Configuration::get('PAYLATER_DISCOUNT') ? 'true' : 'false';
         $currency = new Currency($cart->id_currency);
         $callbackUrl = $link->getModuleLink('paylater', 'notify', $query);
         $cancelUrl = $link->getPageLink('order');
