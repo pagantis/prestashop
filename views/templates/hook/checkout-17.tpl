@@ -1,4 +1,10 @@
 <script type="text/javascript" src="https://cdn.pagamastarde.com/pmt-js-client-sdk/3/js/client-sdk.min.js"></script>
+<script type="text/javascript">
+    if (undefined !== pmtClient) {
+        pmtClient.setPublicKey('{$publicKey}');
+        pmtClient.events.send('checkout', { basketAmount: {$amount} } );
+    }
+</script>
 {if $includeSimulator}
     <span class="js-pmt-payment-type"></span>
     <div class="PmtSimulator"
@@ -8,11 +14,9 @@
     </div>
     <script type="text/javascript">
         (function(){
-            pmtClient.setPublicKey('{$publicKey}');
-            pmtClient.simulator.init();
+            if (undefined !== pmtClient) {
+                pmtClient.simulator.init();
+            }
         })();
     </script>
 {/if}
-<script type="text/javascript">
-    pmtClient.events.send('checkout', { basketAmount: {$amount} } );
-</script>
