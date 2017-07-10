@@ -6,6 +6,8 @@ if (!defined('_PS_VERSION_')) {
 
 define('_PS_PAYLATER_DIR', _PS_MODULE_DIR_. '/paylater');
 define('PAYLATER_PROD_STATUS', [0 => 'TEST', 1 => 'PROD']);
+define('PAYLATER_SHOPPER_URL', 'https://shopper.pagamastarde.com');
+define('PAYLATER_SHOPPER_DEMO_URL', 'http://shopper.localhost');
 
 require _PS_PAYLATER_DIR.'/vendor/autoload.php';
 
@@ -462,7 +464,7 @@ class Paylater extends PaymentModule
         ];
 
         $currency = new Currency($cart->id_currency);
-        $callbackUrl = $link->getModuleLink('paylater', 'notify', $query);
+        $currencyIso = $currency->iso_code;
         $cancelUrl = $link->getPageLink('order');
         $paylaterProd = Configuration::get('PAYLATER_PROD');
         $paylaterMode = PAYLATER_PROD_STATUS[(int) $paylaterProd];
@@ -471,44 +473,36 @@ class Paylater extends PaymentModule
         $iframe = Configuration::get('PAYLATER_IFRAME');
         $includeSimulator = Configuration::get('PAYLATER_ADD_SIMULATOR');
         $okUrl = $link->getModuleLink('paylater', 'notify', $query);
-        $this->context->smarty->assign($this->getButtonTemplateVars($cart));
-        $this->context->smarty->assign('iframe', $iframe);
-
-        $customerAddress = new \ShopperLibrary\ObjectModule\Properties\Base\Address();
-        $customerAddress->setStreet('Mi calle');
-        $customerAddress->setCity('Barcelona');
-        $customerAddress->setZipCode('08008');
+        $shippingAddress = new Address($cart->id_address_delivery);
+        $billingAddress = new Address($cart->id_address_invoice);
+        $discount = Configuration::get('PAYLATER_IFRAME');
+        $spinner = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/img/spinner.gif');
+        $css = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/css/paylater.css');
 
         $prestashopObjectModule = new \ShopperLibrary\ObjectModule\PrestashopObjectModule();
         $prestashopObjectModule
             ->setPublicKey($paylaterPublicKey)
             ->setPrivateKey($paylaterPrivateKey)
-            ->setCurrency($currency->iso_code)
-            ->setAmount((int) ($cart->getOrderTotal() * 100))
-            ->setOrderId($cart->id)
+            ->setCurrency($currencyIso)
+            ->setDiscount($discount)
             ->setOkUrl($okUrl)
             ->setNokUrl($cancelUrl)
             ->setIFrame($iframe)
-            ->setCallbackUrl($callbackUrl)
-            ->setLoginCustomerGender($customer->id_gender)
-            ->setFullName($customer->firstname.' '.$customer->lastname)
-            ->setEmail($customer->email)
+            ->setCallbackUrl($okUrl)
             ->setCancelledUrl($cancelUrl)
-            ->setDateOfBirth(new \DateTime(date('y-m-d', $customer->birthday)))
-            ->setLoginCustomerMemberSince(new \DateTime(date('y-m-d', $customer->date_add)))
             ->setIncludeSimulator($includeSimulator)
             ->setCart($cart)
             ->setCustomer($customer)
-            ->setAddress($customerAddress)
+            ->setPsShippingAddress($shippingAddress)
+            ->setPsBillingAddress($billingAddress)
         ;
-        $shopperClient = new \ShopperLibrary\ShopperClient('http://shopper.localhost/prestashop/');
+
+        $shopperClient = new \ShopperLibrary\ShopperClient(PAYLATER_SHOPPER_DEMO_URL);
         $shopperClient->setObjectModule($prestashopObjectModule);
         $paymentForm = $shopperClient->getPaymentForm();
         $paymentForm = json_decode($paymentForm);
 
-        $spinner = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/img/spinner.gif');
-        $css = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/css/paylater.css');
-
+        $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign([
             'form'          => $paymentForm->data->form,
             'spinner'       => $spinner,
