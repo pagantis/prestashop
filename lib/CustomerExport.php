@@ -20,6 +20,7 @@ class CustomerExport
                 'isGuest' => $customerCore->is_guest,
                 'memberSince' => $customerCore->date_add,
                 'customer' => json_decode(json_encode($customerCore)),
+                'orders' => Order::getCustomerOrders($customerCore->id),
             ];
         }
 
@@ -34,6 +35,7 @@ class CustomerExport
                 'isGuest' => $customerCore->is_guest,
                 'memberSince' => $customerCore->date_add,
                 'customer' => json_decode(json_encode($customerCore)),
+                'orders' => Order::getCustomerOrders($customerCore->id),
             ];
         }
         return (object) [];
