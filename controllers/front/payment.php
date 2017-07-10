@@ -70,8 +70,6 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         $shopperClient = new \ShopperLibrary\ShopperClient(PAYLATER_SHOPPER_DEMO_URL);
         $shopperClient->setObjectModule($prestashopObjectModule);
         $paymentForm = $shopperClient->getPaymentForm();
-        print($paymentForm);
-        die();
         $paymentForm = json_decode($paymentForm);
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
