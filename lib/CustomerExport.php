@@ -5,12 +5,12 @@ class CustomerExport
     /**
      * @param CustomerCore $customerCore
      *
-     * @return array
+     * @return stdClass
      */
     public static function export(CustomerCore $customerCore)
     {
         if (_PS_VERSION_ >= 1.7) {
-            return [
+            return (object) [
                 'id' => $customerCore->id,
                 'gender' => $customerCore->id_gender,
                 'email' => $customerCore->email,
@@ -24,7 +24,7 @@ class CustomerExport
         }
 
         if (_PS_VERSION_ < 1.7) {
-            return [
+            return (object) [
                 'id' => $customerCore->id,
                 'gender' => $customerCore->id_gender,
                 'email' => $customerCore->email,
@@ -36,6 +36,6 @@ class CustomerExport
                 'customer' => json_decode(json_encode($customerCore)),
             ];
         }
-        return [];
+        return (object) [];
     }
 }

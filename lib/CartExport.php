@@ -5,12 +5,12 @@ class CartExport
     /**
      * @param CartCore $cartCore
      *
-     * @return array
+     * @return stdClass
      */
     public static function export(CartCore $cartCore)
     {
         if (_PS_VERSION_ >= 1.7) {
-            return [
+            return (object) [
                 'orderId' => $cartCore->id,
                 'items' => $cartCore->getProducts(true),
                 'amount' => $cartCore->getOrderTotal(),
@@ -20,7 +20,7 @@ class CartExport
         }
 
         if (_PS_VERSION_ < 1.7) {
-            return [
+            return (object) [
                 'orderId' => $cartCore->id,
                 'items' => $cartCore->getProducts(true),
                 'amount' => $cartCore->getOrderTotal(),
@@ -28,6 +28,6 @@ class CartExport
                 'summary' => json_decode(json_encode($cartCore->getSummaryDetails()))
             ];
         }
-        return [];
+        return (object) [];
     }
 }

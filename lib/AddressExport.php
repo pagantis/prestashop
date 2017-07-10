@@ -5,12 +5,12 @@ class AddressExport
     /**
      * @param AddressCore $addressCore
      *
-     * @return array
+     * @return stdClass
      */
     public static function export(AddressCore $addressCore)
     {
         if (_PS_VERSION_ >= 1.7) {
-            return [
+            return (object) [
                 'dni'         => $addressCore->dni,
                 'firstName'   => $addressCore->firstname,
                 'lastName'    => $addressCore->lastname,
@@ -24,7 +24,7 @@ class AddressExport
         }
 
         if (_PS_VERSION_ < 1.7) {
-            return [
+            return (object) [
                 'dni'         => $addressCore->dni,
                 'firstName'   => $addressCore->firstname,
                 'lastName'    => $addressCore->lastname,
@@ -36,6 +36,6 @@ class AddressExport
                 'address'     => json_decode(json_encode($addressCore)),
             ];
         }
-        return [];
+        return (object) [];
     }
 }
