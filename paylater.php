@@ -7,7 +7,7 @@ if (!defined('_PS_VERSION_')) {
 define('_PS_PAYLATER_DIR', _PS_MODULE_DIR_. '/paylater');
 define('PAYLATER_PROD_STATUS', [0 => 'TEST', 1 => 'PROD']);
 define('PAYLATER_SHOPPER_URL', 'https://shopper.pagamastarde.com');
-define('PAYLATER_SHOPPER_DEMO_URL', 'http://shopper.localhost');
+define('PAYLATER_SHOPPER_DEMO_URL', 'http://shopper.localhost/prestashop/');
 
 require _PS_PAYLATER_DIR.'/vendor/autoload.php';
 
