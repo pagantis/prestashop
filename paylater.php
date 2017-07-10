@@ -471,7 +471,6 @@ class Paylater extends PaymentModule
         $iframe = Configuration::get('PAYLATER_IFRAME');
         $includeSimulator = Configuration::get('PAYLATER_ADD_SIMULATOR');
         $okUrl = $link->getModuleLink('paylater', 'notify', $query);
-        $koUrl = $link->getPageLink('checkout');
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign('iframe', $iframe);
 
@@ -488,7 +487,7 @@ class Paylater extends PaymentModule
             ->setAmount((int) ($cart->getOrderTotal() * 100))
             ->setOrderId($cart->id)
             ->setOkUrl($okUrl)
-            ->setNokUrl($koUrl)
+            ->setNokUrl($cancelUrl)
             ->setIFrame($iframe)
             ->setCallbackUrl($callbackUrl)
             ->setLoginCustomerGender($customer->id_gender)
@@ -511,10 +510,11 @@ class Paylater extends PaymentModule
         $css = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/css/paylater.css');
 
         $this->context->smarty->assign([
-            'form'      => $paymentForm->data->form,
-            'spinner'   => $spinner,
-            'iframe'    => $iframe,
-            'css'       => $css,
+            'form'          => $paymentForm->data->form,
+            'spinner'       => $spinner,
+            'iframe'        => $iframe,
+            'css'           => $css,
+            'checkoutUrl'   => $cancelUrl,
         ]);
 
         if (_PS_VERSION_ > 1.7) {

@@ -41,7 +41,7 @@
             });
             var closeModal = function closeModal(evt) {
                 evt.preventDefault();
-                document.getElementById('myModal').style.display = 'none';
+                window.location.href = "{$checkoutUrl}";
             };
 
             var elements = document.querySelectorAll('#paylater_close, #myModal');

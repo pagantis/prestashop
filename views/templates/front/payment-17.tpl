@@ -19,14 +19,6 @@
                 {l s='Open Paylater' mod='paylater'}
             </a>
         </p>
-        <div class="PmtSimulator PmtSimulatorSelectable--claim"
-             data-pmt-num-quota="4"
-             data-pmt-style="grey"
-             data-pmt-type="4"
-             data-pmt-discount="0"
-             data-pmt-amount="19.21"
-             id="0">
-        </div>
     </div>
     <!-- Payment Form Render -->
     {$form nofilter}
@@ -43,7 +35,7 @@
             });
             var closeModal = function closeModal(evt) {
                 evt.preventDefault();
-                document.getElementById('myModal').style.display = 'none';
+                window.location.href = "{$checkoutUrl}";
             };
 
             var elements = document.querySelectorAll('#paylater_close, #myModal');

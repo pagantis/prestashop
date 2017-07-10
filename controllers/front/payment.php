@@ -38,7 +38,6 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         $iframe = Configuration::get('PAYLATER_IFRAME');
         $includeSimulator = Configuration::get('PAYLATER_ADD_SIMULATOR');
         $okUrl = $link->getModuleLink('paylater', 'notify', $query);
-        $koUrl = $link->getPageLink('checkout');
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign('iframe', $iframe);
 
@@ -47,30 +46,29 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         $customerAddress->setCity('Barcelona');
         $customerAddress->setZipCode('08008');
 
-        $prestashopObjectModule = new PrestashopObjectModule();
+        $prestashopObjectModule = new \ShopperLibrary\ObjectModule\PrestashopObjectModule();
         $prestashopObjectModule
-             ->setPublicKey($paylaterPublicKey)
-             ->setPrivateKey($paylaterPrivateKey)
-             ->setCurrency($currency->iso_code)
-             ->setAmount((int) ($cart->getOrderTotal() * 100))
-             ->setOrderId($cart->id)
-             ->setOkUrl($okUrl)
-             ->setNokUrl($koUrl)
-             ->setIFrame($iframe)
-             ->setCallbackUrl($callbackUrl)
-             ->setLoginCustomerGender($customer->id_gender)
-             ->setFullName($customer->firstname.' '.$customer->lastname)
-             ->setEmail($customer->email)
-             ->setCancelledUrl($cancelUrl)
-             ->setDateOfBirth(new \DateTime(date('y-m-d', $customer->birthday)))
-             ->setLoginCustomerMemberSince(new \DateTime(date('y-m-d', $customer->date_add)))
-             ->setIncludeSimulator($includeSimulator)
-             ->setCart($cart)
-             ->setCustomer($customer)
-             ->setAddress($customerAddress)
+            ->setPublicKey($paylaterPublicKey)
+            ->setPrivateKey($paylaterPrivateKey)
+            ->setCurrency($currency->iso_code)
+            ->setAmount((int) ($cart->getOrderTotal() * 100))
+            ->setOrderId($cart->id)
+            ->setOkUrl($okUrl)
+            ->setNokUrl($cancelUrl)
+            ->setIFrame($iframe)
+            ->setCallbackUrl($callbackUrl)
+            ->setLoginCustomerGender($customer->id_gender)
+            ->setFullName($customer->firstname.' '.$customer->lastname)
+            ->setEmail($customer->email)
+            ->setCancelledUrl($cancelUrl)
+            ->setDateOfBirth(new \DateTime(date('y-m-d', $customer->birthday)))
+            ->setLoginCustomerMemberSince(new \DateTime(date('y-m-d', $customer->date_add)))
+            ->setIncludeSimulator($includeSimulator)
+            ->setCart($cart)
+            ->setCustomer($customer)
+            ->setAddress($customerAddress)
         ;
-
-        $shopperClient = new ShopperClient('http://shopper.localhost/prestashop/');
+        $shopperClient = new \ShopperLibrary\ShopperClient('http://shopper.localhost/prestashop/');
         $shopperClient->setObjectModule($prestashopObjectModule);
         $paymentForm = $shopperClient->getPaymentForm();
         $paymentForm = json_decode($paymentForm);
@@ -79,10 +77,11 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         $css = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/css/paylater.css');
 
         $this->context->smarty->assign([
-            'form'      => $paymentForm->data->form,
-            'spinner'   => $spinner,
-            'iframe'    => $iframe,
-            'css'       => $css,
+            'form'          => $paymentForm->data->form,
+            'spinner'       => $spinner,
+            'iframe'        => $iframe,
+            'css'           => $css,
+            'checkoutUrl'   => $cancelUrl,
         ]);
 
         if (_PS_VERSION_ < 1.7) {
