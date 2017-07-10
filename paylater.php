@@ -159,10 +159,11 @@ class Paylater extends PaymentModule
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign([
-            'discount'      => $paylaterDiscount,
-            'amount'        => $orderTotal,
-            'publicKey'     => $paylaterPublicKey,
-            'expanded'      => $paylaterAddSimulator,
+            'discount'              => $paylaterDiscount ? 1 : 0,
+            'amount'                => $orderTotal,
+            'publicKey'             => $paylaterPublicKey,
+            'includeSimulator'      => $paylaterAddSimulator == 0 ? false : true,
+            'simulatorType'         => $paylaterAddSimulator,
         ]);
 
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
@@ -297,6 +298,12 @@ class Paylater extends PaymentModule
                         'label' => $this->l('Include simulator in checkout'),
                         'name' => 'PAYLATER_ADD_SIMULATOR',
                         'prefix' => '<i class="icon icon-puzzle-piece"></i>',
+                        'desc' => '
+                                <a 
+                                    href="http://docs.pagamastarde.com/marketing/simulador/" 
+                                    target="_blank">' . $this->l("+ Info") . '
+                                </a>
+                            ',
                         'is_bool' => false,
                         'values' => array(
                             array(
@@ -307,12 +314,22 @@ class Paylater extends PaymentModule
                             array(
                                 'id' => 'simulator',
                                 'value' => 1,
-                                'label' => $this->l('  Display small')
+                                'label' => $this->l('Mini simulator Paylater')
                             ),
                             array(
                                 'id' => 'simulator',
                                 'value' => 2,
-                                'label' => $this->l('  Display expanded')
+                                'label' => $this->l('Complete simulator Paylater')
+                            ),
+                            array(
+                                'id' => 'simulator',
+                                'value' => 3,
+                                'label' => $this->l('Selectable simulator Paylater')
+                            ),
+                            array(
+                                'id' => 'simulator',
+                                'value' => 4,
+                                'label' => $this->l('Descriptive text Paylater')
                             ),
                         ),
                     ),

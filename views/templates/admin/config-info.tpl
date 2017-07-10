@@ -1,4 +1,5 @@
 <link rel="stylesheet" type="text/css" media="all" href="{$css nofilter}">
+{$confirmation}
 <div class="paylater-content-form">
     <section class="section">
         <div class="column-left">
@@ -15,6 +16,5 @@
             <img src="{$logo}"/>
         </div>
     </section>
-    {$confirmation}
     {$form}
 </div>
