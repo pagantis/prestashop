@@ -135,7 +135,7 @@
     overflow-x: hidden;
     overflow-y: hidden;
     text-align: center;
-    width: 800px;
+    width: 97%;
 }
 
 .paylater-content-form input{
@@ -156,10 +156,27 @@
 
 .paylater-content-form section{
     min-height: 100px;
+    padding: 5px;
+    margin-top: 5px;
+    border: solid;
+    border-color: #00c1d5;
+    border-width: 10px;
+    border-bottom: none;
+}
+
+.panel{
+    background-color: #e3f2f5 !important;
+    border: solid !important;
+    border-color: #00c1d5 !important;
+    border-width: 10px !important;
 }
 
 .paylater-content-form a{
     line-height: 2;
+}
+
+#module_form_submit_btn {
+    float: right;
 }
 
 .panel-heading {
@@ -170,15 +187,28 @@
     margin-top: 10px;
 }
 
-.paylater-left-column {
+.column-left {
+    text-align: left;
     float: left;
+    width: 33%;
 }
-.paylater-right-column {
+
+.column-right {
+    text-align: right;
     float: right;
+    width: 33%;
 }
+
+.column-center {
+    text-align: center;
+    display: inline-block;
+    width: 33%;
+}
+
 .clear {
     clear: both;
 }
+
 html, body {
     max-width: 100%;
     overflow-x: hidden;

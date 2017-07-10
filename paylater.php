@@ -220,6 +220,7 @@ class Paylater extends PaymentModule
                     ),
                     array(
                         'name' => 'PAYLATER_PUBLIC_KEY_TEST',
+                        'suffix' => $this->l('ej: tk_fd53cd467ba49022e4gf215e'),
                         'type' => 'text',
                         'size' => 35,
                         'label' => $this->l('Public TEST API Key'),
@@ -228,6 +229,7 @@ class Paylater extends PaymentModule
                     ),
                     array(
                         'name' => 'PAYLATER_PRIVATE_KEY_TEST',
+                        'suffix' => $this->l('ej: 21e5723a97459f6a'),
                         'type' => 'text',
                         'size' => 35,
                         'label' => $this->l('Private TEST API Key'),
@@ -236,6 +238,7 @@ class Paylater extends PaymentModule
                     ),
                     array(
                         'name' => 'PAYLATER_PUBLIC_KEY_PROD',
+                        'suffix' => $this->l('ej: pk_fd53cd4644a49022e4f8215e'),
                         'type' => 'text',
                         'size' => 35,
                         'label' => $this->l('Public PROD API Key'),
@@ -244,6 +247,7 @@ class Paylater extends PaymentModule
                     ),
                     array(
                         'name' => 'PAYLATER_PRIVATE_KEY_PROD',
+                        'suffix' => $this->l('ej: 21e57bcb97459f6a'),
                         'type' => 'text',
                         'size' => 35,
                         'label' => $this->l('Private PROD API Key'),
