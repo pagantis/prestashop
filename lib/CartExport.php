@@ -28,5 +28,6 @@ class CartExport
                 'summary' => json_decode(json_encode($cartCore->getSummaryDetails()))
             ];
         }
+        return [];
     }
 }
