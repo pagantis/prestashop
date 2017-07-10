@@ -56,15 +56,22 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
             ->setCallbackUrl($okUrl)
             ->setCancelledUrl($cancelUrl)
             ->setIncludeSimulator($includeSimulator)
-            ->setCart($cart)
-            ->setCustomer($customer)
-            ->setPsShippingAddress($shippingAddress)
-            ->setPsBillingAddress($billingAddress)
+            ->setCart(CartExport::export($cart))
+            ->setCustomer(CustomerExport::export($customer))
+            ->setPsShippingAddress(AddressExport::export($shippingAddress))
+            ->setPsBillingAddress(AddressExport::export($billingAddress))
+            ->setMetadata([
+                'ps' => _PS_VERSION_,
+                'pmt' => $this->module->version,
+                'php' => phpversion(),
+            ])
         ;
 
         $shopperClient = new \ShopperLibrary\ShopperClient(PAYLATER_SHOPPER_DEMO_URL);
         $shopperClient->setObjectModule($prestashopObjectModule);
         $paymentForm = $shopperClient->getPaymentForm();
+        print($paymentForm);
+        die();
         $paymentForm = json_decode($paymentForm);
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
