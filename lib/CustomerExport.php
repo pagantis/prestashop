@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the official Paylater module for PrestaShop.
+ *
+ * @author    Paga+Tarde <soporte@pagamastarde.com>
+ * @copyright 2015-2016 Paga+Tarde
+ * @license   proprietary
+ */
 
 class CustomerExport
 {
@@ -17,6 +24,7 @@ class CustomerExport
                 'dob' => $customerCore->birthday,
                 'firstName' => $customerCore->firstname,
                 'lastName' => $customerCore->lastname,
+                'fullName'    => $customerCore->firstname. ' ' .$customerCore->lastname,
                 'isGuest' => $customerCore->is_guest,
                 'memberSince' => $customerCore->date_add,
                 'customer' => json_decode(json_encode($customerCore)),
@@ -32,6 +40,7 @@ class CustomerExport
                 'dob' => $customerCore->birthday,
                 'firstName' => $customerCore->firstname,
                 'lastName' => $customerCore->lastname,
+                'fullName'    => $customerCore->firstname. ' ' .$customerCore->lastname,
                 'isGuest' => $customerCore->is_guest,
                 'memberSince' => $customerCore->date_add,
                 'customer' => json_decode(json_encode($customerCore)),

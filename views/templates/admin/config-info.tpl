@@ -1,5 +1,13 @@
-<link rel="stylesheet" type="text/css" media="all" href="{$css nofilter}">
-{$confirmation}
+{*
+ * This file is part of the official Paga+Tarde module for PrestaShop.
+ *
+ * @author    Paga+Tarde <soporte@pagamastarde.com>
+ * @copyright 2015-2016 Paga+Tarde
+ * @license   proprietary
+ *}
+
+<link rel="stylesheet" type="text/css" media="all" href="{$css|escape:'quotes'}">
+{$confirmation|escape:'quotes'}
 <div class="paylater-content-form">
     <section class="section">
         <div class="column-left">
@@ -13,8 +21,8 @@
             </p>
         </div>
         <div class="column-right">
-            <img src="{$logo}"/>
+            <img src="{$logo|escape:'quotes'}"/>
         </div>
     </section>
-    {$form}
+    {$form nofilter}
 </div>

@@ -1,8 +1,16 @@
-<link rel="stylesheet" type="text/css" media="all" href="{$css nofilter}">
+{*
+ * This file is part of the official Paga+Tarde module for PrestaShop.
+ *
+ * @author    Paga+Tarde <soporte@pagamastarde.com>
+ * @copyright 2015-2016 Paga+Tarde
+ * @license   proprietary
+ *}
+
+<link rel="stylesheet" type="text/css" media="all" href="{$css|escape:'quotes'}">
 <div class="paylater-content">
     <!-- Title and spinner -->
     <h3>{l s='Starting your financing process' mod='paylater'}</h3>
-    <img src="{$spinner nofilter}">
+    <img src="{$spinner|escape:'quotes'}">
     <!-- Iframe Div -->
     <div id="myModal" class="paylater_modal" style="display: none;">
         <div class="paylater_modal-content">
@@ -41,7 +49,7 @@
             });
             var closeModal = function closeModal(evt) {
                 evt.preventDefault();
-                window.location.href = "{$checkoutUrl}";
+                window.location.href = "{$checkoutUrl|escape:'quotes'}";
             };
 
             var elements = document.querySelectorAll('#paylater_close, #myModal');

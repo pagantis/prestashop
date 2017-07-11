@@ -1,7 +1,11 @@
 <?php
-
-use ShopperLibrary\ObjectModule\PrestashopObjectModule;
-use ShopperLibrary\ShopperClient;
+/**
+ * This file is part of the official Paylater module for PrestaShop.
+ *
+ * @author    Paga+Tarde <soporte@pagamastarde.com>
+ * @copyright 2015-2016 Paga+Tarde
+ * @license   proprietary
+ */
 
 /**
  * Class PaylaterRedirectModuleFrontController
@@ -23,10 +27,10 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         /** @var Customer $customer */
         $customer = $this->context->customer;
         $link = $this->context->link;
-        $query = [
+        $query = array(
             'id_cart' => $cart->id,
             'key' => $cart->secure_key,
-        ];
+        );
 
         $currency = new Currency($cart->id_currency);
         $currencyIso = $currency->iso_code;
@@ -60,11 +64,11 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
             ->setCustomer(CustomerExport::export($customer))
             ->setPsShippingAddress(AddressExport::export($shippingAddress))
             ->setPsBillingAddress(AddressExport::export($billingAddress))
-            ->setMetadata([
+            ->setMetadata(array(
                 'ps' => _PS_VERSION_,
                 'pmt' => $this->module->version,
                 'php' => phpversion(),
-            ])
+            ))
         ;
 
         $shopperClient = new \ShopperLibrary\ShopperClient(PAYLATER_SHOPPER_DEMO_URL);
@@ -73,13 +77,13 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         $paymentForm = json_decode($paymentForm);
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
-        $this->context->smarty->assign([
+        $this->context->smarty->assign(array(
             'form'          => $paymentForm->data->form,
             'spinner'       => $spinner,
             'iframe'        => $iframe,
             'css'           => $css,
             'checkoutUrl'   => $cancelUrl,
-        ]);
+        ));
 
         if (_PS_VERSION_ < 1.7) {
             $this->setTemplate('payment-15.tpl');

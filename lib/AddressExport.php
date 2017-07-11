@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the official Paylater module for PrestaShop.
+ *
+ * @author    Paga+Tarde <soporte@pagamastarde.com>
+ * @copyright 2015-2016 Paga+Tarde
+ * @license   proprietary
+ */
 
 class AddressExport
 {
@@ -14,6 +21,7 @@ class AddressExport
                 'dni'         => $addressCore->dni,
                 'firstName'   => $addressCore->firstname,
                 'lastName'    => $addressCore->lastname,
+                'fullName'    => $addressCore->firstname. ' ' .$addressCore->lastname,
                 'mobilePhone' => $addressCore->phone_mobile,
                 'phone'       => $addressCore->phone,
                 'zipCode'     => $addressCore->postcode,
@@ -28,6 +36,7 @@ class AddressExport
                 'dni'         => $addressCore->dni,
                 'firstName'   => $addressCore->firstname,
                 'lastName'    => $addressCore->lastname,
+                'fullName'    => $addressCore->firstname. ' ' .$addressCore->lastname,
                 'mobilePhone' => $addressCore->phone_mobile,
                 'phone'       => $addressCore->phone,
                 'zipCode'     => $addressCore->postcode,

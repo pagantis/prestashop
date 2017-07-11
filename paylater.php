@@ -1,11 +1,18 @@
 <?php
+/**
+ * This file is part of the official Paylater module for PrestaShop.
+ *
+ * @author    Paga+Tarde <soporte@pagamastarde.com>
+ * @copyright 2015-2016 Paga+Tarde
+ * @license   proprietary
+ */
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 define('_PS_PAYLATER_DIR', _PS_MODULE_DIR_. '/paylater');
-define('PAYLATER_PROD_STATUS', [0 => 'TEST', 1 => 'PROD']);
+define('PAYLATER_PROD_STATUS', array(0 => 'TEST', 1 => 'PROD'));
 define('PAYLATER_SHOPPER_URL', 'https://shopper.pagamastarde.com');
 define('PAYLATER_SHOPPER_DEMO_URL', 'http://shopper.localhost/prestashop/');
 
@@ -42,7 +49,7 @@ class Paylater extends PaymentModule
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
         $this->module_key = '2b9bc901b4d834bb7069e7ea6510438f';
-        $this->ps_versions_compliancy = ['min' => '1.3', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = array('min' => '1.3', 'max' => _PS_VERSION_);
         $this->displayName = $this->l('Paga+Tarde');
         $this->description = $this->l(
             'Instant, easy and effective financial tool for your customers'
@@ -104,7 +111,7 @@ class Paylater extends PaymentModule
     {
         $cart                       = $this->context->cart;
         $currency                   = new Currency($cart->id_currency);
-        $availableCurrencies        = ['EUR'];
+        $availableCurrencies        = array('EUR');
         $paylaterMinAmount          = Configuration::get('PAYLATER_MIN_AMOUNT');
         $paylaterProd               = Configuration::get('PAYLATER_PROD');
         $paylaterPublicKeyTest      = Configuration::get('PAYLATER_PUBLIC_KEY_TEST');
@@ -146,7 +153,7 @@ class Paylater extends PaymentModule
     public function hookPaymentOptions($params)
     {
         if (!$this->isPaymentMethodAvailable()) {
-            return [];
+            return array();
         }
 
         /** @var Cart $cart */
@@ -160,13 +167,13 @@ class Paylater extends PaymentModule
         $paylaterAddSimulator   = Configuration::get('PAYLATER_ADD_SIMULATOR');
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
-        $this->context->smarty->assign([
+        $this->context->smarty->assign(array(
             'discount'              => $paylaterDiscount ? 1 : 0,
             'amount'                => $orderTotal,
             'publicKey'             => $paylaterPublicKey,
             'includeSimulator'      => $paylaterAddSimulator == 0 ? false : true,
             'simulatorType'         => $paylaterAddSimulator,
-        ]);
+        ));
 
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
@@ -185,7 +192,7 @@ class Paylater extends PaymentModule
             );
         }
 
-        return [$paymentOption];
+        return array($paymentOption);
     }
 
     /**
@@ -389,8 +396,8 @@ class Paylater extends PaymentModule
     public function getContent()
     {
         $confirmation = "";
-        $settings = [];
-        $settingsKeys = [
+        $settings = array();
+        $settingsKeys = array(
             'PAYLATER_PROD',
             'PAYLATER_PUBLIC_KEY_TEST',
             'PAYLATER_PRIVATE_KEY_TEST',
@@ -400,7 +407,7 @@ class Paylater extends PaymentModule
             'PAYLATER_ADD_SIMULATOR',
             'PAYLATER_IFRAME',
             'PAYLATER_MIN_AMOUNT',
-        ];
+        );
 
         //Different Behavior depending on 1.6 or earlier
         if (Tools::isSubmit('submit'.$this->name)) {
@@ -458,10 +465,10 @@ class Paylater extends PaymentModule
         /** @var Customer $customer */
         $customer = $this->context->customer;
         $link = $this->context->link;
-        $query = [
+        $query = array(
             'id_cart' => $cart->id,
             'key' => $cart->secure_key,
-        ];
+        );
 
         $currency = new Currency($cart->id_currency);
         $currencyIso = $currency->iso_code;
@@ -495,11 +502,11 @@ class Paylater extends PaymentModule
             ->setCustomer(CustomerExport::export($customer))
             ->setPsShippingAddress(AddressExport::export($shippingAddress))
             ->setPsBillingAddress(AddressExport::export($billingAddress))
-            ->setMetadata([
+            ->setMetadata(array(
                 'ps' => _PS_VERSION_,
                 'pmt' => $this->version,
                 'php' => phpversion(),
-            ])
+            ))
         ;
 
         $shopperClient = new \ShopperLibrary\ShopperClient(PAYLATER_SHOPPER_DEMO_URL);
@@ -508,13 +515,13 @@ class Paylater extends PaymentModule
         $paymentForm = json_decode($paymentForm);
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
-        $this->context->smarty->assign([
+        $this->context->smarty->assign(array(
             'form'          => $paymentForm->data->form,
             'spinner'       => $spinner,
             'iframe'        => $iframe,
             'css'           => $css,
             'checkoutUrl'   => $cancelUrl,
-        ]);
+        ));
 
         if (_PS_VERSION_ > 1.7) {
             return $this->display(__FILE__, 'payment-17.tpl');

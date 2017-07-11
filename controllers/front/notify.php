@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the official Paylater module for PrestaShop.
+ *
+ * @author    Paga+Tarde <soporte@pagamastarde.com>
+ * @copyright 2015-2016 Paga+Tarde
+ * @license   proprietary
+ */
 
 use PagaMasTarde\PmtApiClient;
 use \PagaMasTarde\Model\Charge;
@@ -45,12 +52,12 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         $cartId = Tools::getValue('id_cart');
         $secureKey = Tools::getValue('key');
 
-        $result = json_encode([
+        $result = json_encode(array(
             'timestamp' => time(),
             'order_id' => $cartId,
             'secure_key' => $secureKey,
             'result' => $this->message,
-        ]);
+        ));
 
         if ($this->error) {
             header('HTTP/1.1 400 Bad Request', true, 400);
@@ -59,7 +66,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         }
 
         header('Content-Type: application/json', true);
-        header('Content-Length: ' . strlen($result));
+        header('Content-Length: ' . Tools::strlen($result));
 
         exit($result);
     }
@@ -77,12 +84,12 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         $secureKey = Tools::getValue('key');
         $cart = new Cart((int) $cartId);
 
-        $query = [
+        $query = array(
             'id_cart' => $cartId,
             'key' => $secureKey,
             'id_module' => $this->module->id,
             'id_order' => isset($cart) ? $cart->id : ''
-        ];
+        );
 
         if ($this->error) {
             //In case of error we can see the error in the header of the redirection:
@@ -145,6 +152,5 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         }
         $this->message = 'Bad request';
         $this->error = true;
-        return;
     }
 }
