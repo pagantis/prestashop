@@ -1,9 +1,5 @@
 sudo: required
 
-addons:
-  hosts:
-    - prestashop.docker
-
 env:
   - DOCKER_COMPOSE_VERSION=1.14.0
 
