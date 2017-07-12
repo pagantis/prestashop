@@ -25,4 +25,10 @@
         </div>
     </section>
     {$form nofilter}
+    {if version_compare($smarty.const._PS_VERSION_,'1.6','<')}
+        <script type="text/javascript">
+            var d = document.getElementById("module_form");
+            d.className += " panel";
+        </script>
+    {/if}
 </div>
