@@ -1,8 +1,3 @@
-sudo: required
-
-env:
-  - DOCKER_COMPOSE_VERSION=1.14.0
-
 language: php
 
 php:
@@ -12,21 +7,8 @@ php:
   - 7.0
   - 7.1
 
-services:
-  - docker
-
-before_install:
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - docker-compose --version
-  - docker-compose up -d
-  - docker ps -a
-
-
-before_script: 'composer install'
+before_script:
+  - 'npm install'
 
 script:
-  - 'docker-compose exec web /var/www/html/modules/paylater/vendor/bin/phpunit /var/www/html/modules/paylater/test'
   - 'vendor/bin/phpunit'

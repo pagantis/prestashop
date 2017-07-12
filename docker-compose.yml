@@ -8,7 +8,7 @@ services:
     environment:
       - PS_DEV_MODE=1
       - PS_COUNTRY=es
-      - PS_DOMAIN=prestashop.docker:84
+      - PS_DOMAIN=localhost
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
