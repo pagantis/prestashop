@@ -8,7 +8,6 @@
  */
 
 use PagaMasTarde\PmtApiClient;
-use \PagaMasTarde\Model\Charge;
 
 /**
  * Class PaylaterNotifyModuleFrontController
@@ -47,7 +46,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
     /**
      * Send a jsonResponse
      */
-    protected function jsonResponse()
+    public function jsonResponse()
     {
         $cartId = Tools::getValue('id_cart');
         $secureKey = Tools::getValue('key');
@@ -78,7 +77,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
      * the cart. So we will ask directly paga+tarde for it. Then if
      * true we will validate the order with the payment details.
      */
-    protected function redirect()
+    public function redirect()
     {
         $cartId = Tools::getValue('id_cart');
         $secureKey = Tools::getValue('key');
@@ -106,7 +105,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
     /**
      * Process validation vs API of pmt
      */
-    protected function processValidation()
+    public function processValidation()
     {
         $cartId = Tools::getValue('id_cart');
         $secureKey = Tools::getValue('key');
