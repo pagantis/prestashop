@@ -44,7 +44,7 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         $okUrl = $link->getModuleLink('paylater', 'notify', $query);
         $shippingAddress = new Address($cart->id_address_delivery);
         $billingAddress = new Address($cart->id_address_invoice);
-        $discount = Configuration::get('PAYLATER_IFRAME');
+        $discount = Configuration::get('PAYLATER_DISCOUNT');
         $spinner = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/img/spinner.gif');
         $css = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/css/paylater.css');
 

@@ -269,16 +269,15 @@ class Paylater extends PaymentModule
                         'prefix' => '<i class="icon icon-money"></i>',
                         'label' => $this->l('The financial interests will be paid by'),
                         'name' => 'PAYLATER_DISCOUNT',
-                        'is_bool' => true,
                         'values' => array(
                             array(
                                 'id' => 'true',
-                                'value' => true,
+                                'value' => 1,
                                 'label' => $this->l('  The online commerce will cover the cost'),
                             ),
                             array(
                                 'id' => 'false',
-                                'value' => false,
+                                'value' => 0,
                                 'label' => $this->l('  The end client who buys will cover the cost'),
                             ),
                         ),
@@ -482,7 +481,7 @@ class Paylater extends PaymentModule
         $okUrl = $link->getModuleLink('paylater', 'notify', $query);
         $shippingAddress = new Address($cart->id_address_delivery);
         $billingAddress = new Address($cart->id_address_invoice);
-        $discount = Configuration::get('PAYLATER_IFRAME');
+        $discount = Configuration::get('PAYLATER_DISCOUNT');
         $spinner = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/img/spinner.gif');
         $css = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/css/paylater.css');
 
