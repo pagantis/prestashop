@@ -1,6 +1,7 @@
 {
     "name": "pagamastarde/prestashop",
     "description": "Prestashop module to add PagaMasTarde Edit",
+    "license": "proprietary",
     "type": "module",
     "authors": [
         {

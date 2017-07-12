@@ -126,7 +126,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
             $cart = new Cart((int) $cartId);
             if (Validate::isLoadedObject($cart)
             ) {
-                if ($cart->OrderExists() == false) {
+                if ($cart->OrderExists() === false) {
                     /** @var PaymentModule $paymentModule */
                     $paymentModule = $this->module;
                     $paymentModule->validateOrder(
