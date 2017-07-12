@@ -11,7 +11,7 @@ module.exports = function(grunt) {
                 command: 'composer install'
             },
             phpunitRunTest: {
-                command: 'vendor/bin/phpunit'
+                command: 'vendor/bin/phpunit --exclude-group docker'
             }
         },
         cssmin: {
