@@ -17,6 +17,15 @@ use PHPUnit\Framework\TestCase;
 class DockerTest extends TestCase
 {
     /**
+     * DockerTest constructor.
+     */
+    public function __construct()
+    {
+        sleep(30);
+        return parent::__construct();
+    }
+
+    /**
      * Presatshop docker running in local and in travis
      */
     const DOCKER_PRESTASHOP = 'http://localhost';
