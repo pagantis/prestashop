@@ -12,6 +12,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 define('_PS_PAYLATER_DIR', _PS_MODULE_DIR_. '/paylater');
+define('_PS_PAYLATER_STATIC', '/modules/paylater');
 define('PAYLATER_PROD_STATUS', array(0 => 'TEST', 1 => 'PROD'));
 define('PAYLATER_SHOPPER_URL', 'https://shopper.pagamastarde.com');
 define('PAYLATER_SHOPPER_DEMO_URL', 'http://shopper.localhost/prestashop/');
@@ -179,7 +180,7 @@ class Paylater extends PaymentModule
         $paymentOption
             ->setCallToActionText($this->l('Finance using Paylater'))
             ->setAction($link->getModuleLink('paylater', 'payment'))
-            ->setLogo(Media::getMediaPath(_PS_PAYLATER_DIR . '/logo.gif'))
+            ->setLogo(_PS_PAYLATER_STATIC. '/logo.gif')
         ;
 
         if (_PS_VERSION_ >= 1.7) {
@@ -430,8 +431,8 @@ class Paylater extends PaymentModule
             }
         }
 
-        $logo = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/img/logo-229x130.png');
-        $css = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/css/paylater.css');
+        $logo = _PS_PAYLATER_STATIC. '/views/img/logo-229x130.png';
+        $css = _PS_PAYLATER_STATIC. '/views/css/paylater.css';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
@@ -482,8 +483,8 @@ class Paylater extends PaymentModule
         $shippingAddress = new Address($cart->id_address_delivery);
         $billingAddress = new Address($cart->id_address_invoice);
         $discount = Configuration::get('PAYLATER_DISCOUNT');
-        $spinner = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/img/spinner.gif');
-        $css = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/css/paylater.css');
+        $spinner = _PS_PAYLATER_STATIC. '/views/img/spinner.gif';
+        $css = _PS_PAYLATER_STATIC. '/views/css/paylater.css';
 
         $prestashopObjectModule = new \ShopperLibrary\ObjectModule\PrestashopObjectModule();
         $prestashopObjectModule
