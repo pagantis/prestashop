@@ -21,7 +21,9 @@ class DockerTest extends TestCase
      */
     public function __construct()
     {
-        sleep(10);
+        if (file_exists('/.dockerenv')) {
+            sleep(180); //time for prestashop to install
+        }
         return parent::__construct();
     }
 
