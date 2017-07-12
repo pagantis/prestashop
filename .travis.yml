@@ -10,8 +10,7 @@ php:
   - 7.1
 
 before_script:
-  - 'npm install'
+  - 'composer install'
 
 script:
-  - 'grunt'
   - 'vendor/bin/phpunit'
