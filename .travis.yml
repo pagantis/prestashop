@@ -26,7 +26,9 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
   - docker-compose --version
   - docker-compose up -d
+  - docker ps -a
+
 
 before_script: 'composer install'
 
-script: 'vendor/bin/phpunit'
+script: 'docker-compose exec web /var/www/html/modules/paylater/vendor/bin/phpunit /var/www/html/modules/paylater/test'

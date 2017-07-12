@@ -12,14 +12,14 @@ namespace Test\Paylater;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class Paylater
+ * Class DockerTest
  */
-class PaylaterTest extends TestCase
+class DockerTest extends TestCase
 {
     /**
      * Presatshop docker running in local and in travis
      */
-    const DOCKER_PRESTASHOP = 'http://prestashop.docker:84';
+    const DOCKER_PRESTASHOP = 'http://localhost';
 
     /**
      * BackOffice URi for prestashop
@@ -31,11 +31,11 @@ class PaylaterTest extends TestCase
      */
     public function testHomePage()
     {
-        sleep(10);
+        if (file_exists('/.dockerenv')) {
+            $homePage = file_get_contents(self::DOCKER_PRESTASHOP);
 
-        $homePage = file_get_contents(self::DOCKER_PRESTASHOP);
-
-        $this->assertNotEmpty($homePage);
+            $this->assertNotEmpty($homePage);
+        }
     }
 
     /**
@@ -43,10 +43,10 @@ class PaylaterTest extends TestCase
      */
     public function testBackOffice()
     {
-        sleep(10);
+        if (file_exists('/.dockerenv')) {
+            $backOffice = file_get_contents(self::DOCKER_PRESTASHOP . self::BACKOFFICE_DIR);
 
-        $backOffice = file_get_contents(self::DOCKER_PRESTASHOP . self::BACKOFFICE_DIR);
-
-        $this->assertNotEmpty($backOffice);
+            $this->assertNotEmpty($backOffice);
+        }
     }
 }
