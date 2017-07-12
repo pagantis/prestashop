@@ -68,7 +68,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         header('Content-Type: application/json', true);
         header('Content-Length: ' . Tools::strlen($result));
 
-        exit($result);
+        echo $result;
     }
 
     /**
