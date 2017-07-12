@@ -21,7 +21,6 @@ class DockerTest extends TestCase
      */
     public function __construct()
     {
-        sleep(30);
         return parent::__construct();
     }
 
@@ -29,6 +28,11 @@ class DockerTest extends TestCase
      * Presatshop docker running in local and in travis
      */
     const DOCKER_PRESTASHOP = 'http://localhost';
+
+    /**
+     * Home dir
+     */
+    const DIR = '/';
 
     /**
      * BackOffice URi for prestashop
@@ -41,7 +45,7 @@ class DockerTest extends TestCase
     public function testHomePage()
     {
         if (file_exists('/.dockerenv')) {
-            $homePage = file_get_contents(self::DOCKER_PRESTASHOP);
+            $homePage = file_get_contents(self::DOCKER_PRESTASHOP . self::DIR);
 
             $this->assertNotEmpty($homePage);
         }
