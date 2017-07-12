@@ -36,7 +36,8 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         $currencyIso = $currency->iso_code;
         $cancelUrl = $link->getPageLink('order');
         $paylaterProd = Configuration::get('PAYLATER_PROD');
-        $paylaterMode = PAYLATER_PROD_STATUS[(int) $paylaterProd];
+        //$paylaterMode = PAYLATER_PROD_STATUS[(int) $paylaterProd];
+        $paylaterMode = $paylaterProd == 1 ? 'PROD' : 'TEST';
         $paylaterPublicKey = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
         $paylaterPrivateKey = Configuration::get('PAYLATER_PRIVATE_KEY_'.$paylaterMode);
         $iframe = Configuration::get('PAYLATER_IFRAME');
