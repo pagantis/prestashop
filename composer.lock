@@ -140,16 +140,16 @@
         },
         {
             "name": "pagamastarde/pmt-api-client",
-            "version": "v1.0",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PagaMasTarde/pmtApiClient.git",
-                "reference": "305ba6d6d21beb4594f23b3a1327f893e99e23ed"
+                "reference": "8860db920a2138b155be62e89674d532f68f16e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/pmtApiClient/zipball/305ba6d6d21beb4594f23b3a1327f893e99e23ed",
-                "reference": "305ba6d6d21beb4594f23b3a1327f893e99e23ed",
+                "url": "https://api.github.com/repos/PagaMasTarde/pmtApiClient/zipball/8860db920a2138b155be62e89674d532f68f16e6",
+                "reference": "8860db920a2138b155be62e89674d532f68f16e6",
                 "shasum": ""
             },
             "require": {
@@ -167,6 +167,9 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "proprietary"
+            ],
             "authors": [
                 {
                     "name": "DigitalOrigin",
@@ -174,7 +177,7 @@
                 }
             ],
             "description": "PagaMasTarde Api Client in PHP. Use the api with simple methods and using POO.",
-            "time": "2017-07-04T15:26:26+00:00"
+            "time": "2017-07-12T13:19:19+00:00"
         },
         {
             "name": "pagamastarde/shopper-library",

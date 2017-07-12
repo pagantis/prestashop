@@ -116,8 +116,8 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
 
         if ($secureKey && $cartId && Module::isEnabled('paylater')) {
             $pmtClient = new PmtApiClient($privateKey);
-            $charge = $pmtClient->charge()->getChargeByOrderId($cartId);
-            if (!$charge instanceof Charge || $charge->getPaid() !== true) {
+            $payed = $pmtClient->charge()->validatePaymentForOrderId($cartId);
+            if (!$payed) {
                 $this->message = 'Payment not existing in PMT';
                 $this->error = true;
                 return;
