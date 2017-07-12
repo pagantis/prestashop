@@ -31,4 +31,6 @@ before_install:
 
 before_script: 'composer install'
 
-script: 'docker-compose exec web /var/www/html/modules/paylater/vendor/bin/phpunit /var/www/html/modules/paylater/test'
+script:
+  - 'docker-compose exec web /var/www/html/modules/paylater/vendor/bin/phpunit /var/www/html/modules/paylater/test'
+  - 'vendor/bin/phpunit'
