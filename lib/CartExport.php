@@ -20,7 +20,7 @@ class CartExport
             return (object) [
                 'orderId' => $cartCore->id,
                 'items' => $cartCore->getProducts(true),
-                'amount' => $cartCore->getOrderTotal(),
+                'amount' => intval(100 * $cartCore->getOrderTotal()),
                 'shipping' => $cartCore->getTotalShippingCost(),
                 'summary' => json_decode(json_encode($cartCore->getSummaryDetails()))
             ];
@@ -30,7 +30,7 @@ class CartExport
             return (object) [
                 'orderId' => $cartCore->id,
                 'items' => $cartCore->getProducts(true),
-                'amount' => $cartCore->getOrderTotal(),
+                'amount' => intval(100 * $cartCore->getOrderTotal()),
                 'shipping' => $cartCore->getTotalShippingCost(),
                 'summary' => json_decode(json_encode($cartCore->getSummaryDetails()))
             ];
