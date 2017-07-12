@@ -176,6 +176,10 @@
     line-height: 2;
 }
 
+p.payment_module a.bankwire.paylater-checkout {
+    background: url('/modules/paylater/views/img/logo-64x64.png') 15px 12px no-repeat #fbfbfb !important;
+}
+
 #module_form_submit_btn {
     float: right;
 }

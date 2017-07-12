@@ -215,16 +215,15 @@ class Paylater extends PaymentModule
                         'prefix' => '<i class="icon icon-gears"></i>',
                         'label' => $this->l('Working Mode'),
                         'name' => 'PAYLATER_PROD',
-                        'is_bool' => true,
                         'values' => array(
                             array(
                                 'id' => 'production',
-                                'value' => true,
+                                'value' => 1,
                                 'label' => $this->l('  Production'),
                             ),
                             array(
                                 'id' => 'test',
-                                'value' => false,
+                                'value' => 0,
                                 'label' => $this->l('  Test'),
                             ),
                         ),
@@ -288,16 +287,15 @@ class Paylater extends PaymentModule
                         'label' => $this->l('Payment behavior'),
                         'name' => 'PAYLATER_IFRAME',
                         'prefix' => '<i class="icon icon-desktop"></i>',
-                        'is_bool' => true,
                         'values' => array(
                             array(
                                 'id' => 'iframe',
-                                'value' => true,
+                                'value' => 1,
                                 'label' => $this->l('  open on iFrame inside the page'),
                             ),
                             array(
                                 'id' => 'redirection',
-                                'value' => false,
+                                'value' => 0,
                                 'label' => $this->l('  redirect the user to the payment page'),
                             ),
                         ),
@@ -464,6 +462,7 @@ class Paylater extends PaymentModule
         $paylaterPublicKey     = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
         $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
         $paylaterAddSimulator   = Configuration::get('PAYLATER_ADD_SIMULATOR');
+        $css = _PS_PAYLATER_STATIC. '/views/css/paylater.css';
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
@@ -472,6 +471,7 @@ class Paylater extends PaymentModule
             'publicKey'             => $paylaterPublicKey,
             'includeSimulator'      => $paylaterAddSimulator == 0 ? false : true,
             'simulatorType'         => $paylaterAddSimulator,
+            'css'                   => $css,
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment')
         ));
 

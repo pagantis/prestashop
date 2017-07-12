@@ -5,13 +5,15 @@
  * @copyright 2015-2016 Paga+Tarde
  * @license   proprietary
  *}
-
+<link rel="stylesheet" type="text/css" media="all" href="{$css|escape:'quotes'}">
 <div class="row">
     <div class="col-xs-12">
         <p class="payment_module">
-            <a class="bankwire paylater_checkout" href="{$payment|escape:'html'}" title="{l s='Finance using Paylater' mod='paylater'}">
+            <a class="bankwire paylater-checkout" href="{$paymentUrl|escape:'html'}" title="{l s='Finance using Paylater' mod='paylater'}">
+                {if version_compare($smarty.const._PS_VERSION_,'1.6','<')}
+                    <img id="logo_pagamastarde" src="{$module_dir|escape:'htmlall':'UTF-8'}views/img/logo-86x49.png">
+                {/if}
                 {l s='Finance using Paylater' mod='paylater'}
-                <span>
                 <script type="text/javascript" src="https://cdn.pagamastarde.com/pmt-js-client-sdk/3/js/client-sdk.min.js"></script>
                 <script type="text/javascript">
                     if (typeof pmtClient !== 'undefined') {
@@ -32,7 +34,6 @@
                         }
                     </script>
                 {/if}
-                </span>
             </a>
         </p>
     </div>
