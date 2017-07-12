@@ -21,6 +21,7 @@ class DockerTest extends TestCase
      */
     public function __construct()
     {
+        sleep(10);
         return parent::__construct();
     }
 
