@@ -31,6 +31,8 @@ class PaylaterTest extends TestCase
      */
     public function testHomePage()
     {
+        sleep(10);
+
         $homePage = file_get_contents(self::DOCKER_PRESTASHOP);
 
         $this->assertNotEmpty($homePage);
@@ -41,6 +43,8 @@ class PaylaterTest extends TestCase
      */
     public function testBackOffice()
     {
+        sleep(10);
+
         $backOffice = file_get_contents(self::DOCKER_PRESTASHOP . self::BACKOFFICE_DIR);
 
         $this->assertNotEmpty($backOffice);
