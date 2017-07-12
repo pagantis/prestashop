@@ -17,14 +17,6 @@ use PHPUnit\Framework\TestCase;
 class DockerTest extends TestCase
 {
     /**
-     * DockerTest constructor.
-     */
-    public function __construct()
-    {
-        return parent::__construct();
-    }
-
-    /**
      * Presatshop docker running in local and in travis
      */
     const DOCKER_PRESTASHOP = 'http://localhost';
@@ -36,6 +28,8 @@ class DockerTest extends TestCase
 
     /**
      * Test docker is running:
+     *
+     * @group docker
      */
     public function testHomePage()
     {
@@ -48,6 +42,8 @@ class DockerTest extends TestCase
 
     /**
      * Test docker is running in BackOffice
+     *
+     * @group docker
      */
     public function testBackOffice()
     {
