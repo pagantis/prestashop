@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "4be1dc729d9c3520f42836dd1675604d",
+    "content-hash": "d8e08f7a7adb289b65f8d2e4c981f79a",
     "packages": [
         {
             "name": "nategood/httpful",
@@ -140,16 +140,16 @@
         },
         {
             "name": "pagamastarde/pmt-api-client",
-            "version": "v1.2.0",
+            "version": "v1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PagaMasTarde/pmtApiClient.git",
-                "reference": "8860db920a2138b155be62e89674d532f68f16e6"
+                "reference": "6ae0b13e35a745616f781054d389f4d0ee8759d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/pmtApiClient/zipball/8860db920a2138b155be62e89674d532f68f16e6",
-                "reference": "8860db920a2138b155be62e89674d532f68f16e6",
+                "url": "https://api.github.com/repos/PagaMasTarde/pmtApiClient/zipball/6ae0b13e35a745616f781054d389f4d0ee8759d1",
+                "reference": "6ae0b13e35a745616f781054d389f4d0ee8759d1",
                 "shasum": ""
             },
             "require": {
@@ -177,7 +177,7 @@
                 }
             ],
             "description": "PagaMasTarde Api Client in PHP. Use the api with simple methods and using POO.",
-            "time": "2017-07-12T13:19:19+00:00"
+            "time": "2017-07-12T13:52:26+00:00"
         },
         {
             "name": "pagamastarde/shopper-library",
@@ -977,6 +977,70 @@
                 "xunit"
             ],
             "time": "2015-10-02T06:51:40+00:00"
+        },
+        {
+            "name": "phpunit/phpunit-selenium",
+            "version": "2.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/giorgiosironi/phpunit-selenium.git",
+                "reference": "013037eeea481657d236431634042648797e1da8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/giorgiosironi/phpunit-selenium/zipball/013037eeea481657d236431634042648797e1da8",
+                "reference": "013037eeea481657d236431634042648797e1da8",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-dom": "*",
+                "php": ">=5.3.3",
+                "phpunit/phpunit": "~4.8",
+                "sebastian/comparator": "~1.0"
+            },
+            "require-dev": {
+                "phing/phing": "2.*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "PHPUnit/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                ""
+            ],
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Giorgio Sironi",
+                    "email": "info@giorgiosironi.com",
+                    "role": "developer"
+                },
+                {
+                    "name": "Ivan Kurnosov",
+                    "email": "zerkms@zerkms.com",
+                    "role": "developer"
+                },
+                {
+                    "name": "Sebastian Bergmann",
+                    "email": "sb@sebastian-bergmann.de",
+                    "role": "original developer"
+                }
+            ],
+            "description": "Selenium Server integration for PHPUnit",
+            "homepage": "http://www.phpunit.de/",
+            "keywords": [
+                "phpunit",
+                "selenium",
+                "testing",
+                "xunit"
+            ],
+            "time": "2017-01-23T22:15:32+00:00"
         },
         {
             "name": "psr/container",
