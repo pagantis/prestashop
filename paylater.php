@@ -210,7 +210,7 @@ class Paylater extends PaymentModule
                 'input' => array(
                     array(
                         'type' => 'radio',
-                        'class' => 't block',
+                        'class' => 't',
                         'prefix' => '<i class="icon icon-gears"></i>',
                         'label' => $this->l('Working Mode'),
                         'name' => 'PAYLATER_PROD',
