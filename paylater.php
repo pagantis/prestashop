@@ -84,8 +84,6 @@ class Paylater extends PaymentModule
                 && $this->registerHook('displayShoppingCart')
                 && $this->registerHook('payment')
                 && $this->registerHook('paymentOptions')
-                && $this->registerHook('paymentReturn')
-                && $this->registerHook('orderConfirmation')
         );
     }
 
@@ -480,23 +478,5 @@ class Paylater extends PaymentModule
         } else {
             return $this->display(__FILE__, 'views/templates/hook/checkout-15.tpl');
         }
-    }
-
-    /**
-     * @param $params
-     *
-     * @return string
-     */
-    public function orderConfirmation($params)
-    {
-        /** @var OrderCore $order */
-        $order = $params['objOrder'];
-        $products = $order->getProducts();
-        $this->context->smarty->assign(array(
-            'order'=> $order,
-            'order_products' => $products
-        ));
-
-        return $this->display(__FILE__, 'views/templates/hook/confirmation.tpl');
     }
 }
