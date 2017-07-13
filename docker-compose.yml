@@ -13,7 +13,7 @@ services:
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
       - PS_INSTALL_AUTO=1
-      - DB_SERVER=db
+      - DB_SERVER=db-56
       - DB_NAME=prestashop15
       - DB_PREFIX=ps_
       - DB_PASSWD=password
@@ -36,7 +36,7 @@ services:
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
       - PS_INSTALL_AUTO=1
-      - DB_SERVER=db
+      - DB_SERVER=db-57
       - DB_NAME=prestashop16
       - DB_PREFIX=ps_
       - DB_PASSWD=password
@@ -59,7 +59,7 @@ services:
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
       - PS_INSTALL_AUTO=1
-      - DB_SERVER=db
+      - DB_SERVER=db-57
       - DB_NAME=prestashop17
       - DB_PREFIX=ps_
       - DB_PASSWD=password
@@ -82,7 +82,7 @@ services:
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
       - PS_INSTALL_AUTO=1
-      - DB_SERVER=db
+      - DB_SERVER=db-57
       - DB_NAME=prestashop18
       - DB_PREFIX=ps_
       - DB_PASSWD=password
