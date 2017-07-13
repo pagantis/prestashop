@@ -4,7 +4,7 @@ services:
   prestashop15:
     image: prestashop/prestashop:1.5
     depends_on:
-      - db
+      - db-56
     environment:
       - PS_DEV_MODE=1
       - PS_COUNTRY=es
@@ -27,7 +27,7 @@ services:
   prestashop16:
     image: prestashop/prestashop:1.6
     depends_on:
-      - db
+      - db-57
     environment:
       - PS_DEV_MODE=1
       - PS_COUNTRY=es
@@ -50,7 +50,7 @@ services:
   prestashop17:
     image: prestashop/prestashop:1.7
     depends_on:
-      - db
+      - db-57
     environment:
       - PS_DEV_MODE=1
       - PS_COUNTRY=es
@@ -73,7 +73,7 @@ services:
   prestashop18:
     image: prestashop/prestashop:latest
     depends_on:
-      - db
+      - db-57
     environment:
       - PS_DEV_MODE=1
       - PS_COUNTRY=es
@@ -93,8 +93,17 @@ services:
       - ./:/var/www/html/modules/paylater
     ports:
       - "8018:80"
-  db:
+  db-57:
     image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=prestashop
+    networks:
+      - internal
+    ports:
+      - "2034:3306"
+  db-56:
+    image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=prestashop
