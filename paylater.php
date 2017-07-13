@@ -218,12 +218,12 @@ class Paylater extends PaymentModule
                             array(
                                 'id' => 'production',
                                 'value' => 1,
-                                'label' => $this->l('Production'),
+                                'label' => $this->l('Production') . '<br>',
                             ),
                             array(
                                 'id' => 'test',
                                 'value' => 0,
-                                'label' => $this->l('Test'),
+                                'label' => $this->l('Test') . '<br>',
                             ),
                         ),
                     ),
@@ -273,12 +273,12 @@ class Paylater extends PaymentModule
                             array(
                                 'id' => 'true',
                                 'value' => 1,
-                                'label' => $this->l('The online commerce will cover the cost'),
+                                'label' => $this->l('The online commerce will cover the cost') . '<br>',
                             ),
                             array(
                                 'id' => 'false',
                                 'value' => 0,
-                                'label' => $this->l('The end client who buys will cover the cost'),
+                                'label' => $this->l('The end client who buys will cover the cost') . '<br>',
                             ),
                         ),
                     ),
@@ -290,14 +290,14 @@ class Paylater extends PaymentModule
                         'prefix' => '<i class="icon icon-desktop"></i>',
                         'values' => array(
                             array(
-                                'id' => 'iframe',
+                                'id' => 'frame',
                                 'value' => 1,
-                                'label' => $this->l('open on iFrame inside the page'),
+                                'label' => $this->l('open on iFrame inside the page') . '<br>',
                             ),
                             array(
                                 'id' => 'redirection',
                                 'value' => 0,
-                                'label' => $this->l('redirect the user to the payment page'),
+                                'label' => $this->l('redirect the user to the payment page') . '<br>',
                             ),
                         ),
                     ),
@@ -318,27 +318,27 @@ class Paylater extends PaymentModule
                             array(
                                 'id' => 'simulator',
                                 'value' => 0,
-                                'label' => $this->l('Don\'t display')
+                                'label' => $this->l('Don\'t display'). '<br>'
                             ),
                             array(
                                 'id' => 'simulator',
                                 'value' => 1,
-                                'label' => $this->l('Mini simulator Paylater')
+                                'label' => $this->l('Mini simulator Paylater'). '<br>'
                             ),
                             array(
                                 'id' => 'simulator',
                                 'value' => 2,
-                                'label' => $this->l('Complete simulator Paylater')
+                                'label' => $this->l('Complete simulator Paylater'). '<br>'
                             ),
                             array(
                                 'id' => 'simulator',
                                 'value' => 3,
-                                'label' => $this->l('Selectable simulator Paylater')
+                                'label' => $this->l('Selectable simulator Paylater'). '<br>'
                             ),
                             array(
                                 'id' => 'simulator',
                                 'value' => 4,
-                                'label' => $this->l('Descriptive text Paylater')
+                                'label' => $this->l('Descriptive text Paylater'). '<br>'
                             ),
                         ),
                     ),
