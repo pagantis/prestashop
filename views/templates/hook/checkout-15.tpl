@@ -5,32 +5,36 @@
  * @copyright 2015-2016 Paga+Tarde
  * @license   proprietary
  *}
-
-<p class="payment_module paylater_payment_button" id="paylater_payment_button">
-    <a href="javascript:$('#paylater_form').submit();" title="{l s='Paylater' mod='paylater'}">
-        <img id="logo_pagamastarde" src="{$module_dir|escape:'quotes'}views/img/logo-86x49.png"
-             alt="{l s='Paylater logo' mod='paylater'}" style="max-width: 80px"/>
-        {l s='Finance using Paylater' mod='paylater'}
-    </a>
-</p>
-
-<script type="text/javascript" src="https://cdn.pagamastarde.com/pmt-js-client-sdk/3/js/client-sdk.min.js"></script>
-<script type="text/javascript">
-    if (typeof pmtClient !== 'undefined') {
-        pmtClient.setPublicKey('{$publicKey|escape:'quotes'}');
-        pmtClient.events.send('checkout', { basketAmount: {$amount|escape:'quotes'} } );
-    }
-</script>
-{if $includeSimulator}
-    <span class="js-pmt-payment-type"></span>
-    <div class="PmtSimulator"
-         data-pmt-num-quota="4" data-pmt-max-ins="12" data-pmt-style="blue"
-         data-pmt-type="{$simulatorType|escape:'quotes'}"
-         data-pmt-discount="{$discount|escape:'quotes'}" data-pmt-amount="{$amount|escape:'quotes'}" data-pmt-expanded="yes">
+<link rel="stylesheet" type="text/css" media="all" href="{$css|escape:'quotes'}">
+<div class="row">
+    <div class="col-xs-12">
+        <p class="payment_module">
+            <a class="bankwire paylater-checkout" href="{$paymentUrl|escape:'html'}" title="{l s='Finance using Paylater' mod='paylater'}">
+                {if version_compare($smarty.const._PS_VERSION_,'1.6','<')}
+                    <img id="logo_pagamastarde" src="{$module_dir|escape:'htmlall':'UTF-8'}views/img/logo-86x49.png">
+                {/if}
+                {l s='Finance using Paylater' mod='paylater'}
+                <script type="text/javascript" src="https://cdn.pagamastarde.com/pmt-js-client-sdk/3/js/client-sdk.min.js"></script>
+                <script type="text/javascript">
+                    if (typeof pmtClient !== 'undefined') {
+                        pmtClient.setPublicKey('{$publicKey|escape:'quotes'}');
+                        pmtClient.events.send('checkout', { basketAmount: {$amount|escape:'quotes'} } );
+                    }
+                </script>
+                {if $includeSimulator}
+                    <span class="js-pmt-payment-type"></span>
+                    <div class="PmtSimulator"
+                         data-pmt-num-quota="4" data-pmt-max-ins="12" data-pmt-style="blue"
+                         data-pmt-type="{$simulatorType|escape:'quotes'}"
+                         data-pmt-discount="{$discount|escape:'quotes'}" data-pmt-amount="{$amount|escape:'quotes'}" data-pmt-expanded="yes">
+                    </div>
+                    <script type="text/javascript">
+                        if (typeof pmtClient !== 'undefined') {
+                            pmtClient.simulator.init();
+                        }
+                    </script>
+                {/if}
+            </a>
+        </p>
     </div>
-    <script type="text/javascript">
-        if (typeof pmtClient !== 'undefined') {
-            pmtClient.simulator.init();
-        }
-    </script>
-{/if}
+</div>

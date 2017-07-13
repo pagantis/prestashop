@@ -12,7 +12,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 define('_PS_PAYLATER_DIR', _PS_MODULE_DIR_. '/paylater');
-define('PAYLATER_PROD_STATUS', array(0 => 'TEST', 1 => 'PROD'));
+define('_PS_PAYLATER_STATIC', '/modules/paylater');
 define('PAYLATER_SHOPPER_URL', 'https://shopper.pagamastarde.com');
 define('PAYLATER_SHOPPER_DEMO_URL', 'http://shopper.localhost/prestashop/');
 
@@ -84,7 +84,6 @@ class Paylater extends PaymentModule
                 && $this->registerHook('displayShoppingCart')
                 && $this->registerHook('payment')
                 && $this->registerHook('paymentOptions')
-                && $this->registerHook('paymentReturn')
         );
     }
 
@@ -161,8 +160,8 @@ class Paylater extends PaymentModule
         $orderTotal             = $cart->getOrderTotal();
         $link                   = $this->context->link;
         $paylaterProd           = Configuration::get('PAYLATER_PROD');
-        $paylaterMode           = PAYLATER_PROD_STATUS[(int)$paylaterProd];
-        $paylaterPublicKey     = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
+        $paylaterMode           = $paylaterProd == 1 ? 'PROD' : 'TEST';
+        $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
         $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
         $paylaterAddSimulator   = Configuration::get('PAYLATER_ADD_SIMULATOR');
 
@@ -179,7 +178,7 @@ class Paylater extends PaymentModule
         $paymentOption
             ->setCallToActionText($this->l('Finance using Paylater'))
             ->setAction($link->getModuleLink('paylater', 'payment'))
-            ->setLogo(Media::getMediaPath(_PS_PAYLATER_DIR . '/logo.gif'))
+            ->setLogo(_PS_PAYLATER_STATIC. '/logo.gif')
         ;
 
         if (_PS_VERSION_ >= 1.7) {
@@ -214,16 +213,15 @@ class Paylater extends PaymentModule
                         'prefix' => '<i class="icon icon-gears"></i>',
                         'label' => $this->l('Working Mode'),
                         'name' => 'PAYLATER_PROD',
-                        'is_bool' => true,
                         'values' => array(
                             array(
                                 'id' => 'production',
-                                'value' => true,
+                                'value' => 1,
                                 'label' => $this->l('  Production'),
                             ),
                             array(
                                 'id' => 'test',
-                                'value' => false,
+                                'value' => 0,
                                 'label' => $this->l('  Test'),
                             ),
                         ),
@@ -287,16 +285,15 @@ class Paylater extends PaymentModule
                         'label' => $this->l('Payment behavior'),
                         'name' => 'PAYLATER_IFRAME',
                         'prefix' => '<i class="icon icon-desktop"></i>',
-                        'is_bool' => true,
                         'values' => array(
                             array(
                                 'id' => 'iframe',
-                                'value' => true,
+                                'value' => 1,
                                 'label' => $this->l('  open on iFrame inside the page'),
                             ),
                             array(
                                 'id' => 'redirection',
-                                'value' => false,
+                                'value' => 0,
                                 'label' => $this->l('  redirect the user to the payment page'),
                             ),
                         ),
@@ -430,8 +427,8 @@ class Paylater extends PaymentModule
             }
         }
 
-        $logo = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/img/logo-229x130.png');
-        $css = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/css/paylater.css');
+        $logo = _PS_PAYLATER_STATIC. '/views/img/logo-229x130.png';
+        $css = _PS_PAYLATER_STATIC. '/views/css/paylater.css';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
@@ -448,84 +445,38 @@ class Paylater extends PaymentModule
      *
      * @return string
      */
-    public function hookPayment()
+    public function hookPayment($params)
     {
         if (!$this->isPaymentMethodAvailable()) {
             return false;
         }
 
         /** @var Cart $cart */
-        $cart = $this->context->cart;
-
-        if (!$cart->id) {
-            Tools::redirect('index.php?controller=order');
-        }
-
-        /** @var Customer $customer */
-        $customer = $this->context->customer;
-        $link = $this->context->link;
-        $query = array(
-            'id_cart' => $cart->id,
-            'key' => $cart->secure_key,
-        );
-
-        $currency = new Currency($cart->id_currency);
-        $currencyIso = $currency->iso_code;
-        $cancelUrl = $link->getPageLink('order');
-        $paylaterProd = Configuration::get('PAYLATER_PROD');
-        $paylaterMode = PAYLATER_PROD_STATUS[(int) $paylaterProd];
-        $paylaterPublicKey = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
-        $paylaterPrivateKey = Configuration::get('PAYLATER_PRIVATE_KEY_'.$paylaterMode);
-        $iframe = Configuration::get('PAYLATER_IFRAME');
-        $includeSimulator = Configuration::get('PAYLATER_ADD_SIMULATOR');
-        $okUrl = $link->getModuleLink('paylater', 'notify', $query);
-        $shippingAddress = new Address($cart->id_address_delivery);
-        $billingAddress = new Address($cart->id_address_invoice);
-        $discount = Configuration::get('PAYLATER_DISCOUNT');
-        $spinner = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/img/spinner.gif');
-        $css = Media::getMediaPath(_PS_PAYLATER_DIR . '/views/css/paylater.css');
-
-        $prestashopObjectModule = new \ShopperLibrary\ObjectModule\PrestashopObjectModule();
-        $prestashopObjectModule
-            ->setPublicKey($paylaterPublicKey)
-            ->setPrivateKey($paylaterPrivateKey)
-            ->setCurrency($currencyIso)
-            ->setDiscount($discount)
-            ->setOkUrl($okUrl)
-            ->setNokUrl($cancelUrl)
-            ->setIFrame($iframe)
-            ->setCallbackUrl($okUrl)
-            ->setCancelledUrl($cancelUrl)
-            ->setIncludeSimulator($includeSimulator)
-            ->setCart(CartExport::export($cart))
-            ->setCustomer(CustomerExport::export($customer))
-            ->setPsShippingAddress(AddressExport::export($shippingAddress))
-            ->setPsBillingAddress(AddressExport::export($billingAddress))
-            ->setMetadata(array(
-                'ps' => _PS_VERSION_,
-                'pmt' => $this->version,
-                'php' => phpversion(),
-            ))
-        ;
-
-        $shopperClient = new \ShopperLibrary\ShopperClient(PAYLATER_SHOPPER_DEMO_URL);
-        $shopperClient->setObjectModule($prestashopObjectModule);
-        $paymentForm = $shopperClient->getPaymentForm();
-        $paymentForm = json_decode($paymentForm);
+        $cart                   = $params['cart'];
+        $orderTotal             = $cart->getOrderTotal();
+        $link                   = $this->context->link;
+        $paylaterProd           = Configuration::get('PAYLATER_PROD');
+        $paylaterMode           = $paylaterProd == 1 ? 'PROD' : 'TEST';
+        $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
+        $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
+        $paylaterAddSimulator   = Configuration::get('PAYLATER_ADD_SIMULATOR');
+        $css = _PS_PAYLATER_STATIC. '/views/css/paylater.css';
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
-            'form'          => $paymentForm->data->form,
-            'spinner'       => $spinner,
-            'iframe'        => $iframe,
-            'css'           => $css,
-            'checkoutUrl'   => $cancelUrl,
+            'discount'              => $paylaterDiscount ? 1 : 0,
+            'amount'                => $orderTotal,
+            'publicKey'             => $paylaterPublicKey,
+            'includeSimulator'      => $paylaterAddSimulator == 0 ? false : true,
+            'simulatorType'         => $paylaterAddSimulator,
+            'css'                   => $css,
+            'paymentUrl'            => $link->getModuleLink('paylater', 'payment')
         ));
 
         if (_PS_VERSION_ > 1.7) {
-            return $this->display(__FILE__, 'payment-17.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/checkout-17.tpl');
         } else {
-            return $this->display(__FILE__, 'payment-15.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/checkout-15.tpl');
         }
     }
 }
