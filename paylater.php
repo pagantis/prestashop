@@ -210,6 +210,7 @@ class Paylater extends PaymentModule
                 'input' => array(
                     array(
                         'type' => 'radio',
+                        'class' => 't block',
                         'prefix' => '<i class="icon icon-gears"></i>',
                         'label' => $this->l('Working Mode'),
                         'name' => 'PAYLATER_PROD',
@@ -217,12 +218,12 @@ class Paylater extends PaymentModule
                             array(
                                 'id' => 'production',
                                 'value' => 1,
-                                'label' => $this->l('  Production'),
+                                'label' => $this->l('Production'),
                             ),
                             array(
                                 'id' => 'test',
                                 'value' => 0,
-                                'label' => $this->l('  Test'),
+                                'label' => $this->l('Test'),
                             ),
                         ),
                     ),
@@ -264,6 +265,7 @@ class Paylater extends PaymentModule
                     ),
                     array(
                         'type' => 'radio',
+                        'class' => 't',
                         'prefix' => '<i class="icon icon-money"></i>',
                         'label' => $this->l('The financial interests will be paid by'),
                         'name' => 'PAYLATER_DISCOUNT',
@@ -271,17 +273,18 @@ class Paylater extends PaymentModule
                             array(
                                 'id' => 'true',
                                 'value' => 1,
-                                'label' => $this->l('  The online commerce will cover the cost'),
+                                'label' => $this->l('The online commerce will cover the cost'),
                             ),
                             array(
                                 'id' => 'false',
                                 'value' => 0,
-                                'label' => $this->l('  The end client who buys will cover the cost'),
+                                'label' => $this->l('The end client who buys will cover the cost'),
                             ),
                         ),
                     ),
                     array(
                         'type' => 'radio',
+                        'class' => 't',
                         'label' => $this->l('Payment behavior'),
                         'name' => 'PAYLATER_IFRAME',
                         'prefix' => '<i class="icon icon-desktop"></i>',
@@ -289,17 +292,18 @@ class Paylater extends PaymentModule
                             array(
                                 'id' => 'iframe',
                                 'value' => 1,
-                                'label' => $this->l('  open on iFrame inside the page'),
+                                'label' => $this->l('open on iFrame inside the page'),
                             ),
                             array(
                                 'id' => 'redirection',
                                 'value' => 0,
-                                'label' => $this->l('  redirect the user to the payment page'),
+                                'label' => $this->l('redirect the user to the payment page'),
                             ),
                         ),
                     ),
                     array(
                         'type' => 'radio',
+                        'class' => 't',
                         'label' => $this->l('Include simulator in checkout'),
                         'name' => 'PAYLATER_ADD_SIMULATOR',
                         'prefix' => '<i class="icon icon-puzzle-piece"></i>',
@@ -314,7 +318,7 @@ class Paylater extends PaymentModule
                             array(
                                 'id' => 'simulator',
                                 'value' => 0,
-                                'label' => $this->l('  Don\'t display')
+                                'label' => $this->l('Don\'t display')
                             ),
                             array(
                                 'id' => 'simulator',
