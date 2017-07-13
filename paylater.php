@@ -13,7 +13,6 @@ if (!defined('_PS_VERSION_')) {
 
 define('_PS_PAYLATER_DIR', _PS_MODULE_DIR_. '/paylater');
 define('_PS_PAYLATER_STATIC', '/modules/paylater');
-define('PAYLATER_PROD_STATUS', array(0 => 'TEST', 1 => 'PROD'));
 define('PAYLATER_SHOPPER_URL', 'https://shopper.pagamastarde.com');
 define('PAYLATER_SHOPPER_DEMO_URL', 'http://shopper.localhost/prestashop/');
 
@@ -86,6 +85,7 @@ class Paylater extends PaymentModule
                 && $this->registerHook('payment')
                 && $this->registerHook('paymentOptions')
                 && $this->registerHook('paymentReturn')
+                && $this->registerHook('orderConfirmation')
         );
     }
 
@@ -162,8 +162,8 @@ class Paylater extends PaymentModule
         $orderTotal             = $cart->getOrderTotal();
         $link                   = $this->context->link;
         $paylaterProd           = Configuration::get('PAYLATER_PROD');
-        $paylaterMode           = PAYLATER_PROD_STATUS[(int)$paylaterProd];
-        $paylaterPublicKey     = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
+        $paylaterMode           = $paylaterProd == 1 ? 'PROD' : 'TEST';
+        $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
         $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
         $paylaterAddSimulator   = Configuration::get('PAYLATER_ADD_SIMULATOR');
 
@@ -458,8 +458,8 @@ class Paylater extends PaymentModule
         $orderTotal             = $cart->getOrderTotal();
         $link                   = $this->context->link;
         $paylaterProd           = Configuration::get('PAYLATER_PROD');
-        $paylaterMode           = PAYLATER_PROD_STATUS[(int)$paylaterProd];
-        $paylaterPublicKey     = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
+        $paylaterMode           = $paylaterProd == 1 ? 'PROD' : 'TEST';
+        $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
         $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
         $paylaterAddSimulator   = Configuration::get('PAYLATER_ADD_SIMULATOR');
         $css = _PS_PAYLATER_STATIC. '/views/css/paylater.css';
@@ -480,5 +480,23 @@ class Paylater extends PaymentModule
         } else {
             return $this->display(__FILE__, 'views/templates/hook/checkout-15.tpl');
         }
+    }
+
+    /**
+     * @param $params
+     *
+     * @return string
+     */
+    public function orderConfirmation($params)
+    {
+        /** @var OrderCore $order */
+        $order = $params['objOrder'];
+        $products = $order->getProducts();
+        $this->context->smarty->assign(array(
+            'order'=> $order,
+            'order_products' => $products
+        ));
+
+        return $this->display(__FILE__, 'views/templates/hook/confirmation.tpl');
     }
 }

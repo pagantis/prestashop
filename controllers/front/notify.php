@@ -110,7 +110,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         $cartId = Tools::getValue('id_cart');
         $secureKey = Tools::getValue('key');
         $paylaterProd = Configuration::get('PAYLATER_PROD');
-        $paylaterMode = PAYLATER_PROD_STATUS[(int) $paylaterProd];
+        $paylaterMode = $paylaterProd == 1 ? 'PROD' : 'TEST';
         $privateKey = Configuration::get('PAYLATER_PRIVATE_KEY_'. $paylaterMode);
 
         if ($secureKey && $cartId && Module::isEnabled('paylater')) {
