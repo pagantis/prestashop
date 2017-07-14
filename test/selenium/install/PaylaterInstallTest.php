@@ -26,7 +26,7 @@ class WebTest extends \PHPUnit_Extensions_Selenium2TestCase
     {
         $username = 'demo@prestashop.com';
         $password = 'prestashop_demo';
-        $backOfficeLoginUrl = 'http://prestashop17/adminTest/index.php?controller=AdminLogin';
+        $backOfficeLoginUrl = 'http://prestashop17/adminTest';
 
         $this->url($backOfficeLoginUrl);
 
@@ -43,7 +43,6 @@ class WebTest extends \PHPUnit_Extensions_Selenium2TestCase
         sleep(3);
 
         $this->byId('page-header-desc-configuration-add_module')->click();
-        $this->byClassName('module-import-start-select-manual')->click();
         $this->file('Paylater.zip');
         $this->byId('importDropzone')->submit();
 
