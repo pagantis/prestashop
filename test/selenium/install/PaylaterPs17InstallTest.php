@@ -31,6 +31,7 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
             throw $exception;
         }
 
+        sleep(5);
         $this->quit();
     }
 
@@ -105,11 +106,10 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
         $this->webDriver->executeScript('
             document.querySelector(\'input[name="PAYLATER_ADD_SIMULATOR"][type="radio"][value="1"]\').click();
             document.querySelector(\'input[name="PAYLATER_IFRAME"][type="radio"][value="1"]\').click();
-            window.scrollBy(0,250);
-
+            document.getElementById(\'module_form_submit_btn\').scrollIntoView();
         ');
 
-        $this->findByName('submitpaylater')->click();
+        $this->findById('module_form_submit_btn')->click();
 
         $this->webDriver->wait(20, 500)->until(
             WebDriverExpectedCondition::presenceOfElementLocated(
