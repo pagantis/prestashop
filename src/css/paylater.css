@@ -155,13 +155,17 @@
     width: 100px;
 }
 
+.nobootstrap {
+    min-width: 0px !important;
+}
+
 .paylater-content-form section{
     min-height: 100px;
     padding: 5px;
     margin-top: 5px;
     border: solid;
     border-color: #00c1d5;
-    border-width: 10px;
+    border-width: 15px;
     border-bottom: none;
 }
 
@@ -169,7 +173,7 @@
     background-color: #e3f2f5 !important;
     border: solid !important;
     border-color: #00c1d5 !important;
-    border-width: 10px !important;
+    border-width: 15px !important;
 }
 
 .margin-form {
@@ -192,6 +196,8 @@ p.payment_module a.bankwire.paylater-checkout {
 }
 
 #module_form_submit_btn {
+    float: right;
+    margin-right: 60px;
 }
 
 .panel-heading {
