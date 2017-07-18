@@ -2,54 +2,31 @@
 
 namespace Test\Selenium\Basic;
 
+use Test\Selenium\PaylaterPrestashopTestCase;
+
 /**
- * Class WebTest
+ * Class BasicTest
  * @package Test\Selenium\Basic
+ *
+ * @group ps17
  */
-class WebTest extends \PHPUnit_Extensions_Selenium2TestCase
+class BasicPs17Test extends PaylaterPrestashopTestCase
 {
     /**
-     * Configure selenium
+     * testTitlePrestashop17
      */
-    protected function setUp()
+    public function testTitlePrestashop17()
     {
-        $this->setBrowser('chrome');
-        $this->setBrowserUrl('http://localhost:4444');
+        $this->webDriver->get(self::PS17URL);
+        $this->assertEquals('PrestaShop', $this->webDriver->getTitle());
     }
 
     /**
-     * testTitle
+     * testBackOfficeTitlePrestashop17
      */
-    public function testTitle()
+    public function testBackOfficeTitlePrestashop17()
     {
-        $this->url('http://prestashop15');
-        $this->assertEquals('PrestaShop', $this->title());
-
-        $this->url('http://prestashop16');
-        $this->assertEquals('PrestaShop', $this->title());
-
-        $this->url('http://prestashop17');
-        $this->assertEquals('PrestaShop', $this->title());
-
-        $this->url('http://prestashop18');
-        $this->assertEquals('PrestaShop', $this->title());
-    }
-
-    /**
-     * testTitle
-     */
-    public function testBackofficeTitle()
-    {
-        $this->url('http://prestashop15/adminTest');
-        $this->assertContains('Administration panel', $this->title());
-
-        $this->url('http://prestashop16/adminTest');
-        $this->assertContains('Administration panel', $this->title());
-
-        $this->url('http://prestashop17/adminTest');
-        $this->assertContains('PrestaShop', $this->title());
-
-        $this->url('http://prestashop18/adminTest');
-        $this->assertContains('PrestaShop', $this->title());
+        $this->webDriver->get(self::PS17URL.self::BACKOFFICE_FOLDER);
+        $this->assertContains('PrestaShop', $this->webDriver->getTitle());
     }
 }
