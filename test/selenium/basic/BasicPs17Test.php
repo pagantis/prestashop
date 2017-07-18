@@ -2,7 +2,7 @@
 
 namespace Test\Selenium\Basic;
 
-use Test\Selenium\PaylaterPrestashopTestCase;
+use Test\Selenium\PaylaterPrestashopTest;
 
 /**
  * Class BasicTest
@@ -10,7 +10,7 @@ use Test\Selenium\PaylaterPrestashopTestCase;
  *
  * @group ps17
  */
-class BasicPs17Test extends PaylaterPrestashopTestCase
+class BasicPs17Test extends PaylaterPrestashopTest
 {
     /**
      * testTitlePrestashop17
@@ -19,6 +19,8 @@ class BasicPs17Test extends PaylaterPrestashopTestCase
     {
         $this->webDriver->get(self::PS17URL);
         $this->assertEquals('PrestaShop', $this->webDriver->getTitle());
+
+        $this->quit();
     }
 
     /**
@@ -28,5 +30,7 @@ class BasicPs17Test extends PaylaterPrestashopTestCase
     {
         $this->webDriver->get(self::PS17URL.self::BACKOFFICE_FOLDER);
         $this->assertContains('PrestaShop', $this->webDriver->getTitle());
+
+        $this->quit();
     }
 }

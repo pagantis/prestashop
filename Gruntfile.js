@@ -62,10 +62,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.registerTask('default', [
+        'cssmin',
         'shell:composerDev',
         'shell:phpunitRunTest',
         'shell:composerProd',
-        'cssmin',
         'shell:autoindex',
         'compress',
         'shell:composerDev'

@@ -6,7 +6,7 @@ use Facebook\WebDriver\Exception\StaleElementReferenceException;
 use Facebook\WebDriver\Remote\LocalFileDetector;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
-use Test\Selenium\PaylaterPrestashopTestCase;
+use Test\Selenium\PaylaterPrestashopTest;
 
 /**
  * Class PaylaterPs17InstallTest
@@ -14,21 +14,56 @@ use Test\Selenium\PaylaterPrestashopTestCase;
  *
  * @group ps17
  */
-class PaylaterPs17InstallTest extends PaylaterPrestashopTestCase
+class PaylaterPs17InstallTest extends PaylaterPrestashopTest
 {
     /**
      * testInstallPaylaterInPrestashop17
      */
     public function testInstallAndConfigurePaylaterInPrestashop17()
     {
-        $this->loginToBackOffice();
+        try {
+            $this->loginToBackOffice();
+            $this->uploadPaylaterModule();
+            $this->configureModule();
+        } catch (\Exception $exception) {
+            sleep(10);
+            $this->quit();
+            throw $exception;
+        }
 
-        $this->webDriver->findElement(WebDriverBy::linkText('Modules'))->click();
-        $this->webDriver->findElement(WebDriverBy::linkText('Installed modules'))->click();
-        $this->webDriver->findElement(WebDriverBy::id('page-header-desc-configuration-add_module'))->click();
+        $this->quit();
+    }
 
-        // getting the input element
-        $fileInput = $this->webDriver->findElement(WebDriverBy::className('dz-hidden-input'));
+    /**
+     * Login to the backoffice
+     */
+    public function loginToBackOffice()
+    {
+        $this->webDriver->get(self::PS17URL.self::BACKOFFICE_FOLDER);
+
+        $this->findByName('email')->sendKeys($this->configuration['username']);
+        $this->findByName('passwd')->sendKeys($this->configuration['password']);
+        $this->findByName('submitLogin')->click();
+
+        $this->webDriver->wait(10, 5000)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::linkText('Modules')
+            )
+        );
+
+        $this->assertEquals('Dashboard • PrestaShop', $this->webDriver->getTitle());
+    }
+
+    /**
+     * Install PaylaterModule
+     */
+    public function uploadPaylaterModule()
+    {
+        $this->findByLinkText('Modules')->click();
+        $this->findByLinkText('Installed modules')->click();
+        $this->findById('page-header-desc-configuration-add_module')->click();
+
+        $fileInput = $this->findByClass('dz-hidden-input');
         $fileInput->setFileDetector(new LocalFileDetector());
 
         try {
@@ -42,36 +77,49 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTestCase
             )
         );
 
-        $this->webDriver->findElement(WebDriverBy::className('module-import-success-configure'))->click();
-
-        $this->webDriver->wait(20, 500)->until(
-            WebDriverExpectedCondition::textToBePresentInElement(
-                WebDriverBy::className('module-import-success-configure'),
-                'Paylater Configuration Panel'
-            )
+        $this->assertContains(
+            'Module installed!',
+            $this->findByClass('module-import-success-msg')->getText()
         );
-
-        $this->assertTrue(WebDriverExpectedCondition::textToBePresentInElement(
-            WebDriverBy::className('module-import-success-configure'),
-            'Paylater Configuration Panel'
-        ));
     }
 
     /**
-     * Login to the backoffice
+     * Configure paylater module
      */
-    public function loginToBackOffice()
+    public function configureModule()
     {
-        $this->webDriver->findElement(WebDriverBy::name('email'))->sendKeys($this->configuration['username']);
-        $this->webDriver->findElement(WebDriverBy::name('passwd'))->sendKeys($this->configuration['password']);
-        $this->webDriver->findElement(WebDriverBy::name('submitLogin'))->click();
+        $this->findByClass('module-import-success-configure')->click();
 
-        $this->webDriver->wait(10, 5000)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::linkText('Modules')
+        $this->assertContains(
+            'Paylater Configuration Panel',
+            $this->findByClass('paylater-content-form')->getText()
+        );
+
+        //Set it to test:
+        $this->findById('test')->click();
+        //Set Public and Private key:
+        $this->findById('PAYLATER_PUBLIC_KEY_TEST')->clear()->sendKeys($this->configuration['publicKey']);
+        $this->findById('PAYLATER_PRIVATE_KEY_TEST')->clear()->sendKeys($this->configuration['secretKey']);
+        $this->findById('PAYLATER_PUBLIC_KEY_PROD')->clear()->sendKeys('pk_this_is_fake');
+        $this->findById('PAYLATER_PRIVATE_KEY_PROD')->clear()->sendKeys('this is a fake key');
+        $this->webDriver->executeScript('
+            document.querySelector(\'input[name="PAYLATER_ADD_SIMULATOR"][type="radio"][value="1"]\').click();
+            document.querySelector(\'input[name="PAYLATER_IFRAME"][type="radio"][value="1"]\').click();
+            window.scrollBy(0,250);
+
+        ');
+
+        $this->findByName('submitpaylater')->click();
+
+        $this->webDriver->wait(20, 500)->until(
+            WebDriverExpectedCondition::presenceOfElementLocated(
+                WebDriverBy::className('module_confirmation')
             )
         );
 
-        $this->assertEquals('Dashboard Prestashop', $this->webDriver->getTitle());
+        $this->assertContains(
+            'Se han guardado los cambios',
+            $this->findByClass('module_confirmation')->getText()
+        );
     }
 }
