@@ -12,7 +12,7 @@ use Test\Selenium\PaylaterPrestashopTest;
  * Class PaylaterPs17InstallTest
  * @package Test\Selenium\Basic
  *
- * @group ps17
+ * @group ps17install
  */
 class PaylaterPs17InstallTest extends PaylaterPrestashopTest
 {

@@ -8,7 +8,7 @@ use Test\Selenium\PaylaterPrestashopTest;
  * Class BasicTest
  * @package Test\Selenium\Basic
  *
- * @group ps17
+ * @group ps17basic
  */
 class BasicPs17Test extends PaylaterPrestashopTest
 {
