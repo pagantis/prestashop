@@ -114,7 +114,6 @@ services:
   selenium:
     image: selenium/standalone-chrome:3.4.0
     networks:
-      - internal
       - public
     ports:
       - "4444:4444"

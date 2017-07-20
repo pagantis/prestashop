@@ -10,7 +10,8 @@ use Test\Selenium\PaylaterPrestashopTest;
  * Class PaylaterPs17RegisterTest
  * @package Test\Selenium\Basic
  *
- * @group ps17register
+ * @group prestashop17
+ * @group register
  */
 class PaylaterPs17RegisterTest extends PaylaterPrestashopTest
 {
@@ -33,6 +34,13 @@ class PaylaterPs17RegisterTest extends PaylaterPrestashopTest
     {
         try {
             $this->webDriver->get(self::PS17URL);
+
+            $this->webDriver->wait(2, 500)->until(
+                WebDriverExpectedCondition::elementToBeClickable(
+                    WebDriverBy::className('user-info')
+                )
+            );
+
             $this->findByClass('user-info')->click();
             $this->webDriver->wait(2, 500)->until(
                 WebDriverExpectedCondition::elementToBeClickable(

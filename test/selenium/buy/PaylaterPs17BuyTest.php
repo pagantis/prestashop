@@ -10,7 +10,8 @@ use Test\Selenium\PaylaterPrestashopTest;
  * Class PaylaterPs17BuyTest
  * @package Test\Selenium\Basic
  *
- * @group ps17buy
+ * @group prestashop17
+ * @group buy
  */
 class PaylaterPs17BuyTest extends PaylaterPrestashopTest
 {
@@ -53,8 +54,13 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
             //check we have the simulator:
 
             $this->findById('conditions_to_approve[terms-and-conditions]')->click();
-            //$this->findByClass('btn-primary')->click();
-            sleep(40);
+
+            $this->assertContains(
+                'Paga+Tarde',
+                $this->webDriver->findElement(WebDriverBy::tagName('body'))->getText()
+            );
+
+            sleep(10);
         } catch (\Exception $exception) {
             echo $exception->getMessage();
         }

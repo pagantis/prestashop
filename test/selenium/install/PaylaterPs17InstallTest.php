@@ -12,7 +12,8 @@ use Test\Selenium\PaylaterPrestashopTest;
  * Class PaylaterPs17InstallTest
  * @package Test\Selenium\Basic
  *
- * @group ps17install
+ * @group prestashop17
+ * @group install
  */
 class PaylaterPs17InstallTest extends PaylaterPrestashopTest
 {
@@ -26,12 +27,11 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
             $this->uploadPaylaterModule();
             $this->configureModule();
         } catch (\Exception $exception) {
-            sleep(10);
+            echo $exception->getFile();
+            echo $exception->getLine();
             $this->quit();
             throw $exception;
         }
-
-        sleep(5);
         $this->quit();
     }
 
@@ -42,17 +42,37 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
     {
         $this->webDriver->get(self::PS17URL.self::BACKOFFICE_FOLDER);
 
+        $this->webDriver->wait(10, 500)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::name('submitLogin')
+            )
+        );
+
         $this->findByName('email')->sendKeys($this->configuration['username']);
         $this->findByName('passwd')->sendKeys($this->configuration['password']);
         $this->findByName('submitLogin')->click();
 
-        $this->webDriver->wait(10, 5000)->until(
+        $this->webDriver->wait(10, 500)->until(
             WebDriverExpectedCondition::elementToBeClickable(
                 WebDriverBy::linkText('Modules')
             )
         );
 
         $this->assertEquals('Dashboard • PrestaShop', $this->webDriver->getTitle());
+        sleep(1);
+
+        $elements = $this->webDriver->findElements(WebDriverBy::className('onboarding-button-shut-down'));
+        foreach ($elements as $element) {
+            if ($element->isDisplayed()) {
+                try {
+                    $element->click();
+                } catch (\Exception $exception) {
+                    echo $exception->getMessage();
+                }
+            }
+        }
+
+        sleep(1);
     }
 
     /**
@@ -61,7 +81,21 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
     public function uploadPaylaterModule()
     {
         $this->findByLinkText('Modules')->click();
+
+        $this->webDriver->wait(10, 500)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::linkText('Installed modules')
+            )
+        );
+
         $this->findByLinkText('Installed modules')->click();
+
+        $this->webDriver->wait(10, 500)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::id('page-header-desc-configuration-add_module')
+            )
+        );
+
         $this->findById('page-header-desc-configuration-add_module')->click();
 
         $fileInput = $this->findByClass('dz-hidden-input');
@@ -91,6 +125,8 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
     {
         $this->findByClass('module-import-success-configure')->click();
 
+        sleep(3);
+
         $this->assertContains(
             'Paylater Configuration Panel',
             $this->findByClass('paylater-content-form')->getText()
@@ -111,8 +147,8 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
 
         $this->findById('module_form_submit_btn')->click();
 
-        $this->webDriver->wait(20, 500)->until(
-            WebDriverExpectedCondition::presenceOfElementLocated(
+        $this->webDriver->wait(3, 500)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
                 WebDriverBy::className('module_confirmation')
             )
         );
