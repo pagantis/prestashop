@@ -32,24 +32,20 @@ class PaylaterPs17RegisterTest extends PaylaterPrestashopTest
      */
     public function goToLogin()
     {
-        try {
-            $this->webDriver->get(self::PS17URL);
+        $this->webDriver->get(self::PS17URL);
+        $this->webDriver->wait(5, 500)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::className('user-info')
+            )
+        );
 
-            $this->webDriver->wait(2, 500)->until(
-                WebDriverExpectedCondition::elementToBeClickable(
-                    WebDriverBy::className('user-info')
-                )
-            );
+        $this->findByClass('user-info')->click();
 
-            $this->findByClass('user-info')->click();
-            $this->webDriver->wait(2, 500)->until(
-                WebDriverExpectedCondition::elementToBeClickable(
-                    WebDriverBy::name('submitLogin')
-                )
-            );
-        } catch (\Exception $exception) {
-            echo $exception->getMessage();
-        }
+        $this->webDriver->wait(5, 500)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::className('btn-primary')
+            )
+        );
     }
 
     /**
@@ -57,16 +53,12 @@ class PaylaterPs17RegisterTest extends PaylaterPrestashopTest
      */
     public function goToCreateAccount()
     {
-        try {
-            $this->findByClass('no-account')->click();
-            $this->webDriver->wait(2, 500)->until(
-                WebDriverExpectedCondition::elementToBeClickable(
-                    WebDriverBy::name('submitCreate')
-                )
-            );
-        } catch (\Exception $exception) {
-            echo $exception->getMessage();
-        }
+        $this->findByClass('no-account')->click();
+        $this->webDriver->wait(2, 500)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::className('btn-primary')
+            )
+        );
     }
 
     /**
@@ -74,25 +66,22 @@ class PaylaterPs17RegisterTest extends PaylaterPrestashopTest
      */
     public function createAccount()
     {
-        try {
-            $this->webDriver->get(self::PS17URL);
-            $this->findByClass('user-info')->click();
-            $this->findByClass('no-account')->click();
+        $this->webDriver->get(self::PS17URL);
+        $this->findByClass('user-info')->click();
+        $this->findByClass('no-account')->click();
 
-            //Fillup form:
-            $this->findByClass('custom-radio')->click();
-            $this->findByName('firstname')->sendKeys($this->configuration['firstname']);
-            $this->findByName('lastname')->sendKeys($this->configuration['lastname']);
-            $this->findByName('email')->sendKeys($this->configuration['email']);
-            $this->findByName('password')->sendKeys($this->configuration['password']);
-            $this->findByName('birthday')->sendKeys($this->configuration['birthdate']);
+        //Fillup form:
+        $this->findByClass('custom-radio')->click();
+        $this->findByName('firstname')->sendKeys($this->configuration['firstname']);
+        $this->findByName('lastname')->sendKeys($this->configuration['lastname']);
+        $this->findByName('email')->sendKeys($this->configuration['email']);
+        $this->findByName('password')->sendKeys($this->configuration['password']);
+        $this->findByName('birthday')->sendKeys($this->configuration['birthdate']);
 
-            $this->webDriver->executeScript('document.getElementById(\'customer-form\').submit();');
+        $this->webDriver->executeScript('document.getElementById(\'customer-form\').submit();');
 
-            sleep(10);
-        } catch (\Exception $exception) {
-            echo $exception->getMessage();
-        }
+        sleep(1);
+        $this->findByClass('user-info')->click();
     }
 
     /**
@@ -100,14 +89,10 @@ class PaylaterPs17RegisterTest extends PaylaterPrestashopTest
      */
     public function login()
     {
-        try {
-            $this->webDriver->get(self::PS17URL);
-            $this->goToLogin();
-            $this->findByName('email')->sendKeys($this->configuration['email']);
-            $this->findByName('password')->sendKeys($this->configuration['password']);
-            $this->webDriver->executeScript('document.getElementById(\'login-form\').submit();');
-        } catch (\Exception $exception) {
-            echo $exception->getMessage();
-        }
+        $this->webDriver->get(self::PS17URL.'/index.php?controller=authentication&back=my-account');
+        sleep(1);
+        $this->findByName('email')->sendKeys($this->configuration['email']);
+        $this->findByName('password')->sendKeys($this->configuration['password']);
+        $this->webDriver->executeScript('document.getElementById(\'login-form\').submit();');
     }
 }

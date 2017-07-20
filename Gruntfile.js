@@ -10,8 +10,8 @@ module.exports = function(grunt) {
             composerDev: {
                 command: 'composer install'
             },
-            phpunitRunTest: {
-                command: 'vendor/bin/phpunit'
+            runTestPrestashop17: {
+                command: './docker-test.sh prestashop17'
             }
         },
         cssmin: {
@@ -63,8 +63,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.registerTask('default', [
         'cssmin',
+        'shell:autoindex',
         'shell:composerDev',
-        'shell:phpunitRunTest',
+        'compress',
+        'shell:runTestPrestashop17',
         'shell:composerProd',
         'shell:autoindex',
         'compress',

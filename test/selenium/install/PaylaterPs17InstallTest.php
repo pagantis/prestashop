@@ -22,16 +22,9 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
      */
     public function testInstallAndConfigurePaylaterInPrestashop17()
     {
-        try {
-            $this->loginToBackOffice();
-            $this->uploadPaylaterModule();
-            $this->configureModule();
-        } catch (\Exception $exception) {
-            echo $exception->getFile();
-            echo $exception->getLine();
-            $this->quit();
-            throw $exception;
-        }
+        $this->loginToBackOffice();
+        $this->uploadPaylaterModule();
+        $this->configureModule();
         $this->quit();
     }
 
@@ -59,20 +52,6 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
         );
 
         $this->assertEquals('Dashboard • PrestaShop', $this->webDriver->getTitle());
-        sleep(1);
-
-        $elements = $this->webDriver->findElements(WebDriverBy::className('onboarding-button-shut-down'));
-        foreach ($elements as $element) {
-            if ($element->isDisplayed()) {
-                try {
-                    $element->click();
-                } catch (\Exception $exception) {
-                    echo $exception->getMessage();
-                }
-            }
-        }
-
-        sleep(1);
     }
 
     /**
@@ -80,6 +59,8 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
      */
     public function uploadPaylaterModule()
     {
+        $this->webDriver->executeScript('document.querySelector(\'.onboarding-button-shut-down\').click();');
+        sleep(3);
         $this->findByLinkText('Modules')->click();
 
         $this->webDriver->wait(10, 500)->until(
@@ -106,7 +87,7 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
         } catch (StaleElementReferenceException $elementHasDisappeared) {
         }
 
-        $this->webDriver->wait(20, 500)->until(
+        $this->webDriver->wait()->until(
             WebDriverExpectedCondition::elementToBeClickable(
                 WebDriverBy::className('module-import-success-configure')
             )
