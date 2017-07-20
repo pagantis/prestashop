@@ -59,7 +59,23 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
             $this->webDriver->findElement(WebDriverBy::tagName('body'))->getText()
         );
 
-        sleep(10);
+        $this->webDriver->wait(5, 500)->until(
+            WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id('payment-confirmation'))
+        );
+        $this->findById('payment-confirmation')->click();
+
+        sleep(5);
+
+        $iframe = $this->webDriver->findElement(WebDriverBy::id('iframe-pagantis'));
+        $this->webDriver->switchTo()->frame($iframe);
+
+        $this->assertContains(
+            'Financia tu compra de',
+            $this->findByClass('Form-heading1')->getText()
+        );
+
+        //PAYMENT METHOD WORKS!! YUHUUUUU
+        sleep(5);
     }
 
     /**
