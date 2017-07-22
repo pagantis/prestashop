@@ -1,7 +1,3 @@
-require: sudo
-
-sudo: required
-
 services:
   - docker
 
