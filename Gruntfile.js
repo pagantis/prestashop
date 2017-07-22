@@ -5,10 +5,10 @@ module.exports = function(grunt) {
                 command: 'php vendor/pagamastarde/autoindex/index.php .'
             },
             composerProd: {
-                command: 'sudo composer install --no-dev'
+                command: 'composer install --no-dev'
             },
             composerDev: {
-                command: 'sudo composer install'
+                command: 'composer install'
             },
             runTestPrestashop17: {
                 command: './docker-test.sh prestashop17'

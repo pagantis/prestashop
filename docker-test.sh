@@ -11,11 +11,11 @@ sleep 90
 docker logs prestashop_prestashop17_1
 echo "adjust the time in order to see the apache start logs"
 
-echo "Basic $1 testing" && sudo composer install
+echo "Basic $1 testing" && composer install
 vendor/bin/phpunit --group $1 --group basic
-echo "Install $1 testing" && sudo composer install
+echo "Install $1 testing" && composer install
 vendor/bin/phpunit --group $1 --group install
-echo "Register $1 testing" && sudo composer install
+echo "Register $1 testing" && composer install
 vendor/bin/phpunit --group $1 --group register
-echo "Buying $1 testing" && sudo composer install
+echo "Buying $1 testing" && composer install
 vendor/bin/phpunit --group $1 --group buy
