@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-chmod +rw vendor/composer/installed.json
 docker-compose down
 docker-compose up -d selenium
 set -e
@@ -14,16 +13,9 @@ echo "adjust the time in order to see the apache start logs"
 
 echo "Basic $1 testing" && composer install
 vendor/bin/phpunit --group $1 --group basic
-chmod +rw vendor/composer/installed.json
-
 echo "Install $1 testing" && composer install
 vendor/bin/phpunit --group $1 --group install
-chmod +rw vendor/composer/installed.json
-
 echo "Register $1 testing" && composer install
 vendor/bin/phpunit --group $1 --group register
-chmod +rw vendor/composer/installed.json
-
 echo "Buying $1 testing" && composer install
 vendor/bin/phpunit --group $1 --group buy
-chmod +rw vendor/composer/installed.json
