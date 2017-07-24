@@ -12,7 +12,6 @@ if (!defined('_PS_VERSION_')) {
 }
 
 define('_PS_PAYLATER_DIR', _PS_MODULE_DIR_. '/paylater');
-define('_PS_PAYLATER_STATIC', '/modules/paylater');
 define('PAYLATER_SHOPPER_URL', 'https://shopper.pagamastarde.com/prestashop/');
 
 require _PS_PAYLATER_DIR.'/vendor/autoload.php';
@@ -43,7 +42,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '6.0.0';
+        $this->version = '6.0.1';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -177,7 +176,7 @@ class Paylater extends PaymentModule
         $paymentOption
             ->setCallToActionText($this->l('Finance using Paylater'))
             ->setAction($link->getModuleLink('paylater', 'payment'))
-            ->setLogo(_PS_PAYLATER_STATIC. '/logo.gif')
+            ->setLogo($this->getPathUri(). 'logo.gif')
         ;
 
         if (_PS_VERSION_ >= 1.7) {
@@ -430,8 +429,8 @@ class Paylater extends PaymentModule
             }
         }
 
-        $logo = _PS_PAYLATER_STATIC. '/views/img/logo-229x130.png';
-        $css = _PS_PAYLATER_STATIC. '/views/css/paylater.css';
+        $logo = $this->getPathUri(). 'views/img/logo-229x130.png';
+        $css = $this->getPathUri(). 'views/css/paylater.css';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
@@ -463,7 +462,7 @@ class Paylater extends PaymentModule
         $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
         $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
         $paylaterAddSimulator   = Configuration::get('PAYLATER_ADD_SIMULATOR');
-        $css = _PS_PAYLATER_STATIC. '/views/css/paylater.css';
+        $css = $this->getPathUri(). 'views/css/paylater.css';
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(

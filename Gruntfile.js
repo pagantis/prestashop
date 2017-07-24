@@ -13,7 +13,7 @@ module.exports = function(grunt) {
             runTestPrestashop17: {
                 command:
                     'docker-compose up -d prestashop17\n' +
-                    'echo "Creating the $1 shop this will take 2 minutes"\n' +
+                    'echo "Creating the prestashop17 shop this will take 2 minutes"\n' +
                     'sleep 120\n' +
                     'docker logs prestashop_prestashop17_1\n' +
                     'echo "adjust the time in order to see the apache start logs"\n' +
