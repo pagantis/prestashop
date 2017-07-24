@@ -1,12 +1,17 @@
 sudo: required
+language: php
 
 services:
   - docker
 
 language: php
 
+php:
+    - 5.6
+
 before_script:
   - 'npm install'
+  - composer install --dev
 
 script:
   - 'grunt'
