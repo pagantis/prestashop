@@ -11,7 +11,6 @@ php:
 
 before_script:
   - 'npm install'
-  - composer install --dev
 
 script:
-  - 'grunt'
+  - 'sudo grunt'
