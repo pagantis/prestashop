@@ -13,4 +13,4 @@ before_script:
   - 'npm install'
 
 script:
-  - 'sudo grunt'
+  - 'sudo ./node_modules/.bin/grunt'
