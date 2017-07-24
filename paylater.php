@@ -14,7 +14,6 @@ if (!defined('_PS_VERSION_')) {
 define('_PS_PAYLATER_DIR', _PS_MODULE_DIR_. '/paylater');
 define('_PS_PAYLATER_STATIC', '/modules/paylater');
 define('PAYLATER_SHOPPER_URL', 'https://shopper.pagamastarde.com/prestashop/');
-define('PAYLATER_SHOPPER_DEMO_URL', 'https://shopper-staging.pagamastarde.com/prestashop/');
 
 require _PS_PAYLATER_DIR.'/vendor/autoload.php';
 

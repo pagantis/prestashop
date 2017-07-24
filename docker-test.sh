@@ -6,8 +6,8 @@ set -e
 
 docker-compose up -d $1
 
-echo "Creating the $1 shop this will take 1 minutes"
-sleep 90
+echo "Creating the $1 shop this will take 2 minutes"
+sleep 120
 docker logs prestashop_prestashop17_1
 echo "adjust the time in order to see the apache start logs"
 

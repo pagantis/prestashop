@@ -2,6 +2,7 @@
 
 namespace Test\Selenium\Basic;
 
+use Facebook\WebDriver\WebDriverExpectedCondition;
 use Test\Selenium\PaylaterPrestashopTest;
 
 /**
@@ -19,8 +20,14 @@ class BasicPs17Test extends PaylaterPrestashopTest
     public function testTitlePrestashop17()
     {
         $this->webDriver->get(self::PS17URL);
-        $this->assertEquals('PrestaShop', $this->webDriver->getTitle());
 
+        $this->webDriver->wait(10, 500)->until(
+            WebDriverExpectedCondition::titleContains(
+                'PrestaShop'
+            )
+        );
+
+        $this->assertEquals('PrestaShop', $this->webDriver->getTitle());
         $this->quit();
     }
 
@@ -30,8 +37,14 @@ class BasicPs17Test extends PaylaterPrestashopTest
     public function testBackOfficeTitlePrestashop17()
     {
         $this->webDriver->get(self::PS17URL.self::BACKOFFICE_FOLDER);
-        $this->assertContains('PrestaShop', $this->webDriver->getTitle());
 
+        $this->webDriver->wait(10, 500)->until(
+            WebDriverExpectedCondition::titleContains(
+                'PrestaShop'
+            )
+        );
+
+        $this->assertContains('PrestaShop', $this->webDriver->getTitle());
         $this->quit();
     }
 }

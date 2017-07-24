@@ -54,11 +54,6 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
 
         $this->findById('conditions_to_approve[terms-and-conditions]')->click();
 
-        $this->assertContains(
-            'Paga+Tarde',
-            $this->webDriver->findElement(WebDriverBy::tagName('body'))->getText()
-        );
-
         $this->webDriver->wait(5, 500)->until(
             WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id('payment-confirmation'))
         );

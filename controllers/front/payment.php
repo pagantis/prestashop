@@ -71,7 +71,7 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
             ))
         ;
 
-        $shopperClient = new \ShopperLibrary\ShopperClient(PAYLATER_SHOPPER_DEMO_URL);
+        $shopperClient = new \ShopperLibrary\ShopperClient(PAYLATER_SHOPPER_URL);
         $shopperClient->setObjectModule($prestashopObjectModule);
         $paymentForm = $shopperClient->getPaymentForm();
         $form = "";
