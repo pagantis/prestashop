@@ -12,6 +12,7 @@ php:
 
 before_script:
   - 'npm install'
+  - 'composer install'
   - 'chmod 777 vendor/composer/installed.json'
 script:
   - 'grunt'
