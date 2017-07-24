@@ -83,10 +83,5 @@ module.exports = function(grunt) {
         'compress',
         'shell:startTestScenario',
         'shell:runTestPrestashop17',
-        'cssmin',
-        'shell:autoindex',
-        'shell:composerProd',
-        'compress',
-        'shell:composerDev'
     ]);
 };
