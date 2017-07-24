@@ -1,19 +1,21 @@
 version: "2"
 
 services:
-  web:
-    image: prestashop/prestashop
+  prestashop15:
+    image: prestashop/prestashop:1.5
     depends_on:
-      - db
+      - db-56
     environment:
       - PS_DEV_MODE=1
       - PS_COUNTRY=es
-      - PS_DOMAIN=prestashop.docker:84
+      - PS_DOMAIN=prestashop15
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
       - PS_INSTALL_AUTO=1
-      - DB_SERVER=db
+      - DB_SERVER=db-56
+      - DB_NAME=prestashop15
+      - DB_PREFIX=ps_
       - DB_PASSWD=password
     networks:
       - internal
@@ -21,8 +23,77 @@ services:
     volumes:
       - ./:/var/www/html/modules/paylater
     ports:
-      - "84:80"
-  db:
+      - "8015:80"
+  prestashop16:
+    image: prestashop/prestashop:1.6
+    depends_on:
+      - db-57
+    environment:
+      - PS_DEV_MODE=1
+      - PS_COUNTRY=es
+      - PS_DOMAIN=prestashop16
+      - PS_FOLDER_ADMIN=adminTest
+      - PS_FOLDER_INSTALL=installTest
+      - PS_HANDLE_DYNAMIC_DOMAIN=1
+      - PS_INSTALL_AUTO=1
+      - DB_SERVER=db-57
+      - DB_NAME=prestashop16
+      - DB_PREFIX=ps_
+      - DB_PASSWD=password
+    networks:
+      - internal
+      - public
+    volumes:
+      - ./:/var/www/html/modules/paylater
+    ports:
+      - "8016:80"
+  prestashop17:
+    image: prestashop/prestashop:1.7
+    depends_on:
+      - db-57
+    environment:
+      - PS_DEV_MODE=1
+      - PS_COUNTRY=es
+      - PS_DOMAIN=prestashop17
+      - PS_FOLDER_ADMIN=adminTest
+      - PS_FOLDER_INSTALL=installTest
+      - PS_HANDLE_DYNAMIC_DOMAIN=1
+      - PS_INSTALL_AUTO=1
+      - DB_SERVER=db-57
+      - DB_NAME=prestashop17
+      - DB_PREFIX=ps_
+      - DB_PASSWD=password
+    networks:
+      - internal
+      - public
+    volumes:
+      - ./:/var/www/html/modules/paylater
+    ports:
+      - "8017:80"
+  prestashop18:
+    image: prestashop/prestashop:latest
+    depends_on:
+      - db-57
+    environment:
+      - PS_DEV_MODE=1
+      - PS_COUNTRY=es
+      - PS_DOMAIN=prestashop18
+      - PS_FOLDER_ADMIN=adminTest
+      - PS_FOLDER_INSTALL=installTest
+      - PS_HANDLE_DYNAMIC_DOMAIN=1
+      - PS_INSTALL_AUTO=1
+      - DB_SERVER=db-57
+      - DB_NAME=prestashop18
+      - DB_PREFIX=ps_
+      - DB_PASSWD=password
+    networks:
+      - internal
+      - public
+    volumes:
+      - ./:/var/www/html/modules/paylater
+    ports:
+      - "8018:80"
+  db-57:
     image: mysql
     environment:
       - MYSQL_ROOT_PASSWORD=password
@@ -30,7 +101,22 @@ services:
     networks:
       - internal
     ports:
+      - "2034:3306"
+  db-56:
+    image: mysql:5.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=prestashop
+    networks:
+      - internal
+    ports:
       - "2033:3306"
+  selenium:
+    image: selenium/standalone-chrome:3.4.0
+    networks:
+      - public
+    ports:
+      - "4444:4444"
 
 networks:
   internal:

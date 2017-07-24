@@ -10,8 +10,22 @@ module.exports = function(grunt) {
             composerDev: {
                 command: 'composer install'
             },
-            phpunitRunTest: {
-                command: 'vendor/bin/phpunit --exclude-group docker'
+            runTestPrestashop17: {
+                command:
+                    'docker-compose up -d prestashop17\n' +
+                    'echo "Creating the $1 shop this will take 2 minutes"\n' +
+                    'sleep 120\n' +
+                    'docker logs prestashop_prestashop17_1\n' +
+                    'echo "adjust the time in order to see the apache start logs"\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop17 --group basic\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop17 --group install\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop17 --group register\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop17 --group buy\n'
+            },
+            startTestScenario: {
+                command:
+                'docker-compose down\n' +
+                'docker-compose up -d selenium\n'
             }
         },
         cssmin: {
@@ -63,11 +77,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.registerTask('default', [
         'shell:composerDev',
-        'shell:phpunitRunTest',
-        'shell:composerProd',
         'cssmin',
         'shell:autoindex',
+        'shell:composerProd',
         'compress',
-        'shell:composerDev'
+        'shell:startTestScenario',
+        'shell:runTestPrestashop17',
     ]);
 };
