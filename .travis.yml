@@ -14,5 +14,6 @@ before_script:
   - 'npm install'
   - 'composer install'
   - 'chmod -R 777 vendor'
+
 script:
   - 'grunt'

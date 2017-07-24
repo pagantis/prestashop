@@ -11,7 +11,21 @@ module.exports = function(grunt) {
                 command: 'composer install'
             },
             runTestPrestashop17: {
-                command: './docker-test.sh prestashop17'
+                command:
+                    'docker-compose up -d prestashop17\n' +
+                    'echo "Creating the $1 shop this will take 2 minutes"\n' +
+                    'sleep 120\n' +
+                    'docker logs prestashop_prestashop17_1\n' +
+                    'echo "adjust the time in order to see the apache start logs"\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop17 --group basic\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop17 --group install\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop17 --group register\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop17 --group buy\n'
+            },
+            startTestScenario: {
+                command:
+                'docker-compose down\n' +
+                'docker-compose up -d selenium\n'
             }
         },
         cssmin: {
@@ -67,7 +81,7 @@ module.exports = function(grunt) {
         'shell:autoindex',
         'shell:composerProd',
         'compress',
-        'shell:composerDev',
+        'shell:startTestScenario',
         'shell:runTestPrestashop17',
         'cssmin',
         'shell:autoindex',
