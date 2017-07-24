@@ -13,6 +13,6 @@ php:
 before_script:
   - 'npm install'
   - 'composer install'
-  - 'chmod 777 vendor/composer/installed.json'
+  - 'chmod -R 777 vendor'
 script:
   - 'grunt'
