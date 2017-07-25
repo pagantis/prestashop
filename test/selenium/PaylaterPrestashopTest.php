@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 abstract class PaylaterPrestashopTest extends TestCase
 {
     const PS17URL = 'http://prestashop17';
-    const PS16URL = 'http://prestashop16:8016';
+    const PS16URL = 'http://prestashop16';
 
     const BACKOFFICE_FOLDER = '/adminTest';
 
