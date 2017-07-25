@@ -107,10 +107,11 @@ class PaylaterPs16InstallTest extends PaylaterPrestashopTest
         )->click();
 
         try {
-            $this->webDriver->findElement(WebDriverBy::partialLinkText('Install'))->click();
+            $this->findByClass('actions')->findElement(WebDriverBy::cssSelector('a'))->click();
         } catch (\Exception $exception) {
-            $this->webDriver->findElement(WebDriverBy::partialLinkText('Configure'))->click();
+            $this->findByClass('actions')->findElement(WebDriverBy::cssSelector('a'))->click();
         }
+
 
         $this->assertContains(
             'Paylater Configuration Panel',

@@ -12,6 +12,8 @@ module.exports = function(grunt) {
             },
             runTestPrestashop17: {
                 command:
+                    'docker-compose stop selenium\n' +
+                    'docker-compose up -d selenium\n' +
                     'docker-compose up -d prestashop17\n' +
                     'echo "Creating the prestashop17 shop this will take 2 minutes"\n' +
                     'sleep 120\n' +
@@ -24,6 +26,8 @@ module.exports = function(grunt) {
             },
             runTestPrestashop16: {
                 command:
+                    'docker-compose stop selenium\n' +
+                    'docker-compose up -d selenium\n' +
                     'docker-compose up -d prestashop16\n' +
                     'echo "Creating the prestashop16 shop this will take 2 minutes"\n' +
                     'sleep 120\n' +
@@ -33,11 +37,6 @@ module.exports = function(grunt) {
                     'composer install && vendor/bin/phpunit --group prestashop16install\n' +
                     'composer install && vendor/bin/phpunit --group prestashop16register\n' +
                     'composer install && vendor/bin/phpunit --group prestashop16buy\n'
-            },
-            startTestScenario: {
-                command:
-                'docker-compose down\n' +
-                'docker-compose up -d selenium\n'
             }
         },
         cssmin: {
@@ -93,7 +92,6 @@ module.exports = function(grunt) {
         'shell:autoindex',
         'shell:composerProd',
         'compress',
-        'shell:startTestScenario',
         'shell:runTestPrestashop17',
         'shell:runTestPrestashop16'
     ]);
