@@ -6,19 +6,19 @@ use Facebook\WebDriver\WebDriverExpectedCondition;
 use Test\Selenium\PaylaterPrestashopTest;
 
 /**
- * Class BasicTest
+ * Class BasicPs16Test
  * @package Test\Selenium\Basic
  *
- * @group prestashop17basic
+ * @group prestashop16basic
  */
-class BasicPs17Test extends PaylaterPrestashopTest
+class BasicPs16Test extends PaylaterPrestashopTest
 {
     /**
-     * testTitlePrestashop17
+     * testTitlePrestashop16
      */
-    public function testTitlePrestashop17()
+    public function testTitlePrestashop16()
     {
-        $this->webDriver->get(self::PS17URL);
+        $this->webDriver->get(self::PS16URL);
 
         $this->webDriver->wait(10, 500)->until(
             WebDriverExpectedCondition::titleContains(
@@ -31,11 +31,11 @@ class BasicPs17Test extends PaylaterPrestashopTest
     }
 
     /**
-     * testBackOfficeTitlePrestashop17
+     * testBackOfficeTitlePrestashop16
      */
-    public function testBackOfficeTitlePrestashop17()
+    public function testBackOfficeTitlePrestashop16()
     {
-        $this->webDriver->get(self::PS17URL.self::BACKOFFICE_FOLDER);
+        $this->webDriver->get(self::PS16URL.self::BACKOFFICE_FOLDER);
 
         $this->webDriver->wait(10, 500)->until(
             WebDriverExpectedCondition::titleContains(

@@ -14,6 +14,7 @@ use PHPUnit\Framework\TestCase;
 abstract class PaylaterPrestashopTest extends TestCase
 {
     const PS17URL = 'http://prestashop17';
+    const PS16URL = 'http://prestashop16:8016';
 
     const BACKOFFICE_FOLDER = '/adminTest';
 
@@ -29,6 +30,11 @@ abstract class PaylaterPrestashopTest extends TestCase
         'firstname'     => 'John',
         'lastname'      => 'Doe',
         'email'         => 'john.doe@digitalorigin.com',
+        'company'       => 'Digital Origin SL',
+        'zip'           => '08023',
+        'city'          => 'Barcelona',
+        'phone'         => '600123123',
+        'dni'           => '09422447Z'
     ];
 
     /**

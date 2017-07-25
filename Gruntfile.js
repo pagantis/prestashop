@@ -17,10 +17,22 @@ module.exports = function(grunt) {
                     'sleep 120\n' +
                     'docker logs prestashop_prestashop17_1\n' +
                     'echo "adjust the time in order to see the apache start logs"\n' +
-                    'composer install && vendor/bin/phpunit --group prestashop17 --group basic\n' +
-                    'composer install && vendor/bin/phpunit --group prestashop17 --group install\n' +
-                    'composer install && vendor/bin/phpunit --group prestashop17 --group register\n' +
-                    'composer install && vendor/bin/phpunit --group prestashop17 --group buy\n'
+                    'composer install && vendor/bin/phpunit --group prestashop17basic\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop17install\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop17register\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop17buy\n'
+            },
+            runTestPrestashop16: {
+                command:
+                    'docker-compose up -d prestashop16\n' +
+                    'echo "Creating the prestashop16 shop this will take 2 minutes"\n' +
+                    'sleep 120\n' +
+                    'docker logs prestashop_prestashop16_1\n' +
+                    'echo "adjust the time in order to see the apache start logs"\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop16basic\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop16install\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop16register\n' +
+                    'composer install && vendor/bin/phpunit --group prestashop16buy\n'
             },
             startTestScenario: {
                 command:
@@ -83,5 +95,6 @@ module.exports = function(grunt) {
         'compress',
         'shell:startTestScenario',
         'shell:runTestPrestashop17',
+        'shell:runTestPrestashop16'
     ]);
 };

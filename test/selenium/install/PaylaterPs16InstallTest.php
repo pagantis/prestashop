@@ -9,17 +9,18 @@ use Facebook\WebDriver\WebDriverExpectedCondition;
 use Test\Selenium\PaylaterPrestashopTest;
 
 /**
- * Class PaylaterPs17InstallTest
+ * Class PaylaterPs16InstallTest
  * @package Test\Selenium\Basic
  *
- * @group prestashop17install
+ * @group prestashop16install
+ * @group install
  */
-class PaylaterPs17InstallTest extends PaylaterPrestashopTest
+class PaylaterPs16InstallTest extends PaylaterPrestashopTest
 {
     /**
-     * testInstallPaylaterInPrestashop17
+     * testInstallPaylaterInPrestashop16
      */
-    public function testInstallAndConfigurePaylaterInPrestashop17()
+    public function testInstallAndConfigurePaylaterInPrestashop16()
     {
         $this->loginToBackOffice();
         $this->uploadPaylaterModule();
@@ -32,7 +33,7 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
      */
     public function loginToBackOffice()
     {
-        $this->webDriver->get(self::PS17URL.self::BACKOFFICE_FOLDER);
+        $this->webDriver->get(self::PS16URL.self::BACKOFFICE_FOLDER);
 
         $this->webDriver->wait(10, 500)->until(
             WebDriverExpectedCondition::elementToBeClickable(
@@ -46,7 +47,7 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
 
         $this->webDriver->wait(10, 500)->until(
             WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::linkText('Modules')
+                WebDriverBy::linkText('Modules and Services')
             )
         );
 
@@ -58,43 +59,34 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
      */
     public function uploadPaylaterModule()
     {
-        $this->webDriver->executeScript('document.querySelector(\'.onboarding-button-shut-down\').click();');
         sleep(3);
-        $this->findByLinkText('Modules')->click();
+        $this->findByLinkText('Modules and Services')->click();
 
         $this->webDriver->wait(10, 500)->until(
             WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::linkText('Installed modules')
+                WebDriverBy::id('desc-module-new')
             )
         );
 
-        $this->findByLinkText('Installed modules')->click();
+        $this->findById('desc-module-new')->click();
 
-        $this->webDriver->wait(10, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::id('page-header-desc-configuration-add_module')
-            )
-        );
-
-        $this->findById('page-header-desc-configuration-add_module')->click();
-
-        $fileInput = $this->findByClass('dz-hidden-input');
+        $fileInput = $this->findById('file');
         $fileInput->setFileDetector(new LocalFileDetector());
 
         try {
-            $fileInput->sendKeys(__DIR__.'/../../../paylater.zip')->submit();
+            $fileInput->sendKeys(__DIR__.'/../../../paylater.zip');
         } catch (StaleElementReferenceException $elementHasDisappeared) {
         }
 
-        $this->webDriver->wait()->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::className('module-import-success-configure')
-            )
-        );
+        $this->webDriver->executeScript('
+            document.querySelector(\'[name="download"]\').click();
+        ');
+
+        sleep(3);
 
         $this->assertContains(
-            'Module installed!',
-            $this->findByClass('module-import-success-msg')->getText()
+            'The module was successfully downloaded',
+            $this->findByClass('alert-success')->getText()
         );
     }
 
@@ -103,9 +95,22 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
      */
     public function configureModule()
     {
-        $this->findByClass('module-import-success-configure')->click();
 
-        sleep(3);
+        $this->webDriver->wait(10, 500)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::id('module_type_filter')
+            )
+        );
+
+        $this->findById('module_type_filter')->findElement(
+            WebDriverBy::cssSelector("option[value='authorModules[paga+tarde]']")
+        )->click();
+
+        try {
+            $this->webDriver->findElement(WebDriverBy::partialLinkText('Install'))->click();
+        } catch (\Exception $exception) {
+            $this->webDriver->findElement(WebDriverBy::partialLinkText('Configure'))->click();
+        }
 
         $this->assertContains(
             'Paylater Configuration Panel',

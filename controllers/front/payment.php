@@ -45,8 +45,8 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         $shippingAddress = new Address($cart->id_address_delivery);
         $billingAddress = new Address($cart->id_address_invoice);
         $discount = Configuration::get('PAYLATER_DISCOUNT');
-        $spinner = $this->getCanonicalURL().'/modules/paylater/views/img/spinner.gif';
-        $css = $this->getCanonicalURL(). '/modules/paylater/views/css/paylater.css';
+        $spinner = Media::getMediaPath('/modules/paylater/views/img/spinner.gif');
+        $css = Media::getMediaPath('/modules/paylater/views/css/paylater.css');
 
         $prestashopObjectModule = new \ShopperLibrary\ObjectModule\PrestashopObjectModule();
         $prestashopObjectModule
