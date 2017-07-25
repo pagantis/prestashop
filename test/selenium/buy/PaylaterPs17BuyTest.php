@@ -62,6 +62,12 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
             WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt('iframe-pagantis')
         );
 
+        $this->webDriver->wait(5, 500)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::name('form-continue')
+            )
+        );
+
         $this->assertContains(
             'Financia tu compra de',
             $this->findByClass('Form-heading1')->getText()
