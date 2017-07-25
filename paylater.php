@@ -47,7 +47,7 @@ class Paylater extends PaymentModule
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
         $this->module_key = '2b9bc901b4d834bb7069e7ea6510438f';
-        $this->ps_versions_compliancy = array('min' => '1.3', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array('min' => '1.5', 'max' => _PS_VERSION_);
         $this->displayName = $this->l('Paga+Tarde');
         $this->description = $this->l(
             'Instant, easy and effective financial tool for your customers'
@@ -82,6 +82,7 @@ class Paylater extends PaymentModule
         return (parent::install()
                 && $this->registerHook('displayShoppingCart')
                 && $this->registerHook('payment')
+                && $this->registerHook('paymentOptions')
                 && $this->registerHook('displayRightColumn')
                 && $this->registerHook('displayLeftColumn')
                 && $this->registerHook('displayRightColumnProduct')
