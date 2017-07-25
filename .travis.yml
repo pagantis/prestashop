@@ -13,12 +13,12 @@ php:
 before_script:
   - 'npm install'
   - 'composer install'
-  - 'chmod -R 777 vendor'
+  - 'sudo chmod -R 777 vendor'
 
 script:
   - 'grunt default'
-  - 'chmod -R 777 vendor'
+  - 'sudo chmod -R 777 vendor'
   - 'grunt shell:runTestPrestashop16'
-  - 'chmod -R 777 vendor'
+  - 'sudo chmod -R 777 vendor'
   - 'grunt shell:runTestPrestashop17'
 
