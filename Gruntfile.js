@@ -5,7 +5,7 @@ module.exports = function(grunt) {
                 command: 'php vendor/pagamastarde/autoindex/index.php .'
             },
             composerProd: {
-                command: 'composer install --no-dev'
+                command: 'rm -rf vendor && composer install --no-dev'
             },
             composerDev: {
                 command: 'composer install'
@@ -85,9 +85,10 @@ module.exports = function(grunt) {
     grunt.registerTask('default', [
         'shell:composerDev',
         'cssmin',
-        'shell:autoindex',
         'shell:composerProd',
-        'compress'
+        'shell:autoindex',
+        'compress',
+        'shell:composerDev',
     ]);
 
     //manually run the selenium test: "grunt shell:testPrestashop16"
