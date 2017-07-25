@@ -42,7 +42,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '6.0.2';
+        $this->version = '6.0.3';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -77,11 +77,16 @@ class Paylater extends PaymentModule
         Configuration::updateValue('PAYLATER_ADD_SIMULATOR', false);
         Configuration::updateValue('PAYLATER_IFRAME', false);
         Configuration::updateValue('PAYLATER_MIN_AMOUNT', 0);
+        Configuration::updateValue('PAYLATER_PRODUCT_HOOK', false);
 
         return (parent::install()
                 && $this->registerHook('displayShoppingCart')
                 && $this->registerHook('payment')
-                && $this->registerHook('paymentOptions')
+                && $this->registerHook('displayRightColumn')
+                && $this->registerHook('displayLeftColumn')
+                && $this->registerHook('displayRightColumnProduct')
+                && $this->registerHook('displayLeftColumnProduct')
+                && $this->registerHook('displayProductButtons')
         );
     }
 
@@ -143,18 +148,16 @@ class Paylater extends PaymentModule
     }
 
     /**
-     * @param $params
-     *
      * @return array
      */
-    public function hookPaymentOptions($params)
+    public function hookPaymentOptions()
     {
         if (!$this->isPaymentMethodAvailable()) {
             return array();
         }
 
         /** @var Cart $cart */
-        $cart                   = $params['cart'];
+        $cart                   = $this->context->cart;
         $orderTotal             = $cart->getOrderTotal();
         $link                   = $this->context->link;
         $paylaterProd           = Configuration::get('PAYLATER_PROD');
@@ -341,6 +344,46 @@ class Paylater extends PaymentModule
                         ),
                     ),
                     array(
+                        'type' => 'radio',
+                        'class' => 't',
+                        'label' => $this->l('Include simulator in product page'),
+                        'name' => 'PAYLATER_PRODUCT_HOOK',
+                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
+                        'is_bool' => false,
+                        'values' => array(
+                            array(
+                                'id' => 'product-page-hook',
+                                'value' => 'no',
+                                'label' => $this->l('Don\'t display'). '<br>'
+                            ),
+                            array(
+                                'id' => 'product-page-hook',
+                                'value' => 'hookDisplayRightColumn',
+                                'label' => $this->l('display in right column'). '<br>'
+                            ),
+                            array(
+                                'id' => 'product-page-hook',
+                                'value' => 'hookDisplayLeftColumn',
+                                'label' => $this->l('display in left column'). '<br>'
+                            ),
+                            array(
+                                'id' => 'product-page-hook',
+                                'value' => 'hookDisplayRightColumnProduct',
+                                'label' => $this->l('display in right column of product'). '<br>'
+                            ),
+                            array(
+                                'id' => 'product-page-hook',
+                                'value' => 'hookDisplayLeftColumnProduct',
+                                'label' => $this->l('display in left column of product'). '<br>'
+                            ),
+                            array(
+                                'id' => 'product-page-hook',
+                                'value' => 'hookDisplayProductButtons',
+                                'label' => $this->l('display in product buttons (PS 1.7)'). '<br>'
+                            ),
+                        ),
+                    ),
+                    array(
                         'type' => 'text',
                         'size' => 3,
                         'desc' => $this->l('ej: 20'),
@@ -405,6 +448,7 @@ class Paylater extends PaymentModule
             'PAYLATER_ADD_SIMULATOR',
             'PAYLATER_IFRAME',
             'PAYLATER_MIN_AMOUNT',
+            'PAYLATER_PRODUCT_HOOK'
         );
 
         //Different Behavior depending on 1.6 or earlier
@@ -480,5 +524,73 @@ class Paylater extends PaymentModule
         } else {
             return $this->display(__FILE__, 'views/templates/hook/checkout-15.tpl');
         }
+    }
+
+    /**
+     * @param $functionName
+     *
+     * @return string|null
+     */
+    public function productPageSimulatorDisplay($functionName)
+    {
+        $productConfiguration = Configuration::get('PAYLATER_PRODUCT_HOOK');
+
+        if ($functionName != $productConfiguration) {
+            return null;
+        }
+
+        $product = new Product(Tools::getValue('id_product'));
+        $amount = $product->getPublicPrice();
+        $paylaterProd           = Configuration::get('PAYLATER_PROD');
+        $paylaterMode           = $paylaterProd == 1 ? 'PROD' : 'TEST';
+        $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
+
+        $this->context->smarty->assign(array(
+            'amount'                => $amount,
+            'publicKey'             => $paylaterPublicKey,
+            'simulatorType'         => 2,
+        ));
+
+        return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');
+    }
+    /**
+     * @return string
+     */
+    public function hookDisplayRightColumn()
+    {
+
+        return $this->productPageSimulatorDisplay(__FUNCTION__);
+    }
+
+    /**
+     * @return string
+     */
+    public function hookDisplayLeftColumn()
+    {
+        return $this->productPageSimulatorDisplay(__FUNCTION__);
+    }
+
+    /**
+     * @return string
+     */
+    public function hookDisplayRightColumnProduct()
+    {
+        return $this->productPageSimulatorDisplay(__FUNCTION__);
+    }
+
+    /**
+     * @return string
+     */
+    public function hookDisplayLeftColumnProduct()
+    {
+        return $this->productPageSimulatorDisplay(__FUNCTION__);
+    }
+
+    /**
+     * @return string
+     */
+    public function hookDisplayProductButtons()
+    {
+        return $this->productPageSimulatorDisplay(__FUNCTION__);
     }
 }
