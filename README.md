@@ -8,7 +8,7 @@
 ## Instrucciones de Instalación
 
 1. Crea tu cuenta en pagamastarde.com si aún no la tienes [desde aquí](https://bo.pagamastarde.com/users/sign_up)
-2. Descarga el módulo de [aquí](https://github.com/pagantis/pagamastarde-prestashop/releases/latest)
+2. Descarga el módulo de [aquí](https://github.com/pagamastarde/prestashop/releases/latest)
 3. Instala el módulo en tu prestashop
 4. Configuralo con la información de tu cuenta que encontrarás en [el panel de gestión de Paga+Tarde](https://bo.pagamastarde.com/shop). Ten en cuenta que para hacer cobros reales deberás activar tu cuenta de Paga+Tarde.
 
@@ -17,8 +17,6 @@
 Tanto el módulo como Paga+Tarde tienen funcionamiento en real y en modo de pruebas independientes. Debes introducir las credenciales correspondientes del entorno que desees usar.
 
 ### Soporte
-
-El manual de instalación y uso del módulo se puede consultar [aquí](https://github.com/pagantis/pagamastarde-prestashop/blob/master/Guide.pdf).
 
 Si tienes alguna duda o pregunta no tienes más que escribirnos un email a [soporte@pagamastarde.com]
 
