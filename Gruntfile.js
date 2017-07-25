@@ -12,7 +12,7 @@ module.exports = function(grunt) {
             },
             runTestPrestashop17: {
                 command:
-                    'docker-compose stop selenium\n' +
+                    'docker-compose down\n' +
                     'docker-compose up -d selenium\n' +
                     'docker-compose up -d prestashop17\n' +
                     'echo "Creating the prestashop17"\n' +
@@ -24,13 +24,11 @@ module.exports = function(grunt) {
             },
             runTestPrestashop16: {
                 command:
-                    'docker-compose stop selenium\n' +
+                    'docker-compose down\n' +
                     'docker-compose up -d selenium\n' +
                     'docker-compose up -d prestashop16\n' +
                     'echo "Creating the prestashop16"\n' +
                     'sleep 120\n' +
-                    'docker logs prestashop_prestashop16_1\n' +
-                    'echo "adjust the time in order to see the apache start logs"\n' +
                     'composer install && vendor/bin/phpunit --group prestashop16basic\n' +
                     'composer install && vendor/bin/phpunit --group prestashop16install\n' +
                     'composer install && vendor/bin/phpunit --group prestashop16register\n' +

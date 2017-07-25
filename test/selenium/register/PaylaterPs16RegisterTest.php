@@ -69,7 +69,13 @@ class PaylaterPs16RegisterTest extends PaylaterPrestashopTest
 
         $this->webDriver->executeScript('document.getElementById("submitAccount").click();');
 
-        sleep(2);
+        $this->webDriver->wait(5, 500)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::className('logout')
+            )
+        );
+
+        $this->findByClass('logout')->click();
     }
 
     /**
@@ -77,7 +83,6 @@ class PaylaterPs16RegisterTest extends PaylaterPrestashopTest
      */
     public function login()
     {
-        $this->webDriver->get(self::PS16URL);
         $this->webDriver->wait(5, 500)->until(
             WebDriverExpectedCondition::elementToBeClickable(
                 WebDriverBy::className('header_user_info')
