@@ -16,4 +16,9 @@ before_script:
   - 'chmod -R 777 vendor'
 
 script:
-  - 'grunt'
+  - 'grunt default'
+  - 'chmod -R 777 vendor'
+  - 'grunt shell:runTestPrestashop16'
+  - 'chmod -R 777 vendor'
+  - 'grunt shell:runTestPrestashop17'
+

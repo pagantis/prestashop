@@ -87,8 +87,8 @@ module.exports = function(grunt) {
         'cssmin',
         'shell:autoindex',
         'shell:composerProd',
-        'compress',
-        'shell:runTestPrestashop17',
-        'shell:runTestPrestashop16'
+        'compress'
     ]);
+
+    //manually run the selenium test: "grunt shell:testPrestashop16"
 };
