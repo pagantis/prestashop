@@ -99,7 +99,7 @@ class PaylaterPs16BuyTest extends PaylaterPrestashopTest
 
         $this->findByClass('paylater-checkout')->click();
 
-        $this->webDriver->wait(5, 500)->until(
+        $this->webDriver->wait(10, 500)->until(
             WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt('iframe-pagantis')
         );
 
