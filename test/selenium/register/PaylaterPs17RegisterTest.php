@@ -10,8 +10,7 @@ use Test\Selenium\PaylaterPrestashopTest;
  * Class PaylaterPs17RegisterTest
  * @package Test\Selenium\Basic
  *
- * @group prestashop17
- * @group register
+ * @group prestashop17register
  */
 class PaylaterPs17RegisterTest extends PaylaterPrestashopTest
 {
