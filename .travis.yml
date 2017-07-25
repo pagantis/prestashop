@@ -21,4 +21,3 @@ script:
   - 'grunt shell:runTestPrestashop16'
   - 'sudo chmod -R 777 vendor'
   - 'grunt shell:runTestPrestashop17'
-
