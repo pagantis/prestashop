@@ -36,15 +36,15 @@ class PaylaterPs15RegisterTest extends PaylaterPrestashopTest
         $this->webDriver->get(self::PS15URL);
         $this->webDriver->wait(5, 500)->until(
             WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::id('header_user_info')
+                WebDriverBy::className('login')
             )
         );
 
-        $this->findById('header_user_info')->click();
+        $this->findByClass('login')->click();
 
         $this->webDriver->wait(5, 500)->until(
             WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::id('SubmitCreate')
+                WebDriverBy::id('SubmitLogin')
             )
         );
     }
