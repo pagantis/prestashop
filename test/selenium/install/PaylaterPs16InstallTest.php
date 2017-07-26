@@ -59,7 +59,6 @@ class PaylaterPs16InstallTest extends PaylaterPrestashopTest
      */
     public function uploadPaylaterModule()
     {
-        sleep(3);
         $this->findByLinkText('Modules and Services')->click();
 
         $this->webDriver->wait(10, 500)->until(
