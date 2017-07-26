@@ -88,7 +88,7 @@ class PaylaterPs16BuyTest extends PaylaterPrestashopTest
         $this->findById('cgv')->click();
         $this->findByName('processCarrier')->click();
 
-        $this->webDriver->wait(5, 500)->until(
+        $this->webDriver->wait(10, 500)->until(
             WebDriverExpectedCondition::elementToBeClickable(
                 WebDriverBy::className('paylater-checkout')
             )
