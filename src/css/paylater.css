@@ -186,8 +186,8 @@
     line-height: 2;
 }
 
-p.payment_module a.bankwire.paylater-checkout {
-    background: url('/modules/paylater/views/img/logo-64x64.png') 15px 12px no-repeat #fbfbfb !important;
+p.payment_module a.paylater-checkout {
+    background-image: url('/modules/paylater/views/img/logo-64x64.png');
     background-size: 64px !important;
 }
 

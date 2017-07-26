@@ -33,6 +33,18 @@ module.exports = function(grunt) {
                     'composer install && vendor/bin/phpunit --group prestashop16install\n' +
                     'composer install && vendor/bin/phpunit --group prestashop16register\n' +
                     'composer install && vendor/bin/phpunit --group prestashop16buy\n'
+            },
+            runTestPrestashop15: {
+                command:
+                'docker-compose down\n' +
+                'docker-compose up -d selenium\n' +
+                'docker-compose up -d prestashop15\n' +
+                'echo "Creating the prestashop15"\n' +
+                'sleep 120\n' +
+                'composer install && vendor/bin/phpunit --group prestashop15basic\n' +
+                'composer install && vendor/bin/phpunit --group prestashop15install\n' +
+                'composer install && vendor/bin/phpunit --group prestashop15register\n' +
+                'composer install && vendor/bin/phpunit --group prestashop15buy\n'
             }
         },
         cssmin: {

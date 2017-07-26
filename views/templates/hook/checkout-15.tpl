@@ -7,7 +7,7 @@
  *}
 <link rel="stylesheet" type="text/css" media="all" href="{$css|escape:'quotes'}">
 <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-12 col-md-6">
         <p class="payment_module">
             <a class="bankwire paylater-checkout" href="{$paymentUrl|escape:'html'}" title="{l s='Finance using Paylater' mod='paylater'}">
                 {if version_compare($smarty.const._PS_VERSION_,'1.6','<')}
