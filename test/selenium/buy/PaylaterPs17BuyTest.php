@@ -54,23 +54,12 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
         );
 
         $this->findByName('confirmDeliveryOption')->click();
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::id('payment-option-3')
-            )
+        sleep(5);
+        $this->webDriver->executeScript(
+            'document.querySelector(\'#payment-option-3-container button\').click();'.
+            'document.getElementById(\'conditions_to_approve[terms-and-conditions]\').click();'
         );
 
-        $this->findById('payment-option-3')->click();
-
-        //check we have the simulator:
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::id('conditions_to_approve[terms-and-conditions]')
-            )
-        );
-
-        $this->findById('conditions_to_approve[terms-and-conditions]')->click();
 
         $this->webDriver->wait(5, 500)->until(
             WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id('payment-confirmation'))
