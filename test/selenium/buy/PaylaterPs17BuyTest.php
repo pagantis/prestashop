@@ -46,10 +46,29 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
         $this->findByName('postcode')->clear()->sendKeys('00800');
         $this->findByName('city')->clear()->sendKeys('My city');
         $this->findByClass('btn-primary')->click();
+
+        $this->webDriver->wait(5, 500)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::name('confirmDeliveryOption')
+            )
+        );
+
         $this->findByName('confirmDeliveryOption')->click();
+
+        $this->webDriver->wait(5, 500)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::id('payment-option-3')
+            )
+        );
+
         $this->findById('payment-option-3')->click();
 
         //check we have the simulator:
+        $this->webDriver->wait(5, 500)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::id('conditions_to_approve[terms-and-conditions]')
+            )
+        );
 
         $this->findById('conditions_to_approve[terms-and-conditions]')->click();
 
