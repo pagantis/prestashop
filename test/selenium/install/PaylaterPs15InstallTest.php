@@ -75,7 +75,7 @@ class PaylaterPs15InstallTest extends PaylaterPrestashopTest
             )
         );
 
-        $this->findById('desc-module-new')->click();
+        $this->webDriver->executeScript('document.getElementById("desc-module-new").click();');
 
         $this->webDriver->wait(3, 100)->until(
             WebDriverExpectedCondition::elementToBeClickable(
