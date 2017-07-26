@@ -13,7 +13,7 @@
     }
 </script>
 <span class="js-pmt-payment-type"></span>
-<div class="PmtSimulator"
+<div class="PmtSimulator PmtSimulatorSelectable--claim"
      data-pmt-num-quota="4" data-pmt-max-ins="12" data-pmt-style="blue"
      data-pmt-type="{$simulatorType|escape:'quotes'}"
      data-pmt-amount="{$amount|escape:'quotes'}" data-pmt-expanded="yes">

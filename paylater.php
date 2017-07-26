@@ -307,47 +307,6 @@ class Paylater extends PaymentModule
                     array(
                         'type' => 'radio',
                         'class' => 't',
-                        'label' => $this->l('Include simulator in checkout'),
-                        'name' => 'PAYLATER_ADD_SIMULATOR',
-                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
-                        'desc' => '
-                                <a 
-                                    href="http://docs.pagamastarde.com/marketing/simulador/" 
-                                    target="_blank">' . $this->l("+ Info") . '
-                                </a>
-                            ',
-                        'is_bool' => false,
-                        'values' => array(
-                            array(
-                                'id' => 'simulator',
-                                'value' => 0,
-                                'label' => $this->l('Don\'t display'). '<br>'
-                            ),
-                            array(
-                                'id' => 'simulator',
-                                'value' => 1,
-                                'label' => $this->l('Mini simulator Paylater'). '<br>'
-                            ),
-                            array(
-                                'id' => 'simulator',
-                                'value' => 2,
-                                'label' => $this->l('Complete simulator Paylater'). '<br>'
-                            ),
-                            array(
-                                'id' => 'simulator',
-                                'value' => 3,
-                                'label' => $this->l('Selectable simulator Paylater'). '<br>'
-                            ),
-                            array(
-                                'id' => 'simulator',
-                                'value' => 4,
-                                'label' => $this->l('Descriptive text Paylater'). '<br>'
-                            ),
-                        ),
-                    ),
-                    array(
-                        'type' => 'radio',
-                        'class' => 't',
                         'label' => $this->l('Include simulator in product page'),
                         'name' => 'PAYLATER_PRODUCT_HOOK',
                         'prefix' => '<i class="icon icon-puzzle-piece"></i>',
@@ -393,6 +352,47 @@ class Paylater extends PaymentModule
                         'prefix' => '<i class="icon icon-puzzle-piece"></i>',
                         'is_bool' => false,
                         'values' => array(
+                            array(
+                                'id' => 'simulator',
+                                'value' => 1,
+                                'label' => $this->l('Mini simulator Paylater'). '<br>'
+                            ),
+                            array(
+                                'id' => 'simulator',
+                                'value' => 2,
+                                'label' => $this->l('Complete simulator Paylater'). '<br>'
+                            ),
+                            array(
+                                'id' => 'simulator',
+                                'value' => 3,
+                                'label' => $this->l('Selectable simulator Paylater'). '<br>'
+                            ),
+                            array(
+                                'id' => 'simulator',
+                                'value' => 4,
+                                'label' => $this->l('Descriptive text Paylater'). '<br>'
+                            ),
+                        ),
+                    ),
+                    array(
+                        'type' => 'radio',
+                        'class' => 't',
+                        'label' => $this->l('Include simulator in checkout'),
+                        'name' => 'PAYLATER_ADD_SIMULATOR',
+                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
+                        'desc' => '
+                                <a 
+                                    href="http://docs.pagamastarde.com/marketing/simulador/" 
+                                    target="_blank">' . $this->l("+ Info") . '
+                                </a>
+                            ',
+                        'is_bool' => false,
+                        'values' => array(
+                            array(
+                                'id' => 'simulator',
+                                'value' => 0,
+                                'label' => $this->l('Don\'t display'). '<br>'
+                            ),
                             array(
                                 'id' => 'simulator',
                                 'value' => 1,
