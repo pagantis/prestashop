@@ -78,6 +78,7 @@ class Paylater extends PaymentModule
         Configuration::updateValue('PAYLATER_IFRAME', false);
         Configuration::updateValue('PAYLATER_MIN_AMOUNT', 0);
         Configuration::updateValue('PAYLATER_PRODUCT_HOOK', false);
+        Configuration::updateValue('PAYLATER_PRODUCT_HOOK_TYPE', false);
 
         return (parent::install()
                 && $this->registerHook('displayShoppingCart')
@@ -385,6 +386,36 @@ class Paylater extends PaymentModule
                         ),
                     ),
                     array(
+                        'type' => 'radio',
+                        'class' => 't',
+                        'label' => $this->l('Type of simulator in product page'),
+                        'name' => 'PAYLATER_PRODUCT_HOOK_TYPE',
+                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
+                        'is_bool' => false,
+                        'values' => array(
+                            array(
+                                'id' => 'simulator',
+                                'value' => 1,
+                                'label' => $this->l('Mini simulator Paylater'). '<br>'
+                            ),
+                            array(
+                                'id' => 'simulator',
+                                'value' => 2,
+                                'label' => $this->l('Complete simulator Paylater'). '<br>'
+                            ),
+                            array(
+                                'id' => 'simulator',
+                                'value' => 3,
+                                'label' => $this->l('Selectable simulator Paylater'). '<br>'
+                            ),
+                            array(
+                                'id' => 'simulator',
+                                'value' => 4,
+                                'label' => $this->l('Descriptive text Paylater'). '<br>'
+                            ),
+                        ),
+                    ),
+                    array(
                         'type' => 'text',
                         'size' => 3,
                         'desc' => $this->l('ej: 20'),
@@ -449,7 +480,8 @@ class Paylater extends PaymentModule
             'PAYLATER_ADD_SIMULATOR',
             'PAYLATER_IFRAME',
             'PAYLATER_MIN_AMOUNT',
-            'PAYLATER_PRODUCT_HOOK'
+            'PAYLATER_PRODUCT_HOOK',
+            'PAYLATER_PRODUCT_HOOK_TYPE'
         );
 
         //Different Behavior depending on 1.6 or earlier
@@ -542,6 +574,7 @@ class Paylater extends PaymentModule
 
         $product = new Product(Tools::getValue('id_product'));
         $amount = $product->getPublicPrice();
+        $simulatorType          = Configuration::get('PAYLATER_PRODUCT_HOOK_TYPE');
         $paylaterProd           = Configuration::get('PAYLATER_PROD');
         $paylaterMode           = $paylaterProd == 1 ? 'PROD' : 'TEST';
         $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
@@ -549,7 +582,7 @@ class Paylater extends PaymentModule
         $this->context->smarty->assign(array(
             'amount'                => $amount,
             'publicKey'             => $paylaterPublicKey,
-            'simulatorType'         => 2,
+            'simulatorType'         => $simulatorType,
         ));
 
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');
