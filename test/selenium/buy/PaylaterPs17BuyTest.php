@@ -57,10 +57,12 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
 
         $this->webDriver->wait(5, 50)->until(
             WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::id('payment-option-3')
+                WebDriverBy::cssSelector('[for=payment-option-3]')
             )
         );
-        $this->findById('payment-option-3')->click();
+        $this->webDriver->findElement(WebDriverBy::cssSelector('[for=payment-option-3]'))
+                        ->click();
+
         $this->findById('conditions_to_approve[terms-and-conditions]')->click();
 
         $this->webDriver->wait(5, 50)->until(
