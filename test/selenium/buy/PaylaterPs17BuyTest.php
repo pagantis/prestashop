@@ -54,19 +54,23 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
         );
 
         $this->findByName('confirmDeliveryOption')->click();
-        sleep(5);
-        $this->webDriver->executeScript(
-            'document.querySelector(\'#payment-option-3-container button\').click();'.
-            'document.getElementById(\'conditions_to_approve[terms-and-conditions]\').click();'
+
+        $this->webDriver->wait(5, 50)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::id('payment-option-3')
+            )
         );
+        $this->findById('payment-option-3')->click();
+        $this->findById('conditions_to_approve[terms-and-conditions]')->click();
 
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id('payment-confirmation'))
+        $this->webDriver->wait(5, 50)->until(
+            WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::cssSelector(
+                '#payment-confirmation button'
+            ))
         );
-        $this->findById('payment-confirmation')->click();
+        $this->webDriver->findElement(WebDriverBy::cssSelector('#payment-confirmation button'))->click();
 
-        $this->webDriver->wait(10, 500)->until(
+        $this->webDriver->wait(10, 50)->until(
             WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt('iframe-pagantis')
         );
 
