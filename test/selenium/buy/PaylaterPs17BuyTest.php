@@ -70,6 +70,9 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
                 '#payment-confirmation button'
             ))
         );
+
+        sleep(1);
+
         $this->webDriver->findElement(WebDriverBy::cssSelector('#payment-confirmation button'))->click();
 
         $this->webDriver->wait(10, 50)->until(
