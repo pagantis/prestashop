@@ -38,26 +38,26 @@ class PaylaterApiModuleFrontController extends ModuleFrontController
             $payment = 'Paga+Tarde';
         }
 
-        try {
+        if (_PS_VERSION_ > '1.6') {
             $orders = new PrestaShopCollection('Order');
-
-            if ($userId) {
-                $orders = $orders->where('id_customer', '=', $userId);
-            }
-            if ($payment) {
-                $orders->where('payment', '=', $payment);
-            }
-            if ($from) {
-                $orders->where('date_add', '>', $from);
-            }
-
-            foreach ($orders as $order) {
-                $this->message[] = $order;
-            }
-        } catch (\Exception $exception) {
-            $this->message = $exception->getMessage();
-            $this->error = true;
+        } else {
+            $orders = new Collection('Order');
         }
+
+        if ($userId) {
+            $orders = $orders->where('id_customer', '=', $userId);
+        }
+        if ($payment) {
+            $orders->where('payment', '=', $payment);
+        }
+        if ($from) {
+            $orders->where('date_add', '>', $from);
+        }
+
+        foreach ($orders as $order) {
+            $this->message[] = $order;
+        }
+
         $this->jsonResponse();
     }
 
@@ -71,20 +71,16 @@ class PaylaterApiModuleFrontController extends ModuleFrontController
             'result' => $this->message,
         ));
 
-        if ($this->error) {
-            header('HTTP/1.1 400 Bad Request', true, 400);
-        } else {
-            header('HTTP/1.1 200 Ok', true, 200);
-        }
-
+        header('HTTP/1.1 200 Ok', true, 200);
         header('Content-Type: application/json', true);
         header('Content-Length: ' . Tools::strlen($result));
 
         echo $result;
+        exit();
     }
 
     /**
-     *
+     * @return bool|null
      */
     public function authorize()
     {
@@ -106,5 +102,6 @@ class PaylaterApiModuleFrontController extends ModuleFrontController
         header('Content-Length: ' . Tools::strlen($result));
 
         echo $result;
+        exit();
     }
 }

@@ -68,6 +68,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         header('Content-Length: ' . Tools::strlen($result));
 
         echo $result;
+        exit();
     }
 
     /**
