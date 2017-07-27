@@ -88,7 +88,7 @@ class PaylaterApiModuleFrontController extends ModuleFrontController
         $paylaterMode = $paylaterProd == 1 ? 'PROD' : 'TEST';
         $privateKey = Configuration::get('PAYLATER_PRIVATE_KEY_'. $paylaterMode);
 
-        if ($privateKey == getallheaders()['Secret']) {
+        if (Tools::getValue('secret', false) == $privateKey) {
             return true;
         }
 
