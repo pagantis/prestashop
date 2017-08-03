@@ -12,12 +12,11 @@ module.exports = function(grunt) {
             },
             runTestPrestashop17: {
                 command:
-                'docker-compose --version\n' +
                 'docker-compose down\n' +
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop17\n' +
                 'echo "Creating the prestashop17"\n' +
-                'sleep 180\n' +
+                'sleep 130\n' +
                 'docker-compose logs prestashop17\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17install\n' +
@@ -26,12 +25,11 @@ module.exports = function(grunt) {
             },
             runTestPrestashop16: {
                 command:
-                'docker-compose --version\n' +
                 'docker-compose down\n' +
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop16\n' +
                 'echo "Creating the prestashop16"\n' +
-                'sleep 180\n' +
+                'sleep 130\n' +
                 'docker-compose logs prestashop16\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16install\n' +
@@ -40,12 +38,11 @@ module.exports = function(grunt) {
             },
             runTestPrestashop15: {
                 command:
-                'docker-compose --version\n' +
                 'docker-compose down\n' +
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop15\n' +
                 'echo "Creating the prestashop15"\n' +
-                'sleep 180\n' +
+                'sleep 130\n' +
                 'docker-compose logs prestashop15\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15install\n' +
