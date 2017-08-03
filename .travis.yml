@@ -3,11 +3,10 @@ sudo: required
 services:
   - docker
 
-addons:
-  hosts:
-  - prestashop15
-  - prestashop16
-  - prestashop17
+language: php
+
+php:
+  - '7.0'
 
 env:
   - DOCKER_COMPOSE_VERSION=1.14.0
@@ -23,6 +22,7 @@ before_install:
   - docker-compose --version
 
 before_script:
+  - 'phpenv config-rm xdebug.ini'
   - 'npm install'
   - 'composer install'
   - 'sudo chmod -R 777 vendor'
