@@ -78,7 +78,6 @@ module.exports = function(grunt) {
                     {src: ['lib/**'], dest: 'paylater/', filter: 'isFile'},
                     {src: ['defaultoverride/**'], dest: 'paylater/', filter: 'isFile'},
                     {src: ['views/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: 'config.xml', dest: 'paylater/'},
                     {src: 'index.php', dest: 'paylater/'},
                     {src: 'paylater.php', dest: 'paylater/'},
                     {src: 'logo.png', dest: 'paylater/'},
