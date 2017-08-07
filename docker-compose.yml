@@ -13,7 +13,7 @@ services:
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
       - PS_INSTALL_AUTO=1
-      - DB_SERVER=db-56
+      - DB_SERVER=db-ps15
       - DB_NAME=prestashop15
       - DB_PREFIX=ps_
       - DB_PASSWD=password
@@ -36,7 +36,7 @@ services:
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
       - PS_INSTALL_AUTO=1
-      - DB_SERVER=db-57
+      - DB_SERVER=db-ps16
       - DB_NAME=prestashop16
       - DB_PREFIX=ps_
       - DB_PASSWD=password
@@ -59,7 +59,7 @@ services:
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
       - PS_INSTALL_AUTO=1
-      - DB_SERVER=db-57
+      - DB_SERVER=db-ps17
       - DB_NAME=prestashop17
       - DB_PREFIX=ps_
       - DB_PASSWD=password
@@ -82,7 +82,7 @@ services:
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
       - PS_INSTALL_AUTO=1
-      - DB_SERVER=db-57
+      - DB_SERVER=db-ps18
       - DB_NAME=prestashop18
       - DB_PREFIX=ps_
       - DB_PASSWD=password
@@ -93,15 +93,6 @@ services:
       - ./:/var/www/html/modules/paylater
     ports:
       - "8018:80"
-  db-ps18:
-    image: mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=prestashop18
-    networks:
-      - internal
-    ports:
-      - "2034:3306"
   db-ps18:
     image: mysql
     environment:
