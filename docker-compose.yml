@@ -4,7 +4,7 @@ services:
   prestashop15:
     image: prestashop/prestashop:1.5
     depends_on:
-      - db-56
+      - db-ps15
     environment:
       - PS_DEV_MODE=1
       - PS_COUNTRY=es
@@ -27,7 +27,7 @@ services:
   prestashop16:
     image: prestashop/prestashop:1.6
     depends_on:
-      - db-57
+      - db-ps16
     environment:
       - PS_DEV_MODE=1
       - PS_COUNTRY=es
@@ -50,7 +50,7 @@ services:
   prestashop17:
     image: prestashop/prestashop:1.7
     depends_on:
-      - db-57
+      - db-ps17
     environment:
       - PS_DEV_MODE=1
       - PS_COUNTRY=es
@@ -73,7 +73,7 @@ services:
   prestashop18:
     image: prestashop/prestashop:latest
     depends_on:
-      - db-57
+      - db-ps18
     environment:
       - PS_DEV_MODE=1
       - PS_COUNTRY=es
@@ -93,20 +93,47 @@ services:
       - ./:/var/www/html/modules/paylater
     ports:
       - "8018:80"
-  db-57:
+  db-ps18:
     image: mysql
     environment:
       - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=prestashop
+      - MYSQL_DATABASE=prestashop18
     networks:
       - internal
     ports:
       - "2034:3306"
-  db-56:
+  db-ps18:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=prestashop18
+    networks:
+      - internal
+    ports:
+      - "2034:3306"
+  db-ps17:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=prestashop17
+    networks:
+      - internal
+    ports:
+      - "2034:3306"
+  db-ps16:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=prestashop16
+    networks:
+      - internal
+    ports:
+      - "2034:3306"
+  db-ps15:
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=prestashop
+      - MYSQL_DATABASE=prestashop15
     networks:
       - internal
     ports:
