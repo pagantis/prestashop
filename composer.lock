@@ -97,20 +97,20 @@
         },
         {
             "name": "pagamastarde/autoindex",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PagaMasTarde/autoindex.git",
-                "reference": "c535734bc346b2de57babba074faeb11c147496a"
+                "reference": "1a32f749f86fa5bcc985511bc7e570e99e721b45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/autoindex/zipball/c535734bc346b2de57babba074faeb11c147496a",
-                "reference": "c535734bc346b2de57babba074faeb11c147496a",
+                "url": "https://api.github.com/repos/PagaMasTarde/autoindex/zipball/1a32f749f86fa5bcc985511bc7e570e99e721b45",
+                "reference": "1a32f749f86fa5bcc985511bc7e570e99e721b45",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4"
+                "php": ">=5.3"
             },
             "type": "module",
             "extra": {
@@ -136,26 +136,26 @@
                 "module",
                 "prestashop"
             ],
-            "time": "2017-07-12T08:28:38+00:00"
+            "time": "2017-08-08T15:38:57+00:00"
         },
         {
             "name": "pagamastarde/pmt-api-client",
-            "version": "v1.2.1",
+            "version": "v1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PagaMasTarde/pmtApiClient.git",
-                "reference": "6ae0b13e35a745616f781054d389f4d0ee8759d1"
+                "reference": "1b19fc37fd26ae9c021045b81b591a485bb09914"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/pmtApiClient/zipball/6ae0b13e35a745616f781054d389f4d0ee8759d1",
-                "reference": "6ae0b13e35a745616f781054d389f4d0ee8759d1",
+                "url": "https://api.github.com/repos/PagaMasTarde/pmtApiClient/zipball/1b19fc37fd26ae9c021045b81b591a485bb09914",
+                "reference": "1b19fc37fd26ae9c021045b81b591a485bb09914",
                 "shasum": ""
             },
             "require": {
                 "nategood/httpful": "*",
                 "nayjest/str-case-converter": "^1.0",
-                "php": ">=5.4"
+                "php": ">=5.3"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.8"
@@ -177,24 +177,24 @@
                 }
             ],
             "description": "PagaMasTarde Api Client in PHP. Use the api with simple methods and using POO.",
-            "time": "2017-07-12T13:52:26+00:00"
+            "time": "2017-08-08T15:53:26+00:00"
         },
         {
             "name": "pagamastarde/shopper-library",
-            "version": "v1.0.4",
+            "version": "v1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PagaMasTarde/shopperLibrary.git",
-                "reference": "cef281e9b791f932f3c1903e2d86f565f1b4a5f8"
+                "reference": "87906d414d6ac7fbe6b6dc5856d254061ba10f9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/shopperLibrary/zipball/cef281e9b791f932f3c1903e2d86f565f1b4a5f8",
-                "reference": "cef281e9b791f932f3c1903e2d86f565f1b4a5f8",
+                "url": "https://api.github.com/repos/PagaMasTarde/shopperLibrary/zipball/87906d414d6ac7fbe6b6dc5856d254061ba10f9a",
+                "reference": "87906d414d6ac7fbe6b6dc5856d254061ba10f9a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4"
+                "php": ">=5.3"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.8"
@@ -216,7 +216,7 @@
                 }
             ],
             "description": "Library with the models of the shop modules and shopper client",
-            "time": "2017-07-10T16:29:43+00:00"
+            "time": "2017-08-08T10:06:18+00:00"
         }
     ],
     "packages-dev": [
@@ -1246,7 +1246,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.25",
+            "version": "v2.8.26",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",

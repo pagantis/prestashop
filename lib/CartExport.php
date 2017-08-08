@@ -17,24 +17,24 @@ class CartExport
     public static function export(CartCore $cartCore)
     {
         if (_PS_VERSION_ >= 1.7) {
-            return (object) [
+            return (object) array(
                 'orderId' => $cartCore->id,
                 'items' => $cartCore->getProducts(true),
                 'amount' => intval(100 * $cartCore->getOrderTotal()),
                 'shipping' => $cartCore->getTotalShippingCost(),
                 'summary' => json_decode(json_encode($cartCore->getSummaryDetails()))
-            ];
+            );
         }
 
         if (_PS_VERSION_ < 1.7) {
-            return (object) [
+            return (object) array(
                 'orderId' => $cartCore->id,
                 'items' => $cartCore->getProducts(true),
                 'amount' => intval(100 * $cartCore->getOrderTotal()),
                 'shipping' => $cartCore->getTotalShippingCost(),
                 'summary' => json_decode(json_encode($cartCore->getSummaryDetails()))
-            ];
+            );
         }
-        return (object) [];
+        return (object) array();
     }
 }

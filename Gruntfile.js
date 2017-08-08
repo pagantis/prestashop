@@ -1,6 +1,9 @@
 module.exports = function(grunt) {
     grunt.initConfig({
         shell: {
+            rename: {
+                command: 'mv paylater.zip paylater-$(git rev-parse --abbrev-ref HEAD).zip'
+            },
             autoindex: {
                 command: 'php vendor/pagamastarde/autoindex/index.php .'
             },
@@ -106,6 +109,7 @@ module.exports = function(grunt) {
         'shell:autoindex',
         'compress',
         'shell:composerDev',
+        'shell:rename'
     ]);
 
     //manually run the selenium test: "grunt shell:testPrestashop16"
