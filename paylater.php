@@ -42,7 +42,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '6.0.5';
+        $this->version = '6.0.6';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -521,6 +521,8 @@ class Paylater extends PaymentModule
 
     /**
      * Hook to show payment method, this only applies on prestashop <= 1.6
+     *
+     * @param mixed $params
      *
      * @return string
      */
