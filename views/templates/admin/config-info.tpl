@@ -23,7 +23,7 @@
                 <img src="{$logo|escape:'quotes'}"/>
             </div>
         </section>
-        {$form nofilter}
+        {$form|escape:'quotes'}
         {if version_compare($smarty.const._PS_VERSION_,'1.6','<')}
             <script type="text/javascript">
                 var d = document.getElementById("module_form");

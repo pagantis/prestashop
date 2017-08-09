@@ -3,7 +3,6 @@ module.exports = function(grunt) {
         shell: {
             rename: {
                 command:
-                'rm paylater-v*.zip \n' +
                 'cp paylater.zip paylater-$(git rev-parse --abbrev-ref HEAD).zip \n'
             },
             autoindex: {
