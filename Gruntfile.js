@@ -2,7 +2,9 @@ module.exports = function(grunt) {
     grunt.initConfig({
         shell: {
             rename: {
-                command: 'cp paylater.zip paylater-$(git rev-parse --abbrev-ref HEAD).zip'
+                command:
+                'rm paylater-v*.zip \n' +
+                'cp paylater.zip paylater-$(git rev-parse --abbrev-ref HEAD).zip \n'
             },
             autoindex: {
                 command:
