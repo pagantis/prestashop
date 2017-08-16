@@ -76,7 +76,7 @@ class Paylater extends PaymentModule
         Configuration::updateValue('PAYLATER_DISCOUNT', false);
         Configuration::updateValue('PAYLATER_ADD_SIMULATOR', false);
         Configuration::updateValue('PAYLATER_IFRAME', false);
-        Configuration::updateValue('PAYLATER_MIN_AMOUNT', 0);
+        Configuration::updateValue('PAYLATER_MIN_AMOUNT', '0.00');
         Configuration::updateValue('PAYLATER_PRODUCT_HOOK', false);
         Configuration::updateValue('PAYLATER_PRODUCT_HOOK_TYPE', false);
 
@@ -447,6 +447,8 @@ class Paylater extends PaymentModule
         $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->tpl_vars = array(
+            'module_dir' => '',
+            'uri' => $this->getPathUri(),
             'fields_value' => $settings,
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
@@ -463,7 +465,6 @@ class Paylater extends PaymentModule
     public function getContent()
     {
         $error = '';
-        $message = '';
         $settings = array();
         $settingsKeys = array(
             'PAYLATER_PROD',
@@ -506,7 +507,11 @@ class Paylater extends PaymentModule
             }
         } else {
             foreach ($settingsKeys as $key) {
-                $settings[$key] = Configuration::get($key);
+                switch ($key) {
+                    default:
+                        $settings[$key] = Configuration::get($key);
+                        break;
+                }
             }
         }
 
