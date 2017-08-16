@@ -485,12 +485,13 @@ class Paylater extends PaymentModule
                 Configuration::updateValue($key, $value);
                 $settings[$key] = $value;
             }
-            $confirmation = $this->displayConfirmation($this->l('Se han guardado los cambios'));
+            $confirmation = $this->displayConfirmation($this->l('All changes have been saved'));
         } else {
             foreach ($settingsKeys as $key) {
                 switch ($key) {
                     case 'PAYLATER_MIN_AMOUNT':
-                        $settings[$key] = Configuration::get((int)$key);
+                        $value = Configuration::get($key);
+                        $settings[$key] = $value;
                         break;
 
                     default:
