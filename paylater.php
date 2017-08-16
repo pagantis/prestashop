@@ -76,7 +76,7 @@ class Paylater extends PaymentModule
         Configuration::updateValue('PAYLATER_DISCOUNT', false);
         Configuration::updateValue('PAYLATER_ADD_SIMULATOR', false);
         Configuration::updateValue('PAYLATER_IFRAME', false);
-        Configuration::updateValue('PAYLATER_MIN_AMOUNT', 0);
+        Configuration::updateValue('PAYLATER_MIN_AMOUNT', '0.00');
         Configuration::updateValue('PAYLATER_PRODUCT_HOOK', false);
         Configuration::updateValue('PAYLATER_PRODUCT_HOOK_TYPE', false);
 
@@ -447,6 +447,8 @@ class Paylater extends PaymentModule
         $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->tpl_vars = array(
+            'module_dir' => '',
+            'uri' => $this->getPathUri(),
             'fields_value' => $settings,
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
@@ -462,8 +464,7 @@ class Paylater extends PaymentModule
      */
     public function getContent()
     {
-        $error = "";
-        $confirmation = "";
+        $error = '';
         $settings = array();
         $settingsKeys = array(
             'PAYLATER_PROD',
@@ -502,22 +503,11 @@ class Paylater extends PaymentModule
                         $settings[$key] = $value;
                         break;
                 }
+                $message = $this->displayConfirmation($this->l('All changes have been saved'));
             }
         } else {
             foreach ($settingsKeys as $key) {
                 switch ($key) {
-                    case 'PAYLATER_MIN_AMOUNT':
-                        $value = Configuration::get($key);
-                        if (!$value) {
-                            $value = 0;
-                        }
-                        if (!is_numeric($value)) {
-                            $error = $this->l('invalid value for MinAmount');
-                            break;
-                        }
-                        $settings[$key] = $value;
-                        break;
-
                     default:
                         $settings[$key] = Configuration::get($key);
                         break;
@@ -525,9 +515,7 @@ class Paylater extends PaymentModule
             }
         }
 
-        if (!$error) {
-            $message = $this->displayConfirmation($this->l('All changes have been saved'));
-        } else {
+        if ($error) {
             $message = $this->displayError($error);
         }
 
