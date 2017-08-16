@@ -185,11 +185,11 @@ class Paylater extends PaymentModule
         ;
 
         if (_PS_VERSION_ >= 1.7) {
-            $paymentOption    ->setAdditionalInformation(
+            $paymentOption->setAdditionalInformation(
                 $this->fetch('module:paylater/views/templates/hook/checkout-17.tpl')
             );
         } else {
-            $paymentOption    ->setAdditionalInformation(
+            $paymentOption->setAdditionalInformation(
                 $this->fetch('module:paylater/views/templates/hook/checkout-15.tpl')
             );
         }
@@ -380,12 +380,6 @@ class Paylater extends PaymentModule
                         'label' => $this->l('Include simulator in checkout'),
                         'name' => 'PAYLATER_ADD_SIMULATOR',
                         'prefix' => '<i class="icon icon-puzzle-piece"></i>',
-                        'desc' => '
-                                <a 
-                                    href="http://docs.pagamastarde.com/marketing/simulador/" 
-                                    target="_blank">' . $this->l("+ Info") . '
-                                </a>
-                            ',
                         'is_bool' => false,
                         'values' => array(
                             array(
@@ -417,7 +411,7 @@ class Paylater extends PaymentModule
                     ),
                     array(
                         'type' => 'text',
-                        'size' => 3,
+                        'size' => 4,
                         'desc' => $this->l('ej: 20'),
                         'label' => $this->l('MinAmount to display Paylater'),
                         'name' => 'PAYLATER_MIN_AMOUNT',
