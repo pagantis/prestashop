@@ -462,6 +462,7 @@ class Paylater extends PaymentModule
      */
     public function getContent()
     {
+        $error = "";
         $confirmation = "";
         $settings = array();
         $settingsKeys = array(
@@ -481,16 +482,39 @@ class Paylater extends PaymentModule
         //Different Behavior depending on 1.6 or earlier
         if (Tools::isSubmit('submit'.$this->name)) {
             foreach ($settingsKeys as $key) {
-                $value = Tools::getValue($key);
-                Configuration::updateValue($key, $value);
-                $settings[$key] = $value;
+                switch ($key) {
+                    case 'PAYLATER_MIN_AMOUNT':
+                        $value = Tools::getValue($key);
+                        if (!$value) {
+                            $value = 0;
+                        }
+                        if (!is_numeric($value)) {
+                            $error = $this->l('invalid value for MinAmount');
+                            break;
+                        }
+                        Configuration::updateValue($key, $value);
+                        $settings[$key] = $value;
+                        break;
+
+                    default:
+                        $value = Tools::getValue($key);
+                        Configuration::updateValue($key, $value);
+                        $settings[$key] = $value;
+                        break;
+                }
             }
-            $confirmation = $this->displayConfirmation($this->l('All changes have been saved'));
         } else {
             foreach ($settingsKeys as $key) {
                 switch ($key) {
                     case 'PAYLATER_MIN_AMOUNT':
                         $value = Configuration::get($key);
+                        if (!$value) {
+                            $value = 0;
+                        }
+                        if (!is_numeric($value)) {
+                            $error = $this->l('invalid value for MinAmount');
+                            break;
+                        }
                         $settings[$key] = $value;
                         break;
 
@@ -501,13 +525,19 @@ class Paylater extends PaymentModule
             }
         }
 
+        if (!$error) {
+            $message = $this->displayConfirmation($this->l('All changes have been saved'));
+        } else {
+            $message = $this->displayError($error);
+        }
+
         $logo = $this->getPathUri(). 'views/img/logo-229x130.png';
         $css = $this->getPathUri(). 'views/css/paylater.css';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
             'form' => $this->renderForm($settings),
-            'confirmation' => $confirmation,
+            'message' => $message,
             'css' => $css
         ));
 

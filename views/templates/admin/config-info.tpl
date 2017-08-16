@@ -7,7 +7,7 @@
  *}
 {block name="form"}
     <link rel="stylesheet" type="text/css" media="all" href="{$css|escape:'quotes'}">
-    {$confirmation|escape:'quotes'}
+    {$message|escape:'quotes'}
     <div class="paylater-content-form">
         <section class="section">
             <div class="column-left">
