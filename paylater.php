@@ -447,8 +447,6 @@ class Paylater extends PaymentModule
         $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->tpl_vars = array(
-            'module_dir' => '',
-            'uri' => $this->getPathUri(),
             'fields_value' => $settings,
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
@@ -465,6 +463,7 @@ class Paylater extends PaymentModule
     public function getContent()
     {
         $error = '';
+        $message = '';
         $settings = array();
         $settingsKeys = array(
             'PAYLATER_PROD',
@@ -507,11 +506,7 @@ class Paylater extends PaymentModule
             }
         } else {
             foreach ($settingsKeys as $key) {
-                switch ($key) {
-                    default:
-                        $settings[$key] = Configuration::get($key);
-                        break;
-                }
+                $settings[$key] = Configuration::get($key);
             }
         }
 
