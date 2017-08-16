@@ -76,7 +76,7 @@ class Paylater extends PaymentModule
         Configuration::updateValue('PAYLATER_DISCOUNT', false);
         Configuration::updateValue('PAYLATER_ADD_SIMULATOR', false);
         Configuration::updateValue('PAYLATER_IFRAME', false);
-        Configuration::updateValue('PAYLATER_MIN_AMOUNT', '0.00');
+        Configuration::updateValue('PAYLATER_MIN_AMOUNT', 0);
         Configuration::updateValue('PAYLATER_PRODUCT_HOOK', false);
         Configuration::updateValue('PAYLATER_PRODUCT_HOOK_TYPE', false);
 
