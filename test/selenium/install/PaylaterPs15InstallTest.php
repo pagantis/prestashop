@@ -163,7 +163,7 @@ class PaylaterPs15InstallTest extends PaylaterPrestashopTest
         );
 
         $this->assertContains(
-            'Se han guardado los cambios',
+            'All changes have been saved',
             $this->findByClass('module_confirmation')->getText()
         );
     }
