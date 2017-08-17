@@ -577,17 +577,16 @@ class Paylater extends PaymentModule
     public function productPageSimulatorDisplay($functionName)
     {
         $productConfiguration = Configuration::get('PAYLATER_PRODUCT_HOOK');
-
-        if ($functionName != $productConfiguration) {
-            return null;
-        }
-
         $product = new Product(Tools::getValue('id_product'));
         $amount = $product->getPublicPrice();
         $simulatorType          = Configuration::get('PAYLATER_PRODUCT_HOOK_TYPE');
         $paylaterProd           = Configuration::get('PAYLATER_PROD');
         $paylaterMode           = $paylaterProd == 1 ? 'PROD' : 'TEST';
         $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
+
+        if ($functionName != $productConfiguration || $amount <= 0) {
+            return null;
+        }
 
         $this->context->smarty->assign(array(
             'amount'                => $amount,
