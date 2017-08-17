@@ -35,7 +35,7 @@
         </div>
     </div>
     <!-- Payment Form Render -->
-    {$form nofilter}
+    {$form|escape:'quotes'}
     <!-- functionality for iframe or redirect -->
     {if $iframe == true }
         <script type="text/javascript">

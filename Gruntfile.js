@@ -2,10 +2,13 @@ module.exports = function(grunt) {
     grunt.initConfig({
         shell: {
             rename: {
-                command: 'cp paylater.zip paylater-$(git rev-parse --abbrev-ref HEAD).zip'
+                command:
+                'cp paylater.zip paylater-$(git rev-parse --abbrev-ref HEAD).zip \n'
             },
             autoindex: {
-                command: 'php vendor/pagamastarde/autoindex/index.php .'
+                command:
+                'php vendor/pagamastarde/autoindex/index.php . \n' +
+                'rm -rf vendor/pagamastarde/autoindex \n'
             },
             composerProd: {
                 command: 'rm -rf vendor && composer install --no-dev'

@@ -42,7 +42,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '6.0.6';
+        $this->version = '6.0.7';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -185,11 +185,11 @@ class Paylater extends PaymentModule
         ;
 
         if (_PS_VERSION_ >= 1.7) {
-            $paymentOption    ->setAdditionalInformation(
+            $paymentOption->setAdditionalInformation(
                 $this->fetch('module:paylater/views/templates/hook/checkout-17.tpl')
             );
         } else {
-            $paymentOption    ->setAdditionalInformation(
+            $paymentOption->setAdditionalInformation(
                 $this->fetch('module:paylater/views/templates/hook/checkout-15.tpl')
             );
         }
@@ -380,12 +380,6 @@ class Paylater extends PaymentModule
                         'label' => $this->l('Include simulator in checkout'),
                         'name' => 'PAYLATER_ADD_SIMULATOR',
                         'prefix' => '<i class="icon icon-puzzle-piece"></i>',
-                        'desc' => '
-                                <a 
-                                    href="http://docs.pagamastarde.com/marketing/simulador/" 
-                                    target="_blank">' . $this->l("+ Info") . '
-                                </a>
-                            ',
                         'is_bool' => false,
                         'values' => array(
                             array(
@@ -417,7 +411,7 @@ class Paylater extends PaymentModule
                     ),
                     array(
                         'type' => 'text',
-                        'size' => 3,
+                        'size' => 4,
                         'desc' => $this->l('ej: 20'),
                         'label' => $this->l('MinAmount to display Paylater'),
                         'name' => 'PAYLATER_MIN_AMOUNT',
@@ -468,7 +462,8 @@ class Paylater extends PaymentModule
      */
     public function getContent()
     {
-        $confirmation = "";
+        $error = '';
+        $message = '';
         $settings = array();
         $settingsKeys = array(
             'PAYLATER_PROD',
@@ -487,23 +482,36 @@ class Paylater extends PaymentModule
         //Different Behavior depending on 1.6 or earlier
         if (Tools::isSubmit('submit'.$this->name)) {
             foreach ($settingsKeys as $key) {
-                $value = Tools::getValue($key);
-                Configuration::updateValue($key, $value);
-                $settings[$key] = $value;
-            }
-            $confirmation = $this->displayConfirmation($this->l('Se han guardado los cambios'));
-        } else {
-            foreach ($settingsKeys as $key) {
                 switch ($key) {
                     case 'PAYLATER_MIN_AMOUNT':
-                        $settings[$key] = Configuration::get((int)$key);
+                        $value = Tools::getValue($key);
+                        if (!$value) {
+                            $value = 0;
+                        }
+                        if (!is_numeric($value)) {
+                            $error = $this->l('invalid value for MinAmount');
+                            break;
+                        }
+                        Configuration::updateValue($key, $value);
+                        $settings[$key] = $value;
                         break;
 
                     default:
-                        $settings[$key] = Configuration::get($key);
+                        $value = Tools::getValue($key);
+                        Configuration::updateValue($key, $value);
+                        $settings[$key] = $value;
                         break;
                 }
+                $message = $this->displayConfirmation($this->l('All changes have been saved'));
             }
+        } else {
+            foreach ($settingsKeys as $key) {
+                $settings[$key] = Configuration::get($key);
+            }
+        }
+
+        if ($error) {
+            $message = $this->displayError($error);
         }
 
         $logo = $this->getPathUri(). 'views/img/logo-229x130.png';
@@ -512,7 +520,7 @@ class Paylater extends PaymentModule
         $this->context->smarty->assign(array(
             'logo' => $logo,
             'form' => $this->renderForm($settings),
-            'confirmation' => $confirmation,
+            'message' => $message,
             'css' => $css
         ));
 
@@ -569,17 +577,16 @@ class Paylater extends PaymentModule
     public function productPageSimulatorDisplay($functionName)
     {
         $productConfiguration = Configuration::get('PAYLATER_PRODUCT_HOOK');
-
-        if ($functionName != $productConfiguration) {
-            return null;
-        }
-
         $product = new Product(Tools::getValue('id_product'));
         $amount = $product->getPublicPrice();
         $simulatorType          = Configuration::get('PAYLATER_PRODUCT_HOOK_TYPE');
         $paylaterProd           = Configuration::get('PAYLATER_PROD');
         $paylaterMode           = $paylaterProd == 1 ? 'PROD' : 'TEST';
         $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
+
+        if ($functionName != $productConfiguration || $amount <= 0) {
+            return null;
+        }
 
         $this->context->smarty->assign(array(
             'amount'                => $amount,
