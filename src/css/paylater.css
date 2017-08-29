@@ -186,15 +186,6 @@
     line-height: 2;
 }
 
-p.payment_module a.paylater-checkout {
-    background-image: url('/modules/paylater/views/img/logo-64x64.png');
-    background-size: 64px !important;
-}
-
-.paylater-checkout {
-    background-size: 64px !important;
-}
-
 #module_form_submit_btn {
     float: right;
     margin-right: 60px;
