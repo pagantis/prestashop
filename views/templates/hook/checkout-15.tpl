@@ -23,8 +23,8 @@
                     <span class="js-pmt-payment-type"></span>
                     <div class="PmtSimulator"
                          data-pmt-num-quota="4" data-pmt-max-ins="12" data-pmt-style="blue"
-                         data-pmt-type="{$simulatorType|escape:'quotes'}"
-                         data-pmt-discount="{$discount|escape:'quotes'}" data-pmt-amount="{$amount|escape:'quotes'}" data-pmt-expanded="yes">
+                         data-pmt-type="{if $simulatorType != 1}{$simulatorType|escape:'quotes'}{else}2{/if}"
+                         data-pmt-discount="{$discount|escape:'quotes'}" data-pmt-amount="{$amount|escape:'quotes'}" data-pmt-expanded="{if $simulatorType == 1}no{else}yes{/if}">
                     </div>
                     <script type="text/javascript">
                         if (typeof pmtClient !== 'undefined') {

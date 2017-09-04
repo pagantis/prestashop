@@ -587,6 +587,7 @@ class Paylater extends PaymentModule
         $paylaterProd           = Configuration::get('PAYLATER_PROD');
         $paylaterMode           = $paylaterProd == 1 ? 'PROD' : 'TEST';
         $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
+        $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
 
         if ($functionName != $productConfiguration || $amount <= 0) {
             return null;
@@ -596,6 +597,7 @@ class Paylater extends PaymentModule
             'amount'                => $amount,
             'publicKey'             => $paylaterPublicKey,
             'simulatorType'         => $simulatorType,
+            'discount'              => $paylaterDiscount ? 1 : 0,
         ));
 
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');
