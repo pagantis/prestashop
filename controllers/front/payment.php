@@ -47,8 +47,8 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         $discount = Configuration::get('PAYLATER_DISCOUNT');
         $link = Tools::getHttpHost(true).__PS_BASE_URI__;
         $spinner = $link . ('modules/paylater/views/img/spinner.gif');
-        $css = 'http://shopper.pagamastarde.localhost/css/paylater-modal.min.css';
-        $prestashopCss = 'http://shopper.pagamastarde.localhost/css/paylater-prestashop.min.css';
+        $css = 'http://shopper.pagamastarde.com/css/paylater-modal.min.css';
+        $prestashopCss = 'http://shopper.pagamastarde.com/css/paylater-prestashop.min.css';
 
         $prestashopObjectModule = new \ShopperLibrary\ObjectModule\PrestashopObjectModule();
         $prestashopObjectModule
