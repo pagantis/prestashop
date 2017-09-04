@@ -6,6 +6,7 @@
  * @license   proprietary
  *}
 
+<link rel="stylesheet" type="text/css" media="all" href="{$prestashopCss|escape:'quotes'}">
 <link rel="stylesheet" type="text/css" media="all" href="{$css|escape:'quotes'}">
 <div class="paylater-content">
     <!-- Title and spinner -->
