@@ -515,8 +515,8 @@ class Paylater extends PaymentModule
         }
 
         $logo = $this->getPathUri(). 'views/img/logo-229x130.png';
-        $css = 'http://shopper.pagamastarde.com/css/paylater-modal.min.css';
-        $prestashopCss = 'http://shopper.pagamastarde.com/css/paylater-prestashop.min.css';
+        $css = 'https://shopper.pagamastarde.com/css/paylater-modal.min.css';
+        $prestashopCss = 'https://shopper.pagamastarde.com/css/paylater-prestashop.min.css';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
@@ -551,8 +551,8 @@ class Paylater extends PaymentModule
         $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
         $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
         $paylaterAddSimulator   = Configuration::get('PAYLATER_ADD_SIMULATOR');
-        $css = 'http://shopper.pagamastarde.com/css/paylater-modal.min.css';
-        $prestashopCss = 'http://shopper.pagamastarde.com/css/paylater-prestashop.min.css';
+        $css = 'https://shopper.pagamastarde.com/css/paylater-modal.min.css';
+        $prestashopCss = 'https://shopper.pagamastarde.com/css/paylater-prestashop.min.css';
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
