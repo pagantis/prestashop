@@ -59,17 +59,6 @@ module.exports = function(grunt) {
                 'composer install && vendor/bin/phpunit --group prestashop15buy\n'
             }
         },
-        cssmin: {
-            target: {
-                files: [{
-                    expand: true,
-                    cwd: 'src/css',
-                    src: ['*.css', '!*.min.css'],
-                    dest: 'views/css',
-                    ext: '.css'
-                }]
-            }
-        },
         compress: {
             main: {
                 options: {
@@ -104,10 +93,8 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-contrib-compress');
-    grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.registerTask('default', [
         'shell:composerDev',
-        'cssmin',
         'shell:composerProd',
         'shell:autoindex',
         'compress',

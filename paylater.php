@@ -42,7 +42,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '6.0.7';
+        $this->version = '6.1.0';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -515,13 +515,15 @@ class Paylater extends PaymentModule
         }
 
         $logo = $this->getPathUri(). 'views/img/logo-229x130.png';
-        $css = $this->getPathUri(). 'views/css/paylater.css';
+        $css = 'http://shopper.pagamastarde.com/css/paylater-modal.min.css';
+        $prestashopCss = 'http://shopper.pagamastarde.com/css/paylater-prestashop.min.css';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
             'form' => $this->renderForm($settings),
             'message' => $message,
-            'css' => $css
+            'css' => $css,
+            'prestashopCss' => $prestashopCss,
         ));
 
         return $this->context->smarty->fetch($tpl);
@@ -549,7 +551,8 @@ class Paylater extends PaymentModule
         $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
         $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
         $paylaterAddSimulator   = Configuration::get('PAYLATER_ADD_SIMULATOR');
-        $css = $this->getPathUri(). 'views/css/paylater.css';
+        $css = 'http://shopper.pagamastarde.com/css/paylater-modal.min.css';
+        $prestashopCss = 'http://shopper.pagamastarde.com/css/paylater-prestashop.min.css';
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
@@ -559,6 +562,7 @@ class Paylater extends PaymentModule
             'includeSimulator'      => $paylaterAddSimulator == 0 ? false : true,
             'simulatorType'         => $paylaterAddSimulator,
             'css'                   => $css,
+            'prestashopCss'         =>  $prestashopCss,
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment')
         ));
 
@@ -583,6 +587,7 @@ class Paylater extends PaymentModule
         $paylaterProd           = Configuration::get('PAYLATER_PROD');
         $paylaterMode           = $paylaterProd == 1 ? 'PROD' : 'TEST';
         $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
+        $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
 
         if ($functionName != $productConfiguration || $amount <= 0) {
             return null;
@@ -592,6 +597,7 @@ class Paylater extends PaymentModule
             'amount'                => $amount,
             'publicKey'             => $paylaterPublicKey,
             'simulatorType'         => $simulatorType,
+            'discount'              => $paylaterDiscount ? 1 : 0,
         ));
 
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');

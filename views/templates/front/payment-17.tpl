@@ -8,8 +8,9 @@
 
 {extends file='page.tpl'}
 {block name="page_content"}
+<link rel="stylesheet" type="text/css" media="all" href="{$prestashopCss|escape:'quotes'}">
 <link rel="stylesheet" type="text/css" media="all" href="{$css|escape:'quotes'}">
-<div class="paylater-content">
+    <div class="paylater-content">
     <!-- Title and spinner -->
     <h3>{l s='Starting your financing process' mod='paylater'}</h3>
     <img src="{$spinner|escape:'quotes'}">

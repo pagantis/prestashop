@@ -6,6 +6,7 @@
  * @license   proprietary
  *}
 {block name="form"}
+    <link rel="stylesheet" type="text/css" media="all" href="{$prestashopCss|escape:'quotes'}">
     <link rel="stylesheet" type="text/css" media="all" href="{$css|escape:'quotes'}">
     {$message|escape:'quotes'}
     <div class="paylater-content-form">
