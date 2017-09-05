@@ -93,7 +93,6 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-contrib-compress');
-    grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.registerTask('default', [
         'shell:composerDev',
         'shell:composerProd',
