@@ -514,7 +514,7 @@ class Paylater extends PaymentModule
             $message = $this->displayError($error);
         }
 
-        $logo = $this->getPathUri(). 'views/img/logo-229x130.png';
+        $logo = $this->getPathUri(). 'views/img/logo_pagamastarde.png';
         $css = 'https://shopper.pagamastarde.com/css/paylater-modal.min.css';
         $prestashopCss = 'https://shopper.pagamastarde.com/css/paylater-prestashop.min.css';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
