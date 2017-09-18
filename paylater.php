@@ -24,12 +24,12 @@ class Paylater extends PaymentModule
     /**
      * @var string
      */
-    protected $url = 'https://pagamastarde.com';
+    public $url = 'https://pagamastarde.com';
 
     /**
      * @var bool
      */
-    protected $bootstrap = true;
+    public $bootstrap = true;
 
     /**
      * Paylater constructor.
