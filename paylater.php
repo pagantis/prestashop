@@ -42,7 +42,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '6.1.2';
+        $this->version = '6.1.3';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -465,6 +465,7 @@ class Paylater extends PaymentModule
         $error = '';
         $message = '';
         $settings = array();
+        $settings['PAYLATER_MIN_AMOUNT'] = 0;
         $settingsKeys = array(
             'PAYLATER_PROD',
             'PAYLATER_PUBLIC_KEY_TEST',
@@ -506,7 +507,9 @@ class Paylater extends PaymentModule
             }
         } else {
             foreach ($settingsKeys as $key) {
-                $settings[$key] = Configuration::get($key);
+                if (array_key_exists($key, $settings)) {
+                    $settings[$key] = Configuration::get($key);
+                }
             }
         }
 
