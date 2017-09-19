@@ -24,12 +24,12 @@ class Paylater extends PaymentModule
     /**
      * @var string
      */
-    protected $url = 'https://pagamastarde.com';
+    public $url = 'https://pagamastarde.com';
 
     /**
      * @var bool
      */
-    protected $bootstrap = true;
+    public $bootstrap = true;
 
     /**
      * Paylater constructor.
@@ -42,7 +42,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '6.1.0';
+        $this->version = '6.1.2';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -514,7 +514,7 @@ class Paylater extends PaymentModule
             $message = $this->displayError($error);
         }
 
-        $logo = $this->getPathUri(). 'views/img/logo-229x130.png';
+        $logo = $this->getPathUri(). 'views/img/logo_pagamastarde.png';
         $css = 'https://shopper.pagamastarde.com/css/paylater-modal.min.css';
         $prestashopCss = 'https://shopper.pagamastarde.com/css/paylater-prestashop.min.css';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
