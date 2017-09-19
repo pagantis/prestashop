@@ -108,7 +108,7 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
         sleep(3);
 
         $this->assertContains(
-            'Paylater Configuration Panel',
+            strtoupper('Paylater Configuration Panel'),
             $this->findByClass('paylater-content-form')->getText()
         );
 
