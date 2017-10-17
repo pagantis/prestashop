@@ -42,7 +42,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '6.1.2';
+        $this->version = '6.1.3';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -237,7 +237,7 @@ class Paylater extends PaymentModule
                         'size' => 35,
                         'label' => $this->l('Public TEST API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
-                        'col' => 4,
+                        'col' => 6,
                     ),
                     array(
                         'name' => 'PAYLATER_PRIVATE_KEY_TEST',
@@ -246,7 +246,7 @@ class Paylater extends PaymentModule
                         'size' => 35,
                         'label' => $this->l('Private TEST API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
-                        'col' => 4,
+                        'col' => 6,
                     ),
                     array(
                         'name' => 'PAYLATER_PUBLIC_KEY_PROD',
@@ -255,7 +255,7 @@ class Paylater extends PaymentModule
                         'size' => 35,
                         'label' => $this->l('Public PROD API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
-                        'col' => 4,
+                        'col' => 6,
                     ),
                     array(
                         'name' => 'PAYLATER_PRIVATE_KEY_PROD',
@@ -264,7 +264,7 @@ class Paylater extends PaymentModule
                         'size' => 35,
                         'label' => $this->l('Private PROD API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
-                        'col' => 4,
+                        'col' => 6,
                     ),
                     array(
                         'type' => 'radio',
@@ -465,6 +465,7 @@ class Paylater extends PaymentModule
         $error = '';
         $message = '';
         $settings = array();
+        $settings['PAYLATER_MIN_AMOUNT'] = 0;
         $settingsKeys = array(
             'PAYLATER_PROD',
             'PAYLATER_PUBLIC_KEY_TEST',
@@ -506,7 +507,7 @@ class Paylater extends PaymentModule
             }
         } else {
             foreach ($settingsKeys as $key) {
-                $settings[$key] = Configuration::get($key);
+                    $settings[$key] = Configuration::get($key);
             }
         }
 
