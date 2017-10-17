@@ -65,6 +65,8 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
 
         $this->findById('conditions_to_approve[terms-and-conditions]')->click();
 
+        sleep(5);
+
         $this->webDriver->wait(5, 50)->until(
             WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::cssSelector(
                 '#payment-confirmation button'
