@@ -113,6 +113,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         $paylaterProd = Configuration::get('PAYLATER_PROD');
         $paylaterMode = $paylaterProd == 1 ? 'PROD' : 'TEST';
         $privateKey = Configuration::get('PAYLATER_PRIVATE_KEY_'. $paylaterMode);
+        $cart = new Cart((int) $cartId);
 
         if ($secureKey && $cartId && Module::isEnabled('paylater')) {
             $pmtClient = new PmtApiClient($privateKey);
@@ -123,10 +124,17 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
                 return;
             }
 
-            $cart = new Cart((int) $cartId);
+            $payments = $pmtClient->charge()->getChargesByOrderId($cartId);
+            $latestCharge = array_shift($payments);
+            if ($latestCharge->getAmount() != intval(strval(100 * $cart->getOrderTotal(true)))) {
+                $this->message = 'Amount to pay mismatch';
+                $this->error = true;
+                return;
+            }
+
             if (Validate::isLoadedObject($cart)
             ) {
-                if ($cart->OrderExists() === false) {
+                if ($this->checkOrderExists($cart) === false) {
                     /** @var PaymentModule $paymentModule */
                     $paymentModule = $this->module;
                     $paymentModule->validateOrder(
@@ -152,5 +160,16 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         }
         $this->message = 'Bad request';
         $this->error = true;
+    }
+
+    /**
+     * @param Cart $cart
+     *
+     * @return bool
+     */
+    public function checkOrderExists(Cart $cart)
+    {
+        sleep(rand(2, 5));
+        return $cart->OrderExists();
     }
 }

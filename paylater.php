@@ -237,7 +237,7 @@ class Paylater extends PaymentModule
                         'size' => 35,
                         'label' => $this->l('Public TEST API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
-                        'col' => 4,
+                        'col' => 6,
                     ),
                     array(
                         'name' => 'PAYLATER_PRIVATE_KEY_TEST',
@@ -246,7 +246,7 @@ class Paylater extends PaymentModule
                         'size' => 35,
                         'label' => $this->l('Private TEST API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
-                        'col' => 4,
+                        'col' => 6,
                     ),
                     array(
                         'name' => 'PAYLATER_PUBLIC_KEY_PROD',
@@ -255,7 +255,7 @@ class Paylater extends PaymentModule
                         'size' => 35,
                         'label' => $this->l('Public PROD API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
-                        'col' => 4,
+                        'col' => 6,
                     ),
                     array(
                         'name' => 'PAYLATER_PRIVATE_KEY_PROD',
@@ -264,7 +264,7 @@ class Paylater extends PaymentModule
                         'size' => 35,
                         'label' => $this->l('Private PROD API Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
-                        'col' => 4,
+                        'col' => 6,
                     ),
                     array(
                         'type' => 'radio',
@@ -507,9 +507,7 @@ class Paylater extends PaymentModule
             }
         } else {
             foreach ($settingsKeys as $key) {
-                if (array_key_exists($key, $settings)) {
                     $settings[$key] = Configuration::get($key);
-                }
             }
         }
 

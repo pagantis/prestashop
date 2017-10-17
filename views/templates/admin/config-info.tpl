@@ -5,14 +5,14 @@
  * @copyright 2015-2016 Paga+Tarde
  * @license   proprietary
  *}
+
 {block name="form"}
     <link rel="stylesheet" type="text/css" media="all" href="{$prestashopCss|escape:'quotes'}">
     <link rel="stylesheet" type="text/css" media="all" href="{$css|escape:'quotes'}">
     {$message|escape:'quotes'}
-    <div class="paylater-content-form">
-        <section class="section">
-            <div class="column-left">
-                <h3><i class="icon icon-credit-card"></i> {l s='Paylater Configuration Panel' mod='paylater'}</h3>
+    <div class="panel paylater-content-form">
+        <h3><i class="icon icon-credit-card"></i> {l s='Paylater Configuration Panel' mod='paylater'}</h3>
+        <div class="column-left">
                 <a target="_blank" href="https://bo.pagamastarde.com" class="btn btn-default" title="Login Paga+Tarde"><i class="icon-user"></i> {l s='Paylater Backoffice Login' mod='paylater'}</a>
             </div>
             <div class="column-center">
@@ -23,13 +23,12 @@
             <div class="column-right">
                 <img src="{$logo|escape:'quotes'}"/>
             </div>
-        </section>
-        {$form}
-        {if version_compare($smarty.const._PS_VERSION_,'1.6','<')}
-            <script type="text/javascript">
-                var d = document.getElementById("module_form");
-                d.className += " panel";
-            </script>
-        {/if}
     </div>
+    {$form}
+    {if version_compare($smarty.const._PS_VERSION_,'1.6','<')}
+        <script type="text/javascript">
+            var d = document.getElementById("module_form");
+            d.className += " panel";
+        </script>
+    {/if}
 {/block}
