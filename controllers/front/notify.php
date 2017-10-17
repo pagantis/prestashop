@@ -169,7 +169,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
      */
     public function checkOrderExists(Cart $cart)
     {
-        sleep(rand(2, 5));
+        sleep(rand(1, 5));
         return $cart->OrderExists();
     }
 }
