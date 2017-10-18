@@ -68,6 +68,12 @@ class Paylater extends PaymentModule
             return false;
         }
 
+        // Execute module install SQL statements
+        $sql_file = dirname(__FILE__).'/sql/install.sql';
+        if (!$this->loadSQLFile($sql_file)) {
+            return false;
+        }
+
         Configuration::updateValue('PAYLATER_PROD', false);
         Configuration::updateValue('PAYLATER_PUBLIC_KEY_TEST', '');
         Configuration::updateValue('PAYLATER_PRIVATE_KEY_TEST', '');
@@ -99,9 +105,41 @@ class Paylater extends PaymentModule
      */
     public function uninstall()
     {
+        // Execute module install SQL statements
+        $sql_file = dirname(__FILE__).'/sql/uninstall.sql';
+        if (!$this->loadSQLFile($sql_file)) {
+            return false;
+        }
+
         Configuration::deleteByName('PAYLATER_PRIVATE_KEY_PROD');
 
         return parent::uninstall();
+    }
+
+    /**
+     * @param $sql_file
+     *
+     * @return bool
+     */
+    public function loadSQLFile($sql_file)
+    {
+        // Get install SQL file content
+        $sql_content = file_get_contents($sql_file);
+
+        // Replace prefix and store SQL command in array
+        $sql_content = str_replace('PREFIX_', _DB_PREFIX_, $sql_content);
+        $sql_requests = preg_split("/;\s*[\r\n]+/", $sql_content);
+
+        // Execute each SQL statement
+        $result = true;
+        foreach ($sql_requests as $request) {
+            if (!empty($request)) {
+                $result &= Db::getInstance()->execute(trim($request));
+            }
+        }
+
+        // Return result
+        return $result;
     }
 
     /**
