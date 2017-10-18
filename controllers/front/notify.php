@@ -134,7 +134,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
 
             if (Validate::isLoadedObject($cart)
             ) {
-                if ($this->checkOrderExists($cart) === false) {
+                if ($cart->orderExists() === false) {
                     /** @var PaymentModule $paymentModule */
                     $paymentModule = $this->module;
                     $paymentModule->validateOrder(
@@ -160,16 +160,5 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         }
         $this->message = 'Bad request';
         $this->error = true;
-    }
-
-    /**
-     * @param Cart $cart
-     *
-     * @return bool
-     */
-    public function checkOrderExists(Cart $cart)
-    {
-        sleep(rand(1, 5));
-        return $cart->OrderExists();
     }
 }
