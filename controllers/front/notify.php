@@ -29,11 +29,12 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
+        //unlock cart_id locked for more than 10 seconds
+        Db::getInstance()->delete('pmt_cart_process', 'timestamp < ' . (time() - 10));
+
         try {
             $this->processValidation();
             Db::getInstance()->delete('pmt_cart_process', 'id = ' . Tools::getValue('id_cart'));
-            Db::getInstance()->delete('pmt_cart_process', 'timestamp < ' . time() - 10);
-
         } catch (\Exception $exception) {
             $this->message = $exception->getMessage();
             $this->error = true;
@@ -113,8 +114,10 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
     {
         $cartId = Tools::getValue('id_cart');
 
-        if (!Db::getInstance()->insert('pmt_cart_process', array('id' => $cartId))) {
-            return; //occupied, continue please.
+        try {
+            Db::getInstance()->insert('pmt_cart_process', array('id' => $cartId, 'timestamp' => time()));
+        } catch (\Exception $exception) {
+            return;
         }
 
         $secureKey = Tools::getValue('key');

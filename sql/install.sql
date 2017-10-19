@@ -1,5 +1,5 @@
 CREATE TABLE `PREFIX_pmt_cart_process` (
   `id` INT NOT NULL ,
-  `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `timestamp` INT NOT NULL ,
   PRIMARY KEY (`id`)
   ) ENGINE = InnoDB;
