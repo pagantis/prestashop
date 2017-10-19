@@ -52,9 +52,11 @@ class Paylater extends PaymentModule
         $this->description = $this->l(
             'Instant, easy and effective financial tool for your customers'
         );
-        $sql_content = "SELECT * FROM PREFIX_pmt_cart_process";
+
+        $sql_content = "show tables like 'PREFIX_pmt_cart_process'";
         $sql_content = str_replace('PREFIX_', _DB_PREFIX_, $sql_content);
-        $table_exists = Db::getInstance()->execute($sql_content);
+        $table_exists = Db::getInstance()->executeS($sql_content);
+        $table_exists = array_shift(array_shift($table_exists));
         if (!$table_exists) {
             $sql_file = dirname(__FILE__).'/sql/install.sql';
             $this->loadSQLFile($sql_file);
