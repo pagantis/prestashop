@@ -52,6 +52,13 @@ class Paylater extends PaymentModule
         $this->description = $this->l(
             'Instant, easy and effective financial tool for your customers'
         );
+        $sql_content = "SELECT * FROM PREFIX_pmt_cart_process";
+        $sql_content = str_replace('PREFIX_', _DB_PREFIX_, $sql_content);
+        $table_exists = Db::getInstance()->execute($sql_content);
+        if (!$table_exists) {
+            $sql_file = dirname(__FILE__).'/sql/install.sql';
+            $this->loadSQLFile($sql_file);
+        }
 
         parent::__construct();
     }
@@ -65,12 +72,6 @@ class Paylater extends PaymentModule
     {
         if (!extension_loaded('curl')) {
             $this->_errors[] = $this->l('You have to enable the cURL extension on your server to install this module');
-            return false;
-        }
-
-        // Execute module install SQL statements
-        $sql_file = dirname(__FILE__).'/sql/install.sql';
-        if (!$this->loadSQLFile($sql_file)) {
             return false;
         }
 
@@ -105,12 +106,6 @@ class Paylater extends PaymentModule
      */
     public function uninstall()
     {
-        // Execute module install SQL statements
-        $sql_file = dirname(__FILE__).'/sql/uninstall.sql';
-        if (!$this->loadSQLFile($sql_file)) {
-            return false;
-        }
-
         Configuration::deleteByName('PAYLATER_PRIVATE_KEY_PROD');
 
         return parent::uninstall();
