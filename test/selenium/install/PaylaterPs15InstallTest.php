@@ -67,9 +67,13 @@ class PaylaterPs15InstallTest extends PaylaterPrestashopTest
             )
         );
 
-        $this->findById('maintab15')->findElement(WebDriverBy::cssSelector('li'))->click();
+        $this->findById('fifth_block')->findElement(WebDriverBy::cssSelector('a'))->click();
 
-        sleep(4);
+        $this->webDriver->wait(3, 100)->until(
+            WebDriverExpectedCondition::elementToBeClickable(
+                WebDriverBy::id('desc-module-new')
+            )
+        );
 
         $this->webDriver->executeScript('document.getElementById("desc-module-new").click();');
 
