@@ -34,7 +34,6 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
 
         try {
             $this->processValidation();
-            Db::getInstance()->delete('pmt_cart_process', 'id = ' . Tools::getValue('id_cart'));
         } catch (\Exception $exception) {
             $this->message = $exception->getMessage();
             $this->error = true;
@@ -114,11 +113,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
     {
         $cartId = Tools::getValue('id_cart');
 
-        try {
-            Db::getInstance()->insert('pmt_cart_process', array('id' => $cartId, 'timestamp' => time()));
-        } catch (\Exception $exception) {
-            //this case means is occupied: let's leave this answer for later.
-            sleep(5);
+        if (!Db::getInstance()->insert('pmt_cart_process', array('id' => $cartId, 'timestamp' => (time())))) {
             return;
         }
 
@@ -161,6 +156,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
                         false,
                         $secureKey
                     );
+                    Db::getInstance()->delete('pmt_cart_process', 'id = '.Tools::getValue('id_cart'));
                     $this->message = 'Payment Validated';
                     return;
                 }
