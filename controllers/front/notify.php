@@ -156,7 +156,6 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
                         false,
                         $secureKey
                     );
-                    //Db::getInstance()->delete('pmt_cart_process', 'id = '.Tools::getValue('id_cart'));
                     $this->message = 'Payment Validated';
                     return;
                 }
