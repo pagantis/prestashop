@@ -117,6 +117,8 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         try {
             Db::getInstance()->insert('pmt_cart_process', array('id' => $cartId, 'timestamp' => time()));
         } catch (\Exception $exception) {
+            //this case means is occupied: let's leave this answer for later.
+            sleep(5);
             return;
         }
 
