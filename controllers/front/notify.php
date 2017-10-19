@@ -29,6 +29,9 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
+        //unlock cart_id locked for more than 10 seconds
+        Db::getInstance()->delete('pmt_cart_process', 'timestamp < ' . (time() - 10));
+
         try {
             $this->processValidation();
         } catch (\Exception $exception) {
@@ -109,6 +112,11 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
     public function processValidation()
     {
         $cartId = Tools::getValue('id_cart');
+
+        if (!Db::getInstance()->insert('pmt_cart_process', array('id' => $cartId, 'timestamp' => (time())))) {
+            return;
+        }
+
         $secureKey = Tools::getValue('key');
         $paylaterProd = Configuration::get('PAYLATER_PROD');
         $paylaterMode = $paylaterProd == 1 ? 'PROD' : 'TEST';
@@ -126,7 +134,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
 
             $payments = $pmtClient->charge()->getChargesByOrderId($cartId);
             $latestCharge = array_shift($payments);
-            if ($latestCharge->getAmount() != intval(strval(100 * $cart->getOrderTotal(true)))) {
+            if ($latestCharge->getAmount() != (int) ((string) (100 * $cart->getOrderTotal(true)))) {
                 $this->message = 'Amount to pay mismatch';
                 $this->error = true;
                 return;
@@ -134,7 +142,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
 
             if (Validate::isLoadedObject($cart)
             ) {
-                if ($this->checkOrderExists($cart) === false) {
+                if ($cart->orderExists() === false) {
                     /** @var PaymentModule $paymentModule */
                     $paymentModule = $this->module;
                     $paymentModule->validateOrder(
@@ -160,16 +168,5 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         }
         $this->message = 'Bad request';
         $this->error = true;
-    }
-
-    /**
-     * @param Cart $cart
-     *
-     * @return bool
-     */
-    public function checkOrderExists(Cart $cart)
-    {
-        sleep(rand(1, 5));
-        return $cart->OrderExists();
     }
 }
