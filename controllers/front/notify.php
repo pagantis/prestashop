@@ -114,6 +114,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         $cartId = Tools::getValue('id_cart');
 
         if (!Db::getInstance()->insert('pmt_cart_process', array('id' => $cartId, 'timestamp' => (time())))) {
+            sleep(10);
             return;
         }
 
