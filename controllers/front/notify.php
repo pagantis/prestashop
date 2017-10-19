@@ -139,7 +139,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
 
             $payments = $pmtClient->charge()->getChargesByOrderId($cartId);
             $latestCharge = array_shift($payments);
-            if ($latestCharge->getAmount() != intval(strval(100 * $cart->getOrderTotal(true)))) {
+            if ($latestCharge->getAmount() != (int) ((string) (100 * $cart->getOrderTotal(true)))) {
                 $this->message = 'Amount to pay mismatch';
                 $this->error = true;
                 return;

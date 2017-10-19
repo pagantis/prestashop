@@ -119,7 +119,7 @@ class Paylater extends PaymentModule
     public function loadSQLFile($sql_file)
     {
         // Get install SQL file content
-        $sql_content = file_get_contents($sql_file);
+        $sql_content = Tools::file_get_contents($sql_file);
 
         // Replace prefix and store SQL command in array
         $sql_content = str_replace('PREFIX_', _DB_PREFIX_, $sql_content);
