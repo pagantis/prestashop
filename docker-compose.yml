@@ -48,7 +48,7 @@ services:
     ports:
       - "8016:80"
   prestashop17:
-    image: prestashop/prestashop:1.7
+    image: prestashop/prestashop
     depends_on:
       - db-ps17
     environment:
@@ -130,7 +130,7 @@ services:
     ports:
       - "2080:3306"
   selenium:
-    image: selenium/standalone-chrome:3.4.0
+    image: selenium/standalone-chrome
     networks:
       - public
     ports:
