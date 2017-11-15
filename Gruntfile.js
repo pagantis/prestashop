@@ -22,7 +22,7 @@ module.exports = function(grunt) {
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop17\n' +
                 'echo "Creating the prestashop17"\n' +
-                'sleep 130\n' +
+                'sleep 180\n' +
                 'date\n' +
                 'docker-compose logs prestashop17\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17basic\n' +
@@ -36,7 +36,7 @@ module.exports = function(grunt) {
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop16\n' +
                 'echo "Creating the prestashop16"\n' +
-                'sleep 130\n' +
+                'sleep 180\n' +
                 'date\n' +
                 'docker-compose logs prestashop16\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16basic\n' +
@@ -50,7 +50,7 @@ module.exports = function(grunt) {
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop15\n' +
                 'echo "Creating the prestashop15"\n' +
-                'sleep 130\n' +
+                'sleep 180\n' +
                 'date\n' +
                 'docker-compose logs prestashop15\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15basic\n' +
