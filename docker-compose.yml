@@ -101,7 +101,7 @@ services:
     networks:
       - internal
     ports:
-      - "2034:3306"
+      - "2083:3306"
   db-ps17:
     image: mysql
     environment:
@@ -110,7 +110,7 @@ services:
     networks:
       - internal
     ports:
-      - "2034:3306"
+      - "2082:3306"
   db-ps16:
     image: mysql
     environment:
@@ -119,7 +119,7 @@ services:
     networks:
       - internal
     ports:
-      - "2034:3306"
+      - "2081:3306"
   db-ps15:
     image: mysql:5.6
     environment:
@@ -128,7 +128,7 @@ services:
     networks:
       - internal
     ports:
-      - "2033:3306"
+      - "2080:3306"
   selenium:
     image: selenium/standalone-chrome:3.4.0
     networks:
@@ -137,5 +137,5 @@ services:
       - "4444:4444"
 
 networks:
-  internal:
-  public:
+    internal:
+    public:
