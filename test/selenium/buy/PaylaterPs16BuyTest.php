@@ -111,7 +111,7 @@ class PaylaterPs16BuyTest extends PaylaterPrestashopTest
         );
 
         $this->assertContains(
-            'Financia tu compra de',
+            'compra',
             $this->findByClass('Form-heading1')->getText()
         );
 
