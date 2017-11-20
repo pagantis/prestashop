@@ -150,15 +150,19 @@ class Paylater extends PaymentModule
         if (!in_array(PROMOTIONS_CATEGORY, $categories)) {
             $category = new CategoryCore();
             $category->is_root_category = false;
-            $category->link_rewrite = [ 1=> 'paylater-promotion-product' ];
-            $category->meta_description = [ 1=> 'paylater-promotion-product' ];
-            $category->meta_keywords = [ 1=> 'paylater-promotion-product' ];
-            $category->meta_title = [ 1=> 'paylater-promotion-product' ];
-            $category->name = [ 1=> 'paylater-promotion-product' ];
+            $category->link_rewrite = [ 1=> PROMOTIONS_CATEGORY ];
+            $category->meta_description = [ 1=> PROMOTIONS_CATEGORY ];
+            $category->meta_keywords = [ 1=> PROMOTIONS_CATEGORY ];
+            $category->meta_title = [ 1=> PROMOTIONS_CATEGORY ];
+            $category->name = [ 1=> PROMOTIONS_CATEGORY ];
             $category->id_parent = Configuration::get('PS_HOME_CATEGORY');
             $category->active=0;
-            $category->description = 'If assigned, this product will have free interests and the shop will cover the cost of the loan. Use this to promote a special product or improve the average ticket by asume the interests of big products.
-You can also do promotions per brand or by any other elegible attributes. Just add this category to the product and the customer of your shop will see in the simulator and finally in the loan process that it\'s free for him.';
+            $category->description = <<<EOD
+If assigned, this product will have free interests and the shop will cover the cost of the loan. Use this to promote
+a special product or improve the average ticket by asume the interests of big products. You can also do promotions per
+brand or by any other elegible attributes. Just add this category to the product and the customer of your shop will see
+in the simulator and finally in the loan process that it\'s free for him.
+EOD;
             $category->save();
         }
     }
