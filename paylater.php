@@ -678,7 +678,7 @@ EOD;
             'amount'                => $amount,
             'publicKey'             => $paylaterPublicKey,
             'simulatorType'         => $simulatorType,
-            'discount'              => $paylaterDiscount ? 1 : 0,
+            'discount'              => $paylaterDiscount ? 1 : $isPromotionProduct ? 1 : 0,
         ));
 
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');
