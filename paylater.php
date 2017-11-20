@@ -158,12 +158,13 @@ class Paylater extends PaymentModule
             $category->name = [ 1=> PROMOTIONS_CATEGORY ];
             $category->id_parent = Configuration::get('PS_HOME_CATEGORY');
             $category->active=0;
-            $category->description = <<<EOD
+            $description = <<<EOD
 If assigned, this product will have free interests and the shop will cover the cost of the loan. Use this to promote
 a special product or improve the average ticket by asume the interests of big products. You can also do promotions per
 brand or by any other elegible attributes. Just add this category to the product and the customer of your shop will see
 in the simulator and finally in the loan process that it\'s free for him.
 EOD;
+            $category->description = $this->l($description);
             $category->save();
         }
     }
