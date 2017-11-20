@@ -70,14 +70,14 @@ services:
       - ./:/var/www/html/modules/paylater
     ports:
       - "8017:80"
-  prestashop-development:
-    image: prestashop/prestashop:latest
+  prestashop-dev:
+    image: prestashop/prestashop:1.6.1.14
     depends_on:
       - db-dev
     environment:
       - PS_DEV_MODE=1
       - PS_COUNTRY=es
-      - PS_DOMAIN=prestashop-dev
+      - PS_DOMAIN=prestashop-dev:8018
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
