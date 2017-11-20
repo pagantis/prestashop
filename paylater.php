@@ -13,6 +13,7 @@ if (!defined('_PS_VERSION_')) {
 
 define('_PS_PAYLATER_DIR', _PS_MODULE_DIR_. '/paylater');
 define('PAYLATER_SHOPPER_URL', 'https://shopper.pagamastarde.com/prestashop/');
+define('PROMOTIONS_CATEGORY', 'paylater-promotion-product');
 
 require _PS_PAYLATER_DIR.'/vendor/autoload.php';
 
@@ -60,6 +61,7 @@ class Paylater extends PaymentModule
             $sql_file = dirname(__FILE__).'/sql/install.sql';
             $this->loadSQLFile($sql_file);
         }
+        $this->checkPromotionCategory();
 
         parent::__construct();
     }
@@ -136,6 +138,29 @@ class Paylater extends PaymentModule
 
         // Return result
         return $result;
+    }
+
+    /**
+     * checkPromotionCategory
+     */
+    public function checkPromotionCategory()
+    {
+        $categories = CategoryCore::getCategories(null, false, false);
+        $categories = array_column($categories, 'name');
+        if (!in_array(PROMOTIONS_CATEGORY, $categories)) {
+            $category = new CategoryCore();
+            $category->is_root_category = false;
+            $category->link_rewrite = [ 1=> 'paylater-promotion-product' ];
+            $category->meta_description = [ 1=> 'paylater-promotion-product' ];
+            $category->meta_keywords = [ 1=> 'paylater-promotion-product' ];
+            $category->meta_title = [ 1=> 'paylater-promotion-product' ];
+            $category->name = [ 1=> 'paylater-promotion-product' ];
+            $category->id_parent = Configuration::get('PS_HOME_CATEGORY');
+            $category->active=0;
+            $category->description = 'If assigned, this product will have free interests and the shop will cover the cost of the loan. Use this to promote a special product or improve the average ticket by asume the interests of big products.
+You can also do promotions per brand or by any other elegible attributes. Just add this category to the product and the customer of your shop will see in the simulator and finally in the loan process that it\'s free for him.';
+            $category->save();
+        }
     }
 
     /**
