@@ -13,6 +13,10 @@
     }
 </script>
 <span class="js-pmt-payment-type"></span>
+{if $isPromotionProduct == true}
+    <span class="pmt-promotion" id="pmt-promotion-extra">{$promotionExtra|escape:'quotes'}</span>
+{/if}
+
 <div class="PmtSimulator PmtSimulatorSelectable--claim"
      data-pmt-num-quota="4" data-pmt-max-ins="12" data-pmt-style="blue"
      data-pmt-type="{if $simulatorType != 1}{$simulatorType|escape:'quotes'}{else}2{/if}"

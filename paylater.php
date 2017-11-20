@@ -145,10 +145,11 @@ class Paylater extends PaymentModule
      */
     public function checkPromotionCategory()
     {
-        $categories = CategoryCore::getCategories(null, false, false);
+        $categories = Category::getCategories(null, false, false);
         $categories = array_column($categories, 'name');
         if (!in_array(PROMOTIONS_CATEGORY, $categories)) {
-            $category = new CategoryCore();
+            /** @var CategoryCore $category */
+            $category = new Category();
             $category->is_root_category = false;
             $category->link_rewrite = [ 1=> PROMOTIONS_CATEGORY ];
             $category->meta_description = [ 1=> PROMOTIONS_CATEGORY ];
@@ -482,6 +483,15 @@ EOD;
                         'prefix' => '<i class="icon icon-bank"></i>',
                         'suffix' => '€'
                     ),
+                    array(
+                        'type' => 'text',
+                        'size' => 200,
+                        'desc' => $this->l('ej: Finance it without interests'),
+                        'label' => $this->l('Promotion Product Extra'),
+                        'name' => 'PAYLATER_PROMOTION_EXTRA',
+                        'required' => false,
+                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
+                    ),
                 ),
                 'submit' => array(
                     'title' => $this->l('Save'),
@@ -540,7 +550,8 @@ EOD;
             'PAYLATER_IFRAME',
             'PAYLATER_MIN_AMOUNT',
             'PAYLATER_PRODUCT_HOOK',
-            'PAYLATER_PRODUCT_HOOK_TYPE'
+            'PAYLATER_PRODUCT_HOOK_TYPE',
+            'PAYLATER_PROMOTION_EXTRA',
         );
 
         //Different Behavior depending on 1.6 or earlier
@@ -645,19 +656,25 @@ EOD;
     public function productPageSimulatorDisplay($functionName)
     {
         $productConfiguration = Configuration::get('PAYLATER_PRODUCT_HOOK');
+        /** @var ProductCore $product */
         $product = new Product(Tools::getValue('id_product'));
+        $itemCategoriesNames = array_column(Product::getProductCategoriesFull($product->id), 'name');
+        $isPromotionProduct = in_array(PROMOTIONS_CATEGORY, $itemCategoriesNames);
         $amount = $product->getPublicPrice();
         $simulatorType          = Configuration::get('PAYLATER_PRODUCT_HOOK_TYPE');
         $paylaterProd           = Configuration::get('PAYLATER_PROD');
         $paylaterMode           = $paylaterProd == 1 ? 'PROD' : 'TEST';
         $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
         $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
+        $paylaterPromotionExtra = Configuration::get('PAYLATER_PROMOTION_EXTRA');
 
         if ($functionName != $productConfiguration || $amount <= 0) {
             return null;
         }
 
         $this->context->smarty->assign(array(
+            'isPromotionProduct'    => $isPromotionProduct,
+            'promotionExtra'        => $paylaterPromotionExtra,
             'amount'                => $amount,
             'publicKey'             => $paylaterPublicKey,
             'simulatorType'         => $simulatorType,
