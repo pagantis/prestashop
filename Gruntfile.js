@@ -22,7 +22,7 @@ module.exports = function(grunt) {
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop17\n' +
                 'echo "Creating the prestashop17"\n' +
-                'sleep 180\n' +
+                'sleep 60\n' +
                 'date\n' +
                 'docker-compose logs prestashop17\n' +
                 'sudo chmod -R 777 vendor\n' +
@@ -37,7 +37,7 @@ module.exports = function(grunt) {
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop16\n' +
                 'echo "Creating the prestashop16"\n' +
-                'sleep 180\n' +
+                'sleep 60\n' +
                 'date\n' +
                 'docker-compose logs prestashop16\n' +
                 'sudo chmod -R 777 vendor\n' +
@@ -52,7 +52,7 @@ module.exports = function(grunt) {
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop15\n' +
                 'echo "Creating the prestashop15"\n' +
-                'sleep 180\n' +
+                'sleep 60\n' +
                 'date\n' +
                 'docker-compose logs prestashop15\n' +
                 'sudo chmod -R 777 vendor\n' +
