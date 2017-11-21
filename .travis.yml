@@ -6,10 +6,13 @@ services:
 language: php
 
 php:
-  - '7.0'
+  - 5.6
+  - 7.0
+  - 7.1
 
 env:
   - DOCKER_COMPOSE_VERSION=1.14.0
+  - ISOLATED=true
 
 before_install:
   - sudo rm /usr/local/bin/docker-compose
@@ -26,13 +29,17 @@ before_script:
   - 'npm install'
   - 'composer install'
   - 'sudo chmod -R 777 vendor'
-
-script:
   - 'grunt default'
-  - 'set -e'
-  - 'sudo chmod -R 777 vendor'
-  - 'grunt shell:runTestPrestashop15'
-  - 'sudo chmod -R 777 vendor'
-  - 'grunt shell:runTestPrestashop16'
-  - 'sudo chmod -R 777 vendor'
-  - 'grunt shell:runTestPrestashop17'
+
+matrix:
+  include:
+  - php: "7.1"
+    env: PRESTAHOP=prestashop17
+  - php: "7.0"
+    env: PRESTAHOP=prestashop16
+  - php: "5.6"
+    env: PRESTAHOP=prestashop15
+script:
+  - sudo chmod -R 777 vendor
+  - grunt shell:$PRESTASHOP
+
