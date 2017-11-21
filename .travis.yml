@@ -34,11 +34,17 @@ before_script:
 matrix:
   include:
   - php: "7.1"
-    env: PRESTAHOP=prestashop17
+    env:
+      - PRESTAHOP=prestashop17
+      - ISOLATED=true
   - php: "7.0"
-    env: PRESTAHOP=prestashop16
+    env:
+      - PRESTAHOP=prestashop16
+      - ISOLATED=true
   - php: "5.6"
-    env: PRESTAHOP=prestashop15
+    env:
+      - PRESTAHOP=prestashop15
+      - ISOLATED=true
 script:
   - sudo chmod -R 777 vendor
   - grunt shell:$PRESTASHOP
