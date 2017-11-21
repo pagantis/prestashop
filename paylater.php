@@ -486,7 +486,7 @@ EOD;
                     ),
                     array(
                         'type' => 'text',
-                        'size' => 200,
+                        'size' => 4,
                         'desc' => $this->l('ej: Finance it without interests'),
                         'label' => $this->l('Promotion Product Extra'),
                         'name' => 'PAYLATER_PROMOTION_EXTRA',
