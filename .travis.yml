@@ -25,11 +25,10 @@ before_script:
 matrix:
   include:
   - php: "7.1"
-    env: PRESTAHOP=runTestPrestashop17 ISOLATED=true DOCKER_COMPOSE_VERSION=1.14.0
+    env: PRESTASHOP=runTestPrestashop17 ISOLATED=true DOCKER_COMPOSE_VERSION=1.14.0
   - php: "7.0"
-    env: PRESTAHOP=runTestPrestashop16 ISOLATED=true DOCKER_COMPOSE_VERSION=1.14.0
+    env: PRESTASHOP=runTestPrestashop16 ISOLATED=true DOCKER_COMPOSE_VERSION=1.14.0
   - php: "5.6"
-    env: PRESTAHOP=shell:runTestPrestashop15 ISOLATED=true DOCKER_COMPOSE_VERSION=1.14.0
+    env: PRESTASHOP=shell:runTestPrestashop15 ISOLATED=true DOCKER_COMPOSE_VERSION=1.14.0
 script:
   - grunt $PRESTASHOP
-
