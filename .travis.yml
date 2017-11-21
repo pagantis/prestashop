@@ -5,10 +5,6 @@ services:
 
 language: php
 
-env:
-  - DOCKER_COMPOSE_VERSION=1.14.0
-  - ISOLATED=true
-
 before_install:
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
@@ -29,11 +25,11 @@ before_script:
 matrix:
   include:
   - php: "7.1"
-    env: PRESTAHOP=prestashop17 ISOLATED=true
+    env: PRESTAHOP=prestashop17 ISOLATED=true DOCKER_COMPOSE_VERSION=1.14.0
   - php: "7.0"
-    env: PRESTAHOP=prestashop16 ISOLATED=true
+    env: PRESTAHOP=prestashop16 ISOLATED=true DOCKER_COMPOSE_VERSION=1.14.0
   - php: "5.6"
-    env: PRESTAHOP=prestashop15 ISOLATED=true
+    env: PRESTAHOP=prestashop15 ISOLATED=true DOCKER_COMPOSE_VERSION=1.14.0
 script:
   - sudo chmod -R 777 vendor
   - grunt shell:$PRESTASHOP
