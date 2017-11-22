@@ -86,12 +86,14 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
             }
         }
 
+        if (!$iframe) {
+            Tools::redirect($url);
+        }
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
             'form'          => $form,
             'url'           => $url,
             'spinner'       => $spinner,
-            'iframe'        => $iframe,
             'css'           => $css,
             'prestashopCss' => $prestashopCss,
             'checkoutUrl'   => $cancelUrl,
