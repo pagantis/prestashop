@@ -6,7 +6,7 @@ use Facebook\WebDriver\WebDriverExpectedCondition;
 use Test\Selenium\PaylaterPrestashopTest;
 
 /**
- * Class BasicTest
+ * Class BasicPs17Test
  * @package Test\Selenium\Basic
  *
  * @group prestashop17basic
@@ -14,19 +14,19 @@ use Test\Selenium\PaylaterPrestashopTest;
 class BasicPs17Test extends PaylaterPrestashopTest
 {
     /**
+     * Const title
+     */
+    const TITLE = 'PrestaShop';
+
+    /**
      * testTitlePrestashop17
      */
     public function testTitlePrestashop17()
     {
         $this->webDriver->get(self::PS17URL);
-
-        $this->webDriver->wait(10, 500)->until(
-            WebDriverExpectedCondition::titleContains(
-                'PrestaShop'
-            )
-        );
-
-        $this->assertEquals('PrestaShop', $this->webDriver->getTitle());
+        $condition = WebDriverExpectedCondition::titleContains(self::TITLE);
+        $this->webDriver->wait()->until($condition);
+        $this->assertTrue((bool) $condition);
         $this->quit();
     }
 
@@ -36,14 +36,9 @@ class BasicPs17Test extends PaylaterPrestashopTest
     public function testBackOfficeTitlePrestashop17()
     {
         $this->webDriver->get(self::PS17URL.self::BACKOFFICE_FOLDER);
-
-        $this->webDriver->wait(10, 500)->until(
-            WebDriverExpectedCondition::titleContains(
-                'PrestaShop'
-            )
-        );
-
-        $this->assertContains('PrestaShop', $this->webDriver->getTitle());
+        $condition = WebDriverExpectedCondition::titleContains(self::TITLE);
+        $this->webDriver->wait()->until($condition);
+        $this->assertTrue((bool) $condition);
         $this->quit();
     }
 }
