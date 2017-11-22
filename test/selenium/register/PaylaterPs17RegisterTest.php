@@ -32,19 +32,15 @@ class PaylaterPs17RegisterTest extends PaylaterPrestashopTest
     public function goToLogin()
     {
         $this->webDriver->get(self::PS17URL);
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::className('user-info')
-            )
-        );
-
-        $this->findByClass('user-info')->click();
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::className('btn-primary')
-            )
-        );
+        $loginButtonSearch = WebDriverBy::className('user-info');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($loginButtonSearch);
+        $this->webDriver->wait()->until($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($loginButtonSearch)->click();
+        $verifyElement = WebDriverBy::name('email');
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($verifyElement);
+        $this->webDriver->wait()->until($condition);
+        $this->assertTrue((bool) $condition);
     }
 
     /**
@@ -68,19 +64,27 @@ class PaylaterPs17RegisterTest extends PaylaterPrestashopTest
         $this->webDriver->get(self::PS17URL);
         $this->findByClass('user-info')->click();
         $this->findByClass('no-account')->click();
-
-        //Fillup form:
         $this->findByClass('custom-radio')->click();
         $this->findByName('firstname')->sendKeys($this->configuration['firstname']);
         $this->findByName('lastname')->sendKeys($this->configuration['lastname']);
-        $this->findByName('email')->sendKeys($this->configuration['email']);
+        $this->findByName('email')->sendKeys($this->configuration['email'].'123345');
         $this->findByName('password')->sendKeys($this->configuration['password']);
         $this->findByName('birthday')->sendKeys($this->configuration['birthdate']);
+        $this->findById('customer-form')->submit();
 
-        $this->webDriver->executeScript('document.getElementById(\'customer-form\').submit();');
+        try {
+            $logoutButtonSearch = WebDriverBy::className('logout');
+            $condition = WebDriverExpectedCondition::elementToBeClickable($logoutButtonSearch);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool) $condition);
+            $this->findByClass('logout')->click();
 
-        sleep(1);
-        $this->findByClass('user-info')->click();
+        } catch (\Exception $exception) {
+            $errorMessageSearch = WebDriverBy::className('help-block');
+            $condition = WebDriverExpectedCondition::visibilityOfElementLocated($errorMessageSearch);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool) $condition);
+        }
     }
 
     /**
@@ -88,10 +92,17 @@ class PaylaterPs17RegisterTest extends PaylaterPrestashopTest
      */
     public function login()
     {
-        $this->webDriver->get(self::PS17URL.'/index.php?controller=authentication&back=my-account');
-        sleep(1);
+        $this->goToLogin();
+        $submitLoginButtonSearch = WebDriverBy::name('email');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($submitLoginButtonSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
         $this->findByName('email')->sendKeys($this->configuration['email']);
         $this->findByName('password')->sendKeys($this->configuration['password']);
-        $this->webDriver->executeScript('document.getElementById(\'login-form\').submit();');
+        $this->findById('login-form')->submit();
+        $logoutButtonSearch = WebDriverBy::className('logout');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($logoutButtonSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
     }
 }
