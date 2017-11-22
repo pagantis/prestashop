@@ -66,7 +66,7 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
         $fileInput->sendKeys(__DIR__.'/../../../paylater.zip');
         $validatorSearch = WebDriverBy::className('module-import-success-msg');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
-        $this->waitUntil($condition);
+        $this->webDriver->wait(45, 1000)->until($condition);
         $this->assertTrue((bool) $condition);
 
         $this->findByLinkText('CONFIGURE')->click();
@@ -100,7 +100,7 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
         ));
         $this->findById('PAYLATER_PROMOTION_EXTRA')->clear()->sendKeys($this->configuration['extra']);
 
-        $this->moveToElementAndClick($this->findByName('submitpaylater'));
+        $this->moveToElementAndClick($this->findById('module_form_submit_btn'));
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(
             $confirmationSearch,
