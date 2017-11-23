@@ -61,36 +61,33 @@ class PaylaterPs15BuyTest extends PaylaterPrestashopTest
         $shoppingCartTitle = WebDriverBy::id('cart_title');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($shoppingCartTitle);
         $this->assertTrue((bool) $condition);
-
         $cartNavigation = WebDriverBy::className('cart_navigation');
         $nextButton = $cartNavigation->partialLinkText('Next');
         $this->webDriver->findElement($nextButton)->click();
-
         try {
-            //$addressInputSearch = WebDriverBy::id('firstname');
-            //$condition = WebDriverExpectedCondition::visibilityOfElementLocated($addressInputSearch);
-            //$this->waitUntil($condition);
-            //$this->assertTrue((bool) $condition);
-            //$this->findById('company')->clear()->sendKeys($this->configuration['company']);
-            //$this->findById('address1')->clear()->sendKeys('av.diagonal 579');
+            $addressInputSearch = WebDriverBy::id('firstname');
+            $condition = WebDriverExpectedCondition::visibilityOfElementLocated($addressInputSearch);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool) $condition);
+            $this->findById('company')->clear()->sendKeys($this->configuration['company']);
+            $this->findById('address1')->clear()->sendKeys('av.diagonal 579');
             $this->findById('postcode')->clear()->sendKeys($this->configuration['zip']);
-            //$this->findById('city')->clear()->sendKeys($this->configuration['city']);
-            //$this->findById('phone')->clear()->sendKeys($this->configuration['phone']);
-            //$this->findById('phone_mobile')->clear()->sendKeys($this->configuration['phone']);
-            //$this->findById('dni')->clear()->sendKeys($this->configuration['dni']);
-            //$this->findById('id_state')->sendKeys('Barcelona');
-            //$this->findById('submitAddress')->click();
-            //$processAddress = WebDriverBy::name('processAddress');
-            //$condition = WebDriverExpectedCondition::visibilityOfElementLocated($processAddress);
-            //$this->waitUntil($condition);
-            //$this->assertTrue((bool) $condition);
+            $this->findById('city')->clear()->sendKeys($this->configuration['city']);
+            $this->findById('phone')->clear()->sendKeys($this->configuration['phone']);
+            $this->findById('phone_mobile')->clear()->sendKeys($this->configuration['phone']);
+            $this->findById('dni')->clear()->sendKeys($this->configuration['dni']);
+            $this->findById('id_state')->sendKeys('Barcelona');
+            $this->findById('submitAddress')->click();
+            $processAddress = WebDriverBy::name('processAddress');
+            $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processAddress);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool) $condition);
         } catch (\Exception $exception) {
             $processAddress = WebDriverBy::name('processAddress');
             $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processAddress);
             $this->waitUntil($condition);
             $this->assertTrue((bool) $condition);
         }
-
         $this->webDriver->findElement($processAddress)->click();
         $processCarrier = WebDriverBy::name('processCarrier');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processCarrier);
@@ -98,7 +95,6 @@ class PaylaterPs15BuyTest extends PaylaterPrestashopTest
         $this->assertTrue((bool) $condition);
         $this->findById('cgv')->click();
         $this->webDriver->findElement($processCarrier)->click();
-
         $hookPayment = WebDriverBy::id('HOOK_PAYMENT');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($hookPayment);
         $this->waitUntil($condition);
