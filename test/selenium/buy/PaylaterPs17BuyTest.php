@@ -90,7 +90,7 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
             $this->waitUntil($condition);
             $this->assertTrue((bool) $condition);
         } catch (\Exception $exception) {
-            $processAddress = WebDriverBy::name('confirm-addresses');
+            $processAddress = WebDriverBy::name('confirmDeliveryOption');
             $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processAddress);
             $this->waitUntil($condition);
             $this->assertTrue((bool) $condition);
