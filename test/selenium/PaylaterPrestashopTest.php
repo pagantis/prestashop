@@ -132,6 +132,16 @@ abstract class PaylaterPrestashopTest extends TestCase
     }
 
     /**
+     * @param WebDriverElement $element
+     *
+     * @return WebDriverElement
+     */
+    public function getParent(WebDriverElement $element)
+    {
+        return $element->findElement(WebDriverBy::xpath(".."));
+    }
+
+    /**
      * Quit browser
      */
     protected function quit()

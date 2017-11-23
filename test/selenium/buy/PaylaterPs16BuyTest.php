@@ -26,7 +26,6 @@ class PaylaterPs16BuyTest extends PaylaterPrestashopTest
 
     public function addProductAndGoToCheckout()
     {
-
         $this->findByClass('sf-with-ul')->click();
         $this->webDriver->wait(5, 500)->until(
             WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::className('ajax_add_to_cart_button'))

@@ -24,7 +24,7 @@ class PaylaterPs16InstallTest extends PaylaterPrestashopTest
         $this->loginToBackOffice();
         $this->uploadPaylaterModule();
         $this->configureModule();
-        //$this->quit();
+        $this->quit();
     }
 
     /**
@@ -73,9 +73,19 @@ class PaylaterPs16InstallTest extends PaylaterPrestashopTest
         $this->findById('moduleQuicksearch')->clear()->sendKeys('paga+tarde');
 
         try {
-            $this->findByLinkText('Install')->click();
+            $paylaterAnchor = $this->findById('anchorPaylater');
+            $paylaterAnchorParent = $this->getParent($paylaterAnchor);
+            $paylaterAnchorGrandParent = $this->getParent($paylaterAnchorParent);
+            $this->moveToElementAndClick($paylaterAnchorGrandParent->findElement(
+                WebDriverBy::partialLinkText('Install')
+            ));
         } catch (\Exception $exception) {
-            $this->findByLinkText('Configure')->click();
+            $paylaterAnchor = $this->findById('anchorPaylater');
+            $paylaterAnchorParent = $this->getParent($paylaterAnchor);
+            $paylaterAnchorGrandParent = $this->getParent($paylaterAnchorParent);
+            $this->moveToElementAndClick($paylaterAnchorGrandParent->findElement(
+                WebDriverBy::partialLinkText('Configure')
+            ));
         }
 
         $verify = WebDriverBy::id('PAYLATER_PUBLIC_KEY_TEST');
@@ -101,7 +111,7 @@ class PaylaterPs16InstallTest extends PaylaterPrestashopTest
         ));
         $this->findById('PAYLATER_PROMOTION_EXTRA')->clear()->sendKeys($this->configuration['extra']);
 
-        $this->moveToElementAndClick($this->findByName('submitpaylater'));
+        $this->moveToElementAndClick($this->findById('module_form_submit_btn'));
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(
             $confirmationSearch,
