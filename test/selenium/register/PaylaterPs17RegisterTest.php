@@ -67,7 +67,7 @@ class PaylaterPs17RegisterTest extends PaylaterPrestashopTest
         $this->findByClass('custom-radio')->click();
         $this->findByName('firstname')->sendKeys($this->configuration['firstname']);
         $this->findByName('lastname')->sendKeys($this->configuration['lastname']);
-        $this->findByName('email')->sendKeys($this->configuration['email'].'123345');
+        $this->findByName('email')->sendKeys($this->configuration['email']);
         $this->findByName('password')->sendKeys($this->configuration['password']);
         $this->findByName('birthday')->sendKeys($this->configuration['birthdate']);
         $this->findById('customer-form')->submit();

@@ -20,8 +20,138 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
     public function testBuy()
     {
         $this->login();
-        $this->addProductAndGoToCheckout();
+        $this->goToProduct();
+        $this->addProduct();
+        $this->goToCheckout();
+        $this->verifyPaylater();
         $this->quit();
+    }
+
+    /**
+     * Add Product
+     */
+    public function goToProduct()
+    {
+        $this->findById('_desktop_logo')->click();
+        $featuredProductCenterSearch = WebDriverBy::className('products');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($featuredProductCenterSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool)$condition);
+        $this->findByLinkText('Vestido')->click();
+        $available = WebDriverBy::id('product-availability');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($available);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool)$condition);
+    }
+
+    /**
+     * Add Product
+     */
+    public function addProduct()
+    {
+        $this->findByClass('add-to-cart')->click();
+        $cartTitle = WebDriverBy::className('cart-products-count');
+        $condition = WebDriverExpectedCondition::textToBePresentInElement($cartTitle, '(1)');
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->executeScript('document.querySelector(\'.close\').click();');
+    }
+
+    /**
+     * Go to checkout
+     */
+    public function goToCheckout()
+    {
+        sleep(1);
+        $cartButton = WebDriverBy::id('_desktop_cart');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($cartButton);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($cartButton)->click();
+
+        $checkoutButton = WebDriverBy::partialLinkText(strtoupper('Tramitar pedido'));
+        $condition      = WebDriverExpectedCondition::visibilityOfElementLocated($checkoutButton);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool)$condition);
+        $this->webDriver->findElement($checkoutButton)->click();
+        try {
+            throw new \Exception('adsf');
+            $addressInputSearch = WebDriverBy::name('firstname');
+            $condition = WebDriverExpectedCondition::visibilityOfElementLocated($addressInputSearch);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool) $condition);
+            $this->findByName('company')->clear()->sendKeys($this->configuration['company']);
+            $this->findByName('address1')->clear()->sendKeys('av.diagonal 579');
+            $this->findByName('postcode')->clear()->sendKeys($this->configuration['zip']);
+            $this->findByName('city')->clear()->sendKeys($this->configuration['city']);
+            $this->findByName('phone')->clear()->sendKeys($this->configuration['phone']);
+            $this->findById('delivery-address')->findElement(WebDriverBy::name('confirm-addresses'))->click();
+            $processAddress = WebDriverBy::name('confirm-addresses');
+            $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processAddress);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool) $condition);
+        } catch (\Exception $exception) {
+            $processAddress = WebDriverBy::name('confirm-addresses');
+            $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processAddress);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool) $condition);
+        }
+        $this->webDriver->findElement($processAddress)->click();
+        $processCarrier = WebDriverBy::name('confirmDeliveryOption');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processCarrier);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($processCarrier)->click();
+        $hookPayment = WebDriverBy::id('checkout-payment-step');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($hookPayment);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $paylaterOption = WebDriverBy::cssSelector('[for=payment-option-3]');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($paylaterOption);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($paylaterOption)->click();
+        $this->findById('conditions_to_approve[terms-and-conditions]')->click();
+        $this->findById('payment-confirmation')->click();
+    }
+
+    /**
+     * Verify paylater
+     */
+    public function verifyPaylater()
+    {
+        $iFrame = 'iframe-pagantis';
+        $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($iFrame);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $paymentFormElement = WebDriverBy::name('form-continue');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paymentFormElement);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->assertContains(
+            'compra',
+            $this->findByClass('Form-heading1')->getText()
+        );
+    }
+
+    /**
+     * LOGIN
+     */
+    public function login()
+    {
+        $this->webDriver->get(self::PS17URL);
+        $login = WebDriverBy::className('user-info');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($login);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($login)->click();
+        $loginForm = WebDriverBy::id('login-form');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($loginForm);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->findByName('email')->sendKeys($this->configuration['email']);
+        $this->findByName('password')->sendKeys($this->configuration['password']);
+        $this->webDriver->findElement($loginForm)->submit();
     }
 
     public function addProductAndGoToCheckout()
@@ -94,17 +224,5 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
 
         //PAYMENT METHOD WORKS!! YUHUUUUU
         sleep(5);
-    }
-
-    /**
-     * LOGIN
-     */
-    public function login()
-    {
-        $this->webDriver->get(self::PS17URL);
-        $this->findByClass('user-info')->click();
-        $this->findByName('email')->sendKeys($this->configuration['email']);
-        $this->findByName('password')->sendKeys($this->configuration['password']);
-        $this->webDriver->executeScript('document.getElementById(\'login-form\').submit();');
     }
 }

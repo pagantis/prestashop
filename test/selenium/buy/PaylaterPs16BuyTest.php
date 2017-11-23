@@ -23,6 +23,7 @@ class PaylaterPs16BuyTest extends PaylaterPrestashopTest
         $this->goToProduct();
         $this->addProduct();
         $this->goToCheckout();
+        $this->verifyPaylater();
         $this->quit();
     }
 
