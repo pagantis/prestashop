@@ -75,7 +75,6 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
         $this->assertTrue((bool)$condition);
         $this->webDriver->findElement($checkoutButton)->click();
         try {
-            throw new \Exception('adsf');
             $addressInputSearch = WebDriverBy::name('firstname');
             $condition = WebDriverExpectedCondition::visibilityOfElementLocated($addressInputSearch);
             $this->waitUntil($condition);
@@ -111,6 +110,9 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($paylaterOption)->click();
+        $pmtSimulator = WebDriverBy::className('PmtSimulator');
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+        $this->waitUntil($condition);
         $this->findById('conditions_to_approve[terms-and-conditions]')->click();
         $this->findById('payment-confirmation')->click();
     }

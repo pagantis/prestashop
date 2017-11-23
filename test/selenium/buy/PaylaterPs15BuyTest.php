@@ -99,6 +99,9 @@ class PaylaterPs15BuyTest extends PaylaterPrestashopTest
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($hookPayment);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
+        $pmtSimulator = WebDriverBy::className('PmtSimulator');
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+        $this->waitUntil($condition);
     }
 
     /**
