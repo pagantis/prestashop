@@ -73,6 +73,7 @@ class PaylaterPs15InstallTest extends PaylaterPrestashopTest
     {
         $this->findByLinkText('Modules')->click();
         $this->findByLinkText('Modules')->click();
+        $this->findByName('quicksearch')->clear()->sendKeys('paga+tarde');
 
         try {
             $this->findByLinkText('Install')->click();
