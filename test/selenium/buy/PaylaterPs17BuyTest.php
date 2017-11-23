@@ -37,7 +37,7 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($featuredProductCenterSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
-        $this->findByLinkText('Vestido')->click();
+        $this->findByClass('product-description')->click();
         $available = WebDriverBy::id('product-availability');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($available);
         $this->waitUntil($condition);
