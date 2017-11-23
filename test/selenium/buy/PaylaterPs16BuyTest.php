@@ -40,7 +40,7 @@ class PaylaterPs16BuyTest extends PaylaterPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
         $this->moveToElementAndClick($this->findByClass('product-container'));
-        $available = WebDriverBy::className('our_price_display');
+        $available = WebDriverBy::className('replace-2x');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($available);
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
