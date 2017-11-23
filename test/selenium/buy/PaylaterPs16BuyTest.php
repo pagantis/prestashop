@@ -122,7 +122,7 @@ class PaylaterPs16BuyTest extends PaylaterPrestashopTest
         $this->webDriver->findElement($paylaterCheckout)->click();
         $iFrame = 'iframe-pagantis';
         $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($iFrame);
-        $this->webDriver->wait(45, 1000)->until($condition);
+        $this->webDriver->wait(30, 50)->until($condition);
         $this->assertTrue((bool) $condition);
         $paymentFormElement = WebDriverBy::name('form-continue');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paymentFormElement);
