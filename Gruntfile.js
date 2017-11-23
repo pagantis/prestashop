@@ -18,7 +18,7 @@ module.exports = function(grunt) {
             },
             runTestPrestashop17: {
                 command:
-                'sudo chmod -R 777 vendor\n' +
+                'chmod -R 777 vendor\n' +
                 'docker-compose down\n' +
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop17\n' +
@@ -26,6 +26,7 @@ module.exports = function(grunt) {
                 'sleep 120\n' +
                 'date\n' +
                 'docker-compose logs prestashop17\n' +
+                'set -e\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17install\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17register\n' +
@@ -33,7 +34,7 @@ module.exports = function(grunt) {
             },
             runTestPrestashop16: {
                 command:
-                'sudo chmod -R 777 vendor\n' +
+                'chmod -R 777 vendor\n' +
                 'docker-compose down\n' +
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop16\n' +
@@ -41,6 +42,7 @@ module.exports = function(grunt) {
                 'sleep 120\n' +
                 'date\n' +
                 'docker-compose logs prestashop16\n' +
+                'set -e\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16install\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16register\n' +
@@ -48,7 +50,7 @@ module.exports = function(grunt) {
             },
             runTestPrestashop15: {
                 command:
-                'sudo chmod -R 777 vendor\n' +
+                'chmod -R 777 vendor\n' +
                 'docker-compose down\n' +
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop15\n' +
@@ -56,6 +58,7 @@ module.exports = function(grunt) {
                 'sleep 120\n' +
                 'date\n' +
                 'docker-compose logs prestashop15\n' +
+                'set -e\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15install\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15register\n' +
