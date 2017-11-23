@@ -51,6 +51,7 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
     {
         $this->findByClass('add-to-cart')->click();
         $cartTitle = WebDriverBy::className('cart-products-count');
+        /** @var WebDriverExpectedCondition $condition */
         $condition = WebDriverExpectedCondition::textToBePresentInElement($cartTitle, '(1)');
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
@@ -68,9 +69,9 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($cartButton)->click();
-
-        $checkoutButton = WebDriverBy::partialLinkText(strtoupper('Tramitar pedido'));
-        $condition      = WebDriverExpectedCondition::visibilityOfElementLocated($checkoutButton);
+        $checkoutButton = WebDriverBy::className('cart-detailed-actions');
+        $checkoutButton = $checkoutButton->className('btn-primary');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($checkoutButton);
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
         $this->webDriver->findElement($checkoutButton)->click();
@@ -85,18 +86,19 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
             $this->findByName('city')->clear()->sendKeys($this->configuration['city']);
             $this->findByName('phone')->clear()->sendKeys($this->configuration['phone']);
             $this->findById('delivery-address')->findElement(WebDriverBy::name('confirm-addresses'))->click();
-            $processAddress = WebDriverBy::name('confirm-addresses');
+            $processAddress = WebDriverBy::name('confirmDeliveryOption');
             $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processAddress);
             $this->waitUntil($condition);
             $this->assertTrue((bool) $condition);
         } catch (\Exception $exception) {
+            $this->findByName('confirm-addresses')->click();
             $processAddress = WebDriverBy::name('confirmDeliveryOption');
             $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processAddress);
             $this->waitUntil($condition);
             $this->assertTrue((bool) $condition);
         }
         $this->webDriver->findElement($processAddress)->click();
-        $processCarrier = WebDriverBy::name('confirmDeliveryOption');
+        $processCarrier = WebDriverBy::id('payment-confirmation');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processCarrier);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
@@ -154,77 +156,5 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
         $this->findByName('email')->sendKeys($this->configuration['email']);
         $this->findByName('password')->sendKeys($this->configuration['password']);
         $this->webDriver->findElement($loginForm)->submit();
-    }
-
-    public function addProductAndGoToCheckout()
-    {
-        $this->findById('category-3')->click();
-        $this->findByClass('thumbnail-container')->click();
-        $this->findByClass('bootstrap-touchspin-up')->click();
-        $this->findByClass('add-to-cart')->click();
-        sleep(1);
-        $this->findByClass('close')->click();
-        sleep(1);
-        $this->findByClass('shopping-cart')->click();
-        $this->findByClass('btn-primary')->click();
-        try {
-            $editAddress = $this->findByClass('edit-address ');
-            $editAddress->click();
-        } catch (\Exception $exception) {
-            //already input address
-        }
-
-        $this->findByName('address1')->clear()->sendKeys('My house');
-        $this->findByName('postcode')->clear()->sendKeys('00800');
-        $this->findByName('city')->clear()->sendKeys('My city');
-        $this->findByClass('btn-primary')->click();
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::name('confirmDeliveryOption')
-            )
-        );
-
-        $this->findByName('confirmDeliveryOption')->click();
-
-        $this->webDriver->wait(5, 50)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::cssSelector('[for=payment-option-3]')
-            )
-        );
-        $this->webDriver->findElement(WebDriverBy::cssSelector('[for=payment-option-3]'))
-                        ->click();
-
-        $this->findById('conditions_to_approve[terms-and-conditions]')->click();
-
-        sleep(5);
-
-        $this->webDriver->wait(5, 50)->until(
-            WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::cssSelector(
-                '#payment-confirmation button'
-            ))
-        );
-
-        sleep(1);
-
-        $this->webDriver->findElement(WebDriverBy::cssSelector('#payment-confirmation button'))->click();
-
-        $this->webDriver->wait(10, 50)->until(
-            WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt('iframe-pagantis')
-        );
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::name('form-continue')
-            )
-        );
-
-        $this->assertContains(
-            'compra',
-            $this->findByClass('Form-heading1')->getText()
-        );
-
-        //PAYMENT METHOD WORKS!! YUHUUUUU
-        sleep(5);
     }
 }

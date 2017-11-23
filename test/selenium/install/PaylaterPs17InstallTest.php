@@ -25,7 +25,7 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
         $this->loginToBackOffice();
         $this->uploadPaylaterModule();
         $this->configureModule();
-        //$this->quit();
+        $this->quit();
     }
 
     /**
