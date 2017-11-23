@@ -113,7 +113,7 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($paylaterOption)->click();
         //$pmtSimulator = WebDriverBy::className('PmtSimulator');
-        //$condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+        //$condition = WebDriverExpectedCondition::visibilityOfElementLocated($pmtSimulator);
         //$this->waitUntil($condition);
         //$this->assertTrue((bool) $condition);
         $this->findById('conditions_to_approve[terms-and-conditions]')->click();
@@ -127,7 +127,7 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
     {
         $iFrame = 'iframe-pagantis';
         $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($iFrame);
-        $this->waitUntil($condition);
+        $this->webDriver->wait(45, 1000)->until($condition);
         $this->assertTrue((bool) $condition);
         $paymentFormElement = WebDriverBy::name('form-continue');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paymentFormElement);
