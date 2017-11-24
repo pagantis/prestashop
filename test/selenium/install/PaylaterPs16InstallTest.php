@@ -88,7 +88,7 @@ class PaylaterPs16InstallTest extends PaylaterPrestashopTest
             ));
         }
 
-        $verify = WebDriverBy::id('PAYLATER_PUBLIC_KEY_TEST');
+        $verify = WebDriverBy::id('frame');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);

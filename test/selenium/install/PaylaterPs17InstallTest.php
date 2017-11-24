@@ -76,7 +76,7 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
      */
     public function configureModule()
     {
-        $verify = WebDriverBy::id('PAYLATER_PUBLIC_KEY_TEST');
+        $verify = WebDriverBy::id('frame');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
