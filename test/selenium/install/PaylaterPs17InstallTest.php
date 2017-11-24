@@ -86,14 +86,13 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
         $this->findById('PAYLATER_PRIVATE_KEY_TEST')->clear()->sendKeys($this->configuration['secretKey']);
         $this->findById('PAYLATER_PUBLIC_KEY_PROD')->clear()->sendKeys('pk_this_is_fake');
         $this->findById('PAYLATER_PRIVATE_KEY_PROD')->clear()->sendKeys('this is a fake key');
-        $this->webDriver->executeScript("
-            document.querySelector(
-                \'input[name=\"PAYLATER_PRODUCT_HOOK\"][type=\"radio\"][value=\"hookDisplayRightColumnProduct\"]\'
-            ).click();
-            document.querySelector(\'input[name=\"PAYLATER_PRODUCT_HOOK_TYPE\"][type=\"radio\"][value=\"1\"]\').click();
-            document.querySelector(\'input[name=\"PAYLATER_ADD_SIMULATOR\"][type=\"radio\"][value=\"1\"]\').click();
-            document.querySelector(\'input[name=\"PAYLATER_IFRAME\"][type=\"radio\"][value=\"1\"]\').click();
-        ");
+        $script = <<<EOD
+document.querySelector('input[name="PAYLATER_PRODUCT_HOOK"][type="radio"][value="hookDisplayRightColumnProduct"]').click();
+document.querySelector('input[name="PAYLATER_PRODUCT_HOOK_TYPE"][type="radio"][value="1"]').click();
+document.querySelector('input[name="PAYLATER_ADD_SIMULATOR"][type="radio"][value="1"]').click();
+document.querySelector('input[name="PAYLATER_IFRAME"][type="radio"][value="1"]').click();
+EOD;
+        $this->webDriver->executeScript($script);
         $this->findById('PAYLATER_PROMOTION_EXTRA')->clear()->sendKeys($this->configuration['extra']);
         $this->findById('module_form_submit_btn');
         $confirmationSearch = WebDriverBy::className('module_confirmation');
