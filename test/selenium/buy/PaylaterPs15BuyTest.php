@@ -42,6 +42,10 @@ class PaylaterPs15BuyTest extends PaylaterPrestashopTest
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($addToCartSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
+        $pmtSimulator = WebDriverBy::className('PmtSimulator');
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($addToCartSearch)->click();
         $shoppingCartSearch = WebDriverBy::id('shopping_cart');
         $this->webDriver->findElement($shoppingCartSearch)->click();
@@ -102,6 +106,7 @@ class PaylaterPs15BuyTest extends PaylaterPrestashopTest
         $pmtSimulator = WebDriverBy::className('PmtSimulator');
         $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
         $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
     }
 
     /**
