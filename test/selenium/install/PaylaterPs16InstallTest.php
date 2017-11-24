@@ -98,10 +98,12 @@ class PaylaterPs16InstallTest extends PaylaterPrestashopTest
         $this->findById('PAYLATER_PUBLIC_KEY_PROD')->clear()->sendKeys('pk_this_is_fake');
         $this->findById('PAYLATER_PRIVATE_KEY_PROD')->clear()->sendKeys('this is a fake key');
         $this->webDriver->executeScript("
-            document.getElementsByName('PAYLATER_PRODUCT_HOOK')[3].click();
-            document.getElementsByName('PAYLATER_PRODUCT_HOOK_TYPE')[0].click();
-            document.getElementsByName('PAYLATER_IFRAME')[0].click();
-            document.getElementsByName('PAYLATER_ADD_SIMULATOR')[1].click();
+            document.querySelector(
+                \'input[name=\"PAYLATER_PRODUCT_HOOK\"][type=\"radio\"][value=\"hookDisplayRightColumnProduct\"]\'
+            ).click();
+            document.querySelector(\'input[name=\"PAYLATER_PRODUCT_HOOK_TYPE\"][type=\"radio\"][value=\"1\"]\').click();
+            document.querySelector(\'input[name=\"PAYLATER_ADD_SIMULATOR\"][type=\"radio\"][value=\"1\"]\').click();
+            document.querySelector(\'input[name=\"PAYLATER_IFRAME\"][type=\"radio\"][value=\"1\"]\').click();
         ");
         $this->findById('PAYLATER_PROMOTION_EXTRA')->clear()->sendKeys($this->configuration['extra']);
         $this->findById('module_form_submit_btn');
