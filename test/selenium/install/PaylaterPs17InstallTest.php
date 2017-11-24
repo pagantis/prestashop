@@ -3,6 +3,7 @@
 namespace Test\Selenium\Install;
 
 use Facebook\WebDriver\Remote\LocalFileDetector;
+use Facebook\WebDriver\Remote\RemoteWebElement;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Test\Selenium\PaylaterPrestashopTest;
@@ -86,9 +87,18 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
         $this->findById('PAYLATER_PUBLIC_KEY_PROD')->clear()->sendKeys('pk_this_is_fake');
         $this->findById('PAYLATER_PRIVATE_KEY_PROD')->clear()->sendKeys('this is a fake key');
         $this->findById('frame')->click();
-        $this->findByCss('input[name="PAYLATER_PRODUCT_HOOK"][type="radio"][value="hookDisplayRightColumnProduct"]');
-        $this->findByCss('input[name="PAYLATER_PRODUCT_HOOK_TYPE"][type="radio"][value="2"]');
-        $this->findByCss('input[name="PAYLATER_ADD_SIMULATOR"][type="radio"][value="2"]');
+        $selectorComboSearch = WebDriverBy::name('PAYLATER_PRODUCT_HOOK');
+        /** @var RemoteWebElement[] $selectorElements */
+        $selectorElements = $this->webDriver->findElements($selectorComboSearch);
+        $selectorElements[4]->click();
+        $selectorComboSearch = WebDriverBy::name('PAYLATER_PRODUCT_HOOK_TYPE');
+        /** @var RemoteWebElement[] $selectorElements */
+        $selectorElements = $this->webDriver->findElements($selectorComboSearch);
+        $selectorElements[2]->click();
+        $selectorComboSearch = WebDriverBy::name('PAYLATER_ADD_SIMULATOR');
+        /** @var RemoteWebElement[] $selectorElements */
+        $selectorElements = $this->webDriver->findElements($selectorComboSearch);
+        $selectorElements[2]->click();
         $this->findById('PAYLATER_PROMOTION_EXTRA')->clear()->sendKeys($this->configuration['extra']);
         $this->findById('module_form_submit_btn');
         $confirmationSearch = WebDriverBy::className('module_confirmation');
