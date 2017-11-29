@@ -133,12 +133,8 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
             }
 
             $payments = $pmtClient->charge()->getChargesByOrderId($cartId);
-            /** @var OrderCore $order */
-            $orderId = Order::getIdByCartId((int) $cartId);
-            $order = new Order($orderId);
-
             $latestCharge = array_shift($payments);
-            if ($latestCharge->getAmount() != (int) ((string) (100 * $order->total_paid))) {
+            if ($latestCharge->getAmount() != (int) ((string) (100 * $cart->getOrderTotal(true)))) {
                 $this->message = 'Amount to pay mismatch';
                 $this->error = true;
                 return;
@@ -147,12 +143,12 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
             if (Validate::isLoadedObject($cart)
             ) {
                 if ($cart->orderExists() === false) {
-                    /** @var PaymentModuleCore $paymentModule */
+                    /** @var PaymentModule $paymentModule */
                     $paymentModule = $this->module;
                     $paymentModule->validateOrder(
                         $cartId,
                         Configuration::get('PS_OS_PAYMENT'),
-                        $order->total_paid,
+                        $cart->getOrderTotal(true),
                         $this->module->displayName,
                         null,
                         null,
