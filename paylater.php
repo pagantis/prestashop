@@ -668,8 +668,9 @@ EOD;
         $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
         $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
         $paylaterPromotionExtra = Configuration::get('PAYLATER_PROMOTION_EXTRA');
+        $minAmount              = Configuration::get('PAYLATER_MIN_AMOUNT');
 
-        if ($functionName != $productConfiguration || $amount <= 0) {
+        if ($functionName != $productConfiguration || $amount <= 0 || $amount < $minAmount) {
             return null;
         }
 
