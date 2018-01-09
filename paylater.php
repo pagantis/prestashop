@@ -160,8 +160,8 @@ class Paylater extends PaymentModule
             $category->id_parent = Configuration::get('PS_HOME_CATEGORY');
             $category->active=0;
             $description = <<<EOD
-Los productos con esta categoría tienen financiación gratis asumida por el comercio. Úsalo para promocionar tus 
-productos o marcas.
+Paga+Tarde: Los productos con esta categoría tienen financiación gratis asumida por el comercio. Úsalo para promocionar 
+tus productos o marcas.
 EOD;
             $category->description = $this->l($description);
             $category->save();
