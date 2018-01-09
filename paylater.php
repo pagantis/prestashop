@@ -89,6 +89,7 @@ class Paylater extends PaymentModule
         Configuration::updateValue('PAYLATER_MIN_AMOUNT', 0);
         Configuration::updateValue('PAYLATER_PRODUCT_HOOK', false);
         Configuration::updateValue('PAYLATER_PRODUCT_HOOK_TYPE', false);
+        Configuration::updateValue('PAYLATER_PROMOTION_EXTRA', $this->l('Promotion: finance it Without interests'));
 
         return (parent::install()
                 && $this->registerHook('displayShoppingCart')
