@@ -152,11 +152,11 @@ class Paylater extends PaymentModule
             /** @var CategoryCore $category */
             $category = new Category();
             $category->is_root_category = false;
-            $category->link_rewrite = [ 1=> PROMOTIONS_CATEGORY ];
-            $category->meta_description = [ 1=> PROMOTIONS_CATEGORY ];
-            $category->meta_keywords = [ 1=> PROMOTIONS_CATEGORY ];
-            $category->meta_title = [ 1=> PROMOTIONS_CATEGORY ];
-            $category->name = [ 1=> PROMOTIONS_CATEGORY ];
+            $category->link_rewrite = array( 1=> PROMOTIONS_CATEGORY );
+            $category->meta_description = array( 1=> PROMOTIONS_CATEGORY );
+            $category->meta_keywords = array( 1=> PROMOTIONS_CATEGORY );
+            $category->meta_title = array( 1=> PROMOTIONS_CATEGORY );
+            $category->name = array( 1=> PROMOTIONS_CATEGORY );
             $category->id_parent = Configuration::get('PS_HOME_CATEGORY');
             $category->active=0;
             $description = <<<EOD
