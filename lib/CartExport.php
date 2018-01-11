@@ -16,6 +16,12 @@ class CartExport
      */
     public static function export(CartCore $cartCore)
     {
+        $items = $cartCore->getProducts(true);
+        foreach ($items as $key => $item) {
+            $itemCategories = ProductCore::getProductCategoriesFull($item['id_product']);
+            $items[$key]['categories'] = $itemCategories;
+        }
+
         if (_PS_VERSION_ >= 1.7) {
             return (object) array(
                 'orderId' => $cartCore->id,

@@ -2,8 +2,8 @@
 
 namespace Test\Selenium\Install;
 
-use Facebook\WebDriver\Exception\StaleElementReferenceException;
 use Facebook\WebDriver\Remote\LocalFileDetector;
+use Facebook\WebDriver\Remote\RemoteWebElement;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Test\Selenium\PaylaterPrestashopTest;
@@ -13,6 +13,7 @@ use Test\Selenium\PaylaterPrestashopTest;
  * @package Test\Selenium\Basic
  *
  * @group prestashop17install
+ * @group install
  */
 class PaylaterPs17InstallTest extends PaylaterPrestashopTest
 {
@@ -33,24 +34,16 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
     public function loginToBackOffice()
     {
         $this->webDriver->get(self::PS17URL.self::BACKOFFICE_FOLDER);
-
-        $this->webDriver->wait(10, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::name('submitLogin')
-            )
-        );
-
-        $this->findByName('email')->sendKeys($this->configuration['username']);
-        $this->findByName('passwd')->sendKeys($this->configuration['password']);
-        $this->findByName('submitLogin')->click();
-
-        $this->webDriver->wait(10, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::linkText('Modules')
-            )
-        );
-
-        $this->assertEquals('Dashboard • PrestaShop', $this->webDriver->getTitle());
+        $emailElementSearch = WebDriverBy::id('email');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($emailElementSearch);
+        $this->waitUntil($condition);
+        $this->findById('email')->clear()->sendKeys($this->configuration['username']);
+        $this->findById('passwd')->clear()->sendKeys($this->configuration['password']);
+        $this->findById('login_form')->submit();
+        $emailElementSearch = WebDriverBy::id('employee_infos');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($emailElementSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
     }
 
     /**
@@ -60,42 +53,23 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
     {
         $this->webDriver->executeScript('document.querySelector(\'.onboarding-button-shut-down\').click();');
         sleep(3);
+        $elementSearch = WebDriverBy::partialLinkText('Modules');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($elementSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
         $this->findByLinkText('Modules')->click();
-
-        $this->webDriver->wait(10, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::linkText('Installed modules')
-            )
-        );
-
-        $this->findByLinkText('Installed modules')->click();
-
-        $this->webDriver->wait(10, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::id('page-header-desc-configuration-add_module')
-            )
-        );
-
-        $this->findById('page-header-desc-configuration-add_module')->click();
-
-        $fileInput = $this->findByClass('dz-hidden-input');
+        $this->findByLinkText('UPLOAD A MODULE')->click();
+        $moduleInstallBlock = WebDriverBy::id('module_install');
+        $fileInputSearch = $moduleInstallBlock->className('dz-hidden-input');
+        $fileInput = $this->webDriver->findElement($fileInputSearch);
         $fileInput->setFileDetector(new LocalFileDetector());
+        $fileInput->sendKeys(__DIR__.'/../../../paylater.zip');
+        $validatorSearch = WebDriverBy::className('module-import-success-msg');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
+        $this->webDriver->wait(45, 1000)->until($condition);
+        $this->assertTrue((bool) $condition);
 
-        try {
-            $fileInput->sendKeys(__DIR__.'/../../../paylater.zip')->submit();
-        } catch (StaleElementReferenceException $elementHasDisappeared) {
-        }
-
-        $this->webDriver->wait()->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::className('module-import-success-configure')
-            )
-        );
-
-        $this->assertContains(
-            'Module installed!',
-            $this->findByClass('module-import-success-msg')->getText()
-        );
+        $this->findByLinkText('CONFIGURE')->click();
     }
 
     /**
@@ -103,39 +77,30 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
      */
     public function configureModule()
     {
-        $this->findByClass('module-import-success-configure')->click();
-
-        sleep(3);
-
-        $this->assertContains(
-            strtoupper('Paylater Configuration Panel'),
-            $this->findByClass('paylater-content-form')->getText()
-        );
-
-        //Set it to test:
+        $verify = WebDriverBy::id('frame');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
         $this->findById('test')->click();
-        //Set Public and Private key:
         $this->findById('PAYLATER_PUBLIC_KEY_TEST')->clear()->sendKeys($this->configuration['publicKey']);
         $this->findById('PAYLATER_PRIVATE_KEY_TEST')->clear()->sendKeys($this->configuration['secretKey']);
         $this->findById('PAYLATER_PUBLIC_KEY_PROD')->clear()->sendKeys('pk_this_is_fake');
         $this->findById('PAYLATER_PRIVATE_KEY_PROD')->clear()->sendKeys('this is a fake key');
-        $this->webDriver->executeScript('
-            document.querySelector(\'input[name="PAYLATER_ADD_SIMULATOR"][type="radio"][value="1"]\').click();
-            document.querySelector(\'input[name="PAYLATER_IFRAME"][type="radio"][value="1"]\').click();
-            document.getElementById(\'module_form_submit_btn\').scrollIntoView();
-        ');
-
+        $script = <<<EOD
+document.querySelector('input[name="PAYLATER_PRODUCT_HOOK"][type="radio"][value="hookDisplayProductButtons"]').click();
+document.querySelector('input[name="PAYLATER_PRODUCT_HOOK_TYPE"][type="radio"][value="1"]').click();
+document.querySelector('input[name="PAYLATER_ADD_SIMULATOR"][type="radio"][value="1"]').click();
+document.querySelector('input[name="PAYLATER_IFRAME"][type="radio"][value="1"]').click();
+EOD;
+        $this->webDriver->executeScript($script);
+        $this->findById('PAYLATER_PROMOTION_EXTRA')->clear()->sendKeys($this->configuration['extra']);
         $this->findById('module_form_submit_btn')->click();
-
-        $this->webDriver->wait(3, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::className('module_confirmation')
-            )
+        $confirmationSearch = WebDriverBy::className('module_confirmation');
+        $condition = WebDriverExpectedCondition::textToBePresentInElement(
+            $confirmationSearch,
+            'All changes have been saved'
         );
-
-        $this->assertContains(
-            'All changes have been saved',
-            $this->findByClass('module_confirmation')->getText()
-        );
+        $this->webDriver->wait($condition);
+        $this->assertTrue((bool) $condition);
     }
 }

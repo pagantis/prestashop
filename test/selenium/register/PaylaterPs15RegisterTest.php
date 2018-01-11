@@ -20,10 +20,7 @@ class PaylaterPs15RegisterTest extends PaylaterPrestashopTest
     public function testRegisterAndLogin()
     {
         $this->goToLogin();
-        try {
-            $this->createAccount();
-        } catch (\Exception $exception) {
-        }
+        $this->createAccount();
         $this->login();
         $this->quit();
     }
@@ -34,19 +31,15 @@ class PaylaterPs15RegisterTest extends PaylaterPrestashopTest
     public function goToLogin()
     {
         $this->webDriver->get(self::PS15URL);
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::className('login')
-            )
-        );
-
-        $this->findByClass('login')->click();
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::id('SubmitLogin')
-            )
-        );
+        $loginButtonSearch = WebDriverBy::className('login');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($loginButtonSearch);
+        $this->webDriver->wait()->until($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($loginButtonSearch)->click();
+        $verifyElement = WebDriverBy::id('SubmitLogin');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($verifyElement);
+        $this->webDriver->wait()->until($condition);
+        $this->assertTrue((bool) $condition);
     }
 
     /**
@@ -56,36 +49,27 @@ class PaylaterPs15RegisterTest extends PaylaterPrestashopTest
     {
         $this->findById('email_create')->sendKeys($this->configuration['email']);
         $this->findById('SubmitCreate')->click();
-        $this->webDriver->wait(10, 2000)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::id('submitAccount')
-            )
-        );
-        //Fillup form:
+        try {
+            $submitAccountSearch = WebDriverBy::id('customer_firstname');
+            $condition = WebDriverExpectedCondition::visibilityOfElementLocated($submitAccountSearch);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool) $condition);
+        } catch (\Exception $exception) {
+            return true;
+        }
         $this->findById('id_gender1')->click();
-        $this->findByName('customer_firstname')->sendKeys($this->configuration['firstname']);
-        $this->findByName('customer_lastname')->sendKeys($this->configuration['lastname']);
-        $this->findByName('passwd')->sendKeys($this->configuration['password']);
-
-        $this->findById('days')->findElement(
-            WebDriverBy::cssSelector("option[value='1']")
-        )->click();
-        $this->findById('months')->findElement(
-            WebDriverBy::cssSelector("option[value='2']")
-        )->click();
-        $this->findById('years')->findElement(
-            WebDriverBy::cssSelector("option[value='1990']")
-        )->click();
-
-        $this->webDriver->executeScript('document.getElementById("submitAccount").click();');
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::className('logout')
-            )
-        );
-
-        $this->findByClass('logout')->click();
+        $this->findById('customer_firstname')->clear()->sendKeys($this->configuration['firstname']);
+        $this->findById('customer_lastname')->sendKeys($this->configuration['lastname']);
+        $this->findById('passwd')->sendKeys($this->configuration['password']);
+        $this->findById('days')->sendKeys(1);
+        $this->findById('months')->sendKeys('January');
+        $this->findById('years')->sendKeys(1990);
+        $this->findById('submitAccount')->click();
+        $logoutButtonSearch = WebDriverBy::className('logout');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($logoutButtonSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($logoutButtonSearch)->click();
     }
 
     /**
@@ -93,30 +77,22 @@ class PaylaterPs15RegisterTest extends PaylaterPrestashopTest
      */
     public function login()
     {
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::className('login')
-            )
-        );
-
-        $this->findByClass('login')->click();
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::id('SubmitLogin')
-            )
-        );
-
+        $loginButtonSearch = WebDriverBy::className('login');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($loginButtonSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($loginButtonSearch)->click();
+        $submitLoginButtonSearch = WebDriverBy::id('SubmitLogin');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($submitLoginButtonSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
         $this->findById('email')->sendKeys($this->configuration['email']);
         $this->findById('passwd')->sendKeys($this->configuration['password']);
         $this->findById('SubmitLogin')->click();
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::className('logout')
-            )
-        );
-
+        $logoutButtonSearch = WebDriverBy::className('logout');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($logoutButtonSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
         $this->assertContains(
             $this->configuration['firstname'],
             $this->findById('header_user_info')->getText()

@@ -25,7 +25,7 @@ services:
     ports:
       - "8015:80"
   prestashop16:
-    image: prestashop/prestashop:1.6
+    image: prestashop/prestashop:1.6.1.14
     depends_on:
       - db-ps16
     environment:
@@ -70,20 +70,20 @@ services:
       - ./:/var/www/html/modules/paylater
     ports:
       - "8017:80"
-  prestashop18:
-    image: prestashop/prestashop:latest
+  prestashop-dev:
+    image: prestashop/prestashop:1.6.1.14
     depends_on:
-      - db-ps18
+      - db-dev
     environment:
       - PS_DEV_MODE=1
       - PS_COUNTRY=es
-      - PS_DOMAIN=prestashop18
+      - PS_DOMAIN=prestashop-dev:8018
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
       - PS_INSTALL_AUTO=1
-      - DB_SERVER=db-ps18
-      - DB_NAME=prestashop18
+      - DB_SERVER=db-dev
+      - DB_NAME=prestashop-dev
       - DB_PREFIX=ps_
       - DB_PASSWD=password
     networks:
@@ -93,11 +93,11 @@ services:
       - ./:/var/www/html/modules/paylater
     ports:
       - "8018:80"
-  db-ps18:
-    image: mysql
+  db-dev:
+    image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=prestashop18
+      - MYSQL_DATABASE=prestashop-dev
     networks:
       - internal
     ports:

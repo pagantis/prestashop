@@ -20,109 +20,117 @@ class PaylaterPs15BuyTest extends PaylaterPrestashopTest
     public function testBuy()
     {
         $this->login();
-        $this->addProductAndGoToCheckout();
+        $this->addProduct();
+        $this->goTocheckout();
+        $this->verifyPaylater();
         $this->quit();
     }
 
-    public function addProductAndGoToCheckout()
+    /**
+     * Add Product
+     */
+    public function addProduct()
     {
+        $this->findById('header_logo')->click();
+        $featuredProductCenterSearch = WebDriverBy::id('featured-products_block_center');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($featuredProductCenterSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $product = $featuredProductCenterSearch->className('s_title_block');
+        $this->webDriver->findElement($product)->click();
+        $addToCartSearch = WebDriverBy::id('add_to_cart');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($addToCartSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $pmtSimulator = WebDriverBy::className('PmtSimulator');
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($addToCartSearch)->click();
+        $shoppingCartSearch = WebDriverBy::id('shopping_cart');
+        $this->webDriver->findElement($shoppingCartSearch)->click();
+        $shoppingCartTitle = WebDriverBy::id('cart_title');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($shoppingCartTitle);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+    }
 
-        $this->findByClass('sf-with-ul')->click();
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::className('first_item'))
-        );
-        $this->findByClass('first_item')->click();
-
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::className('ajax_add_to_cart_button'))
-        );
-        $this->findByClass('ajax_add_to_cart_button')->click();
-
-        sleep(1);
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id('shopping_cart'))
-        );
-
-        $this->findById('shopping_cart')->findElement(WebDriverBy::cssSelector('a'))->click();
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::className('standard-checkout')
-            )
-        );
-        $this->findByClass('standard-checkout')->click();
-
+    /**
+     * Checkout
+     */
+    public function goTocheckout()
+    {
+        $shoppingCartSearch = WebDriverBy::id('shopping_cart');
+        $this->webDriver->findElement($shoppingCartSearch)->click();
+        $shoppingCartTitle = WebDriverBy::id('cart_title');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($shoppingCartTitle);
+        $this->assertTrue((bool) $condition);
+        $cartNavigation = WebDriverBy::className('cart_navigation');
+        $nextButton = $cartNavigation->partialLinkText('Next');
+        $this->webDriver->findElement($nextButton)->click();
         try {
-            $this->findByClass('address_update')->findElement(WebDriverBy::cssSelector('a'))->click();
+            $addressInputSearch = WebDriverBy::id('firstname');
+            $condition = WebDriverExpectedCondition::visibilityOfElementLocated($addressInputSearch);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool) $condition);
+            $this->findById('company')->clear()->sendKeys($this->configuration['company']);
+            $this->findById('address1')->clear()->sendKeys('av.diagonal 579');
+            $this->findById('postcode')->clear()->sendKeys($this->configuration['zip']);
+            $this->findById('city')->clear()->sendKeys($this->configuration['city']);
+            $this->findById('phone')->clear()->sendKeys($this->configuration['phone']);
+            $this->findById('phone_mobile')->clear()->sendKeys($this->configuration['phone']);
+            $this->findById('dni')->clear()->sendKeys($this->configuration['dni']);
+            $this->findById('id_state')->sendKeys('Barcelona');
+            $this->findById('submitAddress')->click();
+            $processAddress = WebDriverBy::name('processAddress');
+            $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processAddress);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool) $condition);
         } catch (\Exception $exception) {
+            $processAddress = WebDriverBy::name('processAddress');
+            $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processAddress);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool) $condition);
         }
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::id('company')
-            )
-        );
-
-        $this->findById('company')->clear()->sendKeys($this->configuration['company']);
-        $this->findById('address1')->clear()->sendKeys('av.diagonal 579');
-        $this->findById('postcode')->clear()->sendKeys($this->configuration['zip']);
-        $this->findById('city')->clear()->sendKeys($this->configuration['city']);
-        $this->findById('phone')->clear()->sendKeys($this->configuration['phone']);
-        $this->findById('phone_mobile')->clear()->sendKeys($this->configuration['phone']);
-        $this->findById('dni')->clear()->sendKeys($this->configuration['dni']);
-        $this->findById('id_state')->findElement(
-            WebDriverBy::cssSelector("option[value='322']")
-        )->click();
-
-        $this->findById('submitAddress')->click();
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::name('processAddress')
-            )
-        );
-
-        $this->findByName('processAddress')->click();
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::name('processCarrier')
-            )
-        );
-
+        $this->webDriver->findElement($processAddress)->click();
+        $processCarrier = WebDriverBy::name('processCarrier');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processCarrier);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
         $this->findById('cgv')->click();
-        $this->findByName('processCarrier')->click();
+        $this->webDriver->findElement($processCarrier)->click();
+        $hookPayment = WebDriverBy::id('HOOK_PAYMENT');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($hookPayment);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $pmtSimulator = WebDriverBy::className('PmtSimulator');
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+    }
 
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::className('paylater-checkout')
-            )
-        );
-
-        //PAYMENT SHOWN
-        $this->assertTrue(true);
-
-        $this->findByClass('paylater-checkout')->click();
-
-        $this->webDriver->wait(10, 500)->until(
-            WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt('iframe-pagantis')
-        );
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::name('form-continue')
-            )
-        );
-
+    /**
+     * Verify paylater
+     */
+    public function verifyPaylater()
+    {
+        $paylaterCheckout = WebDriverBy::className('paylater-checkout');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paylaterCheckout);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($paylaterCheckout)->click();
+        $iFrame = 'iframe-pagantis';
+        $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($iFrame);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $paymentFormElement = WebDriverBy::name('form-continue');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paymentFormElement);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
         $this->assertContains(
             'compra',
             $this->findByClass('Form-heading1')->getText()
         );
-
-        //PAYMENT METHOD WORKS!! YUHUUUUU
-        sleep(5);
     }
 
     /**
@@ -131,20 +139,16 @@ class PaylaterPs15BuyTest extends PaylaterPrestashopTest
     public function login()
     {
         $this->webDriver->get(self::PS15URL);
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::className('login')
-            )
-        );
-
-        $this->findByClass('login')->click();
-
-        $this->webDriver->wait(5, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::id('SubmitLogin')
-            )
-        );
-
+        $login = WebDriverBy::className('login');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($login);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($login)->click();
+        $loginSubmit = WebDriverBy::id('SubmitLogin');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($loginSubmit);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($loginSubmit)->click();
         $this->findById('email')->sendKeys($this->configuration['email']);
         $this->findById('passwd')->sendKeys($this->configuration['password']);
         $this->findById('SubmitLogin')->click();

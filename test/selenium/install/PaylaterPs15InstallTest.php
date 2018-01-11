@@ -4,6 +4,7 @@ namespace Test\Selenium\Install;
 
 use Facebook\WebDriver\Exception\StaleElementReferenceException;
 use Facebook\WebDriver\Remote\LocalFileDetector;
+use Facebook\WebDriver\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Test\Selenium\PaylaterPrestashopTest;
@@ -34,24 +35,16 @@ class PaylaterPs15InstallTest extends PaylaterPrestashopTest
     public function loginToBackOffice()
     {
         $this->webDriver->get(self::PS15URL.self::BACKOFFICE_FOLDER);
-
-        $this->webDriver->wait(3, 50)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::name('submitLogin')
-            )
-        );
-
-        $this->findByName('email')->sendKeys($this->configuration['username']);
-        $this->findByName('passwd')->sendKeys($this->configuration['password']);
-        $this->findByName('submitLogin')->click();
-
-        $this->webDriver->wait(3, 50)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::id('maintab15')
-            )
-        );
-
-        $this->assertContains('Home - PrestaShop', $this->webDriver->getTitle());
+        $emailElementSearch = WebDriverBy::id('email');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($emailElementSearch);
+        $this->waitUntil($condition);
+        $this->findById('email')->clear()->sendKeys($this->configuration['username']);
+        $this->findById('passwd')->clear()->sendKeys($this->configuration['password']);
+        $this->findById('login_form')->submit();
+        $emailElementSearch = WebDriverBy::id('employee_infos');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($emailElementSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
     }
 
     /**
@@ -59,51 +52,18 @@ class PaylaterPs15InstallTest extends PaylaterPrestashopTest
      */
     public function uploadPaylaterModule()
     {
-        $this->findById('maintab15')->click();
-
-        $this->webDriver->wait(3, 100)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::linkText('Modules')
-            )
-        );
-
-        $this->findById('fifth_block')->findElement(WebDriverBy::cssSelector('a'))->click();
-
-        $this->webDriver->wait(3, 100)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::id('desc-module-new')
-            )
-        );
-
-        $this->webDriver->executeScript('document.getElementById("desc-module-new").click();');
-
-        $this->webDriver->wait(3, 100)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::name('download')
-            )
-        );
-
-        $fileInput = $this->findByName('file');
+        $this->findByLinkText('New module')->click();
+        $this->findByLinkText('Add a new module')->click();
+        $moduleInstallBlock = WebDriverBy::id('module_install');
+        $fileInputSearch = $moduleInstallBlock->name('file');
+        $fileInput = $this->webDriver->findElement($fileInputSearch);
         $fileInput->setFileDetector(new LocalFileDetector());
-
-        try {
-            $fileInput->sendKeys(__DIR__.'/../../../paylater.zip');
-        } catch (StaleElementReferenceException $elementHasDisappeared) {
-        }
-
-        $this->findByName('download')->click();
-
-        $this->webDriver->wait(5, 50)->until(
-            WebDriverExpectedCondition::textToBePresentInElement(
-                WebDriverBy::id('anchorPaylater'),
-                'Paga+Tarde'
-            )
-        );
-
-        $this->assertContains(
-            'The module was downloaded successfully',
-            $this->findByClass('conf')->getText()
-        );
+        $fileInput->sendKeys(__DIR__.'/../../../paylater.zip');
+        $fileInput->submit();
+        $validatorSearch = WebDriverBy::id('anchorPaylater');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
     }
 
     /**
@@ -111,60 +71,39 @@ class PaylaterPs15InstallTest extends PaylaterPrestashopTest
      */
     public function configureModule()
     {
-        $this->findById('module_type_filter')->findElement(
-            WebDriverBy::cssSelector("option[value='authorModules[paga+tarde]']")
-        )->click();
+        $this->findByLinkText('Modules')->click();
+        $this->findByLinkText('Modules')->click();
+        $this->findByName('quicksearch')->clear()->sendKeys('paga+tarde');
 
-        sleep(1);
-
-        if ($this->findById('anchorPaylater')->findElement(
-            WebDriverBy::className('setup')
-        )->getText() == 'NOT INSTALLED') {
-            $this->findById('list-action-button')->findElement(WebDriverBy::cssSelector('li'))->click();
-            $this->webDriver->wait(3, 50)->until(
-                WebDriverExpectedCondition::elementToBeClickable(
-                    WebDriverBy::name('submitpaylater')
-                )
-            );
-        } else {
-            $this->findById('anchorPaylater')->findElement(WebDriverBy::linkText('Configure'))->click();
+        try {
+            $this->findByLinkText('Install')->click();
+        } catch (\Exception $exception) {
+            $this->findByLinkText('Configure')->click();
         }
 
-        $this->webDriver->wait(5, 50)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::name('submitpaylater')
-            )
-        );
-
-        $this->assertContains(
-            'Paylater Configuration Panel',
-            $this->findByClass('paylater-content-form')->getText()
-        );
-
-        //Set it to test:
+        $verify = WebDriverBy::id('PAYLATER_PUBLIC_KEY_TEST');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
         $this->findById('test')->click();
-        //Set Public and Private key:
         $this->findById('PAYLATER_PUBLIC_KEY_TEST')->clear()->sendKeys($this->configuration['publicKey']);
         $this->findById('PAYLATER_PRIVATE_KEY_TEST')->clear()->sendKeys($this->configuration['secretKey']);
         $this->findById('PAYLATER_PUBLIC_KEY_PROD')->clear()->sendKeys('pk_this_is_fake');
         $this->findById('PAYLATER_PRIVATE_KEY_PROD')->clear()->sendKeys('this is a fake key');
-        $this->webDriver->executeScript('
-            document.querySelector(\'input[name="PAYLATER_ADD_SIMULATOR"][type="radio"][value="1"]\').click();
-            document.querySelector(\'input[name="PAYLATER_IFRAME"][type="radio"][value="1"]\').click();
-            document.getElementById(\'module_form_submit_btn\').scrollIntoView();
-        ');
-
-        $this->findById('module_form_submit_btn')->click();
-
-        $this->webDriver->wait(3, 500)->until(
-            WebDriverExpectedCondition::elementToBeClickable(
-                WebDriverBy::className('module_confirmation')
-            )
+        $this->findById('PAYLATER_PROMOTION_EXTRA')->clear()->sendKeys($this->configuration['extra']);
+        $this->findById('frame')->click();
+        $this->findByCss(
+            'input[name="PAYLATER_PRODUCT_HOOK"][type="radio"][value="hookDisplayRightColumnProduct"]'
+        )->click();
+        $this->findByCss('input[name="PAYLATER_PRODUCT_HOOK_TYPE"][type="radio"][value="2"]')->click();
+        $this->findByCss('input[name="PAYLATER_ADD_SIMULATOR"][type="radio"][value="2"]')->click();
+        $this->findById('module_form')->submit();
+        $confirmationSearch = WebDriverBy::className('module_confirmation');
+        $condition = WebDriverExpectedCondition::textToBePresentInElement(
+            $confirmationSearch,
+            'All changes have been saved'
         );
-
-        $this->assertContains(
-            'All changes have been saved',
-            $this->findByClass('module_confirmation')->getText()
-        );
+        $this->webDriver->wait($condition);
+        $this->assertTrue((bool) $condition);
     }
 }

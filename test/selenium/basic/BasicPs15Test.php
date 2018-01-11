@@ -14,19 +14,19 @@ use Test\Selenium\PaylaterPrestashopTest;
 class BasicPs15Test extends PaylaterPrestashopTest
 {
     /**
+     * Const title
+     */
+    const TITLE = 'PrestaShop';
+
+    /**
      * testTitlePrestashop15
      */
     public function testTitlePrestashop15()
     {
         $this->webDriver->get(self::PS15URL);
-
-        $this->webDriver->wait(10, 500)->until(
-            WebDriverExpectedCondition::titleContains(
-                'PrestaShop'
-            )
-        );
-
-        $this->assertEquals('PrestaShop', $this->webDriver->getTitle());
+        $condition = WebDriverExpectedCondition::titleContains(self::TITLE);
+        $this->webDriver->wait()->until($condition);
+        $this->assertTrue((bool) $condition);
         $this->quit();
     }
 
@@ -36,14 +36,9 @@ class BasicPs15Test extends PaylaterPrestashopTest
     public function testBackOfficeTitlePrestashop15()
     {
         $this->webDriver->get(self::PS15URL.self::BACKOFFICE_FOLDER);
-
-        $this->webDriver->wait(10, 500)->until(
-            WebDriverExpectedCondition::titleContains(
-                'PrestaShop'
-            )
-        );
-
-        $this->assertContains('PrestaShop', $this->webDriver->getTitle());
+        $condition = WebDriverExpectedCondition::titleContains(self::TITLE);
+        $this->webDriver->wait()->until($condition);
+        $this->assertTrue((bool) $condition);
         $this->quit();
     }
 }

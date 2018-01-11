@@ -18,13 +18,15 @@ module.exports = function(grunt) {
             },
             runTestPrestashop17: {
                 command:
+                'chmod -R 777 vendor\n' +
                 'docker-compose down\n' +
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop17\n' +
                 'echo "Creating the prestashop17"\n' +
-                'sleep 180\n' +
+                'sleep 90\n' +
                 'date\n' +
                 'docker-compose logs prestashop17\n' +
+                'set -e\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17install\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17register\n' +
@@ -32,13 +34,15 @@ module.exports = function(grunt) {
             },
             runTestPrestashop16: {
                 command:
+                'chmod -R 777 vendor\n' +
                 'docker-compose down\n' +
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop16\n' +
                 'echo "Creating the prestashop16"\n' +
-                'sleep 180\n' +
+                'sleep  90\n' +
                 'date\n' +
                 'docker-compose logs prestashop16\n' +
+                'set -e\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16install\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16register\n' +
@@ -46,13 +50,15 @@ module.exports = function(grunt) {
             },
             runTestPrestashop15: {
                 command:
+                'chmod -R 777 vendor\n' +
                 'docker-compose down\n' +
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop15\n' +
                 'echo "Creating the prestashop15"\n' +
-                'sleep 180\n' +
+                'sleep 90\n' +
                 'date\n' +
                 'docker-compose logs prestashop15\n' +
+                'set -e\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15install\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15register\n' +

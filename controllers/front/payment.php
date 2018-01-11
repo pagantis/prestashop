@@ -75,20 +75,22 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
 
         $shopperClient = new \ShopperLibrary\ShopperClient(PAYLATER_SHOPPER_URL);
         $shopperClient->setObjectModule($prestashopObjectModule);
-        $paymentForm = $shopperClient->getPaymentForm();
-        $form = "";
-        if ($paymentForm) {
-            $paymentForm = json_decode($paymentForm);
+        $response = $shopperClient->getPaymentForm();
+        $url    = "";
+        if ($response) {
+            $paymentForm = json_decode($response);
             if (is_object($paymentForm) && is_object($paymentForm->data)) {
-                $form = $paymentForm->data->form;
+                $url    = $paymentForm->data->url;
             }
         }
 
+        if (!$iframe) {
+            Tools::redirect($url);
+        }
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
-            'form'          => $form,
+            'url'           => $url,
             'spinner'       => $spinner,
-            'iframe'        => $iframe,
             'css'           => $css,
             'prestashopCss' => $prestashopCss,
             'checkoutUrl'   => $cancelUrl,
