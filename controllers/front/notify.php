@@ -135,8 +135,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
             $payments = $pmtClient->charge()->getChargesByOrderId($cartId);
             $latestCharge = array_shift($payments);
             if ($latestCharge->getAmount() != (int) ((string) (100 * $cart->getOrderTotal(true)))) {
-                $this->message = 'Amount to pay mismatch';
-                $this->error = true;
+                $this->triggerAmountPaymentError($cart, $cartId, $secureKey);
                 return;
             }
 
@@ -168,5 +167,36 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         }
         $this->message = 'Bad request';
         $this->error = true;
+    }
+
+    /**
+     * @param $cart
+     * @param $cartId
+     * @param $secureKey
+     */
+    public function triggerAmountPaymentError($cart, $cartId, $secureKey)
+    {
+        if (Validate::isLoadedObject($cart)
+        ) {
+            if ($cart->orderExists() === false) {
+                /** @var PaymentModule $paymentModule */
+                $paymentModule = $this->module;
+                $paymentModule->validateOrder(
+                    $cartId,
+                    Configuration::get('PS_OS_ERROR'),
+                    $cart->getOrderTotal(true),
+                    $this->module->displayName,
+                    'Error in amount, please conciliate manually with PMT backoffice',
+                    null,
+                    null,
+                    false,
+                    $secureKey
+                );
+                $this->message = 'Order amount not match';
+                return;
+            }
+            $this->message = 'Order already processed, amount not match';
+            return;
+        }
     }
 }

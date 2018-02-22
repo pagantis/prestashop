@@ -90,6 +90,7 @@ class Paylater extends PaymentModule
         Configuration::updateValue('PAYLATER_PRODUCT_HOOK', false);
         Configuration::updateValue('PAYLATER_PRODUCT_HOOK_TYPE', false);
         Configuration::updateValue('PAYLATER_PROMOTION_EXTRA', $this->l('Promotion: finance it Without interests'));
+        Configuration::updateValue('PAYLATER_NOTIFY_URL', false);
 
         return (parent::install()
                 && $this->registerHook('displayShoppingCart')
@@ -492,6 +493,27 @@ EOD;
                         'required' => false,
                         'prefix' => '<i class="icon icon-puzzle-piece"></i>',
                     ),
+                    array(
+                        'type' => 'radio',
+                        'class' => 't',
+                        'desc' => $this->l('Info: change to canonical URL if you have compatibility issues'),
+                        'label' => $this->l('Notification Callback URL'),
+                        'name' => 'PAYLATER_NOTIFY_URL',
+                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
+                        'is_bool' => true,
+                        'values' => array(
+                            array(
+                                'id' => 'no',
+                                'value' => false,
+                                'label' => $this->l('Use friendly url'). '<br>'
+                            ),
+                            array(
+                                'id' => 'yes',
+                                'value' => true,
+                                'label' => $this->l('Use canonical url'). '<br>'
+                            ),
+                        ),
+                    ),
                 ),
                 'submit' => array(
                     'title' => $this->l('Save'),
@@ -552,6 +574,7 @@ EOD;
             'PAYLATER_PRODUCT_HOOK',
             'PAYLATER_PRODUCT_HOOK_TYPE',
             'PAYLATER_PROMOTION_EXTRA',
+            'PAYLATER_NOTIFY_URL',
         );
 
         //Different Behavior depending on 1.6 or earlier
