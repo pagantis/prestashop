@@ -61,7 +61,7 @@ class Paylater extends PaymentModule
             $sql_file = dirname(__FILE__).'/sql/install.sql';
             $this->loadSQLFile($sql_file);
         }
-        $this->checkPromotionCategory();
+        //$this->checkPromotionCategory();
 
         parent::__construct();
     }
