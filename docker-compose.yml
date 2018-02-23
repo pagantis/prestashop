@@ -48,7 +48,7 @@ services:
     ports:
       - "8016:80"
   prestashop17:
-    image: prestashop/prestashop:1.7.1.2
+    image: prestashop/prestashop:1.7.0.3
     depends_on:
       - db-ps17
     environment:
@@ -103,7 +103,7 @@ services:
     ports:
       - "2083:3306"
   db-ps17:
-    image: mysql
+    image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=prestashop17
