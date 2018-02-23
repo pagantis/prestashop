@@ -29,6 +29,7 @@ module.exports = function(grunt) {
                 'set -e\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17install\n' +
+                //'composer install && vendor/bin/phpunit --group prestashop17category\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17register\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17buy\n'
             },
@@ -45,6 +46,7 @@ module.exports = function(grunt) {
                 'set -e\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16install\n' +
+                //'composer install && vendor/bin/phpunit --group prestashop16category\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16register\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16buy\n'
             },
@@ -61,6 +63,7 @@ module.exports = function(grunt) {
                 'set -e\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15install\n' +
+                //'composer install && vendor/bin/phpunit --group prestashop15category\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15register\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15buy\n'
             }
