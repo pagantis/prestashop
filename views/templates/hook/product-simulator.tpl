@@ -18,6 +18,7 @@
     if (typeof pmtClient !== 'undefined') {
         pmtClient.setPublicKey('{$publicKey|escape:'quotes'}');
     }
+
 </script>
 <span class="js-pmt-payment-type"></span>
 {if $isPromotionProduct == true}
@@ -30,7 +31,33 @@
      data-pmt-discount="{$discount|escape:'quotes'}" data-pmt-amount="{$amount|escape:'quotes'}" data-pmt-expanded="{if $simulatorType == 1}no{else}yes{/if}">
 </div>
 <script type="text/javascript">
+    function changePrice(seconds=1000)
+    {
+        setTimeout(
+            function() {
+                var newPrice = document.getElementById("our_price_display").innerText;
+                var currentPrice = document.getElementsByClassName('PmtSimulator')[0].getAttribute('data-pmt-amount');
+
+                if (newPrice != currentPrice) {
+                    document.getElementsByClassName('PmtSimulator')[0].setAttribute('data-pmt-amount', newPrice);
+                    if (typeof pmtClient !== 'undefined') { //Set now and init afterwards
+                        pmtClient.simulator.reload();
+                    }
+                }
+            }
+        ,seconds)
+    }
+    changePrice(0); //Load the screen price into simulator to avoid the reload event
+    window.onload = function() {
+        var elms = document.getElementById('attributes').querySelectorAll('input, select, a'); //Select for size, A for color/texture, Input for checkbox
+        for (var i = 0; i < elms.length; i++)
+        {
+            var eventEl = (elms[i].tagName == 'SELECT') ? 'change':'click'; //Function always returns uppercase
+            elms[i].addEventListener(eventEl, changePrice);
+        }
+    }
+
     if (typeof pmtClient !== 'undefined') {
-        pmtClient.simulator.init();
+        pmtClient.simulator.init(); console.log(pmtClient);
     }
 </script>
