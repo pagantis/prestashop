@@ -51,4 +51,4 @@ $_MODULE['<{paylater}prestashop>paylater_a7139ef55f3c52d2de726ec1bab7d5e8'] = 'T
 $_MODULE['<{paylater}prestashop>config-info_07993d517fb8c6a677177b1e886d4b60'] = 'Configura Paga+Tarde';
 $_MODULE['<{paylater}prestashop>config-info_026bf71407899fd3f23498a7705f6c06'] = 'Accede a tu backoffice';
 $_MODULE['<{paylater}prestashop>config-info_a657bd7214435887ea1d6a796f53bb16'] = 'Esta es la configuración de Paga+Tarde, por favor tómate tu tiempo para configurar el método de pago de la manera que mejor se adapte a ti. Si tienes dudas contacta con nosotros en soporte@pagamastarde.com';
-$_MODULE['<{paylater}prestashop>checkout-15_bac8db79603119ec9b739cd5b2dc9225'] = 'Financiar con Paga+Tarde';
+$_MODULE['<{paylater}prestashop>checkout-15_bac8db79603119ec9b739cd5b2dc9225'] = 'Financia tu compra';
