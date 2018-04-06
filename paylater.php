@@ -101,6 +101,7 @@ class Paylater extends PaymentModule
                 && $this->registerHook('displayRightColumnProduct')
                 && $this->registerHook('displayLeftColumnProduct')
                 && $this->registerHook('displayProductButtons')
+                && $this->registerHook('displayOrderConfirmation')
         );
     }
 
@@ -746,5 +747,17 @@ EOD;
     public function hookDisplayProductButtons()
     {
         return $this->productPageSimulatorDisplay(__FUNCTION__);
+    }
+
+    /**
+     * @return string
+     */
+    public function hookDisplayOrderConfirmation($params)
+    {
+        $paymentMethod = (_PS_VERSION_ < 1.7) ? ($params["objOrder"]->payment) : ($params["order"]->payment);
+
+        if( $paymentMethod == $this->displayName ) {
+            return $this->display(__FILE__, 'views/templates/hook/payment-return.tpl');
+        }
     }
 }
