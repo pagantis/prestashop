@@ -80,8 +80,7 @@ class PaylaterPs15BuyTest extends PaylaterPrestashopTest
             $this->findById('phone')->clear()->sendKeys($this->configuration['phone']);
             $this->findById('phone_mobile')->clear()->sendKeys($this->configuration['phone']);
             $this->findById('dni')->clear()->sendKeys($this->configuration['dni']);
-            $this->findById('id_state')->sendKeys('Barcelona');
-            $this->findById('submitAddress')->click();
+            $this->moveToElementAndClick($this->findById('submitAddress'));
             $processAddress = WebDriverBy::name('processAddress');
             $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processAddress);
             $this->waitUntil($condition);

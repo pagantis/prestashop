@@ -39,7 +39,7 @@ class PaylaterPs16BuyTest extends PaylaterPrestashopTest
         );
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
-        $this->moveToElementAndClick($this->findByClass('replace-2x'));
+        $this->moveToElementAndClick($this->findByClass('new-box'));
         $available = WebDriverBy::id('availability_statut');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($available);
         $this->waitUntil($condition);
@@ -85,8 +85,7 @@ class PaylaterPs16BuyTest extends PaylaterPrestashopTest
             $this->findById('phone')->clear()->sendKeys($this->configuration['phone']);
             $this->findById('phone_mobile')->clear()->sendKeys($this->configuration['phone']);
             $this->findById('dni')->clear()->sendKeys($this->configuration['dni']);
-            $this->findById('id_state')->sendKeys('Barcelona');
-            $this->findById('submitAddress')->click();
+            $this->moveToElementAndClick($this->findById('submitAddress'));
             $processAddress = WebDriverBy::name('processAddress');
             $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processAddress);
             $this->waitUntil($condition);

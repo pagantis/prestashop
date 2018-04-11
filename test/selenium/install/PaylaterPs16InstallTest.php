@@ -50,7 +50,7 @@ class PaylaterPs16InstallTest extends PaylaterPrestashopTest
      */
     public function uploadPaylaterModule()
     {
-        $this->findByLinkText('Modules and Services')->click();
+        $this->findById('maintab-AdminParentModules')->click();
         $this->findByLinkText('Add a new module')->click();
         $moduleInstallBlock = WebDriverBy::id('module_install');
         $fileInputSearch = $moduleInstallBlock->name('file');
