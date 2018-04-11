@@ -101,6 +101,7 @@ class Paylater extends PaymentModule
                 && $this->registerHook('displayRightColumnProduct')
                 && $this->registerHook('displayLeftColumnProduct')
                 && $this->registerHook('displayProductButtons')
+                && $this->registerHook('displayOrderConfirmation')
         );
     }
 
@@ -123,14 +124,12 @@ class Paylater extends PaymentModule
      */
     public function loadSQLFile($sql_file)
     {
-        // Get install SQL file content
         $sql_content = Tools::file_get_contents($sql_file);
 
         // Replace prefix and store SQL command in array
         $sql_content = str_replace('PREFIX_', _DB_PREFIX_, $sql_content);
         $sql_requests = preg_split("/;\s*[\r\n]+/", $sql_content);
 
-        // Execute each SQL statement
         $result = true;
         foreach ($sql_requests as $request) {
             if (!empty($request)) {
@@ -672,7 +671,7 @@ EOD;
     }
 
     /**
-     * @param $functionName
+     * @param string $functionName
      *
      * @return string|null
      */
@@ -707,6 +706,7 @@ EOD;
 
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');
     }
+
     /**
      * @return string
      */
@@ -746,5 +746,19 @@ EOD;
     public function hookDisplayProductButtons()
     {
         return $this->productPageSimulatorDisplay(__FUNCTION__);
+    }
+
+    /**
+     * @param array $params
+     *
+     * @return string
+     */
+    public function hookDisplayOrderConfirmation($params)
+    {
+        $paymentMethod = (_PS_VERSION_ < 1.7) ? ($params["objOrder"]->payment) : ($params["order"]->payment);
+
+        if( $paymentMethod == $this->displayName ) {
+            return $this->display(__FILE__, 'views/templates/hook/payment-return.tpl');
+        }
     }
 }

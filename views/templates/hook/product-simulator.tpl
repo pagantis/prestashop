@@ -58,6 +58,6 @@
     }
 
     if (typeof pmtClient !== 'undefined') {
-        pmtClient.simulator.init(); console.log(pmtClient);
+        pmtClient.simulator.init();
     }
 </script>
