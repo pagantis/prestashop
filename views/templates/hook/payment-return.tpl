@@ -7,7 +7,7 @@
  *}
 <p>
 <div class="alert-success alert">
-    Enhorabuena, has completado tu compra, puedes seguir comprando o volver a la lista de pedidos.
+    {l s='Great, you have completed your purchase, you can continue buying or go back to your orders.' mod='paylater'}
     <br/><br/>
 </div>
 </p>

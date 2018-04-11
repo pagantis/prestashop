@@ -43,7 +43,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '6.2.1';
+        $this->version = '6.2.2';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -246,6 +246,7 @@ EOD;
             ->setCallToActionText($this->l('Finance using Paylater'))
             ->setAction($link->getModuleLink('paylater', 'payment'))
             ->setLogo($this->getPathUri(). 'logo.gif')
+            ->setModuleName(__CLASS__)
         ;
 
         if (_PS_VERSION_ >= 1.7) {
@@ -663,7 +664,15 @@ EOD;
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment')
         ));
 
-        if (_PS_VERSION_ > 1.7) {
+        $supercheckout_enabled = Module::isEnabled('supercheckout');
+        $onepagecheckoutps_enabled = Module::isEnabled('onepagecheckoutps');
+        $onepagecheckout_enabled = Module::isEnabled('onepagecheckout');
+
+
+        if ($supercheckout_enabled || $onepagecheckout_enabled || $onepagecheckoutps_enabled) {
+            $this->checkLogoExists();
+            return $this->display(__FILE__, 'views/templates/hook/onepagecheckout.tpl');
+        } elseif (_PS_VERSION_ > 1.7) {
             return $this->display(__FILE__, 'views/templates/hook/checkout-17.tpl');
         } else {
             return $this->display(__FILE__, 'views/templates/hook/checkout-15.tpl');
@@ -757,8 +766,22 @@ EOD;
     {
         $paymentMethod = (_PS_VERSION_ < 1.7) ? ($params["objOrder"]->payment) : ($params["order"]->payment);
 
-        if( $paymentMethod == $this->displayName ) {
+        if ($paymentMethod == $this->displayName) {
             return $this->display(__FILE__, 'views/templates/hook/payment-return.tpl');
+        }
+    }
+
+    /**
+     * Check logo exists in OPC module
+     */
+    public function checkLogoExists()
+    {
+        $logo = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/'. __CLASS__ . '.png';
+        if (!file_exists($logo)) {
+            copy(
+                _PS_PAYPAL_PAYLATER_DIR . '/views/img/logo-64x64.png',
+                $logo
+            );
         }
     }
 }
