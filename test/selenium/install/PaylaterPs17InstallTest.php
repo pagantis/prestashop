@@ -52,7 +52,7 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
     public function uploadPaylaterModule()
     {
         $this->webDriver->executeScript('document.querySelector(\'.onboarding-button-shut-down\').click();');
-        sleep(3);
+        sleep(5);
         $elementSearch = WebDriverBy::partialLinkText('Modules');
         $condition = WebDriverExpectedCondition::elementToBeClickable($elementSearch);
         $this->waitUntil($condition);

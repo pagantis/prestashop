@@ -34,7 +34,7 @@ abstract class PaylaterPrestashopTest extends TestCase
         'birthdate'     => '05/05/2005',
         'firstname'     => 'John',
         'lastname'      => 'Doe',
-        'email'         => 'john.doe@digitalorigin.com',
+        'email'         => 'jøhn.dōè@dîgitalorigin.com',
         'company'       => 'Digital Origin SL',
         'zip'           => '08023',
         'city'          => 'Barcelona',
