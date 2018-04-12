@@ -159,10 +159,10 @@ class Paylater extends PaymentModule
             $category->name = array( 1=> PROMOTIONS_CATEGORY );
             $category->id_parent = Configuration::get('PS_HOME_CATEGORY');
             $category->active=0;
-            $description = <<<EOD
-Paga+Tarde: Los productos con esta categoría tienen financiación gratis asumida por el comercio. Úsalo para promocionar 
-tus productos o marcas.
-EOD;
+            $description = 'Paga+Tarde: Los productos con esta categoría tienen ' .
+                'financiación gratis asumida por el comercio. Úsalo para promocionar ' .
+                'tus productos o marcas.'
+            ;
             $category->description = $this->l($description);
             $category->save();
         }
@@ -776,7 +776,7 @@ EOD;
      */
     public function checkLogoExists()
     {
-        $logo = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/'.strtolower(__CLASS__). '.png';
+        $logo = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/'. Tools::strtolower(__CLASS__). '.png';
         if (!file_exists($logo) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
             copy(
                 _PS_PAYLATER_DIR . '/views/img/logo-64x64.png',
