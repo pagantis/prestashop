@@ -776,10 +776,10 @@ EOD;
      */
     public function checkLogoExists()
     {
-        $logo = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/'. __CLASS__ . '.png';
-        if (!file_exists($logo)) {
+        $logo = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/'.strtolower(__CLASS__). '.png';
+        if (!file_exists($logo) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
             copy(
-                _PS_PAYPAL_PAYLATER_DIR . '/views/img/logo-64x64.png',
+                _PS_PAYLATER_DIR . '/views/img/logo-64x64.png',
                 $logo
             );
         }
