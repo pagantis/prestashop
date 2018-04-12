@@ -23,6 +23,7 @@ class PaylaterPs15BuyTest extends PaylaterPrestashopTest
         $this->addProduct();
         $this->goTocheckout();
         $this->verifyPaylater();
+        $this->verifyUTF8();
         $this->quit();
     }
 
@@ -129,6 +130,21 @@ class PaylaterPs15BuyTest extends PaylaterPrestashopTest
         $this->assertContains(
             'compra',
             $this->findByClass('Form-heading1')->getText()
+        );
+    }
+
+    /**
+     * Verify That UTF Encoding is working
+     */
+    public function verifyUTF8()
+    {
+        $paymentFormElement = WebDriverBy::className('FieldsPreview-desc');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paymentFormElement);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->assertSame(
+            $this->configuration['firstname'] . ' ' . $this->configuration['lastname'],
+            $this->findByClass('FieldsPreview-desc')->getText()
         );
     }
 
