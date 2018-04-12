@@ -3,6 +3,7 @@
 namespace Test\Selenium;
 
 use Facebook\WebDriver\Interactions\WebDriverActions;
+use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\WebDriverCapabilityType;
 use Facebook\WebDriver\WebDriverBy;
@@ -25,22 +26,22 @@ abstract class PaylaterPrestashopTest extends TestCase
     /**
      * @var array
      */
-    protected $configuration = [
+    protected $configuration = array(
         'username'      => 'demo@prestashop.com',
         'password'      => 'prestashop_demo',
         'publicKey'     => 'tk_fd53cd467ba49022e4f8215e',
         'secretKey'     => '21e57baa97459f6a',
         'birthdate'     => '05/05/2005',
-        'firstname'     => 'John',
-        'lastname'      => 'Doe',
-        'email'         => 'john.doe@digitalorigin.com',
+        'firstname'     => 'Jøhn',
+        'lastname'      => 'Dōè',
+        'email'         => 'john_ps@digitalorigin.com',
         'company'       => 'Digital Origin SL',
         'zip'           => '08023',
         'city'          => 'Barcelona',
         'phone'         => '600123123',
         'dni'           => '09422447Z',
         'extra'         => 'Free Finance',
-    ];
+    );
 
     /**
      * @var RemoteWebDriver
@@ -52,8 +53,12 @@ abstract class PaylaterPrestashopTest extends TestCase
      */
     protected function setUp()
     {
-        $capabilities = array(WebDriverCapabilityType::BROWSER_NAME => 'chrome');
-        $this->webDriver = RemoteWebDriver::create('http://localhost:4444/wd/hub', $capabilities);
+        $this->webDriver = RemoteWebDriver::create(
+            'http://localhost:4444/wd/hub',
+            DesiredCapabilities::chrome(),
+            60000,
+            60000
+        );
     }
 
     /**
@@ -108,8 +113,9 @@ abstract class PaylaterPrestashopTest extends TestCase
 
     /**
      * @param WebDriverExpectedCondition $condition
-     *
      * @return mixed
+     * @throws \Facebook\WebDriver\Exception\NoSuchElementException
+     * @throws \Facebook\WebDriver\Exception\TimeOutException
      */
     public function waitUntil(WebDriverExpectedCondition $condition)
     {

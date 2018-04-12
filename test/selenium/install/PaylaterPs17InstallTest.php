@@ -52,13 +52,13 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
     public function uploadPaylaterModule()
     {
         $this->webDriver->executeScript('document.querySelector(\'.onboarding-button-shut-down\').click();');
-        sleep(3);
+        sleep(10);
         $elementSearch = WebDriverBy::partialLinkText('Modules');
         $condition = WebDriverExpectedCondition::elementToBeClickable($elementSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->findByLinkText('Modules')->click();
-        $this->findByLinkText('UPLOAD A MODULE')->click();
+        $this->findById('page-header-desc-configuration-add_module')->click();
         $moduleInstallBlock = WebDriverBy::id('module_install');
         $fileInputSearch = $moduleInstallBlock->className('dz-hidden-input');
         $fileInput = $this->webDriver->findElement($fileInputSearch);
@@ -69,7 +69,7 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
         $this->webDriver->wait(45, 1000)->until($condition);
         $this->assertTrue((bool) $condition);
 
-        $this->findByLinkText('CONFIGURE')->click();
+        $this->findByClass('module-import-success-configure')->click();
     }
 
     /**

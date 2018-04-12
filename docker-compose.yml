@@ -6,8 +6,8 @@ services:
     depends_on:
       - db-ps15
     environment:
-      - PS_DEV_MODE=1
-      - PS_COUNTRY=es
+      - PS_DEV_MODE=0
+      - PS_COUNTRY=ES
       - PS_DOMAIN=prestashop15
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
@@ -25,12 +25,12 @@ services:
     ports:
       - "8015:80"
   prestashop16:
-    image: prestashop/prestashop:1.6.1.14
+    image: prestashop/prestashop:1.6
     depends_on:
       - db-ps16
     environment:
-      - PS_DEV_MODE=1
-      - PS_COUNTRY=es
+      - PS_DEV_MODE=0
+      - PS_COUNTRY=ES
       - PS_DOMAIN=prestashop16
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
@@ -48,12 +48,12 @@ services:
     ports:
       - "8016:80"
   prestashop17:
-    image: prestashop/prestashop:1.7.1.2
+    image: prestashop/prestashop:1.7
     depends_on:
       - db-ps17
     environment:
-      - PS_DEV_MODE=1
-      - PS_COUNTRY=es
+      - PS_DEV_MODE=0
+      - PS_COUNTRY=ES
       - PS_DOMAIN=prestashop17
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
@@ -71,12 +71,12 @@ services:
     ports:
       - "8017:80"
   prestashop-dev:
-    image: prestashop/prestashop:1.6.1.14
+    image: prestashop/prestashop:1.6
     depends_on:
       - db-dev
     environment:
       - PS_DEV_MODE=1
-      - PS_COUNTRY=es
+      - PS_COUNTRY=ES
       - PS_DOMAIN=prestashop-dev:8018
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
@@ -100,8 +100,7 @@ services:
       - MYSQL_DATABASE=prestashop-dev
     networks:
       - internal
-    ports:
-      - "2083:3306"
+
   db-ps17:
     image: mysql:5.6
     environment:
@@ -109,8 +108,7 @@ services:
       - MYSQL_DATABASE=prestashop17
     networks:
       - internal
-    ports:
-      - "2082:3306"
+
   db-ps16:
     image: mysql
     environment:
@@ -118,8 +116,7 @@ services:
       - MYSQL_DATABASE=prestashop16
     networks:
       - internal
-    ports:
-      - "2081:3306"
+
   db-ps15:
     image: mysql:5.6
     environment:
@@ -127,14 +124,13 @@ services:
       - MYSQL_DATABASE=prestashop15
     networks:
       - internal
-    ports:
-      - "2080:3306"
+
   selenium:
-    image: selenium/standalone-chrome:3.4.0
+    image: selenium/standalone-chrome
     networks:
       - public
     ports:
-      - "4444:4444"
+      - 4444:4444
 
 networks:
     internal:

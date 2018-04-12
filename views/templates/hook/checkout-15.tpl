@@ -6,7 +6,8 @@
  * @license   proprietary
  *}
 <link rel="stylesheet" type="text/css" media="all" href="{$prestashopCss|escape:'quotes'}">
-<link rel="stylesheet" type="text/css" media="all" href="{$css|escape:'quotes'}"><div class="row">
+<link rel="stylesheet" type="text/css" media="all" href="{$css|escape:'quotes'}">
+<div class="row">
     <div class="col-xs-12">
         <p class="payment_module">
             <a class="paylater-checkout" href="{$paymentUrl|escape:'html'}" title="{l s='Finance using Paylater' mod='paylater'}">
