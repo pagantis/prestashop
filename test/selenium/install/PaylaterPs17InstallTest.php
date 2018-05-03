@@ -93,7 +93,6 @@ document.querySelector('input[name="PAYLATER_ADD_SIMULATOR"][type="radio"][value
 document.querySelector('input[name="PAYLATER_IFRAME"][type="radio"][value="1"]').click();
 EOD;
         $this->webDriver->executeScript($script);
-        $this->findById('PAYLATER_PROMOTION_EXTRA')->clear()->sendKeys($this->configuration['extra']);
         $this->findById('module_form_submit_btn')->click();
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(
