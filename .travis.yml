@@ -28,7 +28,7 @@ matrix:
     env: PRESTASHOP=shell:runTestPrestashop17 ISOLATED=true DOCKER_COMPOSE_VERSION=1.21.0
   - php: "7.0"
     env: PRESTASHOP=shell:runTestPrestashop16 ISOLATED=true DOCKER_COMPOSE_VERSION=1.21.0
-  - php: "5.3"
+  - php: "5.6"
     env: PRESTASHOP=shell:runTestPrestashop15 ISOLATED=true DOCKER_COMPOSE_VERSION=1.21.0
 script:
   - grunt $PRESTASHOP
