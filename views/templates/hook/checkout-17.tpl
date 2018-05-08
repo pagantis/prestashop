@@ -24,5 +24,13 @@
         if (typeof pmtClient !== 'undefined') {
             pmtClient.simulator.init();
         }
+
+        var paylaterButton  = document.querySelector("[data-module-name='Paylater']");
+        if (paylaterButton !== undefined)
+        {
+            paylaterButton.addEventListener("click", function(){
+                pmtClient.simulator.reload();
+            });
+        }
     </script>
 {/if}
