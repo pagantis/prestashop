@@ -12,7 +12,6 @@ if (!defined('_PS_VERSION_')) {
 }
 
 define('_PS_PAYLATER_DIR', _PS_MODULE_DIR_. '/paylater');
-define('PAYLATER_SHOPPER_URL', 'https://shopper.pagamastarde.com/prestashop/');
 
 require _PS_PAYLATER_DIR.'/vendor/autoload.php';
 
@@ -42,7 +41,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '6.2.3';
+        $this->version = '7.0.0';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -515,6 +514,7 @@ class Paylater extends PaymentModule
      * Function to update the variables of Paga+Tarde Module in the backoffice of prestashop
      *
      * @return string
+     * @throws SmartyException
      */
     public function getContent()
     {
@@ -573,15 +573,11 @@ class Paylater extends PaymentModule
         }
 
         $logo = $this->getPathUri(). 'views/img/logo_pagamastarde.png';
-        $css = 'https://shopper.pagamastarde.com/css/paylater-modal.min.css';
-        $prestashopCss = 'https://shopper.pagamastarde.com/css/paylater-prestashop.min.css';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
             'form' => $this->renderForm($settings),
             'message' => $message,
-            'css' => $css,
-            'prestashopCss' => $prestashopCss,
         ));
 
         return $this->context->smarty->fetch($tpl);
@@ -609,8 +605,6 @@ class Paylater extends PaymentModule
         $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
         $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
         $paylaterAddSimulator   = Configuration::get('PAYLATER_ADD_SIMULATOR');
-        $css = 'https://shopper.pagamastarde.com/css/paylater-modal.min.css';
-        $prestashopCss = 'https://shopper.pagamastarde.com/css/paylater-prestashop.min.css';
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
@@ -619,8 +613,6 @@ class Paylater extends PaymentModule
             'publicKey'             => $paylaterPublicKey,
             'includeSimulator'      => $paylaterAddSimulator == 0 ? false : true,
             'simulatorType'         => $paylaterAddSimulator,
-            'css'                   => $css,
-            'prestashopCss'         =>  $prestashopCss,
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment')
         ));
 
@@ -642,7 +634,9 @@ class Paylater extends PaymentModule
     /**
      * @param string $functionName
      *
-     * @return string|null
+     * @return string
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function productPageSimulatorDisplay($functionName)
     {
@@ -673,6 +667,8 @@ class Paylater extends PaymentModule
 
     /**
      * @return string
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function hookDisplayRightColumn()
     {
@@ -682,6 +678,8 @@ class Paylater extends PaymentModule
 
     /**
      * @return string
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function hookDisplayLeftColumn()
     {
@@ -690,6 +688,8 @@ class Paylater extends PaymentModule
 
     /**
      * @return string
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function hookDisplayRightColumnProduct()
     {
@@ -698,6 +698,8 @@ class Paylater extends PaymentModule
 
     /**
      * @return string
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function hookDisplayLeftColumnProduct()
     {
@@ -706,6 +708,8 @@ class Paylater extends PaymentModule
 
     /**
      * @return string
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function hookDisplayProductButtons()
     {
@@ -724,6 +728,8 @@ class Paylater extends PaymentModule
         if ($paymentMethod == $this->displayName) {
             return $this->display(__FILE__, 'views/templates/hook/payment-return.tpl');
         }
+
+        return null;
     }
 
     /**

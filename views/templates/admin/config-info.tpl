@@ -7,8 +7,48 @@
  *}
 
 {block name="form"}
-    <link rel="stylesheet" type="text/css" media="all" href="{$prestashopCss|escape:'quotes'}">
-    <link rel="stylesheet" type="text/css" media="all" href="{$css|escape:'quotes'}">
+    <style>
+        .column-left {
+            text-align: left;
+            float: left;
+            width: 33%;
+        }
+
+        .column-right {
+            text-align: right;
+            float: right;
+            width: 33%;
+        }
+
+        .column-center {
+            text-align: center;
+            display: inline-block;
+            width: 33%;
+        }
+        .paylater-content-form {
+            overflow-x: hidden;
+            overflow-y: hidden;
+            text-align: center;
+            width: 97%;
+        }
+
+        .paylater-content-form input{
+            margin-left: 15px;
+            margin-right: 5px;
+        }
+
+        .paylater-content-form label{
+            margin-left: 15px;
+        }
+
+        .paylater-content-form img{
+            margin-top: 20px;
+            display: inline-block;
+            vertical-align: middle;
+            float: none;
+            width: 100px;
+        }
+    </style>
     {$message|escape:'quotes'}
     <div class="panel paylater-content-form">
         <h3><i class="icon icon-credit-card"></i> {l s='Paylater Configuration Panel' mod='paylater'}</h3>

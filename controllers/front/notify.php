@@ -7,8 +7,6 @@
  * @license   proprietary
  */
 
-use PagaMasTarde\PmtApiClient;
-
 /**
  * Class PaylaterNotifyModuleFrontController
  */

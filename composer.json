@@ -11,8 +11,7 @@
     ],
     "require": {
       "pagamastarde/autoindex": "^1.0",
-      "pagamastarde/shopper-library": "^1.0",
-      "pagamastarde/pmt-api-client": "^1.0"
+      "pagamastarde/orders-api-client": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8",
