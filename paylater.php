@@ -52,13 +52,8 @@ class Paylater extends PaymentModule
             'Instant, easy and effective financial tool for your customers'
         );
 
-        $sql_content = "show tables like 'PREFIX_pmt_cart_process'";
-        $sql_content = str_replace('PREFIX_', _DB_PREFIX_, $sql_content);
-        $table_exists = Db::getInstance()->executeS($sql_content);
-        if (empty($table_exists)) {
-            $sql_file = dirname(__FILE__).'/sql/install.sql';
-            $this->loadSQLFile($sql_file);
-        }
+        $sql_file = dirname(__FILE__).'/sql/install.sql';
+        $this->loadSQLFile($sql_file);
 
         parent::__construct();
     }
@@ -74,6 +69,9 @@ class Paylater extends PaymentModule
             $this->_errors[] = $this->l('You have to enable the cURL extension on your server to install this module');
             return false;
         }
+
+        $sql_file = dirname(__FILE__).'/sql/install.sql';
+        $this->loadSQLFile($sql_file);
 
         Configuration::updateValue('PAYLATER_PROD', false);
         Configuration::updateValue('PAYLATER_PUBLIC_KEY_TEST', '');

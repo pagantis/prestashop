@@ -179,6 +179,20 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
             $order = $orderClient->createOrder($order);
             if ($order instanceof \PagaMasTarde\OrdersApiClient\Model\Order) {
                 $url = $order->getActionUrls()->getForm();
+                $result = Db::getInstance()->insert(
+                    'pmt_order',
+                    array(
+                        'id' => $cart->id,
+                        'order_id' => $order->getId()
+                    ),
+                    false,
+                    false,
+                    Db::ON_DUPLICATE_KEY,
+                    true
+                );
+                if (!$result) {
+                    throw new \Exception('Unable to save pmt-order-id');
+                }
             } else {
                 throw new \Exception('Order not created');
             }
