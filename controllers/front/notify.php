@@ -119,11 +119,21 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         $paylaterProd = Configuration::get('PAYLATER_PROD');
         $paylaterMode = $paylaterProd == 1 ? 'PROD' : 'TEST';
         $privateKey = Configuration::get('PAYLATER_PRIVATE_KEY_'. $paylaterMode);
+        $publicKey = Configuration::get('PAYLATER_PUBLIC_KEY_'. $paylaterMode);
         $cart = new Cart((int) $cartId);
-
+        $pmtOrderId = Db::getInstance()->getValue(
+            'select order_id from '._DB_PREFIX_.'pmt_order where id = '.$cartId
+        );
         if ($secureKey && $cartId && Module::isEnabled('paylater')) {
-            $pmtClient = new PmtApiClient($privateKey);
-            $payed = $pmtClient->charge()->validatePaymentForOrderId($cartId);
+            $orderClient = new PagaMasTarde\OrdersApiClient\Client(
+                $publicKey,
+                $privateKey
+            );
+            $order = $orderClient->getOrder($pmtOrderId);
+            echo json_encode($order->export(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            die();
+
+            $payed = $order->getStatus() == \PagaMasTarde\OrdersApiClient\Model\Order::STATUS;
             if (!$payed) {
                 $this->message = 'Payment not existing in PMT';
                 $this->error = true;
