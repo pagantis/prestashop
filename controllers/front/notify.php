@@ -28,7 +28,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
     public function postProcess()
     {
         //unlock cart_id locked for more than 10 seconds
-        Db::getInstance()->delete('pmt_cart_process', 'timestamp < ' . (time() - 10));
+        Db::getInstance()->delete('pmt_cart_process', 'timestamp < ' . (time() - 6));
 
         try {
             $this->processValidation();
@@ -105,13 +105,25 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
     }
 
     /**
+     *
      * Process validation vs API of pmt
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws \Httpful\Exception\ConnectionErrorException
+     * @throws \PagaMasTarde\OrdersApiClient\Exception\HttpException
+     * @throws \PagaMasTarde\OrdersApiClient\Exception\ValidationException
      */
     public function processValidation()
     {
         $cartId = Tools::getValue('id_cart');
 
-        if (!Db::getInstance()->insert('pmt_cart_process', array('id' => $cartId, 'timestamp' => (time())))) {
+        try {
+            if (!Db::getInstance()->insert('pmt_cart_process', array('id' => $cartId, 'timestamp' => (time())))) {
+                return;
+            }
+        } catch (\Exception $exception) {
+            $this->message = 'PS Order currently under process, this is not bad, try again in 10 seconds';
+            $this->error = true;
             return;
         }
 
@@ -130,20 +142,22 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
                 $privateKey
             );
             $order = $orderClient->getOrder($pmtOrderId);
-            echo json_encode($order->export(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-            die();
-
-            $payed = $order->getStatus() == \PagaMasTarde\OrdersApiClient\Model\Order::STATUS;
+            $payed = in_array(
+                $order->getStatus(),
+                array(
+                    \PagaMasTarde\OrdersApiClient\Model\Order::STATUS_AUTHORIZED,
+                    \PagaMasTarde\OrdersApiClient\Model\Order::STATUS_CONFIRMED,
+                )
+            );
             if (!$payed) {
-                $this->message = 'Payment not existing in PMT';
+                $this->message = 'Order status is: ' . $order->getStatus();
                 $this->error = true;
                 return;
             }
 
-            $payments = $pmtClient->charge()->getChargesByOrderId($cartId);
-            $latestCharge = array_shift($payments);
-            if ($latestCharge->getAmount() != (int) ((string) (100 * $cart->getOrderTotal(true)))) {
-                $this->triggerAmountPaymentError($cart, $cartId, $secureKey);
+            $totalAmount = $order->getShoppingCart()->getTotalAmount();
+            if ($totalAmount != (int) ((string) (100 * $cart->getOrderTotal(true)))) {
+                $this->triggerAmountPaymentError($cart, $cartId, $secureKey, $order);
                 return;
             }
 
@@ -152,58 +166,78 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
                 if ($cart->orderExists() === false) {
                     /** @var PaymentModule $paymentModule */
                     $paymentModule = $this->module;
-                    $paymentModule->validateOrder(
-                        $cartId,
-                        Configuration::get('PS_OS_PAYMENT'),
-                        $cart->getOrderTotal(true),
-                        $this->module->displayName,
-                        null,
-                        null,
-                        null,
-                        false,
-                        $secureKey
-                    );
-                    $this->message = 'Payment Validated';
+                    try {
+                        $paymentModule->validateOrder(
+                            $cartId,
+                            Configuration::get('PS_OS_PAYMENT'),
+                            $cart->getOrderTotal(true),
+                            $this->module->displayName,
+                            null,
+                            null,
+                            null,
+                            false,
+                            $secureKey
+                        );
+                    } catch (\Exception $exception) {
+                        $this->message = 'Internal saving exception: ' . $exception->getMessage();
+                        $this->error = true;
+                        return;
+                    }
+                    try {
+                        $order = $orderClient->confirmOrder($pmtOrderId);
+                    } catch (\Exception $exception) {
+                        $this->message = 'Order confirmation exception: ' . $exception->getMessage();
+                        $this->error = true;
+                        return;
+                    }
+                    $this->message = 'Payment Validated and order status: ' . $order->getStatus();
                     return;
                 }
-                $this->message = 'Payment already Validated';
+                $this->message = 'Payment already Validated and order status: ' . $order->getStatus();
                 return;
             }
-            $this->message = 'Order not found';
+            $this->message = 'PrestaShop Cart not found';
             $this->error = true;
             return;
         }
-        $this->message = 'Bad request';
+        $this->message = 'Bad request, module may not be enabled';
         $this->error = true;
     }
 
     /**
-     * @param $cart
+     * @param Cart $cart
      * @param $cartId
      * @param $secureKey
+     * @param \PagaMasTarde\OrdersApiClient\Model\Order $order
      */
-    public function triggerAmountPaymentError($cart, $cartId, $secureKey)
+    public function triggerAmountPaymentError($cart, $cartId, $secureKey, $order)
     {
         if (Validate::isLoadedObject($cart)
         ) {
             if ($cart->orderExists() === false) {
                 /** @var PaymentModule $paymentModule */
                 $paymentModule = $this->module;
-                $paymentModule->validateOrder(
-                    $cartId,
-                    Configuration::get('PS_OS_ERROR'),
-                    $cart->getOrderTotal(true),
-                    $this->module->displayName,
-                    'Error in amount, please conciliate manually with PMT backoffice',
-                    null,
-                    null,
-                    false,
-                    $secureKey
-                );
-                $this->message = 'Order amount not match';
+                try {
+                    $paymentModule->validateOrder(
+                        $cartId,
+                        Configuration::get('PS_OS_ERROR'),
+                        $cart->getOrderTotal(true),
+                        $this->module->displayName,
+                        'Error in amount, please conciliate manually with PMT backoffice',
+                        null,
+                        null,
+                        false,
+                        $secureKey
+                    );
+                } catch (\Exception $exception) {
+                    $this->message = 'Internal saving exception: ' . $exception->getMessage();
+                    $this->error = true;
+                    return;
+                }
+                $this->message = 'Order amount not match and order status is: ' . $order->getStatus();
                 return;
             }
-            $this->message = 'Order already processed, amount not match';
+            $this->message = 'Order already processed, amount not match and order status is: ' . $order->getStatus();
             return;
         }
     }

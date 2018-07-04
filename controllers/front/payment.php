@@ -92,7 +92,7 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
                 if ($order['valid']) {
                     $orderHistory = new \PagaMasTarde\OrdersApiClient\Model\Order\User\OrderHistory();
                     $orderHistory
-                        ->setAmount($order['total_paid'])
+                        ->setAmount(intval(100 * $order['total_paid']))
                         ->setDate(new \DateTime($order['date_add']))
                     ;
                     $orderUser->addOrderHistory($orderHistory);
@@ -219,10 +219,14 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
                 'checkoutUrl'   => $cancelUrl,
             ));
 
-            if (_PS_VERSION_ < 1.7) {
-                $this->setTemplate('payment-15.tpl');
-            } else {
-                $this->setTemplate('module:paylater/views/templates/front/payment-17.tpl');
+            try {
+                if (_PS_VERSION_ < 1.7) {
+                    $this->setTemplate('payment-15.tpl');
+                } else {
+                    $this->setTemplate('module:paylater/views/templates/front/payment-17.tpl');
+                }
+            } catch (\Exception $exception) {
+                Tools::redirect($url);
             }
         }
     }
