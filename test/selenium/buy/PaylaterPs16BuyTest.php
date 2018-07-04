@@ -124,7 +124,7 @@ class PaylaterPs16BuyTest extends PaylaterPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($paylaterCheckout)->click();
-        $iFrame = 'iframe-pagantis';
+        $iFrame = 'pmtmodal_iframe';
         $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($iFrame);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);

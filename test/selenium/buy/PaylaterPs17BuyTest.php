@@ -130,7 +130,7 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
      */
     public function verifyPaylater()
     {
-        $iFrame = 'iframe-pagantis';
+        $iFrame = 'pmtmodal_iframe';
         $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($iFrame);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
