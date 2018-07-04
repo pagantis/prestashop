@@ -75,7 +75,6 @@ class PaylaterPs16BuyTest extends PaylaterPrestashopTest
         $this->assertTrue((bool)$condition);
         $this->webDriver->findElement($checkoutButton)->click();
         try {
-            throw new \Exception('whatever'); //TODO REMOVE
             $addressInputSearch = WebDriverBy::id('firstname');
             $condition = WebDriverExpectedCondition::visibilityOfElementLocated($addressInputSearch);
             $this->waitUntil($condition);
