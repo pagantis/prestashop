@@ -119,6 +119,15 @@ class PaylaterPs15BuyTest extends PaylaterPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($paylaterCheckout)->click();
+        $modulePayment = $this->webDriver->findElement(WebDriverBy::id('module-paylater-payment'));
+        $firstIframe = $modulePayment->findElement(WebDriverBy::tagName('iframe'));
+        $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($firstIframe);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $pmtModal = WebDriverBy::id('pmtmodal');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($pmtModal);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
         $iFrame = 'pmtmodal_iframe';
         $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($iFrame);
         $this->waitUntil($condition);
