@@ -94,8 +94,10 @@ class PaylaterPs15InstallTest extends PaylaterPrestashopTest
         $this->findByCss(
             'input[name="PAYLATER_PRODUCT_HOOK"][type="radio"][value="hookDisplayRightColumnProduct"]'
         )->click();
+        $this->webDriver->executeScript('window.scrollBy(0,250)');
         $this->findByCss('input[name="PAYLATER_PRODUCT_HOOK_TYPE"][type="radio"][value="2"]')->click();
         $this->findByCss('input[name="PAYLATER_ADD_SIMULATOR"][type="radio"][value="2"]')->click();
+        $this->webDriver->executeScript('window.scrollBy(0,250)');
         $this->findById('module_form')->submit();
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(

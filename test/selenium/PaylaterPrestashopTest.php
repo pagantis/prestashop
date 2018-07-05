@@ -31,7 +31,7 @@ abstract class PaylaterPrestashopTest extends TestCase
         'password'      => 'prestashop_demo',
         'publicKey'     => 'tk_fd53cd467ba49022e4f8215e',
         'secretKey'     => '21e57baa97459f6a',
-        'birthdate'     => '05/05/2005',
+        'birthdate'     => '05/05/1989',
         'firstname'     => 'Jøhn',
         'lastname'      => 'Dōè',
         'email'         => 'john_ps@digitalorigin.com',

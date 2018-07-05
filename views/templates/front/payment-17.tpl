@@ -9,7 +9,7 @@
 {extends file='page.tpl'}
 {block name="page_content"}
     <script type="text/javascript" src="https://cdn.pagamastarde.com/pmt-js-client-sdk/3/js/client-sdk.min.js"></script>
-    <script type="javascript">
+    <script type="application/javascript">
         if (typeof pmtClient !== 'undefined') {
             document.addEventListener("DOMContentLoaded", function(){
                 pmtClient.modal.open(

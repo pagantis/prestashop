@@ -126,7 +126,10 @@ class PaylaterPs17BuyTest extends PaylaterPrestashopTest
     }
 
     /**
-     * Verify paylater
+     * Verify Paylater iframe exists
+     *
+     * @throws \Facebook\WebDriver\Exception\NoSuchElementException
+     * @throws \Facebook\WebDriver\Exception\TimeOutException
      */
     public function verifyPaylater()
     {

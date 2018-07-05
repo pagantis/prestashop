@@ -13,6 +13,39 @@
 class PaylaterPaymentModuleFrontController extends ModuleFrontController
 {
     /**
+     * @param $customer
+     * @param $exception
+     */
+    protected function addLog($customer, $exception)
+    {
+        if (_PS_VERSION_ < 1.6) {
+            Logger::addLog(
+                'PagaMasTarde Exception For user ' .
+                $customer->email .
+                ' : ' .
+                $exception->getMessage(),
+                3,
+                $exception->getCode(),
+                null,
+                null,
+                true
+            );
+        } else {
+            PrestaShopLogger::addLog(
+                'PagaMasTarde Exception For user ' .
+                $customer->email .
+                ' : ' .
+                $exception->getMessage(),
+                3,
+                $exception->getCode(),
+                null,
+                null,
+                true
+            );
+        }
+    }
+
+    /**
      * Process Post Request
      */
     public function postProcess()
@@ -157,17 +190,7 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
                 ->setUser($orderUser)
             ;
         } catch (\PagaMasTarde\OrdersApiClient\Exception\ValidationException $validationException) {
-            PrestaShopLogger::addLog(
-                'PagaMasTarde Order Validation Exception For user ' .
-                $customer->email .
-                ' : ' .
-                $validationException->getMessage(),
-                3,
-                $validationException->getCode(),
-                null,
-                null,
-                true
-            );
+            $this->addLog($customer, $validationException);
             Tools::redirect($cancelUrl);
         }
 
@@ -179,16 +202,11 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
             $order = $orderClient->createOrder($order);
             if ($order instanceof \PagaMasTarde\OrdersApiClient\Model\Order) {
                 $url = $order->getActionUrls()->getForm();
-                $result = Db::getInstance()->insert(
-                    'pmt_order',
-                    array(
-                        'id' => $cart->id,
-                        'order_id' => $order->getId()
-                    ),
-                    false,
-                    false,
-                    Db::ON_DUPLICATE_KEY,
-                    true
+                $orderId = $order->getId();
+                $result = Db::getInstance()->execute(
+                    "INSERT INTO `ps_pmt_order` (`id`, `order_id`)
+                     VALUES ('$cart->id','$orderId') 
+                     ON DUPLICATE KEY UPDATE `order_id` = '$orderId'"
                 );
                 if (!$result) {
                     throw new \Exception('Unable to save pmt-order-id');
@@ -197,17 +215,7 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
                 throw new \Exception('Order not created');
             }
         } catch (\Exception $exception) {
-            PrestaShopLogger::addLog(
-                'PagaMasTarde OrderException For user ' .
-                $customer->email .
-                ' : ' .
-                $exception->getMessage(),
-                3,
-                $exception->getCode(),
-                null,
-                null,
-                true
-            );
+            $this->addLog($customer, $exception);
             Tools::redirect($cancelUrl);
         }
 

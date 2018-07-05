@@ -23,7 +23,7 @@ module.exports = function(grunt) {
                 'docker-compose up -d selenium\n' +
                 'docker-compose up -d prestashop17\n' +
                 'echo "Creating the prestashop17"\n' +
-                'sleep 90\n' +
+                'sleep 100\n' +
                 'date\n' +
                 'docker-compose logs prestashop17\n' +
                 'set -e\n' +
