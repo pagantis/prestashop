@@ -49,6 +49,8 @@
         });
     }
 
+    setInterval(function(){ changePrice(0); }, 2000);
+
     if (typeof pmtClient !== 'undefined') {
         pmtClient.simulator.init();
     }
