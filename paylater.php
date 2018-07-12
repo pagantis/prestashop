@@ -83,18 +83,27 @@ class Paylater extends PaymentModule
         $sql_file = dirname(__FILE__).'/sql/install.sql';
         $this->loadSQLFile($sql_file);
 
-        Configuration::updateValue('PAYLATER_PROD', false);
-        Configuration::updateValue('PAYLATER_PUBLIC_KEY_TEST', '');
-        Configuration::updateValue('PAYLATER_PRIVATE_KEY_TEST', '');
-        Configuration::updateValue('PAYLATER_PUBLIC_KEY_PROD', '');
-        Configuration::updateValue('PAYLATER_PRIVATE_KEY_PROD', '');
-        Configuration::updateValue('PAYLATER_DISCOUNT', false);
-        Configuration::updateValue('PAYLATER_ADD_SIMULATOR', false);
-        Configuration::updateValue('PAYLATER_IFRAME', false);
-        Configuration::updateValue('PAYLATER_MIN_AMOUNT', 0);
-        Configuration::updateValue('PAYLATER_PRODUCT_HOOK', false);
-        Configuration::updateValue('PAYLATER_PRODUCT_HOOK_TYPE', false);
-        Configuration::updateValue('PAYLATER_NOTIFY_URL', false);
+        Configuration::updateValue('pmt_public_key', '');
+        Configuration::updateValue('pmt_private_key', '');
+        Configuration::updateValue('pmt_iframe', 0);
+        Configuration::updateValue('pmt_title', $this->l('Instant Financing'));
+        Configuration::updateValue('pmt_url_ok', $this->context->link->getPageLink(
+            'order-confirmation',
+            null,
+            null
+        ));
+        Configuration::updateValue('pmt_url_ko', $this->context->link->getPageLink(
+            'order',
+            null,
+            null,
+            array('step'=>3)
+        ));
+        Configuration::updateValue('pmt_sim_checkout', 6);
+        Configuration::updateValue('pmt_sim_product', 6);
+        Configuration::updateValue('pmt_sim_product_hook', false);
+        Configuration::updateValue('pmt_sim_quotes_start', 3);
+        Configuration::updateValue('pmt_sim_quotes_max', 12);
+        Configuration::updateValue('pmt_display_min_amount', 1);
 
         return (parent::install()
                 && $this->registerHook('displayShoppingCart')
@@ -157,20 +166,15 @@ class Paylater extends PaymentModule
         $cart                       = $this->context->cart;
         $currency                   = new Currency($cart->id_currency);
         $availableCurrencies        = array('EUR');
-        $paylaterMinAmount          = Configuration::get('PAYLATER_MIN_AMOUNT');
-        $paylaterProd               = Configuration::get('PAYLATER_PROD');
-        $paylaterPublicKeyTest      = Configuration::get('PAYLATER_PUBLIC_KEY_TEST');
-        $paylaterPrivateKeyTest     = Configuration::get('PAYLATER_PRIVATE_KEY_TEST');
-        $paylaterPublicKeyProd      = Configuration::get('PAYLATER_PUBLIC_KEY_PROD');
-        $paylaterPrivateKeyProd     = Configuration::get('PAYLATER_PRIVATE_KEY_PROD');
+        $pmtDisplayMinAmount          = Configuration::get('pmt_display_min_amount');
+        $pmtPublicKey               = Configuration::get('pmt_public_key');
+        $pmtPrivateKey             = Configuration::get('pmt_private_key');
 
         return (
-            $cart->getOrderTotal() >= $paylaterMinAmount &&
+            $cart->getOrderTotal() >= $pmtDisplayMinAmount &&
             in_array($currency->iso_code, $availableCurrencies) &&
-            (
-                ($paylaterProd && $paylaterPublicKeyProd && $paylaterPrivateKeyProd) ||
-                (!$paylaterProd && $paylaterPublicKeyTest && $paylaterPrivateKeyTest)
-            )
+            $pmtPublicKey &&
+            $pmtPrivateKey
         );
     }
 
@@ -203,24 +207,19 @@ class Paylater extends PaymentModule
         $cart                   = $this->context->cart;
         $orderTotal             = $cart->getOrderTotal();
         $link                   = $this->context->link;
-        $paylaterProd           = Configuration::get('PAYLATER_PROD');
-        $paylaterMode           = $paylaterProd == 1 ? 'PROD' : 'TEST';
-        $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
-        $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
-        $paylaterAddSimulator   = Configuration::get('PAYLATER_ADD_SIMULATOR');
+        $pmtPublicKey           = Configuration::get('pmt_public_key');
+        $pmtSimulatorCheckout   = Configuration::get('pmt_sim_checkout');
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
-            'discount'              => $paylaterDiscount ? 1 : 0,
             'amount'                => $orderTotal,
-            'publicKey'             => $paylaterPublicKey,
-            'includeSimulator'      => $paylaterAddSimulator == 0 ? false : true,
-            'simulatorType'         => $paylaterAddSimulator,
+            'pmtPublicKey'          => $pmtPublicKey,
+            'pmtCheckoutSimulator'  => $pmtSimulatorCheckout,
         ));
 
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
-            ->setCallToActionText($this->l('Finance using Paylater'))
+            ->setCallToActionText($this->l('Instant Financing'))
             ->setAction($link->getModuleLink('paylater', 'payment'))
             ->setLogo($this->getPathUri(). 'logo.gif')
             ->setModuleName(__CLASS__)
@@ -254,84 +253,30 @@ class Paylater extends PaymentModule
                 ),
                 'input' => array(
                     array(
-                        'type' => 'radio',
-                        'class' => 't',
-                        'prefix' => '<i class="icon icon-gears"></i>',
-                        'label' => $this->l('Working Mode'),
-                        'name' => 'PAYLATER_PROD',
-                        'values' => array(
-                            array(
-                                'id' => 'production',
-                                'value' => 1,
-                                'label' => $this->l('Production') . '<br>',
-                            ),
-                            array(
-                                'id' => 'test',
-                                'value' => 0,
-                                'label' => $this->l('Test') . '<br>',
-                            ),
-                        ),
-                    ),
-                    array(
-                        'name' => 'PAYLATER_PUBLIC_KEY_TEST',
+                        'name' => 'pmt_public_key',
                         'suffix' => $this->l('ej: tk_fd53cd467ba49022e4gf215e'),
                         'type' => 'text',
                         'size' => 35,
-                        'label' => $this->l('Public TEST API Key'),
+                        'label' => $this->l('Public Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
-                        'col' => 6,
+                        'col' => 4,
+                        'required' => true,
                     ),
                     array(
-                        'name' => 'PAYLATER_PRIVATE_KEY_TEST',
+                        'name' => 'pmt_private_key',
                         'suffix' => $this->l('ej: 21e5723a97459f6a'),
                         'type' => 'text',
                         'size' => 35,
-                        'label' => $this->l('Private TEST API Key'),
+                        'label' => $this->l('Private Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
-                        'col' => 6,
-                    ),
-                    array(
-                        'name' => 'PAYLATER_PUBLIC_KEY_PROD',
-                        'suffix' => $this->l('ej: pk_fd53cd4644a49022e4f8215e'),
-                        'type' => 'text',
-                        'size' => 35,
-                        'label' => $this->l('Public PROD API Key'),
-                        'prefix' => '<i class="icon icon-key"></i>',
-                        'col' => 6,
-                    ),
-                    array(
-                        'name' => 'PAYLATER_PRIVATE_KEY_PROD',
-                        'suffix' => $this->l('ej: 21e57bcb97459f6a'),
-                        'type' => 'text',
-                        'size' => 35,
-                        'label' => $this->l('Private PROD API Key'),
-                        'prefix' => '<i class="icon icon-key"></i>',
-                        'col' => 6,
+                        'col' => 4,
+                        'required' => true,
                     ),
                     array(
                         'type' => 'radio',
                         'class' => 't',
-                        'prefix' => '<i class="icon icon-money"></i>',
-                        'label' => $this->l('The financial interests will be paid by'),
-                        'name' => 'PAYLATER_DISCOUNT',
-                        'values' => array(
-                            array(
-                                'id' => 'true',
-                                'value' => 1,
-                                'label' => $this->l('The online commerce will cover the cost') . '<br>',
-                            ),
-                            array(
-                                'id' => 'false',
-                                'value' => 0,
-                                'label' => $this->l('The end client who buys will cover the cost') . '<br>',
-                            ),
-                        ),
-                    ),
-                    array(
-                        'type' => 'radio',
-                        'class' => 't',
-                        'label' => $this->l('Payment behavior'),
-                        'name' => 'PAYLATER_IFRAME',
+                        'label' => $this->l('Display mode'),
+                        'name' => 'pmt_iframe',
                         'prefix' => '<i class="icon icon-desktop"></i>',
                         'values' => array(
                             array(
@@ -347,140 +292,173 @@ class Paylater extends PaymentModule
                         ),
                     ),
                     array(
+                        'type' => 'text',
+                        'size' => 4,
+                        'col' => 4,
+                        'desc' =>  $this->l('ex: Instant Financing'),
+                        'label' => $this->l('Payment method title'),
+                        'name' => 'pmt_title',
+                        'required' => true,
+                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
+                    ),
+                    array(
                         'type' => 'radio',
                         'class' => 't',
-                        'label' => $this->l('Include simulator in product page'),
-                        'name' => 'PAYLATER_PRODUCT_HOOK',
+                        'label' => $this->l('Simulator in checkout page'),
+                        'name' => 'pmt_sim_checkout',
                         'prefix' => '<i class="icon icon-puzzle-piece"></i>',
                         'is_bool' => false,
                         'values' => array(
                             array(
-                                'id' => 'product-page-hook',
-                                'value' => 'no',
-                                'label' => $this->l('Don\'t display'). '<br>'
+                                'id' => 'checkout-simulator-hide',
+                                'value' => 0,
+                                'label' => $this->l('Hide'). '<br>'
                             ),
                             array(
-                                'id' => 'product-page-hook',
+                                'id' => 'checkout-simulator-simple',
+                                'value' => 1,
+                                'label' => $this->l('Simple Simulator'). '<br>'
+                            ),
+                            array(
+                                'id' => 'checkout-simulator-complete',
+                                'value' => 2,
+                                'label' => $this->l('Complete Simulator'). '<br>'
+                            ),
+                            array(
+                                'id' => 'checkout-simulator-selectable',
+                                'value' => 3,
+                                'label' => $this->l('Selectable Simulator'). '<br>'
+                            ),
+                            array(
+                                'id' => 'checkout-simulator-text',
+                                'value' => 4,
+                                'label' => $this->l('Text Simulator'). '<br>'
+                            ),
+                            array(
+                                'id' => 'checkout-simulator-mini',
+                                'value' => 6,
+                                'label' => '<strong style="color: green">' . $this->l('Mini Simulator').'</strong><br>'
+                            ),
+                        ),
+                    ),
+                    array(
+                        'type' => 'radio',
+                        'class' => 't',
+                        'label' => $this->l('Simulator in product page'),
+                        'name' => 'pmt_sim_product',
+                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
+                        'is_bool' => false,
+                        'values' => array(
+                            array(
+                                'id' => 'checkout-simulator-hide',
+                                'value' => 0,
+                                'label' => $this->l('Hide'). '<br>'
+                            ),
+                            array(
+                                'id' => 'checkout-simulator-simple',
+                                'value' => 1,
+                                'label' => $this->l('Simple Simulator'). '<br>'
+                            ),
+                            array(
+                                'id' => 'checkout-simulator-complete',
+                                'value' => 2,
+                                'label' => $this->l('Complete Simulator'). '<br>'
+                            ),
+                            array(
+                                'id' => 'checkout-simulator-selectable',
+                                'value' => 3,
+                                'label' => $this->l('Selectable Simulator'). '<br>'
+                            ),
+                            array(
+                                'id' => 'checkout-simulator-text',
+                                'value' => 4,
+                                'label' => $this->l('Text Simulator'). '<br>'
+                            ),
+                            array(
+                                'id' => 'checkout-simulator-mini',
+                                'value' => 6,
+                                'label' => '<strong style="color: green">' . $this->l('Mini Simulator').'</strong><br>'
+                            ),
+                        ),
+                    ),
+                    array(
+                        'type' => 'radio',
+                        'class' => 't',
+                        'label' => $this->l('Simulator in product page position'),
+                        'name' => 'pmt_sim_product_hook',
+                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
+                        'is_bool' => false,
+                        'values' => array(
+                            array(
+                                'id' => 'hookDisplayRightColumn-page-hook',
                                 'value' => 'hookDisplayRightColumn',
                                 'label' => $this->l('display in right column'). '<br>'
                             ),
                             array(
-                                'id' => 'product-page-hook',
+                                'id' => 'hookDisplayLeftColumn',
                                 'value' => 'hookDisplayLeftColumn',
                                 'label' => $this->l('display in left column'). '<br>'
                             ),
                             array(
-                                'id' => 'product-page-hook',
+                                'id' => 'hookDisplayRightColumnProduct',
                                 'value' => 'hookDisplayRightColumnProduct',
                                 'label' => $this->l('display in right column of product'). '<br>'
                             ),
                             array(
-                                'id' => 'product-page-hook',
+                                'id' => 'hookDisplayLeftColumnProduct',
                                 'value' => 'hookDisplayLeftColumnProduct',
                                 'label' => $this->l('display in left column of product'). '<br>'
                             ),
                             array(
-                                'id' => 'product-page-hook',
+                                'id' => 'hookDisplayProductButtons',
                                 'value' => 'hookDisplayProductButtons',
                                 'label' => $this->l('display in product buttons (PS 1.7)'). '<br>'
                             ),
                         ),
                     ),
                     array(
-                        'type' => 'radio',
-                        'class' => 't',
-                        'label' => $this->l('Type of simulator in product page'),
-                        'name' => 'PAYLATER_PRODUCT_HOOK_TYPE',
+                        'type' => 'text',
+                        'col' => 1,
+                        'desc' => $this->l('Between: 2-12'),
+                        'label' => $this->l('Simulator quotes initial value'),
+                        'name' => 'pmt_sim_quotes_start',
+                        'required' => false,
                         'prefix' => '<i class="icon icon-puzzle-piece"></i>',
-                        'is_bool' => false,
-                        'values' => array(
-                            array(
-                                'id' => 'simulator',
-                                'value' => 1,
-                                'label' => $this->l('Mini simulator Paylater'). '<br>'
-                            ),
-                            array(
-                                'id' => 'simulator',
-                                'value' => 2,
-                                'label' => $this->l('Complete simulator Paylater'). '<br>'
-                            ),
-                            array(
-                                'id' => 'simulator',
-                                'value' => 3,
-                                'label' => $this->l('Selectable simulator Paylater'). '<br>'
-                            ),
-                            array(
-                                'id' => 'simulator',
-                                'value' => 4,
-                                'label' => $this->l('Descriptive text Paylater'). '<br>'
-                            ),
-                        ),
-                    ),
-                    array(
-                        'type' => 'radio',
-                        'class' => 't',
-                        'label' => $this->l('Include simulator in checkout'),
-                        'name' => 'PAYLATER_ADD_SIMULATOR',
-                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
-                        'is_bool' => false,
-                        'values' => array(
-                            array(
-                                'id' => 'simulator',
-                                'value' => 0,
-                                'label' => $this->l('Don\'t display'). '<br>'
-                            ),
-                            array(
-                                'id' => 'simulator',
-                                'value' => 1,
-                                'label' => $this->l('Mini simulator Paylater'). '<br>'
-                            ),
-                            array(
-                                'id' => 'simulator',
-                                'value' => 2,
-                                'label' => $this->l('Complete simulator Paylater'). '<br>'
-                            ),
-                            array(
-                                'id' => 'simulator',
-                                'value' => 3,
-                                'label' => $this->l('Selectable simulator Paylater'). '<br>'
-                            ),
-                            array(
-                                'id' => 'simulator',
-                                'value' => 4,
-                                'label' => $this->l('Descriptive text Paylater'). '<br>'
-                            ),
-                        ),
                     ),
                     array(
                         'type' => 'text',
-                        'size' => 4,
+                        'col' => 1,
+                        'desc' => $this->l('Between: 2-12'),
+                        'label' => $this->l('Simulator quotes max value'),
+                        'name' => 'pmt_sim_quotes_max',
+                        'required' => false,
+                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
+                    ),
+                    array(
+                        'type' => 'text',
+                        'col' => 2,
                         'desc' => $this->l('ej: 20'),
-                        'label' => $this->l('MinAmount to display Paylater'),
-                        'name' => 'PAYLATER_MIN_AMOUNT',
+                        'label' => $this->l('Hide Paylater if amount is less than'),
+                        'name' => 'pmt_display_min_amount',
                         'required' => false,
                         'prefix' => '<i class="icon icon-bank"></i>',
                         'suffix' => '€'
                     ),
                     array(
-                        'type' => 'radio',
-                        'class' => 't',
-                        'desc' => $this->l('Info: change to canonical URL if you have compatibility issues'),
-                        'label' => $this->l('Notification Callback URL'),
-                        'name' => 'PAYLATER_NOTIFY_URL',
+                        'type' => 'text',
+                        'col' => 5,
+                        'label' => $this->l('Payment accepted URL'),
+                        'name' => 'pmt_url_ok',
+                        'required' => false,
                         'prefix' => '<i class="icon icon-puzzle-piece"></i>',
-                        'is_bool' => true,
-                        'values' => array(
-                            array(
-                                'id' => 'no',
-                                'value' => false,
-                                'label' => $this->l('Use friendly url'). '<br>'
-                            ),
-                            array(
-                                'id' => 'yes',
-                                'value' => true,
-                                'label' => $this->l('Use canonical url'). '<br>'
-                            ),
-                        ),
+                    ),
+                    array(
+                        'type' => 'text',
+                        'col' => 5,
+                        'label' => $this->l('Payment Failed URL'),
+                        'name' => 'pmt_url_ko',
+                        'required' => false,
+                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
                     ),
                 ),
                 'submit' => array(
