@@ -20,8 +20,6 @@ services:
     networks:
       - internal
       - public
-    volumes:
-      - ./:/var/www/html/modules/paylater
     ports:
       - "8015:80"
   prestashop16:
@@ -43,8 +41,6 @@ services:
     networks:
       - internal
       - public
-    volumes:
-      - ./:/var/www/html/modules/paylater
     ports:
       - "8016:80"
   prestashop17:
@@ -66,8 +62,6 @@ services:
     networks:
       - internal
       - public
-    volumes:
-      - ./:/var/www/html/modules/paylater
     ports:
       - "8017:80"
   prestashop-dev:
