@@ -16,7 +16,7 @@
                     closeOnEscPress: false,
                     backDropDark: false,
                     largeSize: true,
-                    closeConfirmationMessage: '¿Seguro que deseas cerrar?'
+                    closeConfirmationMessage: "{l s='Sure you want to leave?' mod='paylater'}"
                 }
             );
         });

@@ -100,7 +100,7 @@ class Paylater extends PaymentModule
         ));
         Configuration::updateValue('pmt_sim_checkout', 6);
         Configuration::updateValue('pmt_sim_product', 6);
-        Configuration::updateValue('pmt_sim_product_hook', false);
+        Configuration::updateValue('pmt_sim_product_hook', 'hookDisplayProductButtons');
         Configuration::updateValue('pmt_sim_quotes_start', 3);
         Configuration::updateValue('pmt_sim_quotes_max', 12);
         Configuration::updateValue('pmt_display_min_amount', 1);
@@ -209,12 +209,17 @@ class Paylater extends PaymentModule
         $link                   = $this->context->link;
         $pmtPublicKey           = Configuration::get('pmt_public_key');
         $pmtSimulatorCheckout   = Configuration::get('pmt_sim_checkout');
+        $pmtSimulatorQuotesStart  = Configuration::get('pmt_sim_quotes_start');
+        $pmtSimulatorQuotesMax    = Configuration::get('pmt_sim_quotes_max');
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
             'amount'                => $orderTotal,
             'pmtPublicKey'          => $pmtPublicKey,
-            'pmtCheckoutSimulator'  => $pmtSimulatorCheckout,
+            'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
+            'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
+            'pmtSimulatorCheckout'  => $pmtSimulatorCheckout,
+            'paymentUrl'            => $link->getModuleLink('paylater', 'payment')
         ));
 
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
@@ -248,13 +253,13 @@ class Paylater extends PaymentModule
         return array(
             'form' => array(
                 'legend' => array(
-                    'title' => $this->l('Settings'),
+                    'title' => $this->l('Basic Settings'),
                     'icon' => 'icon-cogs',
                 ),
                 'input' => array(
                     array(
                         'name' => 'pmt_public_key',
-                        'suffix' => $this->l('ej: tk_fd53cd467ba49022e4gf215e'),
+                        'suffix' => $this->l('ej: pk_fd53cd467ba49022e4gf215e'),
                         'type' => 'text',
                         'size' => 35,
                         'label' => $this->l('Public Key'),
@@ -282,12 +287,13 @@ class Paylater extends PaymentModule
                             array(
                                 'id' => 'frame',
                                 'value' => 1,
-                                'label' => $this->l('open on iFrame inside the page') . '<br>',
+                                'label' => $this->l('iFrame') . '<br>',
                             ),
                             array(
                                 'id' => 'redirection',
                                 'value' => 0,
-                                'label' => $this->l('redirect the user to the payment page') . '<br>',
+                                'label' => '<strong style="color: green">' . $this->l('Redirect').'</strong><br>'
+
                             ),
                         ),
                     ),
@@ -507,27 +513,27 @@ class Paylater extends PaymentModule
         $error = '';
         $message = '';
         $settings = array();
-        $settings['PAYLATER_MIN_AMOUNT'] = 0;
+        $settings['pmt_display_min_amount'] = 0;
         $settingsKeys = array(
-            'PAYLATER_PROD',
-            'PAYLATER_PUBLIC_KEY_TEST',
-            'PAYLATER_PRIVATE_KEY_TEST',
-            'PAYLATER_PUBLIC_KEY_PROD',
-            'PAYLATER_PRIVATE_KEY_PROD',
-            'PAYLATER_DISCOUNT',
-            'PAYLATER_ADD_SIMULATOR',
-            'PAYLATER_IFRAME',
-            'PAYLATER_MIN_AMOUNT',
-            'PAYLATER_PRODUCT_HOOK',
-            'PAYLATER_PRODUCT_HOOK_TYPE',
-            'PAYLATER_NOTIFY_URL',
+            'pmt_public_key',
+            'pmt_private_key',
+            'pmt_iframe',
+            'pmt_title',
+            'pmt_sim_checkout',
+            'pmt_sim_product',
+            'pmt_sim_product_hook',
+            'pmt_sim_quotes_start',
+            'pmt_sim_quotes_max',
+            'pmt_display_min_amount',
+            'pmt_url_ok',
+            'pmt_url_ko',
         );
 
         //Different Behavior depending on 1.6 or earlier
         if (Tools::isSubmit('submit'.$this->name)) {
             foreach ($settingsKeys as $key) {
                 switch ($key) {
-                    case 'PAYLATER_MIN_AMOUNT':
+                    case 'pmt_display_min_amount':
                         $value = Tools::getValue($key);
                         if (!$value) {
                             $value = 0;
@@ -586,19 +592,18 @@ class Paylater extends PaymentModule
         $cart                   = $params['cart'];
         $orderTotal             = $cart->getOrderTotal();
         $link                   = $this->context->link;
-        $paylaterProd           = Configuration::get('PAYLATER_PROD');
-        $paylaterMode           = $paylaterProd == 1 ? 'PROD' : 'TEST';
-        $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
-        $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
-        $paylaterAddSimulator   = Configuration::get('PAYLATER_ADD_SIMULATOR');
+        $pmtPublicKey           = Configuration::get('pmt_public_key');
+        $pmtSimulatorCheckout   = Configuration::get('pmt_sim_checkout');
+        $pmtSimulatorQuotesStart  = Configuration::get('pmt_sim_quotes_start');
+        $pmtSimulatorQuotesMax    = Configuration::get('pmt_sim_quotes_max');
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
-            'discount'              => $paylaterDiscount ? 1 : 0,
             'amount'                => $orderTotal,
-            'publicKey'             => $paylaterPublicKey,
-            'includeSimulator'      => $paylaterAddSimulator == 0 ? false : true,
-            'simulatorType'         => $paylaterAddSimulator,
+            'pmtPublicKey'          => $pmtPublicKey,
+            'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
+            'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
+            'pmtSimulatorCheckout'  => $pmtSimulatorCheckout,
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment')
         ));
 
@@ -626,26 +631,30 @@ class Paylater extends PaymentModule
      */
     public function productPageSimulatorDisplay($functionName)
     {
-        $productConfiguration = Configuration::get('PAYLATER_PRODUCT_HOOK');
+        $productConfiguration = Configuration::get('pmt_sim_product_hook');
         /** @var ProductCore $product */
         $product = new Product(Tools::getValue('id_product'));
         $amount = $product->getPublicPrice();
-        $simulatorType          = Configuration::get('PAYLATER_PRODUCT_HOOK_TYPE');
-        $paylaterProd           = Configuration::get('PAYLATER_PROD');
-        $paylaterMode           = $paylaterProd == 1 ? 'PROD' : 'TEST';
-        $paylaterPublicKey      = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
-        $paylaterDiscount       = Configuration::get('PAYLATER_DISCOUNT');
-        $minAmount              = Configuration::get('PAYLATER_MIN_AMOUNT');
+        $pmtPublicKey             = Configuration::get('pmt_public_key');
+        $pmtSimulatorProduct      = Configuration::get('pmt_sim_product');
+        $pmtSimulatorQuotesStart  = Configuration::get('pmt_sim_quotes_start');
+        $pmtSimulatorQuotesMax    = Configuration::get('pmt_sim_quotes_max');
+        $pmtDisplayMinAmount      = Configuration::get('pmt_display_min_amount');
 
-        if ($functionName != $productConfiguration || $amount <= 0 || $amount < $minAmount) {
+        if ($functionName != $productConfiguration ||
+            $amount <= 0 ||
+            $amount < $pmtDisplayMinAmount ||
+            $pmtSimulatorProduct
+        ) {
             return null;
         }
 
         $this->context->smarty->assign(array(
             'amount'                => $amount,
-            'publicKey'             => $paylaterPublicKey,
-            'simulatorType'         => $simulatorType,
-            'discount'              => $paylaterDiscount ? 1 : 0,
+            'pmtPublicKey'          => $pmtPublicKey,
+            'pmtSimulatorProduct'   => $pmtSimulatorProduct,
+            'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
+            'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
         ));
 
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');

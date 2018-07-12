@@ -65,20 +65,14 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
             'key' => $cart->secure_key,
         );
 
-        $iframe = Configuration::get('PAYLATER_IFRAME');
-        $cancelUrl = $link->getPageLink('order', null, null, array('step'=>3));
-        $paylaterProd = Configuration::get('PAYLATER_PROD');
-        $paylaterMode = $paylaterProd == 1 ? 'PROD' : 'TEST';
-        $paylaterPublicKey = Configuration::get('PAYLATER_PUBLIC_KEY_'.$paylaterMode);
-        $paylaterPrivateKey = Configuration::get('PAYLATER_PRIVATE_KEY_'.$paylaterMode);
-        $canonicalUrl = Configuration::get('PAYLATER_NOTIFY_URL');
-        $okUrl = $link->getModuleLink('paylater', 'notify', $query);
-        if ($canonicalUrl) {
-            $okUrl = _PS_BASE_URL_.__PS_BASE_URI__
-                     .'index.php?canonical=true&fc=module&module=paylater&controller=notify&'
-                     .http_build_query($query)
-            ;
-        }
+        $iframe = Configuration::get('pmt_iframe');
+        $cancelUrl = Configuration::get('pmt_url_ko');
+        $paylaterPublicKey = Configuration::get('pmt_public_key');
+        $paylaterPrivateKey = Configuration::get('pmt_private_key');
+        $okUrl = _PS_BASE_URL_.__PS_BASE_URI__
+                 .'index.php?canonical=true&fc=module&module=paylater&controller=notify&'
+                 .http_build_query($query)
+        ;
 
         $shippingAddress = new Address($cart->id_address_delivery);
         $billingAddress = new Address($cart->id_address_invoice);
