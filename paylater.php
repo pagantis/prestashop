@@ -644,7 +644,7 @@ class Paylater extends PaymentModule
         if ($functionName != $productConfiguration ||
             $amount <= 0 ||
             $amount < $pmtDisplayMinAmount ||
-            $pmtSimulatorProduct
+            !$pmtSimulatorProduct
         ) {
             return null;
         }

@@ -97,7 +97,9 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
             $redirectUrl = Configuration::get('pmt_url_ko');
             Tools::redirect($redirectUrl, null, null, 'ErrorMessage: '.$this->message);
         } else {
-            $redirectUrl = Configuration::get('pmt_url_ok');
+            $parsedUrl = parse_url(Configuration::get('pmt_url_ok'));
+            $separator = ($parsedUrl['query'] == null) ? '?' : '&';
+            $redirectUrl = Configuration::get('pmt_url_ok'). $separator .http_build_query($query);
             Tools::redirect($redirectUrl);
         }
     }
