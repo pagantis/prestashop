@@ -76,10 +76,13 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
 
         $shippingAddress = new Address($cart->id_address_delivery);
         $billingAddress = new Address($cart->id_address_invoice);
+        $curlInfo = curl_version();
+        $curlVersion = $curlInfo['version'];
         $metadata = array(
             'ps' => _PS_VERSION_,
             'pmt' => $this->module->version,
             'php' => phpversion(),
+            'curl' => $curlVersion,
         );
 
         try {

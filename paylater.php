@@ -513,6 +513,9 @@ class Paylater extends PaymentModule
         $error = '';
         $message = '';
         $settings = array();
+        $settings['pmt_public_key'] = Configuration::get('pmt_public_key');
+        $settings['pmt_private_key'] = Configuration::get('pmt_private_key');
+        $settings['pmt_title'] = Configuration::get('pmt_title');
         $settings['pmt_display_min_amount'] = 0;
         $settingsKeys = array(
             'pmt_public_key',
@@ -545,7 +548,33 @@ class Paylater extends PaymentModule
                         Configuration::updateValue($key, $value);
                         $settings[$key] = $value;
                         break;
-
+                    case 'pmt_public_key':
+                        $value = Tools::getValue($key);
+                        if (!$value) {
+                            $error = $this->l('Please add a Paga+Tarde API Public Key');
+                            break;
+                        }
+                        Configuration::updateValue($key, $value);
+                        $settings[$key] = $value;
+                        break;
+                    case 'pmt_private_key':
+                        $value = Tools::getValue($key);
+                        if (!$value) {
+                            $error = $this->l('Please add a Paga+Tarde API Private Key');
+                            break;
+                        }
+                        Configuration::updateValue($key, $value);
+                        $settings[$key] = $value;
+                        break;
+                    case 'pmt_title':
+                        $value = Tools::getValue($key);
+                        if (!$value) {
+                            $error = $this->l('Please add a Title for the payment method');
+                            break;
+                        }
+                        Configuration::updateValue($key, $value);
+                        $settings[$key] = $value;
+                        break;
                     default:
                         $value = Tools::getValue($key);
                         Configuration::updateValue($key, $value);
