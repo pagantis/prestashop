@@ -8,22 +8,26 @@
 <div class="row">
     <div class="col-xs-12">
         <p class="payment_module">
-            <a class="paylater-checkout" href="{$paymentUrl|escape:'html'}" title="{l s='Finance using Paylater' mod='paylater'}">
+            <a class="paylater-checkout" href="{$paymentUrl|escape:'html'}" title="{l s='Instant Financing' mod='paylater'}">
                 <img width="64px" height="64px" id="logo_pagamastarde" src="{$module_dir|escape:'htmlall':'UTF-8'}views/img/logo-64x64.png">
-                {l s='Finance using Paylater' mod='paylater'}
+                {l s='Instant Financing' mod='paylater'}
                 <script type="text/javascript" src="https://cdn.pagamastarde.com/pmt-js-client-sdk/3/js/client-sdk.min.js"></script>
                 <script type="text/javascript">
                     if (typeof pmtClient !== 'undefined') {
-                        pmtClient.setPublicKey('{$publicKey|escape:'quotes'}');
+                        pmtClient.setPublicKey('{$pmtPublicKey|escape:'quotes'}');
                         pmtClient.events.send('checkout', { basketAmount: {$amount|escape:'quotes'} } );
                     }
                 </script>
-                {if $includeSimulator}
+                {if $pmtSimulatorCheckout}
                     <span class="js-pmt-payment-type"></span>
                     <div class="PmtSimulator"
-                         data-pmt-num-quota="4" data-pmt-max-ins="12" data-pmt-style="blue"
-                         data-pmt-type="{if $simulatorType != 1}{$simulatorType|escape:'quotes'}{else}2{/if}"
-                         data-pmt-discount="{$discount|escape:'quotes'}" data-pmt-amount="{$amount|escape:'quotes'}" data-pmt-expanded="{if $simulatorType == 1}no{else}yes{/if}">
+                         data-pmt-num-quota="{$pmtQuotesStart|escape:'quotes'}"
+                         data-pmt-max-ins="{$pmtQuotesMax|escape:'quotes'}"
+                         data-pmt-style="blue"
+                         data-pmt-type="{$pmtSimulatorCheckout|escape:'quotes'}"
+                         data-pmt-discount="no"
+                         data-pmt-amount="{$amount|escape:'quotes'}"
+                         data-pmt-expanded="yes">
                     </div>
                     <script type="text/javascript">
                         if (typeof pmtClient !== 'undefined') {

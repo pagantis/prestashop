@@ -17,8 +17,5 @@
         "phpunit/phpunit": "^4.8",
         "phpunit/phpunit-selenium": "^2.0",
         "facebook/webdriver": "^1.1"
-    },
-    "autoload": {
-        "psr-0": {"": "lib/"}
     }
 }

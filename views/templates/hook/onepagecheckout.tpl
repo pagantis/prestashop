@@ -10,15 +10,15 @@
     <div class="col-xs-12">
         {if version_compare($smarty.const._PS_VERSION_,'1.6.0.0','<')}
             <div class="payment_module" id="paylater_payment_button">
-                <a href="javascript:$('#paylater_form').submit();" title="{l s='Finance using Paylater' mod='paylater'}">
+                <a href="javascript:$('#paylater_form').submit();" title="{l s='Instant Financing' mod='paylater'}">
                     <img id="logo_paylater" src="{$module_dir|escape:'htmlall':'UTF-8'}views/img/logo-64x64.png"
-                         alt="{l s='Finance using Paylater' mod='paylater'}" style="max-width: 80px"/>
-                    {l s='Finance using Paylater' mod='paylater'}
+                         alt="{l s='Instant Financing' mod='paylater'}" style="max-width: 80px"/>
+                    {l s='Instant Financing' mod='paylater'}
                 </a>
             </div>
         {else}
             <p class="payment_module" id="payment_button">
-                <a href="javascript:$('#paylater_form').submit();" title="{l s='Finance using Paylater' mod='paylater'}"></a>
+                <a href="javascript:$('#paylater_form').submit();" title="{l s='Instant Financing' mod='paylater'}"></a>
             </p>
         {/if}
     </div>

@@ -140,16 +140,16 @@
         },
         {
             "name": "pagamastarde/orders-api-client",
-            "version": "v1.0.4",
+            "version": "v1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PagaMasTarde/ordersApiClient.git",
-                "reference": "7dcc1c0bb7514bb26bed7ebb879955e817fb5d28"
+                "reference": "bf38c7aed8d2bc4b5f8b083a90b3bafd8e592d48"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/ordersApiClient/zipball/7dcc1c0bb7514bb26bed7ebb879955e817fb5d28",
-                "reference": "7dcc1c0bb7514bb26bed7ebb879955e817fb5d28",
+                "url": "https://api.github.com/repos/PagaMasTarde/ordersApiClient/zipball/bf38c7aed8d2bc4b5f8b083a90b3bafd8e592d48",
+                "reference": "bf38c7aed8d2bc4b5f8b083a90b3bafd8e592d48",
                 "shasum": ""
             },
             "require": {
@@ -178,7 +178,7 @@
                 }
             ],
             "description": "PagaMasTarde Orders Api Client in PHP. Use the api with simple methods and using OOP.",
-            "time": "2018-07-03T17:42:11+00:00"
+            "time": "2018-07-09T10:40:00+00:00"
         }
     ],
     "packages-dev": [

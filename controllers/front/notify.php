@@ -94,12 +94,12 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
 
         if ($this->error) {
             //In case of error we can see the error in the header of the redirection:
-            $link = $this->context->link;
-            $redirectUrl = $link->getPageLink('order');
+            $redirectUrl = Configuration::get('pmt_url_ko');
             Tools::redirect($redirectUrl, null, null, 'ErrorMessage: '.$this->message);
         } else {
-            $link = $this->context->link;
-            $redirectUrl = $link->getPageLink('order-confirmation', null, null, $query);
+            $parsedUrl = parse_url(Configuration::get('pmt_url_ok'));
+            $separator = ($parsedUrl['query'] == null) ? '?' : '&';
+            $redirectUrl = Configuration::get('pmt_url_ok'). $separator .http_build_query($query);
             Tools::redirect($redirectUrl);
         }
     }
@@ -128,16 +128,14 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
         }
 
         $secureKey = Tools::getValue('key');
-        $paylaterProd = Configuration::get('PAYLATER_PROD');
-        $paylaterMode = $paylaterProd == 1 ? 'PROD' : 'TEST';
-        $privateKey = Configuration::get('PAYLATER_PRIVATE_KEY_'. $paylaterMode);
-        $publicKey = Configuration::get('PAYLATER_PUBLIC_KEY_'. $paylaterMode);
+        $privateKey = Configuration::get('pmt_private_key');
+        $publicKey = Configuration::get('pmt_public_key');
         $cart = new Cart((int) $cartId);
         $pmtOrderId = Db::getInstance()->getValue(
             'select order_id from '._DB_PREFIX_.'pmt_order where id = '.$cartId
         );
         if ($secureKey && $cartId && Module::isEnabled('paylater')) {
-            $orderClient = new PagaMasTarde\OrdersApiClient\Client(
+            $orderClient = new \PagaMasTarde\OrdersApiClient\Client(
                 $publicKey,
                 $privateKey
             );
