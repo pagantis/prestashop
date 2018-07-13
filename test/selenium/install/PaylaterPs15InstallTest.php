@@ -81,22 +81,13 @@ class PaylaterPs15InstallTest extends PaylaterPrestashopTest
             $this->findByLinkText('Configure')->click();
         }
 
-        $verify = WebDriverBy::id('PAYLATER_PUBLIC_KEY_TEST');
+        $verify = WebDriverBy::id('frame');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->findById('test')->click();
-        $this->findById('PAYLATER_PUBLIC_KEY_TEST')->clear()->sendKeys($this->configuration['publicKey']);
-        $this->findById('PAYLATER_PRIVATE_KEY_TEST')->clear()->sendKeys($this->configuration['secretKey']);
-        $this->findById('PAYLATER_PUBLIC_KEY_PROD')->clear()->sendKeys('pk_this_is_fake');
-        $this->findById('PAYLATER_PRIVATE_KEY_PROD')->clear()->sendKeys('this is a fake key');
         $this->findById('frame')->click();
-        $this->findByCss(
-            'input[name="PAYLATER_PRODUCT_HOOK"][type="radio"][value="hookDisplayRightColumnProduct"]'
-        )->click();
-        $this->webDriver->executeScript('window.scrollBy(0,250)');
-        $this->findByCss('input[name="PAYLATER_PRODUCT_HOOK_TYPE"][type="radio"][value="2"]')->click();
-        $this->findByCss('input[name="PAYLATER_ADD_SIMULATOR"][type="radio"][value="2"]')->click();
+        $this->findById('pmt_public_key')->clear()->sendKeys($this->configuration['publicKey']);
+        $this->findById('pmt_private_key')->clear()->sendKeys($this->configuration['secretKey']);
         $this->webDriver->executeScript('window.scrollBy(0,250)');
         $this->findById('module_form')->submit();
         $confirmationSearch = WebDriverBy::className('module_confirmation');

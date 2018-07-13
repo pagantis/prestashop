@@ -81,18 +81,9 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->findById('test')->click();
-        $this->findById('PAYLATER_PUBLIC_KEY_TEST')->clear()->sendKeys($this->configuration['publicKey']);
-        $this->findById('PAYLATER_PRIVATE_KEY_TEST')->clear()->sendKeys($this->configuration['secretKey']);
-        $this->findById('PAYLATER_PUBLIC_KEY_PROD')->clear()->sendKeys('pk_this_is_fake');
-        $this->findById('PAYLATER_PRIVATE_KEY_PROD')->clear()->sendKeys('this is a fake key');
-        $script = <<<EOD
-document.querySelector('input[name="PAYLATER_PRODUCT_HOOK"][type="radio"][value="hookDisplayProductButtons"]').click();
-document.querySelector('input[name="PAYLATER_PRODUCT_HOOK_TYPE"][type="radio"][value="1"]').click();
-document.querySelector('input[name="PAYLATER_ADD_SIMULATOR"][type="radio"][value="1"]').click();
-document.querySelector('input[name="PAYLATER_IFRAME"][type="radio"][value="1"]').click();
-EOD;
-        $this->webDriver->executeScript($script);
+        $this->findById('frame')->click();
+        $this->findById('pmt_public_key')->clear()->sendKeys($this->configuration['publicKey']);
+        $this->findById('pmt_private_key')->clear()->sendKeys($this->configuration['secretKey']);
         $this->findById('module_form_submit_btn')->click();
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(
