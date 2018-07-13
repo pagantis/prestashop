@@ -57,7 +57,7 @@ class PaylaterPs16InstallTest extends PaylaterPrestashopTest
         $fileInput = $this->webDriver->findElement($fileInputSearch);
         $fileInput->setFileDetector(new LocalFileDetector());
         $fileInput->sendKeys(__DIR__.'/../../../paylater.zip');
-        $fileInput->submit();
+        $this->findByName('download')->click();
         $validatorSearch = WebDriverBy::id('anchorPaylater');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
