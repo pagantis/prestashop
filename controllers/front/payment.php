@@ -164,7 +164,7 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
             $orderChannel = new \PagaMasTarde\OrdersApiClient\Model\Order\Configuration\Channel();
             $orderChannel
                 ->setAssistedSale(false)
-                ->setType(PagaMasTarde\OrdersApiClient\Model\Order\Configuration\Channel::ONLINE)
+                ->setType(\PagaMasTarde\OrdersApiClient\Model\Order\Configuration\Channel::ONLINE)
             ;
 
             $orderConfiguration = new \PagaMasTarde\OrdersApiClient\Model\Order\Configuration();
@@ -192,7 +192,7 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         }
 
         try {
-            $orderClient = new PagaMasTarde\OrdersApiClient\Client(
+            $orderClient = new \PagaMasTarde\OrdersApiClient\Client(
                 $paylaterPublicKey,
                 $paylaterPrivateKey
             );
