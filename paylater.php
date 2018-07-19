@@ -356,32 +356,32 @@ class Paylater extends PaymentModule
                         'is_bool' => false,
                         'values' => array(
                             array(
-                                'id' => 'checkout-simulator-hide',
+                                'id' => 'product-simulator-hide',
                                 'value' => 0,
                                 'label' => $this->l('Hide'). '<br>'
                             ),
                             array(
-                                'id' => 'checkout-simulator-simple',
+                                'id' => 'product-simulator-simple',
                                 'value' => 1,
                                 'label' => $this->l('Simple Simulator'). '<br>'
                             ),
                             array(
-                                'id' => 'checkout-simulator-complete',
+                                'id' => 'product-simulator-complete',
                                 'value' => 2,
                                 'label' => $this->l('Complete Simulator'). '<br>'
                             ),
                             array(
-                                'id' => 'checkout-simulator-selectable',
+                                'id' => 'product-simulator-selectable',
                                 'value' => 3,
                                 'label' => $this->l('Selectable Simulator'). '<br>'
                             ),
                             array(
-                                'id' => 'checkout-simulator-text',
+                                'id' => 'product-simulator-text',
                                 'value' => 4,
                                 'label' => $this->l('Text Simulator'). '<br>'
                             ),
                             array(
-                                'id' => 'checkout-simulator-mini',
+                                'id' => 'product-simulator-mini',
                                 'value' => 6,
                                 'label' => '<strong style="color: green">' . $this->l('Mini Simulator').'</strong><br>'
                             ),

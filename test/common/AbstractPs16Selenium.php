@@ -60,6 +60,7 @@ abstract class AbstractPs16Selenium extends PaylaterPrestashopTest
      */
     public function getPaylaterBackOffice()
     {
+        $this->webDriver->get(self::PS16URL.self::BACKOFFICE_FOLDER);
         $this->findByLinkText('Modules and Services')->click();
         $this->findById('moduleQuicksearch')->clear()->sendKeys('paga+tarde');
         $paylaterAnchor = $this->findById('anchorPaylater');
@@ -207,9 +208,11 @@ abstract class AbstractPs16Selenium extends PaylaterPrestashopTest
     }
 
     /**
+     * @param bool $verifySimulator
+     *
      * @throws \Exception
      */
-    public function goToProduct()
+    public function goToProduct($verifySimulator = true)
     {
         $this->webDriver->get(self::PS16URL);
         $this->findById('header_logo')->click();
@@ -224,10 +227,12 @@ abstract class AbstractPs16Selenium extends PaylaterPrestashopTest
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($available);
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
-        $pmtSimulator = WebDriverBy::className('PmtSimulator');
-        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
+        if ($verifySimulator) {
+            $pmtSimulator = WebDriverBy::className('PmtSimulator');
+            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool) $condition);
+        }
     }
 
     /**

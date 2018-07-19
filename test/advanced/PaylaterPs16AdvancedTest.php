@@ -103,4 +103,82 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
         $this->assertTrue((bool) $condition);
         $this->quit();
     }
+
+    /**
+     * @REQ9 BackOffice Simulator Product Page
+     * @REQ11 BackOffice Simulator Start and Max installments
+     * @REQ12 BackOffice MinAmount (product simulator part)
+     *
+     * @throws \Exception
+     *
+     * @group test-actual
+     */
+    public function testSimulatorInProductPage()
+    {
+        $this->goToProduct();
+        $simulatorDiv = $this->findByClass('PmtSimulator');
+        $simulatorType = $simulatorDiv->getAttribute('data-pmt-type');
+        $numQuota = $simulatorDiv->getAttribute('data-pmt-num-quota');
+        $maxInstallments = $simulatorDiv->getAttribute('data-pmt-max-ins');
+
+        $this->assertEquals(6, $simulatorType);
+        $this->assertEquals(3, $numQuota);
+        $this->assertEquals(12, $maxInstallments);
+
+        //Check min amount simulator
+        $this->loginToBackOffice();
+        $this->getPaylaterBackOffice();
+        $this->findById('pmt_display_min_amount')->clear()->sendKeys(500);
+        $this->findById('module_form_submit_btn')->click();
+
+        $this->goToProduct(false);
+        $html = $this->webDriver->getPageSource();
+        $this->assertNotContains('PmtSimulator', $html);
+
+        //Change Type, num Quota and Max Installments, Restore min amount
+        $this->getPaylaterBackOffice();
+        $this->findById('product-simulator-complete')->click();
+        $this->findById('pmt_sim_quotes_start')->clear()->sendKeys(5);
+        $this->findById('pmt_sim_quotes_max')->clear()->sendKeys(10);
+        $this->findById('pmt_display_min_amount')->clear()->sendKeys(1);
+        $this->findById('module_form_submit_btn')->click();
+
+        $this->goToProduct();
+        $simulatorDiv = $this->findByClass('PmtSimulator');
+        $simulatorType = $simulatorDiv->getAttribute('data-pmt-type');
+        $numQuota = $simulatorDiv->getAttribute('data-pmt-num-quota');
+        $maxInstallments = $simulatorDiv->getAttribute('data-pmt-max-ins');
+
+        $this->assertEquals(2, $simulatorType);
+        $this->assertEquals(5, $numQuota);
+        $this->assertEquals(10, $maxInstallments);
+
+        //Hide simulator
+        $this->getPaylaterBackOffice();
+        $this->findById('product-simulator-hide')->click();
+        $this->findById('pmt_sim_quotes_start')->clear()->sendKeys(3);
+        $this->findById('pmt_sim_quotes_max')->clear()->sendKeys(12);
+        $this->findById('module_form_submit_btn')->click();
+
+        $this->goToProduct(false);
+        $html = $this->webDriver->getPageSource();
+        $this->assertNotContains('PmtSimulator', $html);
+
+        //Restore default simulator
+        $this->getPaylaterBackOffice();
+        $this->findById('product-simulator-mini')->click();
+        $this->findById('pmt_sim_quotes_start')->clear()->sendKeys(3);
+        $this->findById('pmt_sim_quotes_max')->clear()->sendKeys(12);
+        $this->findById('module_form_submit_btn')->click();
+
+        $this->goToProduct();
+        $simulatorDiv = $this->findByClass('PmtSimulator');
+        $simulatorType = $simulatorDiv->getAttribute('data-pmt-type');
+        $numQuota = $simulatorDiv->getAttribute('data-pmt-num-quota');
+        $maxInstallments = $simulatorDiv->getAttribute('data-pmt-max-ins');
+
+        $this->assertEquals(6, $simulatorType);
+        $this->assertEquals(3, $numQuota);
+        $this->assertEquals(12, $maxInstallments);
+    }
 }
