@@ -65,7 +65,7 @@ services:
     ports:
       - "8017:80"
   prestashop-dev:
-    image: prestashop/prestashop:1.5-5.5-apache
+    image: prestashop/prestashop:1.6
     depends_on:
       - db-dev
     environment:

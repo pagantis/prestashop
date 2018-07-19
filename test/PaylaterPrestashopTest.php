@@ -18,7 +18,7 @@ abstract class PaylaterPrestashopTest extends TestCase
 {
     const PS17URL = 'http://prestashop17';
     const PS16URL = 'http://prestashop16';
-    const PS15URL = 'http://prestashop-dev:8018';
+    const PS15URL = 'http://prestashop15';
 
     const BACKOFFICE_FOLDER = '/adminTest';
 
