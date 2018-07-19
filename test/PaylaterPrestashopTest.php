@@ -1,11 +1,10 @@
 <?php
 
-namespace Test\Selenium;
+namespace Test;
 
 use Facebook\WebDriver\Interactions\WebDriverActions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Facebook\WebDriver\Remote\WebDriverCapabilityType;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
 use Facebook\WebDriver\WebDriverExpectedCondition;
@@ -19,7 +18,7 @@ abstract class PaylaterPrestashopTest extends TestCase
 {
     const PS17URL = 'http://prestashop17';
     const PS16URL = 'http://prestashop16';
-    const PS15URL = 'http://prestashop15';
+    const PS15URL = 'http://prestashop-dev:8018';
 
     const BACKOFFICE_FOLDER = '/adminTest';
 

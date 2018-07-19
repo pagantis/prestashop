@@ -1,17 +1,14 @@
 <?php
 
-namespace Test\Selenium\Basic;
+namespace Test\Basic;
 
 use Facebook\WebDriver\WebDriverExpectedCondition;
-use Test\Selenium\PaylaterPrestashopTest;
+use Test\Common\AbstractPs16Selenium;
 
 /**
- * Class BasicPs17Test
- * @package Test\Selenium\Basic
- *
- * @group prestashop17basic
+ * @group prestashop16basic
  */
-class BasicPs17Test extends PaylaterPrestashopTest
+class BasicPs16Test extends AbstractPs16Selenium
 {
     /**
      * Const title
@@ -19,11 +16,11 @@ class BasicPs17Test extends PaylaterPrestashopTest
     const TITLE = 'PrestaShop';
 
     /**
-     * testTitlePrestashop17
+     * @throws \Exception
      */
-    public function testTitlePrestashop17()
+    public function testTitlePrestashop16()
     {
-        $this->webDriver->get(self::PS17URL);
+        $this->webDriver->get(self::PS16URL);
         $condition = WebDriverExpectedCondition::titleContains(self::TITLE);
         $this->webDriver->wait()->until($condition);
         $this->assertTrue((bool) $condition);
@@ -31,11 +28,11 @@ class BasicPs17Test extends PaylaterPrestashopTest
     }
 
     /**
-     * testBackOfficeTitlePrestashop17
+     * @throws \Exception
      */
-    public function testBackOfficeTitlePrestashop17()
+    public function testBackOfficeTitlePrestashop16()
     {
-        $this->webDriver->get(self::PS17URL.self::BACKOFFICE_FOLDER);
+        $this->webDriver->get(self::PS16URL.self::BACKOFFICE_FOLDER);
         $condition = WebDriverExpectedCondition::titleContains(self::TITLE);
         $this->webDriver->wait()->until($condition);
         $this->assertTrue((bool) $condition);
