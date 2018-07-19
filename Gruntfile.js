@@ -29,9 +29,9 @@ module.exports = function(grunt) {
                 'set -e\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17install\n' +
-                //'composer install && vendor/bin/phpunit --group prestashop17category\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17register\n' +
-                'composer install && vendor/bin/phpunit --group prestashop17buy\n'
+                'composer install && vendor/bin/phpunit --group prestashop17buy\n' +
+                'composer install && vendor/bin/phpunit --group prestashop17advanced\n'
             },
             runTestPrestashop16: {
                 command:
@@ -46,9 +46,9 @@ module.exports = function(grunt) {
                 'set -e\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16install\n' +
-                //'composer install && vendor/bin/phpunit --group prestashop16category\n' +
                 'composer install && vendor/bin/phpunit --group prestashop16register\n' +
-                'composer install && vendor/bin/phpunit --group prestashop16buy\n'
+                'composer install && vendor/bin/phpunit --group prestashop16buy\n' +
+                'composer install && vendor/bin/phpunit --group prestashop16advanced\n'
             },
             runTestPrestashop15: {
                 command:
@@ -63,9 +63,9 @@ module.exports = function(grunt) {
                 'set -e\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15basic\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15install\n' +
-                //'composer install && vendor/bin/phpunit --group prestashop15category\n' +
                 'composer install && vendor/bin/phpunit --group prestashop15register\n' +
-                'composer install && vendor/bin/phpunit --group prestashop15buy\n'
+                'composer install && vendor/bin/phpunit --group prestashop15buy\n' +
+                'composer install && vendor/bin/phpunit --group prestashop15advanced\n'
             }
         },
         compress: {

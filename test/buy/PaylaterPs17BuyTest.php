@@ -22,7 +22,7 @@ class PaylaterPs17BuyTest extends AbstractPs17Selenium
         $this->loginToFrontend();
         $this->goToProduct();
         $this->addProduct();
-        $this->goToCheckout(true);
+        $this->goToCheckout();
         $this->verifyPaylater();
         $this->verifyUTF8();
         $this->quit();
