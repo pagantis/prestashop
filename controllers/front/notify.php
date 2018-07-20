@@ -170,7 +170,7 @@ class PaylaterNotifyModuleFrontController extends ModuleFrontController
                             Configuration::get('PS_OS_PAYMENT'),
                             $cart->getOrderTotal(true),
                             $this->module->displayName,
-                            null,
+                            'pmtOrderId: ' . $order->getId(),
                             null,
                             null,
                             false,
