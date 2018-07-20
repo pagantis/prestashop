@@ -132,10 +132,11 @@ abstract class AbstractPs16Selenium extends PaylaterPrestashopTest
 
     /**
      * @param bool $addressExists
+     * @param bool $verifySimulator
      *
      * @throws \Exception
      */
-    public function goToCheckout($addressExists = false)
+    public function goToCheckout($addressExists = false, $verifySimulator = true)
     {
         $this->webDriver->get(self::PS16URL);
         $shoppingCart = WebDriverBy::className('shopping_cart');
@@ -187,10 +188,12 @@ abstract class AbstractPs16Selenium extends PaylaterPrestashopTest
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($hookPayment);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $pmtSimulator = WebDriverBy::className('PmtSimulator');
-        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
+        if ($verifySimulator) {
+            $pmtSimulator = WebDriverBy::className('PmtSimulator');
+            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool) $condition);
+        }
     }
 
     /**
@@ -247,6 +250,42 @@ abstract class AbstractPs16Selenium extends PaylaterPrestashopTest
         $this->assertSame(
             $this->configuration['firstname'] . ' ' . $this->configuration['lastname'],
             $this->findByClass('FieldsPreview-desc')->getText()
+        );
+    }
+
+    /**
+     * Verify Paylater iframe
+     *
+     * @throws \Facebook\WebDriver\Exception\NoSuchElementException
+     * @throws \Facebook\WebDriver\Exception\TimeOutException
+     */
+    public function verifyPaylater()
+    {
+        $paylaterCheckout = WebDriverBy::className('paylater-checkout');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paylaterCheckout);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($paylaterCheckout)->click();
+        $modulePayment = $this->webDriver->findElement(WebDriverBy::id('module-paylater-payment'));
+        $firstIframe = $modulePayment->findElement(WebDriverBy::tagName('iframe'));
+        $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($firstIframe);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $pmtModal = WebDriverBy::id('pmtmodal');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($pmtModal);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $iFrame = 'pmtmodal_iframe';
+        $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($iFrame);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $paymentFormElement = WebDriverBy::name('form-continue');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paymentFormElement);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->assertContains(
+            'compra',
+            $this->findByClass('Form-heading1')->getText()
         );
     }
 }

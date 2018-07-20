@@ -204,13 +204,14 @@ class Paylater extends PaymentModule
         }
 
         /** @var Cart $cart */
-        $cart                   = $this->context->cart;
-        $orderTotal             = $cart->getOrderTotal();
-        $link                   = $this->context->link;
-        $pmtPublicKey           = Configuration::get('pmt_public_key');
-        $pmtSimulatorCheckout   = Configuration::get('pmt_sim_checkout');
-        $pmtSimulatorQuotesStart  = Configuration::get('pmt_sim_quotes_start');
-        $pmtSimulatorQuotesMax    = Configuration::get('pmt_sim_quotes_max');
+        $cart                       = $this->context->cart;
+        $orderTotal                 = $cart->getOrderTotal();
+        $link                       = $this->context->link;
+        $pmtPublicKey               = Configuration::get('pmt_public_key');
+        $pmtSimulatorCheckout       = Configuration::get('pmt_sim_checkout');
+        $pmtSimulatorQuotesStart    = Configuration::get('pmt_sim_quotes_start');
+        $pmtSimulatorQuotesMax      = Configuration::get('pmt_sim_quotes_max');
+        $pmtTitle                   = Configuration::get('pmt_title');
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
@@ -219,12 +220,13 @@ class Paylater extends PaymentModule
             'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
             'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
             'pmtSimulatorCheckout'  => $pmtSimulatorCheckout,
-            'paymentUrl'            => $link->getModuleLink('paylater', 'payment')
+            'pmtTitle'              => $pmtTitle,
+            'paymentUrl'            => $link->getModuleLink('paylater', 'payment'),
         ));
 
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
-            ->setCallToActionText($this->l('Instant Financing'))
+            ->setCallToActionText($pmtTitle)
             ->setAction($link->getModuleLink('paylater', 'payment'))
             ->setLogo($this->getPathUri(). 'logo.gif')
             ->setModuleName(__CLASS__)
@@ -618,14 +620,14 @@ class Paylater extends PaymentModule
         }
 
         /** @var Cart $cart */
-        $cart                   = $params['cart'];
-        $orderTotal             = $cart->getOrderTotal();
-        $link                   = $this->context->link;
-        $pmtPublicKey           = Configuration::get('pmt_public_key');
-        $pmtSimulatorCheckout   = Configuration::get('pmt_sim_checkout');
-        $pmtSimulatorQuotesStart  = Configuration::get('pmt_sim_quotes_start');
-        $pmtSimulatorQuotesMax    = Configuration::get('pmt_sim_quotes_max');
-
+        $cart                       = $params['cart'];
+        $orderTotal                 = $cart->getOrderTotal();
+        $link                       = $this->context->link;
+        $pmtPublicKey               = Configuration::get('pmt_public_key');
+        $pmtSimulatorCheckout       = Configuration::get('pmt_sim_checkout');
+        $pmtSimulatorQuotesStart    = Configuration::get('pmt_sim_quotes_start');
+        $pmtSimulatorQuotesMax      = Configuration::get('pmt_sim_quotes_max');
+        $pmtTitle                   = Configuration::get('pmt_title');
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
             'amount'                => $orderTotal,
@@ -633,7 +635,8 @@ class Paylater extends PaymentModule
             'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
             'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
             'pmtSimulatorCheckout'  => $pmtSimulatorCheckout,
-            'paymentUrl'            => $link->getModuleLink('paylater', 'payment')
+            'pmtTitle'              => $pmtTitle,
+            'paymentUrl'            => $link->getModuleLink('paylater', 'payment'),
         ));
 
         $supercheckout_enabled = Module::isEnabled('supercheckout');
