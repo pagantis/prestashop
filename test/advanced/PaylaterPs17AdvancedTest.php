@@ -83,6 +83,18 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
         $this->goToProduct();
         $this->addProduct();
         $this->goToCheckout(true);
+        $paylaterOption = WebDriverBy::cssSelector('[for=payment-option-3]');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($paylaterOption);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($paylaterOption)->click();
+        $pmtSimulator = WebDriverBy::className('PmtSimulator');
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool)$condition);
+        sleep(1);
+        $this->findById('conditions_to_approve[terms-and-conditions]')->click();
+        $this->findById('payment-confirmation')->click();
         $this->verifyUTF8();
 
         $this->webDriver->get(self::PS17URL.self::BACKOFFICE_FOLDER);
@@ -259,7 +271,7 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
         $pk = $this->webDriver->executeScript('return pmtClient.simulator.getPublicKey()');
         $this->assertEquals($this->configuration['publicKey'], $pk);
         $this->addProduct();
-        $this->goToCheckout(true, false);
+        $this->goToCheckout(true);
         $pk = $this->webDriver->executeScript('return pmtClient.simulator.getPublicKey()');
         $this->assertEquals($this->configuration['publicKey'], $pk);
         $simulatorDiv = $this->findByClass('PmtSimulator');
@@ -283,7 +295,7 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
 
         $this->goToProduct(false);
         $this->addProduct();
-        $this->goToCheckout(true, false);
+        $this->goToCheckout(true);
         $html = $this->webDriver->getPageSource();
         $this->assertNotContains('PmtSimulator', $html);
 
@@ -297,7 +309,7 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
 
         $this->goToProduct(false);
         $this->addProduct();
-        $this->goToCheckout(true, false);
+        $this->goToCheckout(true);
         $simulatorDiv = $this->findByClass('PmtSimulator');
         $simulatorType = $simulatorDiv->getAttribute('data-pmt-type');
         $numQuota = $simulatorDiv->getAttribute('data-pmt-num-quota');
@@ -316,7 +328,7 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
 
         $this->goToProduct(false);
         $this->addProduct();
-        $this->goToCheckout(true, false);
+        $this->goToCheckout(true);
         $html = $this->webDriver->getPageSource();
         $this->assertNotContains('PmtSimulator', $html);
 
@@ -329,7 +341,7 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
 
         $this->goToProduct(false);
         $this->addProduct();
-        $this->goToCheckout(true, false);
+        $this->goToCheckout(true);
         $simulatorDiv = $this->findByClass('PmtSimulator');
         $simulatorType = $simulatorDiv->getAttribute('data-pmt-type');
         $numQuota = $simulatorDiv->getAttribute('data-pmt-num-quota');

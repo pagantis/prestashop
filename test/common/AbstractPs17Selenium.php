@@ -136,7 +136,7 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
      *
      * @throws \Exception
      */
-    public function goToCheckout($addressExists = false, $verifySimulator = true)
+    public function goToCheckout($addressExists = false)
     {
         sleep(1);
         $cartButton = WebDriverBy::id('_desktop_cart');
@@ -185,17 +185,6 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($hookPayment);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        if ($verifySimulator) {
-            $paylaterOption = WebDriverBy::cssSelector('[for=payment-option-3]');
-            $condition = WebDriverExpectedCondition::elementToBeClickable($paylaterOption);
-            $this->waitUntil($condition);
-            $this->assertTrue((bool) $condition);
-            $this->webDriver->findElement($paylaterOption)->click();
-            $pmtSimulator = WebDriverBy::className('PmtSimulator');
-            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
-            $this->waitUntil($condition);
-            $this->assertTrue((bool)$condition);
-        }
     }
 
     /**
@@ -263,6 +252,16 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
      */
     public function verifyPaylater()
     {
+        $paylaterOption = WebDriverBy::cssSelector('[for=payment-option-3]');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($paylaterOption);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($paylaterOption)->click();
+        $pmtSimulator = WebDriverBy::className('PmtSimulator');
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool)$condition);
+        sleep(1);
         $this->findById('conditions_to_approve[terms-and-conditions]')->click();
         $this->findById('payment-confirmation')->click();
         $modulePayment = $this->webDriver->findElement(WebDriverBy::id('module-paylater-payment'));

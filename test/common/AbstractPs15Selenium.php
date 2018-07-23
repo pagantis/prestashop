@@ -281,7 +281,11 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($paylaterCheckout)->click();
-        $modulePayment = $this->webDriver->findElement(WebDriverBy::id('module-paylater-payment'));
+        $paylaterModal = WebDriverBy::id('module-paylater-payment');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paylaterModal);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $modulePayment = $this->webDriver->findElement($paylaterModal);
         $firstIframe = $modulePayment->findElement(WebDriverBy::tagName('iframe'));
         $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($firstIframe);
         $this->waitUntil($condition);

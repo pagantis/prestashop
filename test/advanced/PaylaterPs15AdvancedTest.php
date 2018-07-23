@@ -84,6 +84,11 @@ class PaylaterPs15InstallTest extends AbstractPs15Selenium
         $this->goToProduct();
         $this->addProduct();
         $this->goToCheckout(true);
+        $paylaterCheckout = WebDriverBy::className('paylater-checkout');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paylaterCheckout);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($paylaterCheckout)->click();
         $this->verifyUTF8();
 
         $this->webDriver->get(self::PS15URL.self::BACKOFFICE_FOLDER);

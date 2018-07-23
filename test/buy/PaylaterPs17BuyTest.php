@@ -2,8 +2,6 @@
 
 namespace Test\Buy;
 
-use Facebook\WebDriver\WebDriverBy;
-use Facebook\WebDriver\WebDriverExpectedCondition;
 use Test\Common\AbstractPs17Selenium;
 
 /**
