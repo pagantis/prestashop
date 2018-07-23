@@ -350,9 +350,6 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
      * @REQ35 Amount matches checkout page
      * @REQ36 Back to shop
      *
-     *
-     * @group test-actual
-     *
      * @throws \Exception
      */
     public function testAmountAndKoUrlInPmtForm()

@@ -131,14 +131,10 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
         $this->assertTrue((bool) $condition);
         $this->findById('email_create')->sendKeys($this->configuration['email']);
         $this->findById('SubmitCreate')->click();
-        try {
-            $submitAccountSearch = WebDriverBy::id('customer_firstname');
-            $condition = WebDriverExpectedCondition::visibilityOfElementLocated($submitAccountSearch);
-            $this->waitUntil($condition);
-            $this->assertTrue((bool) $condition);
-        } catch (\Exception $exception) {
-            return true;
-        }
+        $submitAccountSearch = WebDriverBy::id('customer_firstname');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($submitAccountSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
         $this->findById('id_gender1')->click();
         $this->findById('customer_firstname')->clear()->sendKeys($this->configuration['firstname']);
         $this->findById('customer_lastname')->sendKeys($this->configuration['lastname']);
@@ -156,10 +152,11 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
 
     /**
      * @param bool $addressExists
+     * @param bool $verifySimulator
      *
      * @throws \Exception
      */
-    public function goToCheckout($addressExists = false)
+    public function goToCheckout($addressExists = false, $verifySimulator = true)
     {
         $shoppingCartSearch = WebDriverBy::id('shopping_cart');
         $this->webDriver->findElement($shoppingCartSearch)->click();
@@ -206,15 +203,12 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($hookPayment);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $pmtSimulator = WebDriverBy::className('PmtSimulator');
-        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
-        $paylaterCheckout = WebDriverBy::className('paylater-checkout');
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paylaterCheckout);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
-        $this->webDriver->findElement($paylaterCheckout)->click();
+        if ($verifySimulator) {
+            $pmtSimulator = WebDriverBy::className('PmtSimulator');
+            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool) $condition);
+        }
     }
 
     /**
@@ -224,15 +218,8 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
      */
     public function addProduct()
     {
-        $featuredProductCenterSearch = WebDriverBy::id('featured-products_block_center');
-        $product = $featuredProductCenterSearch->className('s_title_block');
-        $this->webDriver->findElement($product)->click();
         $addToCartSearch = WebDriverBy::id('add_to_cart');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($addToCartSearch);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
-        $pmtSimulator = WebDriverBy::className('PmtSimulator');
-        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($addToCartSearch)->click();
@@ -245,9 +232,11 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
     }
 
     /**
+     * @param bool $verifySimulator
+     *
      * @throws \Exception
      */
-    public function goToProduct()
+    public function goToProduct($verifySimulator = true)
     {
         $this->webDriver->get(self::PS15URL);
         $this->findById('header_logo')->click();
@@ -255,6 +244,14 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($featuredProductCenterSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
+        $product = $featuredProductCenterSearch->className('s_title_block');
+        $this->webDriver->findElement($product)->click();
+        if ($verifySimulator) {
+            $pmtSimulator = WebDriverBy::className('PmtSimulator');
+            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+            $this->waitUntil($condition);
+            $this->assertTrue((bool)$condition);
+        }
     }
 
     /**
@@ -269,6 +266,41 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
         $this->assertSame(
             $this->configuration['firstname'] . ' ' . $this->configuration['lastname'],
             $this->findByClass('FieldsPreview-desc')->getText()
+        );
+    }
+
+    /**
+     * Verify Paylater iframe
+     *
+     * @throws \Exception
+     */
+    public function verifyPaylater()
+    {
+        $paylaterCheckout = WebDriverBy::className('paylater-checkout');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paylaterCheckout);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->webDriver->findElement($paylaterCheckout)->click();
+        $modulePayment = $this->webDriver->findElement(WebDriverBy::id('module-paylater-payment'));
+        $firstIframe = $modulePayment->findElement(WebDriverBy::tagName('iframe'));
+        $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($firstIframe);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $pmtModal = WebDriverBy::id('pmtmodal');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($pmtModal);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $iFrame = 'pmtmodal_iframe';
+        $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($iFrame);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $paymentFormElement = WebDriverBy::name('form-continue');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paymentFormElement);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->assertContains(
+            'compra',
+            $this->findByClass('Form-heading1')->getText()
         );
     }
 }
