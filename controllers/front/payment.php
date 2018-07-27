@@ -85,6 +85,15 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
         );
 
         try {
+            $userAddress =  new \PagaMasTarde\OrdersApiClient\Model\Order\User\Address();
+            $userAddress
+                ->setZipCode($shippingAddress->postcode)
+                ->setFullName($shippingAddress->firstname . ' ' . $shippingAddress->lastname)
+                ->setCountryCode('ES')
+                ->setCity($shippingAddress->city)
+                ->setAddress($shippingAddress->address1 . ' ' . $shippingAddress->address2)
+            ;
+
             $orderShippingAddress =  new \PagaMasTarde\OrdersApiClient\Model\Order\User\Address();
             $orderShippingAddress
                 ->setZipCode($shippingAddress->postcode)
@@ -111,7 +120,7 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
 
             $orderUser = new \PagaMasTarde\OrdersApiClient\Model\Order\User();
             $orderUser
-                ->setAddress($orderShippingAddress)
+                ->setAddress($userAddress)
                 ->setFullName($orderShippingAddress->getFullName())
                 ->setBillingAddress($orderBillingAddress)
                 ->setDateOfBirth($customer->birthday)
