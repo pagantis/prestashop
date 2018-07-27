@@ -59,7 +59,6 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
 
         /** @var Customer $customer */
         $customer = $this->context->customer;
-        $link = $this->context->link;
         $query = array(
             'id_cart' => $cart->id,
             'key' => $cart->secure_key,
@@ -93,6 +92,9 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
                 ->setCountryCode('ES')
                 ->setCity($shippingAddress->city)
                 ->setAddress($shippingAddress->address1 . ' ' . $shippingAddress->address2)
+                ->setDni($shippingAddress->dni)
+                ->setFixPhone($shippingAddress->phone)
+                ->setMobilePhone($shippingAddress->phone_mobile)
             ;
 
             $orderBillingAddress = new \PagaMasTarde\OrdersApiClient\Model\Order\User\Address();
@@ -102,6 +104,9 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
                 ->setCountryCode('ES')
                 ->setCity($billingAddress->city)
                 ->setAddress($billingAddress->address1 . ' ' . $billingAddress->address2)
+                ->setDni($billingAddress->dni)
+                ->setFixPhone($billingAddress->phone)
+                ->setMobilePhone($billingAddress->phone_mobile)
             ;
 
             $orderUser = new \PagaMasTarde\OrdersApiClient\Model\Order\User();
