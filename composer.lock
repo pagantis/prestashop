@@ -140,16 +140,16 @@
         },
         {
             "name": "pagamastarde/orders-api-client",
-            "version": "v1.0.5",
+            "version": "v1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PagaMasTarde/ordersApiClient.git",
-                "reference": "bf38c7aed8d2bc4b5f8b083a90b3bafd8e592d48"
+                "reference": "55eb038f7008f2c3ae6404a4ecbb1d5ac1b42fb3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/ordersApiClient/zipball/bf38c7aed8d2bc4b5f8b083a90b3bafd8e592d48",
-                "reference": "bf38c7aed8d2bc4b5f8b083a90b3bafd8e592d48",
+                "url": "https://api.github.com/repos/PagaMasTarde/ordersApiClient/zipball/55eb038f7008f2c3ae6404a4ecbb1d5ac1b42fb3",
+                "reference": "55eb038f7008f2c3ae6404a4ecbb1d5ac1b42fb3",
                 "shasum": ""
             },
             "require": {
@@ -178,7 +178,7 @@
                 }
             ],
             "description": "PagaMasTarde Orders Api Client in PHP. Use the api with simple methods and using OOP.",
-            "time": "2018-07-09T10:40:00+00:00"
+            "time": "2018-08-01T11:03:59+00:00"
         }
     ],
     "packages-dev": [
@@ -1263,16 +1263,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.42",
+            "version": "v2.8.44",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "51356b7a2ff7c9fd06b2f1681cc463bb62b5c1ff"
+                "reference": "fbf876678e29dc634430dcf0096e216eb0004467"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/51356b7a2ff7c9fd06b2f1681cc463bb62b5c1ff",
-                "reference": "51356b7a2ff7c9fd06b2f1681cc463bb62b5c1ff",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/fbf876678e29dc634430dcf0096e216eb0004467",
+                "reference": "fbf876678e29dc634430dcf0096e216eb0004467",
                 "shasum": ""
             },
             "require": {
@@ -1309,7 +1309,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2018-05-01T22:52:40+00:00"
+            "time": "2018-07-26T09:03:18+00:00"
         }
     ],
     "aliases": [],
