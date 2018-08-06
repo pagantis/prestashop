@@ -215,7 +215,7 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
                 $url = $order->getActionUrls()->getForm();
                 $orderId = $order->getId();
                 $result = Db::getInstance()->execute(
-                    "INSERT INTO `ps_pmt_order` (`id`, `order_id`)
+                    "INSERT INTO " . _DB_PREFIX_ . "`pmt_order` (`id`, `order_id`)
                      VALUES ('$cart->id','$orderId') 
                      ON DUPLICATE KEY UPDATE `order_id` = '$orderId'"
                 );
