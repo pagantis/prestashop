@@ -48,6 +48,9 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
         $fileInput = $this->webDriver->findElement($fileInputSearch);
         $fileInput->setFileDetector(new LocalFileDetector());
         $fileInput->sendKeys(__DIR__.'/../../paylater.zip');
+        $submitButton = WebDriverBy::name('download');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($submitButton);
+        $this->waitUntil($condition);
         $this->findByName('download')->click();
         $validatorSearch = WebDriverBy::id('anchorPaylater');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
@@ -304,6 +307,11 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
         $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($iFrame);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
+        try {
+            $this->findByName('one_click_return_to_normal')->click();
+        } catch (\Exception $exception) {
+            unset($exception);
+        }
         $paymentFormElement = WebDriverBy::name('form-continue');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paymentFormElement);
         $this->waitUntil($condition);
