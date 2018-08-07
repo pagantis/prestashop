@@ -31,7 +31,8 @@ module.exports = function(grunt) {
                 'composer install && vendor/bin/phpunit --group prestashop17install\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17register\n' +
                 'composer install && vendor/bin/phpunit --group prestashop17buy\n' +
-                'composer install && vendor/bin/phpunit --group prestashop17advanced\n'
+                'composer install && vendor/bin/phpunit --group prestashop17advanced\n' +
+                'composer install && vendor/bin/phpunit --group prestashop17validate\n'
             },
             runTestPrestashop16: {
                 command:
