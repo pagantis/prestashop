@@ -289,9 +289,5 @@ abstract class AbstractPs16Selenium extends PaylaterPrestashopTest
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paymentFormElement);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->assertContains(
-            'compra',
-            $this->findByClass('Form-heading1')->getText()
-        );
     }
 }
