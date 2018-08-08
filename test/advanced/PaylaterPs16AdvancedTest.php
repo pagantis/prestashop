@@ -88,6 +88,17 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($paylaterCheckout)->click();
+        $element = WebDriverBy::cssSelector(".Loading .is-disabled");
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($element);
+        $this->webDriver->wait()->until($condition);
+        try {
+            $this->findByName('one_click_return_to_normal')->click();
+        } catch (\Exception $exception) {
+            unset($exception);
+        }
+        $element = WebDriverBy::cssSelector(".Loading .is-disabled");
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($element);
+        $this->webDriver->wait()->until($condition);
         $this->verifyUTF8();
 
         $this->webDriver->get(self::PS16URL.self::BACKOFFICE_FOLDER);

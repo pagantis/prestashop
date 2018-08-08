@@ -282,11 +282,17 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
         $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($iFrame);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
+        $element = WebDriverBy::cssSelector(".Loading .is-disabled");
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($element);
+        $this->webDriver->wait()->until($condition);
         try {
             $this->findByName('one_click_return_to_normal')->click();
         } catch (\Exception $exception) {
             unset($exception);
         }
+        $element = WebDriverBy::cssSelector(".Loading .is-disabled");
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($element);
+        $this->webDriver->wait()->until($condition);
         $paymentFormElement = WebDriverBy::name('form-continue');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paymentFormElement);
         $this->waitUntil($condition);
