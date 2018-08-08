@@ -98,6 +98,17 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
         sleep(1);
         $this->findById('conditions_to_approve[terms-and-conditions]')->click();
         $this->findById('payment-confirmation')->click();
+        $element = WebDriverBy::cssSelector(".Loading .is-disabled");
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($element);
+        $this->webDriver->wait()->until($condition);
+        try {
+            $this->findByName('one_click_return_to_normal')->click();
+        } catch (\Exception $exception) {
+            unset($exception);
+        }
+        $element = WebDriverBy::cssSelector(".Loading .is-disabled");
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($element);
+        $this->webDriver->wait()->until($condition);
         $this->verifyUTF8();
 
         $this->webDriver->get(self::PS17URL.self::BACKOFFICE_FOLDER);
