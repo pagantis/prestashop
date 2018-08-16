@@ -48,7 +48,7 @@ services:
     ports:
       - "8016:80"
   prestashop17:
-    image: prestashop/prestashop:1.7
+    image: prestashop/prestashop:1.7.3
     depends_on:
       - db-ps17
     environment:
