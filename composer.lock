@@ -182,16 +182,16 @@
         },
         {
             "name": "pagamastarde/selenium-form-utils",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PagaMasTarde/selenium-form-utils.git",
-                "reference": "91d8cef802fa13557007c9566835be713b680fee"
+                "reference": "1f2dd08cc42eb1464923504adb9b0dd2620aae17"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/selenium-form-utils/zipball/91d8cef802fa13557007c9566835be713b680fee",
-                "reference": "91d8cef802fa13557007c9566835be713b680fee",
+                "url": "https://api.github.com/repos/PagaMasTarde/selenium-form-utils/zipball/1f2dd08cc42eb1464923504adb9b0dd2620aae17",
+                "reference": "1f2dd08cc42eb1464923504adb9b0dd2620aae17",
                 "shasum": ""
             },
             "require": {
@@ -221,7 +221,7 @@
                 }
             ],
             "description": "Paga+Tarde PHP Library. Selenium helper to end a test purchase. Helper to test the payment validation and redirection",
-            "time": "2018-08-06T10:14:41+00:00"
+            "time": "2018-08-16T08:53:15+00:00"
         }
     ],
     "packages-dev": [
@@ -1251,25 +1251,28 @@
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.8.0",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "7cc359f1b7b80fc25ed7796be7d96adc9b354bae"
+                "reference": "e3d826245268269cd66f8326bd8bc066687b4a19"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/7cc359f1b7b80fc25ed7796be7d96adc9b354bae",
-                "reference": "7cc359f1b7b80fc25ed7796be7d96adc9b354bae",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/e3d826245268269cd66f8326bd8bc066687b4a19",
+                "reference": "e3d826245268269cd66f8326bd8bc066687b4a19",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
+            "suggest": {
+                "ext-ctype": "For best performance"
+            },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.8-dev"
+                    "dev-master": "1.9-dev"
                 }
             },
             "autoload": {
@@ -1302,7 +1305,7 @@
                 "polyfill",
                 "portable"
             ],
-            "time": "2018-04-30T19:57:29+00:00"
+            "time": "2018-08-06T14:22:27+00:00"
         },
         {
             "name": "symfony/yaml",
