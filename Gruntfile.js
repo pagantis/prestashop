@@ -27,12 +27,12 @@ module.exports = function(grunt) {
                 'date\n' +
                 'docker-compose logs prestashop17\n' +
                 'set -e\n' +
-                'composer install && vendor/bin/phpunit --group prestashop17basic\n' +
-                'composer install && vendor/bin/phpunit --group prestashop17install\n' +
-                'composer install && vendor/bin/phpunit --group prestashop17register\n' +
-                'composer install && vendor/bin/phpunit --group prestashop17buy\n' +
-                'composer install && vendor/bin/phpunit --group prestashop17advanced\n' +
-                'composer install && vendor/bin/phpunit --group prestashop17validate\n'
+                'vendor/bin/phpunit --group prestashop17basic\n' +
+                'vendor/bin/phpunit --group prestashop17install\n' +
+                'vendor/bin/phpunit --group prestashop17register\n' +
+                'vendor/bin/phpunit --group prestashop17buy\n' +
+                'vendor/bin/phpunit --group prestashop17advanced\n' +
+                'vendor/bin/phpunit --group prestashop17validate\n'
             },
             runTestPrestashop16: {
                 command:
@@ -45,12 +45,12 @@ module.exports = function(grunt) {
                 'date\n' +
                 'docker-compose logs prestashop16\n' +
                 'set -e\n' +
-                'composer install && vendor/bin/phpunit --group prestashop16basic\n' +
-                'composer install && vendor/bin/phpunit --group prestashop16install\n' +
-                'composer install && vendor/bin/phpunit --group prestashop16register\n' +
-                'composer install && vendor/bin/phpunit --group prestashop16buy\n' +
-                'composer install && vendor/bin/phpunit --group prestashop16advanced\n' +
-                'composer install && vendor/bin/phpunit --group prestashop16validate\n'
+                'vendor/bin/phpunit --group prestashop16basic\n' +
+                'vendor/bin/phpunit --group prestashop16install\n' +
+                'vendor/bin/phpunit --group prestashop16register\n' +
+                'vendor/bin/phpunit --group prestashop16buy\n' +
+                'vendor/bin/phpunit --group prestashop16advanced\n' +
+                'vendor/bin/phpunit --group prestashop16validate\n'
             },
             runTestPrestashop15: {
                 command:
@@ -63,11 +63,11 @@ module.exports = function(grunt) {
                 'date\n' +
                 'docker-compose logs prestashop15\n' +
                 'set -e\n' +
-                'composer install && vendor/bin/phpunit --group prestashop15basic\n' +
-                'composer install && vendor/bin/phpunit --group prestashop15install\n' +
-                'composer install && vendor/bin/phpunit --group prestashop15register\n' +
-                'composer install && vendor/bin/phpunit --group prestashop15buy\n' +
-                'composer install && vendor/bin/phpunit --group prestashop15advanced\n'
+                'vendor/bin/phpunit --group prestashop15basic\n' +
+                'vendor/bin/phpunit --group prestashop15install\n' +
+                'vendor/bin/phpunit --group prestashop15register\n' +
+                'vendor/bin/phpunit --group prestashop15buy\n' +
+                'vendor/bin/phpunit --group prestashop15advanced\n'
             }
         },
         compress: {

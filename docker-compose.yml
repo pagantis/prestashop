@@ -8,7 +8,7 @@ services:
     environment:
       - PS_DEV_MODE=0
       - PS_COUNTRY=ES
-      - PS_DOMAIN=prestashop15
+      - PS_DOMAIN=prestashop15-test.docker:8015
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
@@ -22,6 +22,8 @@ services:
       - public
     ports:
       - "8015:80"
+    extra_hosts:
+      - "prestashop15-test.docker:127.0.0.1"
   prestashop16:
     image: prestashop/prestashop:1.6.1.20
     depends_on:
@@ -29,7 +31,7 @@ services:
     environment:
       - PS_DEV_MODE=0
       - PS_COUNTRY=ES
-      - PS_DOMAIN=prestashop16
+      - PS_DOMAIN=prestashop16-test.docker:8016
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
@@ -43,6 +45,8 @@ services:
       - public
     ports:
       - "8016:80"
+    extra_hosts:
+    - "prestashop16-test.docker:127.0.0.1"
   prestashop17:
     image: prestashop/prestashop:1.7.3
     depends_on:
@@ -50,7 +54,7 @@ services:
     environment:
       - PS_DEV_MODE=0
       - PS_COUNTRY=ES
-      - PS_DOMAIN=prestashop17
+      - PS_DOMAIN=prestashop17-test.docker:8017
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
@@ -64,6 +68,8 @@ services:
       - public
     ports:
       - "8017:80"
+    extra_hosts:
+    - "prestashop17-test.docker:127.0.0.1"
   prestashop-dev:
     image: prestashop/prestashop:1.6
     depends_on:
@@ -71,7 +77,7 @@ services:
     environment:
       - PS_DEV_MODE=1
       - PS_COUNTRY=ES
-      - PS_DOMAIN=prestashop-dev:8018
+      - PS_DOMAIN=prestashop-dev.docker:8018
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
@@ -87,6 +93,8 @@ services:
       - ./:/var/www/html/modules/paylater
     ports:
       - "8018:80"
+    extra_hosts:
+    - "prestashop-dev.docker:127.0.0.1"
   db-dev:
     image: mysql:5.6
     environment:
@@ -120,11 +128,16 @@ services:
       - internal
 
   selenium:
-    image: selenium/standalone-chrome
+    image: selenium/standalone-chrome:3.7.1
     networks:
       - public
     ports:
       - 4444:4444
+    extra_hosts:
+      - "prestashop15-test.docker:${DOCKERHOST}"
+      - "prestashop16-test.docker:${DOCKERHOST}"
+      - "prestashop17-test.docker:${DOCKERHOST}"
+      - "prestashop-dev.docker:${DOCKERHOST}"
 
 networks:
     internal:
