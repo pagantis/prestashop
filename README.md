@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/PagaMasTarde/prestashop.svg?branch=master)](https://travis-ci.org/PagaMasTarde/prestashop)
 [![Latest Stable Version](https://poser.pugx.org/pagamastarde/prestashop/v/stable)](https://packagist.org/packages/pagamastarde/prestashop)
 [![composer.lock](https://poser.pugx.org/pagamastarde/prestashop/composerlock)](https://packagist.org/packages/pagamastarde/prestashop)
-[![Maintainability](https://api.codeclimate.com/v1/badges/67ba3d1afdcfae2bf0a8/maintainability)](https://codeclimate.com/github/PagaMasTarde/prestashop/maintainability)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/PagaMasTarde/prestashop/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/PagaMasTarde/prestashop/?branch=master)
 ## Instrucciones de Instalación
 
 1. Crea tu cuenta en pagamastarde.com si aún no la tienes [desde aquí](https://bo.pagamastarde.com/users/sign_up)
