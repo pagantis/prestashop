@@ -88,7 +88,7 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($paylaterOption)->click();
-        //TODO UNCOMMENT THIS WHEN ORDERS HAVE SIMULATOR
+        //TODO UNCOMMENT THIS WHEN ORDERS HAVE CHECKOUT SIMULATOR
         /*
         $pmtSimulator = WebDriverBy::className('PmtSimulator');
         $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
@@ -137,9 +137,6 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
      */
     public function testSimulatorInProductPage()
     {
-        //TODO REMOVE THIS WHEN ORDERS HAVE SIMULATOR
-        return true;
-
         $this->goToProduct();
         $simulatorDiv = $this->findByClass('PmtSimulator');
         $simulatorType = $simulatorDiv->getAttribute('data-pmt-type');

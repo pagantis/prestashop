@@ -41,7 +41,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '7.0.2';
+        $this->version = '7.0.3';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -99,7 +99,7 @@ class Paylater extends PaymentModule
             array('step'=>3)
         ));
         Configuration::updateValue('pmt_sim_checkout', 0); //TODO Back to 6 after simulator in orders
-        Configuration::updateValue('pmt_sim_product', 0); //TODO Back to 6 after simulator in orders
+        Configuration::updateValue('pmt_sim_product', 6);
         Configuration::updateValue('pmt_sim_product_hook', 'hookDisplayProductButtons');
         Configuration::updateValue('pmt_sim_quotes_start', 3);
         Configuration::updateValue('pmt_sim_quotes_max', 12);
@@ -351,6 +351,7 @@ class Paylater extends PaymentModule
                             ),
                         ),
                     ),
+                    */
                     array(
                         'type' => 'radio',
                         'class' => 't',
@@ -444,7 +445,6 @@ class Paylater extends PaymentModule
                         'required' => false,
                         'prefix' => '<i class="icon icon-puzzle-piece"></i>',
                     ),
-                    */
                     array(
                         'type' => 'text',
                         'col' => 2,

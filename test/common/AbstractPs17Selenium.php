@@ -222,13 +222,10 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
         if ($verifySimulator) {
-            //TODO UNCOMMENT THIS WHEN ORDERS HAVE SIMULATOR
-            /*
             $pmtSimulator = WebDriverBy::className('PmtSimulator');
             $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
-            */
         }
     }
 
@@ -259,7 +256,7 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($paylaterOption)->click();
-        //TODO UNCOMMENT THIS WHEN ORDERS HAVE SIMULATOR
+        //TODO UNCOMMENT THIS WHEN ORDERS HAVE CHECKOUT SIMULATOR
         /*
         $pmtSimulator = WebDriverBy::className('PmtSimulator');
         $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);

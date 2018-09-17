@@ -127,9 +127,6 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
      */
     public function testSimulatorInProductPage()
     {
-        //TODO REMOVE THIS WHEN ORDERS HAVE SIMULATOR
-        return true;
-
         $this->goToProduct();
         $simulatorDiv = $this->findByClass('PmtSimulator');
         $simulatorType = $simulatorDiv->getAttribute('data-pmt-type');
