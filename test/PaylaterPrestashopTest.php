@@ -55,8 +55,8 @@ abstract class PaylaterPrestashopTest extends TestCase
         $this->webDriver = RemoteWebDriver::create(
             'http://localhost:4444/wd/hub',
             DesiredCapabilities::chrome(),
-            60000,
-            60000
+            120000,
+            120000
         );
     }
 
