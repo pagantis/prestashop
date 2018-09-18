@@ -23,17 +23,36 @@
      data-pmt-expanded="yes">
 </div>
 <script type="text/javascript">
+    function findPrice()    {
+        var price = document.getElementById("our_price_display");
+        if (price) {
+            return price.innerText;
+        }
+
+        var all = document.getElementsByTagName("*");
+        // Extra search
+        var attribute = "itemprop";
+        var value = "price";
+        for (var i = 0; i < all.length; i++) {
+            if (all[i].getAttribute(attribute) == value) {
+                return all[i].innerText;
+            }
+        }
+        return false;
+    }
     function changePrice(miliseconds=1000)
     {
         setTimeout(
             function() {
-                var newPrice = document.getElementById("our_price_display").innerText;
-                var currentPrice = document.getElementsByClassName('PmtSimulator')[0].getAttribute('data-pmt-amount');
+                var newPrice = findPrice();
+                if (newPrice) {
+                    var currentPrice = document.getElementsByClassName('PmtSimulator')[0].getAttribute('data-pmt-amount');
 
-                if (newPrice != currentPrice) {
-                    document.getElementsByClassName('PmtSimulator')[0].setAttribute('data-pmt-amount', newPrice);
-                    if (typeof pmtClient !== 'undefined') {
-                        pmtClient.simulator.reload();
+                    if (newPrice != currentPrice) {
+                        document.getElementsByClassName('PmtSimulator')[0].setAttribute('data-pmt-amount', newPrice);
+                        if (typeof pmtClient !== 'undefined') {
+                            pmtClient.simulator.reload();
+                        }
                     }
                 }
             }
