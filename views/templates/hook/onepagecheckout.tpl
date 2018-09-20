@@ -17,9 +17,17 @@
                 </a>
             </div>
         {else}
-            <p class="payment_module" id="payment_button">
-                <a href="javascript:$('#paylater_form').submit();" title="{$pmtTitle|escape:'quotes'}"></a>
+            <p class="payment_module paylater" id="payment_button">
+                <a href="javascript:$('#paylater_form').submit();" title="{$pmtTitle|escape:'quotes'}">
+                    <img id="logo_paylater" src="{$module_dir|escape:'htmlall':'UTF-8'}views/img/logo-64x64.png"
+                         alt="{$pmtTitle|escape:'quotes'}" style="max-width: 80px"/>
+                    {$pmtTitle|escape:'quotes'}
+                </a>
             </p>
+            <style>p.payment_module.paylater a
+                {
+                    padding-left:17px;
+                }</style>
         {/if}
     </div>
 </div>
