@@ -38,7 +38,7 @@ abstract class PaylaterPrestashopTest extends TestCase
         'zip'           => '08023',
         'city'          => 'Barcelona',
         'phone'         => '600123123',
-        'dni'           => '09422447Z',
+        'dni'           => '33460885W',
         'extra'         => 'Free Finance',
     );
 
