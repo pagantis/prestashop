@@ -36,3 +36,8 @@ For more information about how to install the plugin, see our [installation sect
 Configure the plugin in Woocommerce admin panel using the information found in your [Paga+Tarde profile](https://bo.pagamastarde.com/shop). 
 
 For more information about how to config the module, see our [configuration section](/Documentation/configuration.md).
+
+## :arrow_forward: Use
+To use in a real environment you should enable your Paga+Tarde account.
+
+For more information about how to use the module, see our [use section](/Documentation/use.md).
