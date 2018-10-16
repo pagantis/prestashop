@@ -1,9 +1,3 @@
-# Prestashop Module <img src="https://pagamastarde.com/img/icons/logo.svg" width="100" align="right">
-
-[![Build Status](https://travis-ci.org/PagaMasTarde/prestashop.svg?branch=master)](https://travis-ci.org/PagaMasTarde/prestashop)
-[![Latest Stable Version](https://poser.pugx.org/pagamastarde/prestashop/v/stable)](https://packagist.org/packages/pagamastarde/prestashop)
-[![composer.lock](https://poser.pugx.org/pagamastarde/prestashop/composerlock)](https://packagist.org/packages/pagamastarde/prestashop)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/PagaMasTarde/prestashop/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/PagaMasTarde/prestashop/?branch=master)
 # Module installation <img src="https://pagamastarde.com/img/icons/logo.svg" width="100" align="right">
 
 [![Build Status](https://travis-ci.org/PagaMasTarde/WooCommerce.svg?branch=master)](https://travis-ci.org/PagaMasTarde/WooCommerce)
