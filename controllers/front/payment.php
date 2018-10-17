@@ -200,8 +200,8 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
                 ->setShoppingCart($orderShoppingCart)
                 ->setUser($orderUser)
             ;
-        } catch (\PagaMasTarde\OrdersApiClient\Exception\ValidationException $validationException) {
-            $this->addLog($customer, $validationException);
+        } catch (\PagaMasTarde\OrdersApiClient\Exception\ClientException $clientException) {
+            $this->addLog($customer, $clientException);
             Tools::redirect($cancelUrl);
         }
 
