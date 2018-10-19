@@ -65,7 +65,7 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
      *
      * @throws \Exception
      */
-    public function testBuyWithRedirect()
+    /*public function testBuyWithRedirect()
     {
         $this->loginToBackOffice();
         $this->getPaylaterBackOffice();
@@ -94,7 +94,7 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
         $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
-        */
+
         sleep(1);
         $this->findById('conditions_to_approve[terms-and-conditions]')->click();
         $this->findById('payment-confirmation')->click();
@@ -123,7 +123,7 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
         $this->webDriver->wait($condition);
         $this->assertTrue((bool) $condition);
         $this->quit();
-    }
+    }*/
 
     /**
      * @REQ9 BackOffice Simulator Product Page

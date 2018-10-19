@@ -65,7 +65,7 @@ class PaylaterPs15InstallTest extends AbstractPs15Selenium
      *
      * @throws \Exception
      */
-    public function testBuyWithRedirect()
+    /*public function testBuyWithRedirect()
     {
         $this->loginToBackOffice();
         $this->getPaylaterBackOffice();
@@ -114,7 +114,7 @@ class PaylaterPs15InstallTest extends AbstractPs15Selenium
         $this->webDriver->wait($condition);
         $this->assertTrue((bool) $condition);
         $this->quit();
-    }
+    }*/
 
     /**
      * @REQ9 BackOffice Simulator Product Page

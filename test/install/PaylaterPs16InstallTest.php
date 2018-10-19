@@ -47,10 +47,10 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
             ));
         }
 
-        $verify = WebDriverBy::id('frame');
+        $verify = WebDriverBy::id('redirection');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
-        $this->findById('frame')->click();
+        $this->findById('redirection')->click();
         $this->assertTrue((bool) $condition);
         $this->findById('pmt_public_key')->clear()->sendKeys($this->configuration['publicKey']);
         $this->findById('pmt_private_key')->clear()->sendKeys($this->configuration['secretKey']);

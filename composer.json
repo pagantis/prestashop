@@ -21,7 +21,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Test\\Common\\": "test/common"
+            "Test\\Common\\": "test/common", "Test\\": "test/"
         }
     }
 }

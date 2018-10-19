@@ -22,7 +22,6 @@ class PaylaterPs15BuyTest extends AbstractPs15Selenium
         $this->addProduct();
         $this->goToCheckout();
         $this->verifyPaylater();
-        $this->verifyUTF8();
         $this->quit();
     }
 }

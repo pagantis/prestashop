@@ -65,7 +65,7 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
      *
      * @throws \Exception
      */
-    public function testBuyWithRedirect()
+    /*public function testBuyWithRedirect()
     {
         $this->loginToBackOffice();
         $this->getPaylaterBackOffice();
@@ -113,7 +113,7 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
         $this->webDriver->wait($condition);
         $this->assertTrue((bool) $condition);
         $this->quit();
-    }
+    }*/
 
     /**
      * @REQ9 BackOffice Simulator Product Page
@@ -366,7 +366,7 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
      *
      * @throws \Exception
      */
-    public function testAmountAndKoUrlInPmtForm()
+    /*public function testAmountAndKoUrlInPmtForm()
     {
         //Get KO Url:
         $this->loginToBackOffice();
@@ -383,6 +383,8 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
         $html = $this->webDriver->getPageSource();
         $this->assertContains($totalPrice, $html);
         $this->assertNotContains('Women', $html);
+
+
         $backToStoreButton = WebDriverBy::name('back_to_store_button');
         $condition = WebDriverExpectedCondition::elementToBeClickable($backToStoreButton);
         $this->waitUntil($condition);
@@ -392,5 +394,5 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
         $this->webDriver->executeScript('document.getElementsByName("back_to_store_button")[0].click();');
         $this->assertEquals($koUrl, $this->webDriver->getCurrentURL());
         $this->quit();
-    }
+    }*/
 }

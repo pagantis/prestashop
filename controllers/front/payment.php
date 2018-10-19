@@ -123,12 +123,16 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
                 ->setAddress($userAddress)
                 ->setFullName($orderShippingAddress->getFullName())
                 ->setBillingAddress($orderBillingAddress)
-                ->setDateOfBirth($customer->birthday)
                 ->setEmail($this->context->cookie->logged ? $this->context->cookie->email : $customer->email)
                 ->setFixPhone($shippingAddress->phone)
                 ->setMobilePhone($shippingAddress->phone_mobile)
                 ->setShippingAddress($orderShippingAddress)
+                ->setDni($shippingAddress->dni)
             ;
+
+            if ($customer->birthday!='0000-00-00') {
+                $orderUser->setDateOfBirth($customer->birthday);
+            }
 
             $orders = Order::getCustomerOrders($customer->id);
             /** @var \PrestaShop\PrestaShop\Adapter\Entity\Order $order */
@@ -141,10 +145,6 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
                     ;
                     $orderUser->addOrderHistory($orderHistory);
                 }
-            }
-
-            if (\PagaMasTarde\OrdersApiClient\Model\Order\User::dniCheck($shippingAddress->dni)) {
-                $orderUser->setDni($shippingAddress->dni);
             }
 
             $details = new \PagaMasTarde\OrdersApiClient\Model\Order\ShoppingCart\Details();

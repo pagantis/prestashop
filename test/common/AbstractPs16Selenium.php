@@ -5,6 +5,7 @@ namespace Test\Common;
 use Facebook\WebDriver\Remote\LocalFileDetector;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
+use PagaMasTarde\SeleniumFormUtils\SeleniumHelper;
 use Test\PaylaterPrestashopTest;
 
 /**
@@ -245,25 +246,9 @@ abstract class AbstractPs16Selenium extends PaylaterPrestashopTest
     }
 
     /**
-     * @throws \Exception
-     */
-    public function verifyUTF8()
-    {
-        $paymentFormElement = WebDriverBy::className('FieldsPreview-desc');
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paymentFormElement);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
-        $this->assertSame(
-            $this->configuration['firstname'] . ' ' . $this->configuration['lastname'],
-            $this->findByClass('FieldsPreview-desc')->getText()
-        );
-    }
-
-    /**
-     * Verify Paylater iframe
+     * Verify paylater
      *
-     * @throws \Facebook\WebDriver\Exception\NoSuchElementException
-     * @throws \Facebook\WebDriver\Exception\TimeOutException
+     * @throws \Exception
      */
     public function verifyPaylater()
     {
@@ -272,37 +257,7 @@ abstract class AbstractPs16Selenium extends PaylaterPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($paylaterCheckout)->click();
-        $modulePayment = $this->webDriver->findElement(WebDriverBy::id('module-paylater-payment'));
-        $firstIframe = $modulePayment->findElement(WebDriverBy::tagName('iframe'));
-        $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($firstIframe);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
-        $pmtModal = WebDriverBy::id('pmtmodal');
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($pmtModal);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
-        $iFrame = 'pmtmodal_iframe';
-        $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($iFrame);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
-        $element = WebDriverBy::cssSelector(".Loading .is-disabled");
-        $condition = WebDriverExpectedCondition::presenceOfElementLocated($element);
-        $this->webDriver->wait()->until($condition);
-        try {
-            $this->findByName('one_click_return_to_normal')->click();
-        } catch (\Exception $exception) {
-            unset($exception);
-        }
-        $element = WebDriverBy::cssSelector(".Loading .is-disabled");
-        $condition = WebDriverExpectedCondition::presenceOfElementLocated($element);
-        $this->webDriver->wait()->until($condition);
-        $paymentFormElement = WebDriverBy::name('form-continue');
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paymentFormElement);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
-        $this->assertContains(
-            'compra',
-            $this->findByClass('Form-heading1')->getText()
-        );
+
+        SeleniumHelper::finishForm($this->webDriver);
     }
 }

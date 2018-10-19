@@ -40,6 +40,7 @@ abstract class PaylaterPrestashopTest extends TestCase
         'phone'         => '600123123',
         'dni'           => '33460885W',
         'extra'         => 'Free Finance',
+        'confirmationMessage' => 'Great, you have completed your purchase',
     );
 
     /**
@@ -52,7 +53,7 @@ abstract class PaylaterPrestashopTest extends TestCase
      */
     protected function setUp()
     {
-        $this->webDriver = RemoteWebDriver::create(
+        $this->webDriver = PmtWebDriver::create(
             'http://localhost:4444/wd/hub',
             DesiredCapabilities::chrome(),
             120000,
