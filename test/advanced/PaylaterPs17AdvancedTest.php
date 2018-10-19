@@ -376,7 +376,7 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
      *
      * @throws \Exception
      */
-    public function testAmountAndKoUrlInPmtForm()
+    /*public function testAmountAndKoUrlInPmtForm()
     {
         //Get KO Url:
         $this->loginToBackOffice();
@@ -407,5 +407,5 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
         $this->webDriver->executeScript('document.getElementsByName("back_to_store_button")[0].click();');
         $this->assertEquals($koUrl, $this->webDriver->getCurrentURL());
         $this->quit();
-    }
+    }*/
 }
