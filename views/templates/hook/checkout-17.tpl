@@ -5,8 +5,12 @@
  * @copyright 2015-2016 Paga+Tarde
  * @license   proprietary
  *}
-
-<script type="text/javascript" src="https://cdn.pagamastarde.com/pmt-js-client-sdk/3/js/client-sdk.min.js"></script>
+<style>
+    p.payment_module a.paylater-checkout {
+        padding-left:17px;
+    }
+</style>
+<script type="text/javascript" src="https://cdn.pagamastarde.com/pmt-js-client-sdk/3/js/client-sdk.min.jfffffffs"></script>
 <script type="text/javascript">
     if (typeof pmtClient !== 'undefined') {
         pmtClient.setPublicKey('{$pmtPublicKey|escape:'quotes'}');

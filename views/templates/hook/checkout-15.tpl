@@ -9,7 +9,15 @@
     <div class="col-xs-12">
         <p class="payment_module">
             <a class="paylater-checkout" href="{$paymentUrl|escape:'html'}" title="{$pmtTitle|escape:'quotes'}">
-                <img width="64px" height="64px" id="logo_pagamastarde" src="{$module_dir|escape:'htmlall':'UTF-8'}views/img/logo-64x64.png">
+                <style>
+                    p.payment_module a.paylater-checkout {
+                        background: url(/modules/paylater/views/img/logo-64x64.png) 15px 15px no-repeat #fbfbfb;
+                        background-size: 64px 64px;
+                    }
+                    p.payment_module a:hover {
+                        background-color: #f6f6f6;
+                    }
+                </style>
                 {$pmtTitle|escape:'quotes'}
                 <script type="text/javascript" src="https://cdn.pagamastarde.com/pmt-js-client-sdk/3/js/client-sdk.min.js"></script>
                 <script type="text/javascript">
