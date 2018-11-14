@@ -30,22 +30,15 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
     {
         $this->findByLinkText('Modules and Services')->click();
         $this->findById('moduleQuicksearch')->clear()->sendKeys('paga+tarde');
+        $this->installOrConfigureModule();
 
+        // new prompt in module installation no thusted
         try {
-            $paylaterAnchor = $this->findById('anchorPaylater');
-            $paylaterAnchorParent = $this->getParent($paylaterAnchor);
-            $paylaterAnchorGrandParent = $this->getParent($paylaterAnchorParent);
-            $this->moveToElementAndClick($paylaterAnchorGrandParent->findElement(
-                WebDriverBy::partialLinkText('Install')
-            ));
+            sleep(3);
+            $this->findByCss('#moduleNotTrusted #proceed-install-anyway')->click();
         } catch (\Exception $exception) {
-            $paylaterAnchor = $this->findById('anchorPaylater');
-            $paylaterAnchorParent = $this->getParent($paylaterAnchor);
-            $paylaterAnchorGrandParent = $this->getParent($paylaterAnchorParent);
-            $this->moveToElementAndClick($paylaterAnchorGrandParent->findElement(
-                WebDriverBy::partialLinkText('Configure')
-            ));
-        }
+            // do nothing, no prompt
+        };
 
         $verify = WebDriverBy::id('redirection');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
@@ -62,5 +55,24 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
         );
         $this->webDriver->wait($condition);
         $this->assertTrue((bool) $condition);
+    }
+
+    public function installOrConfigureModule()
+    {
+        try {
+            $paylaterAnchor = $this->findById('anchorPaylater');
+            $paylaterAnchorParent = $this->getParent($paylaterAnchor);
+            $paylaterAnchorGrandParent = $this->getParent($paylaterAnchorParent);
+            $this->moveToElementAndClick($paylaterAnchorGrandParent->findElement(
+                WebDriverBy::partialLinkText('Install')
+            ));
+        } catch (\Exception $exception) {
+            $paylaterAnchor = $this->findById('anchorPaylater');
+            $paylaterAnchorParent = $this->getParent($paylaterAnchor);
+            $paylaterAnchorGrandParent = $this->getParent($paylaterAnchorParent);
+            $this->moveToElementAndClick($paylaterAnchorGrandParent->findElement(
+                WebDriverBy::partialLinkText('Configure')
+            ));
+        }
     }
 }
