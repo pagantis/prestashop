@@ -5,6 +5,7 @@ namespace Test\Common;
 use Facebook\WebDriver\Remote\LocalFileDetector;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
+use PagaMasTarde\SeleniumFormUtils\SeleniumHelper;
 use Facebook\WebDriver\WebDriverKeys;
 use Test\PaylaterPrestashopTest;
 
