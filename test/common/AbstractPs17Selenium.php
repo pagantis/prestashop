@@ -6,6 +6,7 @@ use Facebook\WebDriver\Remote\LocalFileDetector;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
+use PagaMasTarde\SeleniumFormUtils\SeleniumHelper;
 use Test\PaylaterPrestashopTest;
 
 /**
@@ -236,11 +237,14 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
      */
     public function verifyPaylater()
     {
-        $paylaterCheckout = WebDriverBy::className('paylater-checkout');
+        $paylaterCheckout = WebDriverBy::cssSelector('[for=payment-option-3]');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paylaterCheckout);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($paylaterCheckout)->click();
+
+        $this->findById('conditions_to_approve[terms-and-conditions]')->click();
+        $this->findById('payment-confirmation')->click();
 
         SeleniumHelper::finishForm($this->webDriver);
     }

@@ -16,12 +16,11 @@
 <div class="PmtSimulator PmtSimulatorSelectable--claim"
      data-pmt-num-quota="{$pmtQuotesStart|escape:'quotes'}"
      data-pmt-max-ins="{$pmtQuotesMax|escape:'quotes'}"
-     data-pmt-style="grey"
+     data-pmt-style="Blue"
      data-pmt-type="{$pmtSimulatorProduct|escape:'quotes'}"
      data-pmt-discount="no"
      data-pmt-amount="{$amount|escape:'quotes'}"
-     data-pmt-expanded="yes"
-     style="width: max-content">
+     data-pmt-expanded="yes">
 </div>
 <script type="text/javascript">
     function findPrice()    {

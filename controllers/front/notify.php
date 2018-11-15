@@ -1,6 +1,5 @@
 <?php
 
-//print_r(__DIR__);die;
 require_once('AbstractController.php');
 
 use PagaMasTarde\OrdersApiClient\Client as PmtClient;
@@ -360,7 +359,6 @@ class PaylaterNotifyModuleFrontController extends AbstractController
             'method' => $method,
             'line' => $line,
         ));
-        die("dieee");
         return $this->finishProcess(true);
     }
 

@@ -41,7 +41,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '7.0.4';
+        $this->version = '7.0.5';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -222,6 +222,7 @@ class Paylater extends PaymentModule
             'pmtSimulatorCheckout'  => $pmtSimulatorCheckout,
             'pmtTitle'              => $pmtTitle,
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment'),
+            'ps_version'            => str_replace('.', '-', substr(_PS_VERSION_, 0, 3)),
         ));
 
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
@@ -231,6 +232,7 @@ class Paylater extends PaymentModule
             ->setLogo($this->getPathUri(). 'logo.gif')
             ->setModuleName(__CLASS__)
         ;
+
 
         if (_PS_VERSION_ >= 1.7) {
             $paymentOption->setAdditionalInformation(
@@ -640,6 +642,7 @@ class Paylater extends PaymentModule
             'pmtSimulatorCheckout'  => $pmtSimulatorCheckout,
             'pmtTitle'              => $pmtTitle,
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment'),
+            'ps_version'            => str_replace('.', '-', substr(_PS_VERSION_, 0, 3)),
         ));
 
         $supercheckout_enabled = Module::isEnabled('supercheckout');
