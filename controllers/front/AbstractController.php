@@ -61,7 +61,7 @@ abstract class AbstractController extends ModuleFrontController
     protected $errorDetail = '';
 
     /**
-     * @var string $headers
+     * @var array $headers
      */
     protected $headers;
 
@@ -70,10 +70,12 @@ abstract class AbstractController extends ModuleFrontController
      */
     protected $format = 'json';
 
+
     /**
      * Return a printable response of the request
      *
-     * @return Mage_Core_Controller_Response_Http
+     * @param array $extraOutput
+     * @return mixed
      */
     public function response($extraOutput = array())
     {
@@ -108,18 +110,21 @@ abstract class AbstractController extends ModuleFrontController
     /**
      * Configure redirection
      *
-     * @param bool $error
+     * @param bool   $error
+     * @param string $url
+     * @param array  $parameters
      */
-    public function redirect($error = true, $url = '', $parameters = array() )
+    public function redirect($error = true, $url = '', $parameters = array())
     {
         if ($error) {
-            Tools::redirect($url, null, null, 'ErrorMessage: ' . $this->errorMessage);
+            Tools::redirect($url);
             return;
         }
         $parsedUrl = parse_url($url);
         $separator = ($parsedUrl['query'] == null) ? '?' : '&';
         $redirectUrl = $url. $separator . http_build_query($parameters);
         Tools::redirect($redirectUrl);
+        return;
     }
 
     /**
@@ -163,9 +168,8 @@ abstract class AbstractController extends ModuleFrontController
                 'date' => date("Y-m-d H:i:s"),
             ));
 
-
             Db::getInstance()->insert('pmt_logs', array(
-                'log' => json_encode($data),
+                'log' => json_encode(str_replace('\'', '`', $data)),
             ));
         } catch (\Exception $exception) {
             // Do nothing

@@ -59,63 +59,6 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
     }
 
     /**
-     * @REQ8 In the backOffice the merchant has to be able to choose between Iframe and Redirect.
-     * (both cases should be tested in buy experience test).
-     * Item title: "Visualización". Values: Redirect & Iframe. By default: Redirect
-     *
-     * @throws \Exception
-     */
-    /*public function testBuyWithRedirect()
-    {
-        $this->loginToBackOffice();
-        $this->getPaylaterBackOffice();
-        $this->findById('redirection')->click();
-        $this->findById('module_form_submit_btn')->click();
-        $confirmationSearch = WebDriverBy::className('module_confirmation');
-        $condition = WebDriverExpectedCondition::textToBePresentInElement(
-            $confirmationSearch,
-            'All changes have been saved'
-        );
-        $this->webDriver->wait($condition);
-        $this->assertTrue((bool) $condition);
-
-        $this->loginToFrontend();
-        $this->goToProduct();
-        $this->addProduct();
-        $this->goToCheckout(true);
-        $paylaterCheckout = WebDriverBy::className('paylater-checkout');
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paylaterCheckout);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
-        $this->webDriver->findElement($paylaterCheckout)->click();
-        $element = WebDriverBy::cssSelector(".Loading .is-disabled");
-        $condition = WebDriverExpectedCondition::presenceOfElementLocated($element);
-        $this->webDriver->wait()->until($condition);
-        try {
-            $this->findByName('one_click_return_to_normal')->click();
-        } catch (\Exception $exception) {
-            unset($exception);
-        }
-        $element = WebDriverBy::cssSelector(".Loading .is-disabled");
-        $condition = WebDriverExpectedCondition::presenceOfElementLocated($element);
-        $this->webDriver->wait()->until($condition);
-        $this->verifyUTF8();
-
-        $this->webDriver->get(self::PS16URL.self::BACKOFFICE_FOLDER);
-        $this->getPaylaterBackOffice();
-        $this->findById('frame')->click();
-        $this->findById('module_form_submit_btn')->click();
-        $confirmationSearch = WebDriverBy::className('module_confirmation');
-        $condition = WebDriverExpectedCondition::textToBePresentInElement(
-            $confirmationSearch,
-            'All changes have been saved'
-        );
-        $this->webDriver->wait($condition);
-        $this->assertTrue((bool) $condition);
-        $this->quit();
-    }*/
-
-    /**
      * @REQ9 BackOffice Simulator Product Page
      * @REQ11 BackOffice Simulator Start and Max installments
      * @REQ12 BackOffice MinAmount (product simulator part)
@@ -359,40 +302,4 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
         $this->assertEquals(12, $maxInstallments);
         $this->quit();
     }
-
-    /**
-     * @REQ35 Amount matches checkout page
-     * @REQ36 Back to shop
-     *
-     * @throws \Exception
-     */
-    /*public function testAmountAndKoUrlInPmtForm()
-    {
-        //Get KO Url:
-        $this->loginToBackOffice();
-        $this->getPaylaterBackOffice();
-        $koUrl = $this->findById('pmt_url_ko')->getAttribute('value');
-
-        //Verify Amount:
-        $this->loginToFrontend();
-        $this->goToProduct();
-        $this->addProduct();
-        $this->goToCheckout(true, false);
-        $totalPrice = str_replace(' ', '', $this->findById('total_price')->getText());
-        $this->verifyPaylater();
-        $html = $this->webDriver->getPageSource();
-        $this->assertContains($totalPrice, $html);
-        $this->assertNotContains('Women', $html);
-
-
-        $backToStoreButton = WebDriverBy::name('back_to_store_button');
-        $condition = WebDriverExpectedCondition::elementToBeClickable($backToStoreButton);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
-        $backToStoreButton = $this->findByName('back_to_store_button');
-        $this->assertEquals($backToStoreButton->getAttribute('href'), $koUrl);
-        $this->webDriver->executeScript('document.getElementsByName("back_to_store_button")[0].click();');
-        $this->assertEquals($koUrl, $this->webDriver->getCurrentURL());
-        $this->quit();
-    }*/
 }

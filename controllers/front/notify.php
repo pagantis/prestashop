@@ -82,14 +82,9 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function prepareVariables()
     {
-        $this->merchantOrderId = Tools::getValue('id_cartita');
-        if ($this->merchantOrderId == '') {
-            throw new \Exception(self::CC_NO_MERCHANT_ORDERID, 404);
-        }
-
         try {
             $this->config = array(
-                'urlOK' => parse_url(Configuration::get('pmt_url_ok')),
+                'urlOK' => Configuration::get('pmt_url_ok'),
                 'urlKO' => Configuration::get('pmt_url_ko'),
                 'publicKey' => Configuration::get('pmt_public_key'),
                 'privateKey' => Configuration::get('pmt_private_key'),
@@ -98,6 +93,12 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         } catch (\Exception $exception) {
             throw new \Exception(self::CC_NO_CONFIG, 500);
         }
+
+        $this->merchantOrderId = Tools::getValue('id_cart');
+        if ($this->merchantOrderId == '') {
+            throw new \Exception(self::CC_NO_MERCHANT_ORDERID, 404);
+        }
+
 
         if (!($this->config['secureKey'] && $this->merchantOrderId && Module::isEnabled(self::PMT_CODE))) {
             throw new \Exception(self::CC_MALFORMED, 500);
@@ -265,7 +266,6 @@ class PaylaterNotifyModuleFrontController extends AbstractController
                 false,
                 $this->config['secureKey']
             );
-
         } catch (\Exception $exception) {
             $this->statusCode = 500;
             $this->errorMessage = self::PMO_ERR_MSG;
@@ -335,12 +335,13 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     public function cancelProcess(\Exception $exception)
     {
         if ($this->merchantOrder) {
+            $id = (!is_null($this->pmtOrder))?$this->pmtOrder->getId():null;
             $this->module->validateOrder(
                 $this->merchantOrderId,
                 Configuration::get('PS_OS_ERROR'),
                 $this->merchantOrder->getOrderTotal(true),
                 $this->module->displayName,
-                'pmtOrderId: ' . $this->pmtOrder->getId(),
+                'pmtOrderId: ' . $id,
                 null,
                 null,
                 false,
@@ -378,7 +379,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
             'id_cart' => $this->merchantOrderId,
             'key' => $this->config['secureKey'],
             'id_module' => $this->module->id,
-            'id_order' => $this->merchantOrder->id,
+            'id_order' => ($this->pmtOrder)?$this->pmtOrder->getId(): null,
         );
         $url = ($error)? $this->config['urlKO'] : $this->config['urlOK'];
         return $this->redirect($error, $url, $parameters);
