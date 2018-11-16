@@ -36,7 +36,7 @@ class PaylaterPs15InstallTest extends AbstractPs15Selenium
         } catch (\Exception $exception) {
             $this->findByLinkText('Configure')->click();
         }
-        $verify = WebDriverBy::id('frame');
+        $verify = WebDriverBy::id('redirection');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);

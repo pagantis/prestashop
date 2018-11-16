@@ -28,7 +28,7 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
      */
     public function configurePaylater()
     {
-        $verify = WebDriverBy::id('frame');
+        $verify = WebDriverBy::id('redirection');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
         $this->findById('redirection')->click();

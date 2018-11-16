@@ -6,7 +6,6 @@ use Facebook\WebDriver\Remote\LocalFileDetector;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
-use PagaMasTarde\SeleniumFormUtils\SeleniumHelper;
 use Test\PaylaterPrestashopTest;
 
 /**
@@ -42,7 +41,7 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
     public function uploadPaylater()
     {
         $this->webDriver->executeScript('document.querySelector(\'.onboarding-button-shut-down\').click();');
-        sleep(3);
+        sleep(10);
         $elementSearch = WebDriverBy::partialLinkText('Modules');
         $condition = WebDriverExpectedCondition::elementToBeClickable($elementSearch);
         $this->waitUntil($condition);
@@ -138,7 +137,7 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
      */
     public function goToCheckout($addressExists = false)
     {
-        sleep(1);
+        sleep(3);
         $cartButton = WebDriverBy::id('_desktop_cart');
         $condition = WebDriverExpectedCondition::elementToBeClickable($cartButton);
         $this->waitUntil($condition);
