@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "1f494ca13a6b7d393b71f9fdc6ba8823",
@@ -140,16 +140,16 @@
         },
         {
             "name": "pagamastarde/orders-api-client",
-            "version": "v1.0.12",
+            "version": "v1.0.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PagaMasTarde/ordersApiClient.git",
-                "reference": "d29e25e00e6f910c7c081ff0c7062e9e5d65be5d"
+                "reference": "8daca8f3be7fd32fbbbe77fc8cb7ab388e641c59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/ordersApiClient/zipball/d29e25e00e6f910c7c081ff0c7062e9e5d65be5d",
-                "reference": "d29e25e00e6f910c7c081ff0c7062e9e5d65be5d",
+                "url": "https://api.github.com/repos/PagaMasTarde/ordersApiClient/zipball/8daca8f3be7fd32fbbbe77fc8cb7ab388e641c59",
+                "reference": "8daca8f3be7fd32fbbbe77fc8cb7ab388e641c59",
                 "shasum": ""
             },
             "require": {
@@ -178,7 +178,7 @@
                 }
             ],
             "description": "PagaMasTarde Orders Api Client in PHP. Use the api with simple methods and using OOP.",
-            "time": "2018-10-04T15:04:48+00:00"
+            "time": "2018-11-05T15:50:44+00:00"
         },
         {
             "name": "pagamastarde/selenium-form-utils",

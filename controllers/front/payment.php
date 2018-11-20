@@ -171,7 +171,8 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
             $orderConfigurationUrls
                 ->setCancel($cancelUrl)
                 ->setKo($cancelUrl)
-                ->setNotificationCallback($okUrl)
+                ->setAuthorizedNotificationCallback($okUrl)
+                ->setRejectedNotificationCallback($okUrl)
                 ->setOk($okUrl)
             ;
 
