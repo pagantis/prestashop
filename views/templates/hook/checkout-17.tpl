@@ -17,7 +17,7 @@
         pmtClient.events.send('checkout', { basketAmount: {$amount|escape:'quotes'} } );
     }
 </script>
-{if $pmtSimulatorCheckout}
+{if $pmtSimulatorIsEnabled}
     <span class="js-pmt-payment-type"></span>
     <div class="PmtSimulator"
          data-pmt-num-quota="{$pmtQuotesStart|escape:'quotes'}"

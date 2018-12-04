@@ -12,7 +12,8 @@
     "require": {
       "pagamastarde/autoindex": "^1.0",
       "pagamastarde/orders-api-client": "^1.0",
-      "pagamastarde/selenium-form-utils": "^1.0"
+      "pagamastarde/selenium-form-utils": "^1.0",
+          "vlucas/phpdotenv": "^2.5"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8",

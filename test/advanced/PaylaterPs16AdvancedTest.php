@@ -93,8 +93,6 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
         //Change Type, num Quota and Max Installments, Restore min amount
         $this->getPaylaterBackOffice();
         $this->findById('product-simulator-complete')->click();
-        $this->findById('pmt_sim_quotes_start')->clear()->sendKeys(5);
-        $this->findById('pmt_sim_quotes_max')->clear()->sendKeys(10);
         $this->findById('pmt_display_min_amount')->clear()->sendKeys(1);
         $this->findById('module_form_submit_btn')->click();
 
@@ -135,53 +133,6 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
         $this->assertEquals(6, $simulatorType);
         $this->assertEquals(3, $numQuota);
         $this->assertEquals(12, $maxInstallments);
-        $this->quit();
-    }
-
-    /**
-     * @REQ14 BackOffice Checkout Title
-     * @REQ20 Checkout Title
-     *
-     * @throws \Exception
-     */
-    public function testTitleIsEditable()
-    {
-        $title = 'Instant Financing';
-        $newTitle = 'Financiación Instánea';
-
-        $this->loginToFrontend();
-        $this->goToProduct();
-        $this->addProduct();
-        $this->goToCheckout(true);
-
-        $html = $this->webDriver->getPageSource();
-        $this->assertContains($title, $html);
-
-        //Change Title
-        $this->loginToBackOffice();
-        $this->getPaylaterBackOffice();
-        $this->findById('pmt_title')->clear()->sendKeys($newTitle);
-        $this->findById('module_form_submit_btn')->click();
-
-
-        $this->goToProduct();
-        $this->addProduct();
-        $this->goToCheckout(true);
-
-        $html = $this->webDriver->getPageSource();
-        $this->assertContains($newTitle, $html);
-
-        //Restore Title
-        $this->getPaylaterBackOffice();
-        $this->findById('pmt_title')->clear()->sendKeys($title);
-        $this->findById('module_form_submit_btn')->click();
-
-        $this->goToProduct();
-        $this->addProduct();
-        $this->goToCheckout(true);
-
-        $html = $this->webDriver->getPageSource();
-        $this->assertContains($title, $html);
         $this->quit();
     }
 

@@ -73,7 +73,7 @@ abstract class AbstractPs16Selenium extends PaylaterPrestashopTest
         $this->moveToElementAndClick($paylaterAnchorGrandParent->findElement(
             WebDriverBy::partialLinkText('Configure')
         ));
-        $verify = WebDriverBy::id('frame');
+        $verify = WebDriverBy::id('pmt_public_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
     }

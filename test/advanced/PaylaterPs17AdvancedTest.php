@@ -139,53 +139,6 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
     }
 
     /**
-     * @REQ14 BackOffice Checkout Title
-     * @REQ20 Checkout Title
-     *
-     * @throws \Exception
-     */
-    public function testTitleIsEditable()
-    {
-        $title = 'Instant Financing';
-        $newTitle = 'Financiación Instánea';
-
-        $this->loginToFrontend();
-        $this->goToProduct();
-        $this->addProduct();
-        $this->goToCheckout(true);
-
-        $html = $this->webDriver->getPageSource();
-        $this->assertContains($title, $html);
-
-        //Change Title
-        $this->loginToBackOffice();
-        $this->getPaylaterBackOffice();
-        $this->findById('pmt_title')->clear()->sendKeys($newTitle);
-        $this->findById('module_form_submit_btn')->click();
-
-
-        $this->goToProduct();
-        $this->addProduct();
-        $this->goToCheckout(true);
-
-        $html = $this->webDriver->getPageSource();
-        $this->assertContains($newTitle, $html);
-
-        //Restore Title
-        $this->getPaylaterBackOffice();
-        $this->findById('pmt_title')->clear()->sendKeys($title);
-        $this->findById('module_form_submit_btn')->click();
-
-        $this->goToProduct();
-        $this->addProduct();
-        $this->goToCheckout(true);
-
-        $html = $this->webDriver->getPageSource();
-        $this->assertContains($title, $html);
-        $this->quit();
-    }
-
-    /**
      * @REQ17 BackOffice Panel should have visible Logo and links
      *
      * @throws \Exception

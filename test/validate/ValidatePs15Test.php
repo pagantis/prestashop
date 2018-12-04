@@ -22,7 +22,6 @@ class ValidatePs15Test extends AbstractPs15Selenium
     {
         $this->loginToBackOffice();
         $this->getPaylaterBackOffice();
-        $this->findById('redirection')->click();
         $this->findById('module_form_submit_btn')->click();
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(

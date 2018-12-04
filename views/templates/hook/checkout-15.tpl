@@ -11,7 +11,7 @@
             <a class="paylater-checkout ps_version_{$ps_version}" href="{$paymentUrl|escape:'html'}" title="{$pmtTitle|escape:'quotes'}">
                 {$pmtTitle|escape:'quotes'}
             </a>
-            {if $pmtSimulatorCheckout}
+            {if $pmtSimulatorIsEnabled}
                 <span class="js-pmt-payment-type"></span>
                 <div class="PmtSimulator"
                      data-pmt-num-quota="{$pmtQuotesStart|escape:'quotes'}"

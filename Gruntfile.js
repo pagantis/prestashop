@@ -96,7 +96,8 @@ module.exports = function(grunt) {
                     {src: 'logo.gif', dest: 'paylater/'},
                     {src: 'LICENSE.md', dest: 'paylater/'},
                     {src: 'CONTRIBUTORS.md', dest: 'paylater/'},
-                    {src: 'README.md', dest: 'paylater/'}
+                    {src: 'README.md', dest: 'paylater/'},
+                    {src: '.env', dest: 'paylater/'}
                 ]
             }
         }

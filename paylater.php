@@ -41,7 +41,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '7.0.5';
+        $this->version = '7.0.6';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -56,6 +56,8 @@ class Paylater extends PaymentModule
         $this->loadSQLFile($sql_file);
 
         parent::__construct();
+        $dotenv = new Dotenv\Dotenv(__DIR__);
+        $dotenv->load();
     }
 
     /**
@@ -83,10 +85,11 @@ class Paylater extends PaymentModule
         $sql_file = dirname(__FILE__).'/sql/install.sql';
         $this->loadSQLFile($sql_file);
 
+        Configuration::updateValue('pmt_is_enabled', 1);
+        Configuration::updateValue('pmt_simulator_is_enabled', 1);
         Configuration::updateValue('pmt_public_key', '');
         Configuration::updateValue('pmt_private_key', '');
-        Configuration::updateValue('pmt_iframe', 0);
-        Configuration::updateValue('pmt_title', $this->l('Instant Financing'));
+        Configuration::updateValue('pmt_title', $this->l(getenv('PMT_TITLE')));
         Configuration::updateValue('pmt_url_ok', $this->context->link->getPageLink(
             'order-confirmation',
             null,
@@ -98,15 +101,12 @@ class Paylater extends PaymentModule
             null,
             array('step'=>3)
         ));
-        Configuration::updateValue('pmt_sim_checkout', 0); //TODO Back to 6 after simulator in orders
-        Configuration::updateValue('pmt_sim_product', 6);
+        Configuration::updateValue('pmt_sim_product', getenv('PMT_SIMUMATOR_DISPLAY_TYPE'));
         Configuration::updateValue('pmt_sim_product_hook', 'hookDisplayProductButtons');
-        Configuration::updateValue('pmt_sim_quotes_start', 3);
-        Configuration::updateValue('pmt_sim_quotes_max', 12);
         Configuration::updateValue('pmt_display_min_amount', 1);
 
         return (parent::install()
-                && $this->registerHook('displayShoppingCart')
+                && $this->registerHook('displayShoppingCart')/**/
                 && $this->registerHook('payment')
                 && $this->registerHook('paymentOptions')
                 && $this->registerHook('displayRightColumn')
@@ -208,10 +208,10 @@ class Paylater extends PaymentModule
         $orderTotal                 = $cart->getOrderTotal();
         $link                       = $this->context->link;
         $pmtPublicKey               = Configuration::get('pmt_public_key');
-        $pmtSimulatorCheckout       = Configuration::get('pmt_sim_checkout');
-        $pmtSimulatorQuotesStart    = Configuration::get('pmt_sim_quotes_start');
-        $pmtSimulatorQuotesMax      = Configuration::get('pmt_sim_quotes_max');
-        $pmtTitle                   = Configuration::get('pmt_title');
+        $pmtSimulatorIsEnabled      = Configuration::get('pmt_simulator_is_enabled');
+        $pmtSimulatorQuotesStart    = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
+        $pmtSimulatorQuotesMax      = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
+        $pmtTitle                   = $this->l(getenv('PMT_TITLE'));
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
@@ -219,7 +219,7 @@ class Paylater extends PaymentModule
             'pmtPublicKey'          => $pmtPublicKey,
             'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
             'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
-            'pmtSimulatorCheckout'  => $pmtSimulatorCheckout,
+            'pmtSimulatorIsEnabled' => $pmtSimulatorIsEnabled,
             'pmtTitle'              => $pmtTitle,
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment'),
             'ps_version'            => str_replace('.', '-', substr(_PS_VERSION_, 0, 3)),
@@ -262,6 +262,26 @@ class Paylater extends PaymentModule
                 ),
                 'input' => array(
                     array(
+                        'name' => 'pmt_is_enabled',
+                        'type' => 'switch',
+                        'label' => $this->l('Module is enabled'),
+                        'prefix' => '<i class="icon icon-key"></i>',
+                        'col' => 6,
+                        'required' => true,
+                        'values'=> array(
+                            array(
+                                'id' => 'pmt_is_enabled_true',
+                                'value' => 1,
+                                'label' => $this->l('Yes'),
+                            ),
+                            array(
+                                'id' => 'pmt_is_enabled_false',
+                                'value' => 0,
+                                'label' => $this->l('No'),
+                            ),
+                        )
+                    ),
+                    array(
                         'name' => 'pmt_public_key',
                         'suffix' => $this->l('ej: pk_fd53cd467ba49022e4gf215e'),
                         'type' => 'text',
@@ -282,196 +302,34 @@ class Paylater extends PaymentModule
                         'required' => true,
                     ),
                     array(
-                        'type' => 'radio',
-                        'class' => 't',
-                        'label' => $this->l('How to open payment'),
-                        'name' => 'pmt_iframe',
-                        'prefix' => '<i class="icon icon-desktop"></i>',
-                        'values' => array(
-                            array(
-                                'id' => 'frame',
-                                'value' => 1,
-                                'label' => $this->l('iFrame') . '<br>',
-                            ),
-                            array(
-                                'id' => 'redirection',
-                                'value' => 0,
-                                'label' => '<strong style="color: green">' . $this->l('Redirect').'</strong><br>'
-
-                            ),
-                        ),
-                    ),
-                    array(
-                        'type' => 'text',
-                        'size' => 60,
+                        'name' => 'pmt_simulator_is_enabled',
+                        'type' => 'switch',
+                        'label' => $this->l('Simulator is enabled'),
+                        'prefix' => '<i class="icon icon-key"></i>',
                         'col' => 6,
-                        'desc' =>  $this->l('ex: Instant Financing'),
-                        'label' => $this->l('Title'),
-                        'name' => 'pmt_title',
                         'required' => true,
-                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
-                    ),
-                    //TODO UNCOMMENT WHEN SIMULATOR READY IN ORDERS
-                    /*
-                    array(
-                        'type' => 'radio',
-                        'class' => 't',
-                        'label' => $this->l('Simulator in checkout page'),
-                        'name' => 'pmt_sim_checkout',
-                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
-                        'is_bool' => false,
-                        'values' => array(
+                        'values'=> array(
                             array(
-                                'id' => 'checkout-simulator-hide',
-                                'value' => 0,
-                                'label' => $this->l('Hide'). '<br>'
-                            ),
-                            array(
-                                'id' => 'checkout-simulator-simple',
+                                'id' => 'pmt_simulator_is_enabled_true',
                                 'value' => 1,
-                                'label' => $this->l('Simple Simulator'). '<br>'
+                                'label' => $this->l('Yes'),
                             ),
                             array(
-                                'id' => 'checkout-simulator-complete',
-                                'value' => 2,
-                                'label' => $this->l('Complete Simulator'). '<br>'
-                            ),
-                            array(
-                                'id' => 'checkout-simulator-selectable',
-                                'value' => 3,
-                                'label' => $this->l('Selectable Simulator'). '<br>'
-                            ),
-                            array(
-                                'id' => 'checkout-simulator-text',
-                                'value' => 4,
-                                'label' => $this->l('Text Simulator'). '<br>'
-                            ),
-                            array(
-                                'id' => 'checkout-simulator-mini',
-                                'value' => 6,
-                                'label' => '<strong style="color: green">' . $this->l('Mini Simulator').'</strong><br>'
-                            ),
-                        ),
-                    ),
-                    */
-                    array(
-                        'type' => 'radio',
-                        'class' => 't',
-                        'label' => $this->l('Product simulator'),
-                        'name' => 'pmt_sim_product',
-                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
-                        'is_bool' => false,
-                        'values' => array(
-                            array(
-                                'id' => 'product-simulator-hide',
+                                'id' => 'pmt_simulator_is_enabled_false',
                                 'value' => 0,
-                                'label' => $this->l('Hide'). '<br>'
+                                'label' => $this->l('No'),
                             ),
-                            array(
-                                'id' => 'product-simulator-simple',
-                                'value' => 1,
-                                'label' => $this->l('Simple Simulator'). '<br>'
-                            ),
-                            array(
-                                'id' => 'product-simulator-complete',
-                                'value' => 2,
-                                'label' => $this->l('Complete Simulator'). '<br>'
-                            ),
-                            array(
-                                'id' => 'product-simulator-selectable',
-                                'value' => 3,
-                                'label' => $this->l('Selectable Simulator'). '<br>'
-                            ),
-                            array(
-                                'id' => 'product-simulator-text',
-                                'value' => 4,
-                                'label' => $this->l('Text Simulator'). '<br>'
-                            ),
-                            array(
-                                'id' => 'product-simulator-mini',
-                                'value' => 6,
-                                'label' => '<strong style="color: green">' . $this->l('Mini Simulator').'</strong><br>'
-                            ),
-                        ),
-                    ),
-                    array(
-                        'type' => 'radio',
-                        'class' => 't',
-                        'label' => $this->l('Simulator product position'),
-                        'name' => 'pmt_sim_product_hook',
-                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
-                        'is_bool' => false,
-                        'values' => array(
-                            array(
-                                'id' => 'hookDisplayRightColumn-page-hook',
-                                'value' => 'hookDisplayRightColumn',
-                                'label' => $this->l('display in right column'). '<br>'
-                            ),
-                            array(
-                                'id' => 'hookDisplayLeftColumn',
-                                'value' => 'hookDisplayLeftColumn',
-                                'label' => $this->l('display in left column'). '<br>'
-                            ),
-                            array(
-                                'id' => 'hookDisplayRightColumnProduct',
-                                'value' => 'hookDisplayRightColumnProduct',
-                                'label' => $this->l('display in right column of product'). '<br>'
-                            ),
-                            array(
-                                'id' => 'hookDisplayLeftColumnProduct',
-                                'value' => 'hookDisplayLeftColumnProduct',
-                                'label' => $this->l('display in left column of product'). '<br>'
-                            ),
-                            array(
-                                'id' => 'hookDisplayProductButtons',
-                                'value' => 'hookDisplayProductButtons',
-                                'label' => $this->l('display in product buttons (PS 1.7)'). '<br>'
-                            ),
-                        ),
-                    ),
-                    array(
-                        'type' => 'text',
-                        'col' => 1,
-                        'desc' => $this->l('Between: 2-12'),
-                        'label' => $this->l('Number of installments by default'),
-                        'name' => 'pmt_sim_quotes_start',
-                        'required' => false,
-                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
-                    ),
-                    array(
-                        'type' => 'text',
-                        'col' => 1,
-                        'desc' => $this->l('Between: 2-12'),
-                        'label' => $this->l('Maximum numbers of installments'),
-                        'name' => 'pmt_sim_quotes_max',
-                        'required' => false,
-                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
+                        )
                     ),
                     array(
                         'type' => 'text',
                         'col' => 2,
-                        'desc' => $this->l('ej: 20'),
+                        'desc' => $this->l('ex: 20'),
                         'label' => $this->l('Minimum amount'),
                         'name' => 'pmt_display_min_amount',
                         'required' => false,
                         'prefix' => '<i class="icon icon-bank"></i>',
                         'suffix' => '€'
-                    ),
-                    array(
-                        'type' => 'text',
-                        'col' => 6,
-                        'label' => $this->l('Ok url'),
-                        'name' => 'pmt_url_ok',
-                        'required' => false,
-                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
-                    ),
-                    array(
-                        'type' => 'text',
-                        'col' => 6,
-                        'label' => $this->l('Ko url'),
-                        'name' => 'pmt_url_ko',
-                        'required' => false,
-                        'prefix' => '<i class="icon icon-puzzle-piece"></i>',
                     ),
                 ),
                 'submit' => array(
@@ -506,6 +364,8 @@ class Paylater extends PaymentModule
             'id_language' => $this->context->language->id,
         );
 
+        $helper->fields_value['pmt_url_ok'] = Configuration::get('pmt_url_ok');
+
         return $helper->generateForm(array($this->getConfigForm()));
     }
 
@@ -522,14 +382,14 @@ class Paylater extends PaymentModule
         $settings = array();
         $settings['pmt_public_key'] = Configuration::get('pmt_public_key');
         $settings['pmt_private_key'] = Configuration::get('pmt_private_key');
-        $settings['pmt_title'] = Configuration::get('pmt_title');
+        $settings['pmt_title'] = $this->l(getenv('PMT_TITLE'));
         $settings['pmt_display_min_amount'] = 0;
         $settingsKeys = array(
+            'pmt_is_enabled',
             'pmt_public_key',
             'pmt_private_key',
-            'pmt_iframe',
+            'pmt_simulator_is_enabled',
             'pmt_title',
-            'pmt_sim_checkout',
             'pmt_sim_product',
             'pmt_sim_product_hook',
             'pmt_sim_quotes_start',
@@ -568,15 +428,6 @@ class Paylater extends PaymentModule
                         $value = Tools::getValue($key);
                         if (!$value) {
                             $error = $this->l('Please add a Paga+Tarde API Private Key');
-                            break;
-                        }
-                        Configuration::updateValue($key, $value);
-                        $settings[$key] = $value;
-                        break;
-                    case 'pmt_title':
-                        $value = Tools::getValue($key);
-                        if (!$value) {
-                            $error = $this->l('Please add a Title for the payment method');
                             break;
                         }
                         Configuration::updateValue($key, $value);
@@ -629,17 +480,17 @@ class Paylater extends PaymentModule
         $orderTotal                 = $cart->getOrderTotal();
         $link                       = $this->context->link;
         $pmtPublicKey               = Configuration::get('pmt_public_key');
-        $pmtSimulatorCheckout       = Configuration::get('pmt_sim_checkout');
-        $pmtSimulatorQuotesStart    = Configuration::get('pmt_sim_quotes_start');
-        $pmtSimulatorQuotesMax      = Configuration::get('pmt_sim_quotes_max');
-        $pmtTitle                   = Configuration::get('pmt_title');
+        $pmtSimulatorIsEnabled    = Configuration::get('pmt_simulator_is_enabled');
+        $pmtSimulatorQuotesStart    = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
+        $pmtSimulatorQuotesMax      = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
+        $pmtTitle                   = $this->l(getenv('PMT_TITLE'));
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
             'amount'                => $orderTotal,
             'pmtPublicKey'          => $pmtPublicKey,
             'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
             'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
-            'pmtSimulatorCheckout'  => $pmtSimulatorCheckout,
+            'pmtSimulatorIsEnabled' => $pmtSimulatorIsEnabled,
             'pmtTitle'              => $pmtTitle,
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment'),
             'ps_version'            => str_replace('.', '-', substr(_PS_VERSION_, 0, 3)),
@@ -669,14 +520,15 @@ class Paylater extends PaymentModule
      */
     public function productPageSimulatorDisplay($functionName)
     {
-        $productConfiguration = Configuration::get('pmt_sim_product_hook');
+        $productConfiguration = getenv('PMT_SIMUMATOR_DISPLAY_POSITION');
         /** @var ProductCore $product */
         $product = new Product(Tools::getValue('id_product'));
         $amount = $product->getPublicPrice();
         $pmtPublicKey             = Configuration::get('pmt_public_key');
-        $pmtSimulatorProduct      = Configuration::get('pmt_sim_product');
-        $pmtSimulatorQuotesStart  = Configuration::get('pmt_sim_quotes_start');
-        $pmtSimulatorQuotesMax    = Configuration::get('pmt_sim_quotes_max');
+        $pmtSimulatorIsEnabled    = Configuration::get('pmt_simulator_is_enabled');
+        $pmtSimulatorProduct      = getenv('PMT_SIMUMATOR_DISPLAY_TYPE');
+        $pmtSimulatorQuotesStart  = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
+        $pmtSimulatorQuotesMax    = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
         $pmtDisplayMinAmount      = Configuration::get('pmt_display_min_amount');
 
         if ($functionName != $productConfiguration ||
@@ -690,6 +542,7 @@ class Paylater extends PaymentModule
         $this->context->smarty->assign(array(
             'amount'                => $amount,
             'pmtPublicKey'          => $pmtPublicKey,
+            'pmtSimulatorIsEnabled'   => $pmtSimulatorIsEnabled,
             'pmtSimulatorProduct'   => $pmtSimulatorProduct,
             'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
             'pmtQuotesMax'          => $pmtSimulatorQuotesMax,

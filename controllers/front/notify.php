@@ -82,10 +82,21 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function prepareVariables()
     {
+        $callbackOkUrl = $this->context->link->getPageLink(
+            'order-confirmation',
+            null,
+            null
+        );
+        $callbackKoUrl = $this->context->link->getPageLink(
+            'order',
+            null,
+            null,
+            array('step'=>3)
+        );
         try {
             $this->config = array(
-                'urlOK' => Configuration::get('pmt_url_ok'),
-                'urlKO' => Configuration::get('pmt_url_ko'),
+                'urlOK' => (getenv('PMT_URL_OK') !== '') ? getenv('PMT_URL_OK') : $callbackOkUrl,
+                'urlKO' => (getenv('PMT_URL_KO') !== '') ? getenv('PMT_URL_KO') : $callbackKoUrl,
                 'publicKey' => Configuration::get('pmt_public_key'),
                 'privateKey' => Configuration::get('pmt_private_key'),
                 'secureKey' => Tools::getValue('key'),

@@ -77,7 +77,7 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
             ->sendKeys(WebDriverKeys::ENTER)
         ;
         $this->findByClass('module_action_menu_configure')->click();
-        $verify = WebDriverBy::id('frame');
+        $verify = WebDriverBy::id('pmt_public_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
     }

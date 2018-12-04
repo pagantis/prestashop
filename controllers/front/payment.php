@@ -64,8 +64,14 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
             'key' => $cart->secure_key,
         );
 
-        $iframe = Configuration::get('pmt_iframe');
-        $cancelUrl = Configuration::get('pmt_url_ko');
+        $koUrl = $this->context->link->getPageLink(
+            'order',
+            null,
+            null,
+            array('step'=>3)
+        );
+        $iframe = getenv('PMT_FORM_DISPLAY_TYPE');
+        $cancelUrl = (getenv('PMT_URL_KO') !== '') ? getenv('PMT_URL_KO') : $koUrl;
         $paylaterPublicKey = Configuration::get('pmt_public_key');
         $paylaterPrivateKey = Configuration::get('pmt_private_key');
         $okUrl = _PS_BASE_URL_.__PS_BASE_URI__
