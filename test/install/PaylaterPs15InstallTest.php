@@ -36,9 +36,7 @@ class PaylaterPs15InstallTest extends AbstractPs15Selenium
         } catch (\Exception $exception) {
             $this->findByLinkText('Configure')->click();
         }
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
+
         $this->findById('pmt_public_key')->clear()->sendKeys($this->configuration['publicKey']);
         $this->findById('pmt_private_key')->clear()->sendKeys($this->configuration['secretKey']);
         $this->webDriver->executeScript('window.scrollBy(0,250)');

@@ -123,18 +123,53 @@ services:
     extra_hosts:
     - "prestashop-dev.docker:127.0.0.1"
 
-  db-dev16:
-    image: mysql:5.6
+  prestashop-dev15:
+    image: prestashop/prestashop:1.5-5.5-apache
+    depends_on:
+      - db-dev15
     environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=ps-dev16
+      - PS_DEV_MODE=1
+      - PS_COUNTRY=ES
+      - PS_DOMAIN=prestashop-dev.docker:8020
+      - PS_FOLDER_ADMIN=adminTest
+      - PS_FOLDER_INSTALL=installTest
+      - PS_HANDLE_DYNAMIC_DOMAIN=1
+      - PS_INSTALL_AUTO=1
+      - DB_SERVER=db-dev15
+      - DB_NAME=ps-dev15
+      - DB_PREFIX=ps_
+      - DB_PASSWD=password
     networks:
       - internal
+      - public
+    volumes:
+      - ./:/var/www/html/modules/paylater
+    ports:
+      - "8020:80"
+    extra_hosts:
+      - "prestashop-dev.docker:127.0.0.1"
+
   db-dev17:
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=ps-dev17
+    networks:
+      - internal
+
+  db-dev16:
+    image: mysql:5.6
+    environment:
+        - MYSQL_ROOT_PASSWORD=password
+        - MYSQL_DATABASE=ps-dev16
+    networks:
+        - internal
+
+  db-dev15:
+    image: mysql:5.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=ps-dev15
     networks:
       - internal
 

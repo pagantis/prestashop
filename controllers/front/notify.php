@@ -43,6 +43,9 @@ class PaylaterNotifyModuleFrontController extends AbstractController
 
     /**
      * Main action of the controller. Dispatch the Notify process
+     *
+     * @return Mage_Core_Controller_Response_Http|Mage_Core_Controller_Varien_Action
+     * @throws Exception
      */
     public function postProcess()
     {
@@ -67,7 +70,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         }
 
         try {
-            $this->unblockConcurrency($this->merchantOrderId);
+            $this->unblockConcurrency();
         } catch (\Exception $exception) {
             // Do nothing
         }

@@ -263,27 +263,27 @@ class Paylater extends PaymentModule
                 'input' => array(
                     array(
                         'name' => 'pmt_is_enabled',
-                        'type' => 'switch',
+                        'type' =>  (version_compare(_PS_VERSION_, '1.6')<0) ?'radio' :'switch',
                         'label' => $this->l('Module is enabled'),
                         'prefix' => '<i class="icon icon-key"></i>',
-                        'col' => 6,
+                        'class' => 't',
                         'required' => true,
                         'values'=> array(
                             array(
                                 'id' => 'pmt_is_enabled_true',
                                 'value' => 1,
-                                'label' => $this->l('Yes'),
+                                'label' => $this->l('Yes', get_class($this), null, false),
                             ),
                             array(
                                 'id' => 'pmt_is_enabled_false',
                                 'value' => 0,
-                                'label' => $this->l('No'),
+                                'label' => $this->l('No', get_class($this), null, false),
                             ),
                         )
                     ),
                     array(
                         'name' => 'pmt_public_key',
-                        'suffix' => $this->l('ej: pk_fd53cd467ba49022e4gf215e'),
+                        'suffix' => $this->l('ex: pk_fd53cd467ba49022e4gf215e'),
                         'type' => 'text',
                         'size' => 60,
                         'label' => $this->l('Public Key'),
@@ -293,7 +293,7 @@ class Paylater extends PaymentModule
                     ),
                     array(
                         'name' => 'pmt_private_key',
-                        'suffix' => $this->l('ej: 21e5723a97459f6a'),
+                        'suffix' => $this->l('ex: 21e5723a97459f6a'),
                         'type' => 'text',
                         'size' => 60,
                         'label' => $this->l('Secret Key'),
@@ -303,10 +303,10 @@ class Paylater extends PaymentModule
                     ),
                     array(
                         'name' => 'pmt_simulator_is_enabled',
-                        'type' => 'switch',
+                        'type' => (version_compare(_PS_VERSION_, '1.6')<0) ?'radio' :'switch',
                         'label' => $this->l('Simulator is enabled'),
                         'prefix' => '<i class="icon icon-key"></i>',
-                        'col' => 6,
+                        'class' => 't',
                         'required' => true,
                         'values'=> array(
                             array(
