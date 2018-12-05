@@ -310,12 +310,12 @@ class Paylater extends PaymentModule
                         'required' => true,
                         'values'=> array(
                             array(
-                                'id' => 'pmt_simulator_is_enabled_true',
+                                'id' => 'pmt_simulator_is_enabled_on',
                                 'value' => 1,
                                 'label' => $this->l('Yes'),
                             ),
                             array(
-                                'id' => 'pmt_simulator_is_enabled_false',
+                                'id' => 'pmt_simulator_is_enabled_off',
                                 'value' => 0,
                                 'label' => $this->l('No'),
                             ),

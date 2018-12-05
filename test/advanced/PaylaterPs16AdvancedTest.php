@@ -54,7 +54,6 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
         $this->assertTrue((bool) $condition);
         $this->assertContains('Please add a Paga+Tarde API Private Key', $this->webDriver->getPageSource());
         $this->findById('pmt_private_key')->clear()->sendKeys($this->configuration['secretKey']);
-
         $this->quit();
     }
 
@@ -93,7 +92,7 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
         //Hide simulator
         $this->getPaylaterBackOffice();
         $this->findById('pmt_display_min_amount')->clear()->sendKeys(1);
-        $this->findById('pmt_simulator_is_enabled_false')->click();
+        $this->findById('pmt_simulator_is_enabled_off')->click();
         $this->findById('module_form_submit_btn')->click();
 
         $this->goToProduct(false);

@@ -93,7 +93,7 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
         //Hide simulator
         $this->getPaylaterBackOffice();
         $this->findById('pmt_display_min_amount')->clear()->sendKeys(1);
-        $this->findById('pmt_simulator_is_enabled_false')->click();
+        $this->findById('pmt_simulator_is_enabled_off')->click();
         $this->findById('module_form_submit_btn')->click();
 
         $this->goToProduct(false);
@@ -102,7 +102,7 @@ class PaylaterPs17InstallTest extends AbstractPs17Selenium
 
         //Restore default simulator
         $this->getPaylaterBackOffice();
-        $this->findById('pmt_simulator_is_enabled_true')->click();
+        $this->findById('pmt_simulator_is_enabled_on')->click();
         $this->findById('module_form_submit_btn')->click();
 
         $this->goToProduct();
