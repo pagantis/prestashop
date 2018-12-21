@@ -2,6 +2,7 @@ version: "3.5"
 
 services:
   prestashop15:
+    container_name: prestashop15
     image: prestashop/prestashop:1.5-5.5-apache
     depends_on:
       - db-ps15
@@ -25,6 +26,7 @@ services:
     extra_hosts:
       - "prestashop15-test.docker:127.0.0.1"
   prestashop16:
+    container_name: prestashop16
     image: prestashop/prestashop:1.6.1.20
     depends_on:
       - db-ps16
@@ -48,6 +50,7 @@ services:
     extra_hosts:
     - "prestashop16-test.docker:127.0.0.1"
   prestashop17:
+    container_name: prestashop17
     image: prestashop/prestashop:1.7.3
     depends_on:
       - db-ps17
@@ -72,6 +75,7 @@ services:
     - "prestashop17-test.docker:127.0.0.1"
 
   prestashop-dev17:
+    container_name: prestashop17dev
     image: prestashop/prestashop:1.7.3
     depends_on:
       - db-dev17
@@ -96,8 +100,8 @@ services:
       - "8018:80"
     extra_hosts:
     - "prestashop-dev.docker:127.0.0.1"
-
   prestashop-dev16:
+    container_name: prestashop16dev
     image: prestashop/prestashop:1.6.1.20
     depends_on:
     - db-dev16
@@ -122,8 +126,8 @@ services:
     - "8019:80"
     extra_hosts:
     - "prestashop-dev.docker:127.0.0.1"
-
   prestashop-dev15:
+    container_name: prestashop15dev
     image: prestashop/prestashop:1.5-5.5-apache
     depends_on:
       - db-dev15
@@ -148,48 +152,48 @@ services:
       - "8020:80"
     extra_hosts:
       - "prestashop-dev.docker:127.0.0.1"
-
   db-dev17:
+    container_name: prestashopDb17Dev
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=ps-dev17
     networks:
       - internal
-
   db-dev16:
+    container_name: prestashopDb16Dev
     image: mysql:5.6
     environment:
         - MYSQL_ROOT_PASSWORD=password
         - MYSQL_DATABASE=ps-dev16
     networks:
         - internal
-
   db-dev15:
+    container_name: prestashopDb15Dev
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=ps-dev15
     networks:
       - internal
-
   db-ps17:
+    container_name: prestashopDb17
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=prestashop17
     networks:
       - internal
-
   db-ps16:
+    container_name: prestashopDb16
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=prestashop16
     networks:
       - internal
-
   db-ps15:
+    container_name: prestashopDb15
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
@@ -198,6 +202,7 @@ services:
       - internal
 
   selenium:
+    container_name: prestashopSelenium
     image: selenium/standalone-chrome:3.7.1
     networks:
       - public

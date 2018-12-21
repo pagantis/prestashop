@@ -4,3 +4,4 @@
 /views/js/
 paylater*.zip
 config_es.xml
+.env

@@ -31,6 +31,11 @@ class Paylater extends PaymentModule
     public $bootstrap = true;
 
     /**
+     * @var _errors
+     */
+    public $_errors = array();
+
+    /**
      * Paylater constructor.
      *
      * Define the module main properties so that prestashop understands what are the module requirements
@@ -52,16 +57,35 @@ class Paylater extends PaymentModule
             'Instant, easy and effective financial tool for your customers'
         );
 
+        $continue = true;
+        if (Module::isInstalled($this->name)) {
+            $continue = $this->upgrade();
+        } else {
+            copy(__DIR__.'/.env.dist', __DIR__.'/.env');
+        }
+
+
         $sql_file = dirname(__FILE__).'/sql/install.sql';
         $this->loadSQLFile($sql_file);
 
+        try {
+            $envFile = new Dotenv\Dotenv(__DIR__);
+            $envFile->load();
+        } catch (\Exception $exception) {
+            $continue = true;
+            $this->context->controller->errors[] = 'Unable to read file '. __DIR__.'/.env Ensure that the file . \n'.
+                'exists and have the correct permissions';
+        }
+
+        if (!$continue) {
+            $this->context->controller->errors[] = 'Unable to write file '. __DIR__.'/.env PERMISSION DENIED. \n'.
+                'Please check the documentation at https://github.com/PagaMasTarde/prestashop';
+        }
         parent::__construct();
-        $dotenv = new Dotenv\Dotenv(__DIR__);
-        $dotenv->load();
     }
 
     /**
-     * Configure the database variables for paga+tarde payment method.
+     * Configure the variables for paga+tarde payment method.
      *
      * @return bool
      */
@@ -89,24 +113,9 @@ class Paylater extends PaymentModule
         Configuration::updateValue('pmt_simulator_is_enabled', 1);
         Configuration::updateValue('pmt_public_key', '');
         Configuration::updateValue('pmt_private_key', '');
-        Configuration::updateValue('pmt_title', $this->l(getenv('PMT_TITLE')));
-        Configuration::updateValue('pmt_url_ok', $this->context->link->getPageLink(
-            'order-confirmation',
-            null,
-            null
-        ));
-        Configuration::updateValue('pmt_url_ko', $this->context->link->getPageLink(
-            'order',
-            null,
-            null,
-            array('step'=>3)
-        ));
-        Configuration::updateValue('pmt_sim_product', getenv('PMT_SIMUMATOR_DISPLAY_TYPE'));
-        Configuration::updateValue('pmt_sim_product_hook', 'hookDisplayProductButtons');
-        Configuration::updateValue('pmt_display_min_amount', 1);
 
         return (parent::install()
-                && $this->registerHook('displayShoppingCart')/**/
+                && $this->registerHook('displayShoppingCart')
                 && $this->registerHook('payment')
                 && $this->registerHook('paymentOptions')
                 && $this->registerHook('displayRightColumn')
@@ -131,8 +140,73 @@ class Paylater extends PaymentModule
     }
 
     /**
-     * @param $sql_file
+     * Upgrade module and generate/update .env file if needed
+     */
+    public function upgrade()
+    {
+
+        if (!is_writable(__DIR__.'/.env')) {
+            return false;
+        }
+        $envFileVariables = $this->readEnvFileAsArray(__DIR__.'/.env');
+        $distFileVariables = $this->readEnvFileAsArray(__DIR__.'/.env.dist');
+        $distFile = file_get_contents(__DIR__.'/.env.dist');
+
+        $newEnvFileArr = array_merge($distFileVariables, $envFileVariables);
+        $newEnvFile = $this->replaceEnvFileValues($distFile, $newEnvFileArr);
+        file_put_contents(__DIR__.'/.env', $newEnvFile);
+        return true;
+    }
+
+    /**
+     * readEnvFileAsArray and return it as a key=>value array
      *
+     * @param $filePath
+     * @return array
+     */
+    protected function readEnvFileAsArray($filePath)
+    {
+        $envFileVariables = array();
+
+        if (file_exists($filePath)) {
+            // Read file into an array of lines with auto-detected line endings
+            $autodetect = ini_get('auto_detect_line_endings');
+            ini_set('auto_detect_line_endings', '1');
+            $lines = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            ini_set('auto_detect_line_endings', $autodetect);
+
+            foreach ($lines as $line) {
+                // Is a variable line ?
+                if (!(isset($line[0]) && $line[0] === '#') && strpos($line, '=') !== false) {
+                    list($name, $value) = array_map('trim', explode('=', $line, 2));
+                    $envFileVariables[$name] = $value;
+                }
+            }
+        }
+        return $envFileVariables;
+    }
+
+    /**
+     * @param $envFile
+     * @param $replacements
+     * @return mixed
+     */
+    protected function replaceEnvFileValues($envFile, $replacements)
+    {
+        foreach ($replacements as $key => $value) {
+            $from = strpos($envFile, $key);
+            if ($from !== false) {
+                $to = strpos($envFile, '#', $from);
+                $fromReplace = substr($envFile, $from, (($to - $from)-1));
+                $toReplace = $key . '=' . $value;
+                $envFile = str_replace($fromReplace, $toReplace, $envFile);
+            }
+        }
+        return $envFile;
+    }
+
+    /**
+     * @param $sql_file
      * @return bool
      */
     public function loadSQLFile($sql_file)
@@ -166,7 +240,7 @@ class Paylater extends PaymentModule
         $cart                       = $this->context->cart;
         $currency                   = new Currency($cart->id_currency);
         $availableCurrencies        = array('EUR');
-        $pmtDisplayMinAmount          = Configuration::get('pmt_display_min_amount');
+        $pmtDisplayMinAmount          = getenv('PMT_DISPLAY_MIN_AMOUNT');
         $pmtPublicKey               = Configuration::get('pmt_public_key');
         $pmtPrivateKey             = Configuration::get('pmt_private_key');
 
@@ -321,16 +395,6 @@ class Paylater extends PaymentModule
                             ),
                         )
                     ),
-                    array(
-                        'type' => 'text',
-                        'col' => 2,
-                        'desc' => $this->l('ex: 20'),
-                        'label' => $this->l('Minimum amount'),
-                        'name' => 'pmt_display_min_amount',
-                        'required' => false,
-                        'prefix' => '<i class="icon icon-bank"></i>',
-                        'suffix' => '€'
-                    ),
                 ),
                 'submit' => array(
                     'title' => $this->l('Save'),
@@ -382,39 +446,17 @@ class Paylater extends PaymentModule
         $settings = array();
         $settings['pmt_public_key'] = Configuration::get('pmt_public_key');
         $settings['pmt_private_key'] = Configuration::get('pmt_private_key');
-        $settings['pmt_title'] = $this->l(getenv('PMT_TITLE'));
-        $settings['pmt_display_min_amount'] = 0;
         $settingsKeys = array(
             'pmt_is_enabled',
             'pmt_public_key',
             'pmt_private_key',
             'pmt_simulator_is_enabled',
-            'pmt_title',
-            'pmt_sim_product',
-            'pmt_sim_product_hook',
-            'pmt_sim_quotes_start',
-            'pmt_sim_quotes_max',
-            'pmt_display_min_amount',
-            'pmt_url_ok',
-            'pmt_url_ko',
         );
 
         //Different Behavior depending on 1.6 or earlier
         if (Tools::isSubmit('submit'.$this->name)) {
             foreach ($settingsKeys as $key) {
                 switch ($key) {
-                    case 'pmt_display_min_amount':
-                        $value = Tools::getValue($key);
-                        if (!$value) {
-                            $value = 0;
-                        }
-                        if (!is_numeric($value)) {
-                            $error = $this->l('invalid value for MinAmount');
-                            break;
-                        }
-                        Configuration::updateValue($key, $value);
-                        $settings[$key] = $value;
-                        break;
                     case 'pmt_public_key':
                         $value = Tools::getValue($key);
                         if (!$value) {
@@ -520,16 +562,16 @@ class Paylater extends PaymentModule
      */
     public function productPageSimulatorDisplay($functionName)
     {
-        $productConfiguration = getenv('PMT_SIMUMATOR_DISPLAY_POSITION');
+        $productConfiguration = getenv('PMT_SIMULATOR_DISPLAY_POSITION');
         /** @var ProductCore $product */
         $product = new Product(Tools::getValue('id_product'));
         $amount = $product->getPublicPrice();
         $pmtPublicKey             = Configuration::get('pmt_public_key');
         $pmtSimulatorIsEnabled    = Configuration::get('pmt_simulator_is_enabled');
-        $pmtSimulatorProduct      = getenv('PMT_SIMUMATOR_DISPLAY_TYPE');
+        $pmtSimulatorProduct      = getenv('PMT_SIMULATOR_DISPLAY_TYPE');
         $pmtSimulatorQuotesStart  = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
         $pmtSimulatorQuotesMax    = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
-        $pmtDisplayMinAmount      = Configuration::get('pmt_display_min_amount');
+        $pmtDisplayMinAmount      = getenv('PMT_DISPLAY_MIN_AMOUNT');
 
         if ($functionName != $productConfiguration ||
             $amount <= 0 ||

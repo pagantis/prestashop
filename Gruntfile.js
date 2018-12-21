@@ -97,7 +97,7 @@ module.exports = function(grunt) {
                     {src: 'LICENSE.md', dest: 'paylater/'},
                     {src: 'CONTRIBUTORS.md', dest: 'paylater/'},
                     {src: 'README.md', dest: 'paylater/'},
-                    {src: '.env', dest: 'paylater/'}
+                    {src: '.env.dist', dest: 'paylater/'}
                 ]
             }
         }
