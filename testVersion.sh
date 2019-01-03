@@ -7,7 +7,7 @@ then
     docker-compose up -d prestashop$1
     docker-compose up -d selenium
     echo "Creating the prestashop $1"
-    sleep 30
+    sleep 40
     date
     docker-compose logs prestashop$1
     set -e
