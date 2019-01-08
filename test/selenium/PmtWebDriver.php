@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace Test\Selenium;
 
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverWait;
