@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace Test\Selenium;
 
 use Facebook\WebDriver\Interactions\WebDriverActions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
