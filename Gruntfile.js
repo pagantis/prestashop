@@ -3,12 +3,12 @@ module.exports = function(grunt) {
         shell: {
             rename: {
                 command:
-                'cp paylater.zip paylater-$(git rev-parse --abbrev-ref HEAD).zip \n'
+                    'cp paylater.zip paylater-$(git rev-parse --abbrev-ref HEAD).zip \n'
             },
             autoindex: {
                 command:
-                'php vendor/pagamastarde/autoindex/index.php . \n' +
-                'rm -rf vendor/pagamastarde/autoindex \n'
+                    'php vendor/pagamastarde/autoindex/index.php . \n' +
+                    'rm -rf vendor/pagamastarde/autoindex \n'
             },
             composerProd: {
                 command: 'rm -rf vendor && composer install --no-dev'
@@ -18,54 +18,56 @@ module.exports = function(grunt) {
             },
             runTestPrestashop17: {
                 command:
-                'chmod -R 777 vendor\n' +
-                'docker-compose down\n' +
-                'docker-compose up -d selenium\n' +
-                'docker-compose up -d prestashop17\n' +
-                'echo "Creating the prestashop17"\n' +
-                'sleep 90\n' +
-                'date\n' +
-                'docker-compose logs prestashop17\n' +
-                'set -e\n' +
-                'composer install && vendor/bin/phpunit --group prestashop17basic\n' +
-                'composer install && vendor/bin/phpunit --group prestashop17install\n' +
-                //'composer install && vendor/bin/phpunit --group prestashop17category\n' +
-                'composer install && vendor/bin/phpunit --group prestashop17register\n' +
-                'composer install && vendor/bin/phpunit --group prestashop17buy\n'
+                    'chmod -R 777 vendor\n' +
+                    'docker-compose down\n' +
+                    'docker-compose up -d selenium\n' +
+                    'docker-compose up -d prestashop17\n' +
+                    'echo "Creating the prestashop17"\n' +
+                    'sleep 100\n' +
+                    'date\n' +
+                    'docker-compose logs prestashop17\n' +
+                    'set -e\n' +
+                    'vendor/bin/phpunit --group prestashop17basic\n' +
+                    'vendor/bin/phpunit --group prestashop17install\n' +
+                    'vendor/bin/phpunit --group prestashop17register\n' +
+                    'vendor/bin/phpunit --group prestashop17buy\n' +
+                    'vendor/bin/phpunit --group prestashop17advanced\n' +
+                    'vendor/bin/phpunit --group prestashop17validate\n'
             },
             runTestPrestashop16: {
                 command:
-                'chmod -R 777 vendor\n' +
-                'docker-compose down\n' +
-                'docker-compose up -d selenium\n' +
-                'docker-compose up -d prestashop16\n' +
-                'echo "Creating the prestashop16"\n' +
-                'sleep  90\n' +
-                'date\n' +
-                'docker-compose logs prestashop16\n' +
-                'set -e\n' +
-                'composer install && vendor/bin/phpunit --group prestashop16basic\n' +
-                'composer install && vendor/bin/phpunit --group prestashop16install\n' +
-                //'composer install && vendor/bin/phpunit --group prestashop16category\n' +
-                'composer install && vendor/bin/phpunit --group prestashop16register\n' +
-                'composer install && vendor/bin/phpunit --group prestashop16buy\n'
+                    'chmod -R 777 vendor\n' +
+                    'docker-compose down\n' +
+                    'docker-compose up -d selenium\n' +
+                    'docker-compose up -d prestashop16\n' +
+                    'echo "Creating the prestashop16"\n' +
+                    'sleep  90\n' +
+                    'date\n' +
+                    'docker-compose logs prestashop16\n' +
+                    'set -e\n' +
+                    'vendor/bin/phpunit --group prestashop16basic\n' +
+                    'vendor/bin/phpunit --group prestashop16install\n' +
+                    'vendor/bin/phpunit --group prestashop16register\n' +
+                    'vendor/bin/phpunit --group prestashop16buy\n' +
+                    'vendor/bin/phpunit --group prestashop16advanced\n' +
+                    'vendor/bin/phpunit --group prestashop16validate\n'
             },
             runTestPrestashop15: {
                 command:
-                'chmod -R 777 vendor\n' +
-                'docker-compose down\n' +
-                'docker-compose up -d selenium\n' +
-                'docker-compose up -d prestashop15\n' +
-                'echo "Creating the prestashop15"\n' +
-                'sleep 90\n' +
-                'date\n' +
-                'docker-compose logs prestashop15\n' +
-                'set -e\n' +
-                'composer install && vendor/bin/phpunit --group prestashop15basic\n' +
-                'composer install && vendor/bin/phpunit --group prestashop15install\n' +
-                //'composer install && vendor/bin/phpunit --group prestashop15category\n' +
-                'composer install && vendor/bin/phpunit --group prestashop15register\n' +
-                'composer install && vendor/bin/phpunit --group prestashop15buy\n'
+                    'chmod -R 777 vendor\n' +
+                    'docker-compose down\n' +
+                    'docker-compose up -d selenium\n' +
+                    'docker-compose up -d prestashop15\n' +
+                    'echo "Creating the prestashop15"\n' +
+                    'sleep 90\n' +
+                    'date\n' +
+                    'docker-compose logs prestashop15\n' +
+                    'set -e\n' +
+                    'vendor/bin/phpunit --group prestashop15basic\n' +
+                    'vendor/bin/phpunit --group prestashop15install\n' +
+                    'vendor/bin/phpunit --group prestashop15register\n' +
+                    'vendor/bin/phpunit --group prestashop15buy\n' +
+                    'vendor/bin/phpunit --group prestashop15advanced\n'
             }
         },
         compress: {

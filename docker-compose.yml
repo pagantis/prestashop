@@ -2,13 +2,14 @@ version: "3.5"
 
 services:
   prestashop15:
+    container_name: prestashop15
     image: prestashop/prestashop:1.5-5.5-apache
     depends_on:
       - db-ps15
     environment:
       - PS_DEV_MODE=0
       - PS_COUNTRY=ES
-      - PS_DOMAIN=prestashop15
+      - PS_DOMAIN=prestashop15-test.docker:8015
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
@@ -20,18 +21,19 @@ services:
     networks:
       - internal
       - public
-    volumes:
-      - ./:/var/www/html/modules/paylater
     ports:
       - "8015:80"
+    extra_hosts:
+      - "prestashop15-test.docker:127.0.0.1"
   prestashop16:
-    image: prestashop/prestashop:1.6
+    container_name: prestashop16
+    image: prestashop/prestashop:1.6.1.20
     depends_on:
       - db-ps16
     environment:
       - PS_DEV_MODE=0
       - PS_COUNTRY=ES
-      - PS_DOMAIN=prestashop16
+      - PS_DOMAIN=prestashop16-test.docker:8016
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
@@ -43,18 +45,19 @@ services:
     networks:
       - internal
       - public
-    volumes:
-      - ./:/var/www/html/modules/paylater
     ports:
       - "8016:80"
+    extra_hosts:
+      - "prestashop16-test.docker:127.0.0.1"
   prestashop17:
+    container_name: prestashop17
     image: prestashop/prestashop:1.7.3
     depends_on:
       - db-ps17
     environment:
       - PS_DEV_MODE=0
       - PS_COUNTRY=ES
-      - PS_DOMAIN=prestashop17
+      - PS_DOMAIN=prestashop17-test.docker:8017
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
@@ -66,59 +69,131 @@ services:
     networks:
       - internal
       - public
-    volumes:
-      - ./:/var/www/html/modules/paylater
     ports:
       - "8017:80"
-  prestashop-dev:
-    image: prestashop/prestashop:1.6
+    extra_hosts:
+      - "prestashop17-test.docker:127.0.0.1"
+
+  prestashop-dev17:
+    container_name: prestashop17dev
+    image: prestashop/prestashop:1.7.3
     depends_on:
-      - db-dev
+      - db-dev17
     environment:
       - PS_DEV_MODE=1
       - PS_COUNTRY=ES
-      - PS_DOMAIN=prestashop-dev:8018
+      - PS_DOMAIN=prestashop-dev.docker:8018
       - PS_FOLDER_ADMIN=adminTest
       - PS_FOLDER_INSTALL=installTest
       - PS_HANDLE_DYNAMIC_DOMAIN=1
       - PS_INSTALL_AUTO=1
-      - DB_SERVER=db-dev
-      - DB_NAME=prestashop-dev
+      - DB_SERVER=db-dev17
+      - DB_NAME=ps-dev17
       - DB_PREFIX=ps_
       - DB_PASSWD=password
     networks:
       - internal
       - public
-      - shopper
     volumes:
       - ./:/var/www/html/modules/paylater
     ports:
       - "8018:80"
-  db-dev:
+    extra_hosts:
+      - "prestashop-dev.docker:127.0.0.1"
+  prestashop-dev16:
+    container_name: prestashop16dev
+    image: prestashop/prestashop:1.6.1.20
+    depends_on:
+      - db-dev16
+    environment:
+      - PS_DEV_MODE=1
+      - PS_COUNTRY=ES
+      - PS_DOMAIN=prestashop-dev.docker:8019
+      - PS_FOLDER_ADMIN=adminTest
+      - PS_FOLDER_INSTALL=installTest
+      - PS_HANDLE_DYNAMIC_DOMAIN=1
+      - PS_INSTALL_AUTO=1
+      - DB_SERVER=db-dev16
+      - DB_NAME=ps-dev16
+      - DB_PREFIX=ps_
+      - DB_PASSWD=password
+    networks:
+      - internal
+      - public
+    volumes:
+      - ./:/var/www/html/modules/paylater
+    ports:
+      - "8019:80"
+    extra_hosts:
+      - "prestashop-dev.docker:127.0.0.1"
+  prestashop-dev15:
+    container_name: prestashop15dev
+    image: prestashop/prestashop:1.5-5.5-apache
+    depends_on:
+      - db-dev15
+    environment:
+      - PS_DEV_MODE=1
+      - PS_COUNTRY=ES
+      - PS_DOMAIN=prestashop-dev.docker:8020
+      - PS_FOLDER_ADMIN=adminTest
+      - PS_FOLDER_INSTALL=installTest
+      - PS_HANDLE_DYNAMIC_DOMAIN=1
+      - PS_INSTALL_AUTO=1
+      - DB_SERVER=db-dev15
+      - DB_NAME=ps-dev15
+      - DB_PREFIX=ps_
+      - DB_PASSWD=password
+    networks:
+      - internal
+      - public
+    volumes:
+      - ./:/var/www/html/modules/paylater
+    ports:
+      - "8020:80"
+    extra_hosts:
+      - "prestashop-dev.docker:127.0.0.1"
+  db-dev17:
+    container_name: prestashopDb17Dev
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=prestashop-dev
+      - MYSQL_DATABASE=ps-dev17
     networks:
       - internal
-
+  db-dev16:
+    container_name: prestashopDb16Dev
+    image: mysql:5.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=ps-dev16
+    networks:
+      - internal
+  db-dev15:
+    container_name: prestashopDb15Dev
+    image: mysql:5.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=ps-dev15
+    networks:
+      - internal
   db-ps17:
+    container_name: prestashopDb17
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=prestashop17
     networks:
       - internal
-
   db-ps16:
+    container_name: prestashopDb16
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=prestashop16
     networks:
       - internal
-
   db-ps15:
+    container_name: prestashopDb15
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
@@ -127,14 +202,18 @@ services:
       - internal
 
   selenium:
-    image: selenium/standalone-chrome
+    container_name: prestashopSelenium
+    image: selenium/standalone-chrome:3.7.1
     networks:
       - public
     ports:
       - 4444:4444
+    extra_hosts:
+      - "prestashop15-test.docker:${DOCKERHOST}"
+      - "prestashop16-test.docker:${DOCKERHOST}"
+      - "prestashop17-test.docker:${DOCKERHOST}"
+      - "prestashop-dev.docker:${DOCKERHOST}"
 
 networks:
-    internal:
-    public:
-    shopper:
-      name: shopper-network
+  internal:
+  public:
