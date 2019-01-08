@@ -283,6 +283,7 @@ class Paylater extends PaymentModule
         $link                       = $this->context->link;
         $pmtPublicKey               = Configuration::get('pmt_public_key');
         $pmtSimulatorIsEnabled      = Configuration::get('pmt_simulator_is_enabled');
+        $pmtIsEnabled               = Configuration::get('pmt_is_enabled');
         $pmtSimulatorQuotesStart    = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
         $pmtSimulatorQuotesMax      = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
         $pmtTitle                   = $this->l(getenv('PMT_TITLE'));
@@ -294,6 +295,7 @@ class Paylater extends PaymentModule
             'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
             'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
             'pmtSimulatorIsEnabled' => $pmtSimulatorIsEnabled,
+            'pmtIsEnabled'          => $pmtIsEnabled,
             'pmtTitle'              => $pmtTitle,
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment'),
             'ps_version'            => str_replace('.', '-', substr(_PS_VERSION_, 0, 3)),
@@ -522,7 +524,8 @@ class Paylater extends PaymentModule
         $orderTotal                 = $cart->getOrderTotal();
         $link                       = $this->context->link;
         $pmtPublicKey               = Configuration::get('pmt_public_key');
-        $pmtSimulatorIsEnabled    = Configuration::get('pmt_simulator_is_enabled');
+        $pmtSimulatorIsEnabled      = Configuration::get('pmt_simulator_is_enabled');
+        $pmtIsEnabled               = Configuration::get('pmt_is_enabled');
         $pmtSimulatorQuotesStart    = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
         $pmtSimulatorQuotesMax      = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
         $pmtTitle                   = $this->l(getenv('PMT_TITLE'));
@@ -533,6 +536,7 @@ class Paylater extends PaymentModule
             'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
             'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
             'pmtSimulatorIsEnabled' => $pmtSimulatorIsEnabled,
+            'pmtIsEnabled'          => $pmtIsEnabled,
             'pmtTitle'              => $pmtTitle,
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment'),
             'ps_version'            => str_replace('.', '-', substr(_PS_VERSION_, 0, 3)),
@@ -568,6 +572,7 @@ class Paylater extends PaymentModule
         $amount = $product->getPublicPrice();
         $pmtPublicKey             = Configuration::get('pmt_public_key');
         $pmtSimulatorIsEnabled    = Configuration::get('pmt_simulator_is_enabled');
+        $pmtIsEnabled             = Configuration::get('pmt_is_enabled');
         $pmtSimulatorProduct      = getenv('PMT_SIMULATOR_DISPLAY_TYPE');
         $pmtSimulatorQuotesStart  = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
         $pmtSimulatorQuotesMax    = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
@@ -584,7 +589,8 @@ class Paylater extends PaymentModule
         $this->context->smarty->assign(array(
             'amount'                => $amount,
             'pmtPublicKey'          => $pmtPublicKey,
-            'pmtSimulatorIsEnabled'   => $pmtSimulatorIsEnabled,
+            'pmtSimulatorIsEnabled' => $pmtSimulatorIsEnabled,
+            'pmtIsEnabled'          => $pmtIsEnabled,
             'pmtSimulatorProduct'   => $pmtSimulatorProduct,
             'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
             'pmtQuotesMax'          => $pmtSimulatorQuotesMax,

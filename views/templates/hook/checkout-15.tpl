@@ -5,6 +5,7 @@
  * @copyright 2015-2016 Paga+Tarde
  * @license   proprietary
  *}
+{if $pmtIsEnabled}
 <div class="row">
     <div class="col-xs-12">
         <p class="payment_module">
@@ -57,3 +58,4 @@
         }
     </script>
 </div>
+{/if}
