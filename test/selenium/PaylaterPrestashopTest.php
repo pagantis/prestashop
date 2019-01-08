@@ -9,6 +9,7 @@ use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use PHPUnit\Framework\TestCase;
+use Test\Selenium\PmtWebDriver as aaa;
 
 /**
  * Class PaylaterPrestashopTest
@@ -53,7 +54,7 @@ abstract class PaylaterPrestashopTest extends TestCase
      */
     protected function setUp()
     {
-        $this->webDriver = PmtWebDriver::create(
+        $this->webDriver = RemoteWebDriver::create(
             'http://localhost:4444/wd/hub',
             DesiredCapabilities::chrome(),
             120000,
