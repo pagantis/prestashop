@@ -60,6 +60,7 @@ class PaylaterPs15InstallTest extends PaylaterPrestashopTest
         $fileInput->setFileDetector(new LocalFileDetector());
         $fileInput->sendKeys(__DIR__.'/../../../paylater.zip');
         $fileInput->submit();
+        sleep(5);
         $validatorSearch = WebDriverBy::id('anchorPaylater');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);

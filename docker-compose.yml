@@ -25,6 +25,7 @@ services:
       - "8015:80"
     extra_hosts:
       - "prestashop15-test.docker:127.0.0.1"
+
   prestashop16:
     container_name: prestashop16
     image: prestashop/prestashop:1.6.1.20
@@ -49,6 +50,7 @@ services:
       - "8016:80"
     extra_hosts:
       - "prestashop16-test.docker:127.0.0.1"
+
   prestashop17:
     container_name: prestashop17
     image: prestashop/prestashop:1.7.3
