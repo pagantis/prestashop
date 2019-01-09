@@ -64,9 +64,10 @@ class PaylaterPs17InstallTest extends PaylaterPrestashopTest
         $fileInput = $this->webDriver->findElement($fileInputSearch);
         $fileInput->setFileDetector(new LocalFileDetector());
         $fileInput->sendKeys(__DIR__.'/../../../paylater.zip');
+        sleep(5);
         $validatorSearch = WebDriverBy::className('module-import-success-msg');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
-        $this->webDriver->wait(180)->until($condition);
+        $this->webDriver->wait(120, 250)->until($condition);
         $this->assertTrue((bool) $condition);
 
         $this->findByClass('module-import-success-configure')->click();

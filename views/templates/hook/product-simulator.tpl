@@ -27,7 +27,13 @@
     {
         setTimeout(
             function() {
-                var newPrice = document.getElementById("our_price_display").innerText;
+                var newPrice = '';
+                var newPriceDOM = document.getElementById("our_price_display");
+                if (newPriceDOM != null) {
+                    newPrice = newPrice.innerText;
+                } else {
+                    newPrice = document.querySelector(".current-price span").innerText;
+                }
                 var currentPrice = document.getElementsByClassName('PmtSimulator')[0].getAttribute('data-pmt-amount');
 
                 if (newPrice != currentPrice) {
@@ -41,8 +47,14 @@
     }
     changePrice(0); //Load the screen price into simulator to avoid the reload event
     window.onload = function() {
-        var productAttributeModifiers = document.getElementById('attributes').querySelectorAll('input, select, a');
+        var productAttributeModifiers = {};
+        var productAttributeModifiersDOM = document.getElementById('attributes');
         //<select> for size, <a> for color/texture, <input>for checkbox
+        if (productAttributeModifiersDOM != null) {
+            productAttributeModifiers = productAttributeModifiersDOM.querySelectorAll('input, select, a');
+        } else {
+            productAttributeModifiers = document.getElementsByClassName('product-variants')[0].querySelectorAll('input, select, a');
+        }
         productAttributeModifiers.forEach(function(modifier, index) {
             var eventType = (modifier.tagName == 'SELECT') ? 'change':'click';
             modifier.addEventListener(eventType, changePrice);
