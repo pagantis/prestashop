@@ -1,9 +1,15 @@
 <?php
 
-require_once('AbstractController.php');
-
 use PagaMasTarde\OrdersApiClient\Client as PmtClient;
 use PagaMasTarde\OrdersApiClient\Model\Order as PmtModelOrder;
+use PagaMasTarde\ModuleUtils\Exception\AmountMismatchException;
+use PagaMasTarde\ModuleUtils\Exception\ConcurrencyException;
+use PagaMasTarde\ModuleUtils\Exception\MerchantOrderNotFoundException;
+use PagaMasTarde\ModuleUtils\Exception\NoIdentificationException;
+use PagaMasTarde\ModuleUtils\Exception\NoOrderFoundException;
+use PagaMasTarde\ModuleUtils\Exception\NoQuoteFoundException;
+use PagaMasTarde\ModuleUtils\Exception\UnknownException;
+use PagaMasTarde\ModuleUtils\Exception\WrongStatusException;
 
 /**
  * Class PaylaterNotifyModuleFrontController
@@ -49,6 +55,8 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function postProcess()
     {
+        require_once('AbstractController.php');
+
         try {
             $this->checkConcurrency();
             $this->getMerchantOrder();
@@ -59,14 +67,14 @@ class PaylaterNotifyModuleFrontController extends AbstractController
             $this->validateAmount();
             $this->processMerchantOrder();
         } catch (\Exception $exception) {
-            return $this->cancelProcess($exception);
+            return $this->cancelProcess();
         }
 
         try {
             $this->confirmPmtOrder();
         } catch (\Exception $exception) {
             $this->rollbackMerchantOrder();
-            return $this->cancelProcess($exception);
+            return $this->cancelProcess();
         }
 
         try {
@@ -105,17 +113,17 @@ class PaylaterNotifyModuleFrontController extends AbstractController
                 'secureKey' => Tools::getValue('key'),
             );
         } catch (\Exception $exception) {
-            throw new \Exception(self::CC_NO_CONFIG, 500);
+            throw new UnknownException(self::CC_NO_CONFIG);
         }
 
         $this->merchantOrderId = Tools::getValue('id_cart');
         if ($this->merchantOrderId == '') {
-            throw new \Exception(self::CC_NO_MERCHANT_ORDERID, 404);
+            throw new NoQuoteFoundException();
         }
 
 
         if (!($this->config['secureKey'] && $this->merchantOrderId && Module::isEnabled(self::PMT_CODE))) {
-            throw new \Exception(self::CC_MALFORMED, 500);
+            throw new UnknownException(self::CC_MALFORMED);
         }
     }
 
@@ -126,16 +134,9 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function checkConcurrency()
     {
-        try {
-            $this->prepareVariables();
-            $this->unblockConcurrency();
-            $this->blockConcurrency($this->merchantOrderId);
-        } catch (\Exception $exception) {
-            $this->statusCode = 429;
-            $this->errorMessage = self::CC_ERR_MSG;
-            $this->errorDetail = 'Code: '.$exception->getCode().', Description: '.$exception->getMessage();
-            throw new \Exception();
-        }
+        $this->prepareVariables();
+        $this->unblockConcurrency();
+        $this->blockConcurrency($this->merchantOrderId);
     }
 
     /**
@@ -152,10 +153,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
                 throw new \Exception(self::GMO_CART_NOT_LOADED, 500);
             }
         } catch (\Exception $exception) {
-            $this->statusCode = 404;
-            $this->errorMessage = self::GMO_ERR_MSG;
-            $this->errorDetail = 'Code: '.$exception->getCode().', Description: '.$exception->getMessage();
-            throw new \Exception();
+            throw new MerchantOrderNotFoundException();
         }
     }
 
@@ -172,13 +170,10 @@ class PaylaterNotifyModuleFrontController extends AbstractController
             );
 
             if (is_null($this->pmtOrderId)) {
-                throw new \Exception(self::GPOI_NO_ORDERID, 404);
+                throw new NoIdentificationException();
             }
         } catch (\Exception $exception) {
-            $this->statusCode = 404;
-            $this->errorMessage = self::GPOI_ERR_MSG;
-            $this->errorDetail = 'Code: '.$exception->getCode().', Description: '.$exception->getMessage();
-            throw new \Exception();
+            throw new NoIdentificationException();
         }
     }
 
@@ -189,17 +184,10 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     private function getPmtOrder()
     {
-        try {
-            $this->orderClient = new PmtClient($this->config['publicKey'], $this->config['privateKey']);
-            $this->pmtOrder = $this->orderClient->getOrder($this->pmtOrderId);
-            if (!($this->pmtOrder instanceof PmtModelOrder)) {
-                throw new \Exception(self::GPO_ERR_TYPEOF, 500);
-            }
-        } catch (\Exception $exception) {
-            $this->statusCode = 400;
-            $this->errorMessage = self::GPO_ERR_MSG;
-            $this->errorDetail = 'Code: '.$exception->getCode().', Description: '.$exception->getMessage();
-            throw new \Exception();
+        $this->orderClient = new PmtClient($this->config['publicKey'], $this->config['privateKey']);
+        $this->pmtOrder = $this->orderClient->getOrder($this->pmtOrderId);
+        if (!($this->pmtOrder instanceof PmtModelOrder)) {
+            throw new NoOrderFoundException();
         }
     }
 
@@ -210,15 +198,12 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function checkOrderStatus()
     {
-        try {
-            if ($this->pmtOrder->getStatus() !== PmtModelOrder::STATUS_AUTHORIZED) {
-                throw new \Exception(self::COS_WRONG_STATUS, 403);
+        if ($this->pmtOrder->getStatus() !== PmtModelOrder::STATUS_AUTHORIZED) {
+            $status = '-';
+            if ($this->pmtOrder instanceof \PagaMasTarde\OrdersApiClient\Model\Order) {
+                $status = $this->pmtOrder->getStatus();
             }
-        } catch (\Exception $exception) {
-            $this->statusCode = 403;
-            $this->errorMessage = self::COS_ERR_MSG;
-            $this->errorDetail = 'Code: '.$exception->getCode().', Description: '.$exception->getMessage();
-            throw new \Exception();
+            throw new WrongStatusException($status);
         }
     }
 
@@ -229,15 +214,8 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function checkMerchantOrderStatus()
     {
-        try {
-            if ($this->merchantOrder->orderExists() !== false) {
-                throw new \Exception(self::CMOS_WRONG_CURRENT_STATUS, 409);
-            }
-        } catch (\Exception $exception) {
-            $this->statusCode = 409;
-            $this->errorMessage = self::CMOS_ERR_MSG;
-            $this->errorDetail = 'Code: '.$exception->getCode().', Description: '.$exception->getMessage();
-            throw new \Exception();
+        if ($this->merchantOrder->orderExists() !== false) {
+            throw new WrongStatusException('already_processed');
         }
     }
 
@@ -248,16 +226,10 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function validateAmount()
     {
-        try {
-            $totalAmount = $this->pmtOrder->getShoppingCart()->getTotalAmount();
-            if ($totalAmount != (int)((string) (100 * $this->merchantOrder->getOrderTotal(true)))) {
-                throw new \Exception(self::VA_WRONG_AMOUNT, 409);
-            }
-        } catch (\Exception $exception) {
-            $this->statusCode = 409;
-            $this->errorMessage = self::VA_ERR_MSG;
-            $this->errorDetail = 'Code: '.$exception->getCode().', Description: '.$exception->getMessage();
-            throw new \Exception();
+        $totalAmount = $this->pmtOrder->getShoppingCart()->getTotalAmount();
+        $merchantAmount = (int)((string) (100 * $this->merchantOrder->getOrderTotal(true)));
+        if ($totalAmount != $merchantAmount) {
+            throw new AmountMismatchException($totalAmount, $merchantAmount);
         }
     }
 
@@ -281,10 +253,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
                 $this->config['secureKey']
             );
         } catch (\Exception $exception) {
-            $this->statusCode = 500;
-            $this->errorMessage = self::PMO_ERR_MSG;
-            $this->errorDetail = 'Code: '.$exception->getCode().', Description: '.$exception->getMessage();
-            throw new \Exception();
+            throw new UnknownException($exception->getMessage());
         }
     }
 
@@ -298,21 +267,18 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         try {
             $this->orderClient->confirmOrder($this->pmtOrderId);
         } catch (\Exception $exception) {
-            $this->statusCode = 500;
-            $this->errorMessage = self::CPO_ERR_MSG;
-            $this->errorDetail = 'Code: '.$exception->getCode().', Description: '.$exception->getMessage();
-            throw new \Exception();
+            throw new UnknownException($exception->getMessage());
         }
     }
 
     /**
-     * Leave the merchant order as it was peviously
+     * Leave the merchant order as it was previously
      *
      * @throws Exception
      */
     public function rollbackMerchantOrder()
     {
-        // Do nothing.
+        // Do nothing because the order is created only when the purchase was successfully
     }
 
 
@@ -324,7 +290,11 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     protected function blockConcurrency($orderId)
     {
-        Db::getInstance()->insert('pmt_cart_process', array('id' => $orderId, 'timestamp' => (time())));
+        try {
+            Db::getInstance()->insert('pmt_cart_process', array('id' => $orderId, 'timestamp' => (time())));
+        } catch (\Exception $exception) {
+            throw new ConcurrencyException();
+        }
     }
 
     /**
@@ -334,19 +304,21 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     protected function unblockConcurrency()
     {
-        Db::getInstance()->delete('pmt_cart_process', 'timestamp < ' . (time() - 6));
+        try {
+            Db::getInstance()->delete('pmt_cart_process', 'timestamp < ' . (time() - 6));
+        } catch (\Exception $exception) {
+            throw new ConcurrencyException();
+        }
     }
 
     /**
      * Do all the necessary actions to cancel the confirmation process in case of error
      * 1. Unblock concurrency
-     * 3. Save log
+     * 2. Save log
      *
-     * @param Exception $exception
      * @return Mage_Core_Controller_Response_Http|Mage_Core_Controller_Varien_Action
-     * @throws Exception
      */
-    public function cancelProcess(\Exception $exception)
+    public function cancelProcess()
     {
         if ($this->merchantOrder) {
             $id = (!is_null($this->pmtOrder))?$this->pmtOrder->getId():null;
