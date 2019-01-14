@@ -140,16 +140,16 @@
         },
         {
             "name": "pagamastarde/orders-api-client",
-            "version": "v1.0.15",
+            "version": "v1.0.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PagaMasTarde/ordersApiClient.git",
-                "reference": "8daca8f3be7fd32fbbbe77fc8cb7ab388e641c59"
+                "reference": "94ee56ac2f744d47d29c5ffbb4fe8e1a897b9e61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/ordersApiClient/zipball/8daca8f3be7fd32fbbbe77fc8cb7ab388e641c59",
-                "reference": "8daca8f3be7fd32fbbbe77fc8cb7ab388e641c59",
+                "url": "https://api.github.com/repos/PagaMasTarde/ordersApiClient/zipball/94ee56ac2f744d47d29c5ffbb4fe8e1a897b9e61",
+                "reference": "94ee56ac2f744d47d29c5ffbb4fe8e1a897b9e61",
                 "shasum": ""
             },
             "require": {
@@ -178,20 +178,20 @@
                 }
             ],
             "description": "PagaMasTarde Orders Api Client in PHP. Use the api with simple methods and using OOP.",
-            "time": "2018-11-05T15:50:44+00:00"
+            "time": "2018-12-17T11:25:27+00:00"
         },
         {
             "name": "pagamastarde/selenium-form-utils",
-            "version": "v1.0.2",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PagaMasTarde/selenium-form-utils.git",
-                "reference": "1f2dd08cc42eb1464923504adb9b0dd2620aae17"
+                "reference": "4e6ecf61afd9eb0f099f67b738a29528277c8903"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/selenium-form-utils/zipball/1f2dd08cc42eb1464923504adb9b0dd2620aae17",
-                "reference": "1f2dd08cc42eb1464923504adb9b0dd2620aae17",
+                "url": "https://api.github.com/repos/PagaMasTarde/selenium-form-utils/zipball/4e6ecf61afd9eb0f099f67b738a29528277c8903",
+                "reference": "4e6ecf61afd9eb0f099f67b738a29528277c8903",
                 "shasum": ""
             },
             "require": {
@@ -221,7 +221,7 @@
                 }
             ],
             "description": "Paga+Tarde PHP Library. Selenium helper to end a test purchase. Helper to test the payment validation and redirection",
-            "time": "2018-08-16T08:53:15+00:00"
+            "time": "2018-08-27T08:26:26+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -1359,26 +1359,35 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.44",
+            "version": "v3.4.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "fbf876678e29dc634430dcf0096e216eb0004467"
+                "reference": "554a59a1ccbaac238a89b19c8e551a556fd0e2ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/fbf876678e29dc634430dcf0096e216eb0004467",
-                "reference": "fbf876678e29dc634430dcf0096e216eb0004467",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/554a59a1ccbaac238a89b19c8e551a556fd0e2ea",
+                "reference": "554a59a1ccbaac238a89b19c8e551a556fd0e2ea",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.9",
+                "php": "^5.5.9|>=7.0.8",
                 "symfony/polyfill-ctype": "~1.8"
+            },
+            "conflict": {
+                "symfony/console": "<3.4"
+            },
+            "require-dev": {
+                "symfony/console": "~3.4|~4.0"
+            },
+            "suggest": {
+                "symfony/console": "For validating YAML files using the lint command"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "3.4-dev"
                 }
             },
             "autoload": {
@@ -1405,7 +1414,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2018-07-26T09:03:18+00:00"
+            "time": "2019-01-01T13:45:19+00:00"
         }
     ],
     "aliases": [],
