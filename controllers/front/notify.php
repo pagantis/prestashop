@@ -1,5 +1,7 @@
 <?php
 
+require_once('AbstractController.php');
+
 use PagaMasTarde\OrdersApiClient\Client as PmtClient;
 use PagaMasTarde\OrdersApiClient\Model\Order as PmtModelOrder;
 use PagaMasTarde\ModuleUtils\Exception\AmountMismatchException;
@@ -48,6 +50,11 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     protected $config;
 
     /**
+     * @var Object $jsonResponse
+     */
+    protected $jsonResponse;
+
+    /**
      * Main action of the controller. Dispatch the Notify process
      *
      * @return Mage_Core_Controller_Response_Http|Mage_Core_Controller_Varien_Action
@@ -55,8 +62,6 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function postProcess()
     {
-        require_once('AbstractController.php');
-
         try {
             $this->checkConcurrency();
             $this->getMerchantOrder();
@@ -67,13 +72,28 @@ class PaylaterNotifyModuleFrontController extends AbstractController
             $this->validateAmount();
             $this->processMerchantOrder();
         } catch (\Exception $exception) {
+            $this->jsonResponse = new JsonExceptionResponse();
+            $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
+            $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
+            $this->jsonResponse->setException($exception);
+            $response = $this->jsonResponse->toJson();
             return $this->cancelProcess();
         }
 
         try {
-            $this->confirmPmtOrder();
+            if (!isset($response)) {
+                $this->jsonResponse = new JsonSuccessResponse();
+                $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
+                $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
+                $this->confirmPmtOrder();
+            }
         } catch (\Exception $exception) {
             $this->rollbackMerchantOrder();
+            $this->jsonResponse = new JsonExceptionResponse();
+            $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
+            $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
+            $this->jsonResponse->setException($exception);
+            $this->jsonResponse->toJson();
             return $this->cancelProcess();
         }
 
@@ -358,7 +378,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     public function finishProcess($error = true)
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            return $this->response();
+            $this->jsonResponse->printResponse();
         }
 
         $parameters = array(

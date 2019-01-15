@@ -32,8 +32,6 @@ class PaylaterLogModuleFrontController extends ModuleFrontController
             }
         }
 
-
-
         $this->jsonResponse();
     }
 

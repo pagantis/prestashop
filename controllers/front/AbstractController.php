@@ -1,5 +1,7 @@
 <?php
 
+use PagaMasTarde\ModuleUtils\Model\Log\LogEntry;
+
 /**
  * Class AbstractController
  */
@@ -77,35 +79,35 @@ abstract class AbstractController extends ModuleFrontController
      * @param array $extraOutput
      * @return mixed
      */
-    public function response($extraOutput = array())
-    {
-        $response = $this->getResponse();
-
-        $output = array();
-        if (!empty($this->errorMessage)) {
-            $output['errorMessage'] = $this->errorMessage;
-        }
-        if (!empty($this->errorDetail)) {
-            $output['errorDetail'] = $this->errorDetail;
-        }
-        if (count($extraOutput)) {
-            $output = array_merge($output, $extraOutput);
-        }
-        if ($this->format == 'json') {
-            $output = json_encode($output);
-            $response->setHeader('Content-Type', 'application/json');
-            $response->setHeader('Content-Length', strlen($output));
-        }
-
-        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-        $response->setHeader($protocol, $this->statusCode, $this->getHttpStatusCode($this->statusCode));
-        $response->setBody($output);
-
-        foreach ($this->headers as $key => $value) {
-            $response->setHeader($key, $value);
-        }
-        return $response;
-    }
+//    public function response($extraOutput = array())
+//    {
+//        $response = $this->getResponse();
+//
+//        $output = array();
+//        if (!empty($this->errorMessage)) {
+//            $output['errorMessage'] = $this->errorMessage;
+//        }
+//        if (!empty($this->errorDetail)) {
+//            $output['errorDetail'] = $this->errorDetail;
+//        }
+//        if (count($extraOutput)) {
+//            $output = array_merge($output, $extraOutput);
+//        }
+//        if ($this->format == 'json') {
+//            $output = json_encode($output);
+//            $response->setHeader('Content-Type', 'application/json');
+//            $response->setHeader('Content-Length', strlen($output));
+//        }
+//
+//        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+//        $response->setHeader($protocol, $this->statusCode, $this->getHttpStatusCode($this->statusCode));
+//        $response->setBody($output);
+//
+//        foreach ($this->headers as $key => $value) {
+//            $response->setHeader($key, $value);
+//        }
+//        return $response;
+//    }
 
     /**
      * Configure redirection

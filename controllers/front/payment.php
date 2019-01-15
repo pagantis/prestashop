@@ -1,5 +1,7 @@
 <?php
 
+require_once('AbstractController.php');
+
 /**
  * Class PaylaterRedirectModuleFrontController
  */
@@ -202,11 +204,16 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
                 ->setShoppingCart($orderShoppingCart)
                 ->setUser($orderUser)
             ;
-        } catch (\PagaMasTarde\OrdersApiClient\Exception\ClientException $clientException) {
-            $this->addLog($customer, $clientException);
+        } catch (\Exception $exception) {
+            $this->saveLog(
+                array(
+                    'exception' => 'Exception for user ' . $customer->email . ' : ' . $exception->getMessage()
+                )
+            );
             Tools::redirect($cancelUrl);
         }
 
+        $url ='';
         try {
             $orderClient = new \PagaMasTarde\OrdersApiClient\Client(
                 $paylaterPublicKey,
@@ -228,7 +235,11 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
                 throw new \Exception('Order not created');
             }
         } catch (\Exception $exception) {
-            $this->addLog($customer, $exception);
+            $this->saveLog(
+                array(
+                    'exception' => 'Exception for user ' . $customer->email . ' : ' . $exception->getMessage()
+                )
+            );
             Tools::redirect($cancelUrl);
         }
 
@@ -247,6 +258,11 @@ class PaylaterPaymentModuleFrontController extends ModuleFrontController
                     $this->setTemplate('module:paylater/views/templates/front/payment-17.tpl');
                 }
             } catch (\Exception $exception) {
+                $this->saveLog(
+                    array(
+                        'exception' => 'Exception for user ' . $customer->email . ' : ' . $exception->getMessage()
+                    )
+                );
                 Tools::redirect($url);
             }
         }
