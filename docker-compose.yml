@@ -25,6 +25,7 @@ services:
       - "8015:80"
     extra_hosts:
       - "prestashop15-test.docker:127.0.0.1"
+
   prestashop16:
     container_name: prestashop16
     image: prestashop/prestashop:1.6.1.20
@@ -49,6 +50,7 @@ services:
       - "8016:80"
     extra_hosts:
     - "prestashop16-test.docker:127.0.0.1"
+
   prestashop17:
     container_name: prestashop17
     image: prestashop/prestashop:1.7.3
@@ -100,6 +102,7 @@ services:
       - "8018:80"
     extra_hosts:
     - "prestashop-dev.docker:127.0.0.1"
+
   prestashop-dev16:
     container_name: prestashop16dev
     image: prestashop/prestashop:1.6.1.20
@@ -126,6 +129,7 @@ services:
     - "8019:80"
     extra_hosts:
     - "prestashop-dev.docker:127.0.0.1"
+
   prestashop-dev15:
     container_name: prestashop15dev
     image: prestashop/prestashop:1.5-5.5-apache
@@ -152,6 +156,7 @@ services:
       - "8020:80"
     extra_hosts:
       - "prestashop-dev.docker:127.0.0.1"
+
   db-dev17:
     container_name: prestashopDb17Dev
     image: mysql:5.6
@@ -176,6 +181,7 @@ services:
       - MYSQL_DATABASE=ps-dev15
     networks:
       - internal
+
   db-ps17:
     container_name: prestashopDb17
     image: mysql:5.6
