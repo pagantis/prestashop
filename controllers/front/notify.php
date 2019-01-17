@@ -267,7 +267,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
                 $this->merchantOrder->getOrderTotal(true),
                 $this->module->displayName,
                 'pmtOrderId: ' . $this->pmtOrder->getId(),
-                null,
+                array('transaction_id' => $this->pmtOrderId),
                 null,
                 false,
                 $this->config['secureKey']
