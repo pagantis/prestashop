@@ -56,3 +56,6 @@ $_MODULE['<{paylater}prestashop>payment-17_830a4bb0255e273df5154612248fe7d1'] = 
 $_MODULE['<{paylater}prestashop>checkout-15_5f6b4e92693477bbe133f206f62eef8f'] = 'Financiación Instantánea';
 $_MODULE['<{paylater}prestashop>onepagecheckout_5f6b4e92693477bbe133f206f62eef8f'] = 'Financiación Instantánea';
 $_MODULE['<{paylater}prestashop>payment-return_b4c2efa5d2e4f7b7145d5ec06c0895f6'] = ' ¡ Genial ! has completado tu compra. Ahora puedes continuar comprando o ver tus pedidos.';
+$_MODULE['<{paylater}prestashop>config-info_0090b5208d37b70953d279cb6e1c6573'] = 'Si necesita ayuda o desea personalizar el módulo, consulte nuestra documentación en';
+$_MODULE['<{paylater}prestashop>paylater_3a81ce4e85b690fff58321777a019c3d'] = 'No se puede ller el fichero';
+$_MODULE['<{paylater}prestashop>paylater_7986bad028e571021c8c502b6438ffc2'] = 'Asegúrate de que el archivo existe y tiene los permisos correctos';

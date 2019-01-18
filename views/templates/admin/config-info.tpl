@@ -59,6 +59,10 @@
                 <p>
                     {l s='Paylater configuration panel, please take your time to configure the payment method behavior' mod='paylater'}
                 </p>
+                <p>
+                    {l s='If you need help or want to customize the module, please take a look to our documentation on' mod='paylater'}
+                    <a href="https://github.com/PagaMasTarde/prestashop/tree/{$version|escape:'quotes'}">GitHub </a>
+                </p>
             </div>
             <div class="column-right">
                 <img src="{$logo|escape:'quotes'}"/>

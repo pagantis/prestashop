@@ -5,7 +5,7 @@ require_once('AbstractController.php');
 /**
  * Class PaylaterRedirectModuleFrontController
  */
-class PaylaterPaymentModuleFrontController extends ModuleFrontController
+class PaylaterPaymentModuleFrontController extends AbstractController
 {
     /**
      * @param $customer

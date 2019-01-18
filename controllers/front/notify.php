@@ -12,6 +12,8 @@ use PagaMasTarde\ModuleUtils\Exception\NoOrderFoundException;
 use PagaMasTarde\ModuleUtils\Exception\NoQuoteFoundException;
 use PagaMasTarde\ModuleUtils\Exception\UnknownException;
 use PagaMasTarde\ModuleUtils\Exception\WrongStatusException;
+use PagaMasTarde\ModuleUtils\Model\Response\JsonSuccessResponse;
+use PagaMasTarde\ModuleUtils\Model\Response\JsonExceptionResponse;
 
 /**
  * Class PaylaterNotifyModuleFrontController
@@ -25,7 +27,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     protected $merchantOrderId;
 
     /**
-     * @var Mage_Sales_Model_Order $merchantOrder
+     * @var \Cart $merchantOrder
      */
     protected $merchantOrder;
 
@@ -55,13 +57,11 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     protected $jsonResponse;
 
     /**
-     * Main action of the controller. Dispatch the Notify process
-     *
-     * @return Mage_Core_Controller_Response_Http|Mage_Core_Controller_Varien_Action
      * @throws Exception
      */
     public function postProcess()
     {
+        $response = null;
         try {
             $this->checkConcurrency();
             $this->getMerchantOrder();
@@ -167,7 +167,6 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     public function getMerchantOrder()
     {
         try {
-            /** @var Mage_Sales_Model_Order $order */
             $this->merchantOrder = new Cart($this->merchantOrderId);
             if (!Validate::isLoadedObject($this->merchantOrder)) {
                 throw new \Exception(self::GMO_CART_NOT_LOADED, 500);
@@ -336,7 +335,6 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      * 1. Unblock concurrency
      * 2. Save log
      *
-     * @return Mage_Core_Controller_Response_Http|Mage_Core_Controller_Varien_Action
      */
     public function cancelProcess()
     {
@@ -354,6 +352,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
                 $this->config['secureKey']
             );
         }
+
         $debug = debug_backtrace();
         $method = $debug[1]['function'];
         $line = $debug[1]['line'];
@@ -373,7 +372,6 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      * Redirect the request to the e-commerce or show the output in json
      *
      * @param bool $error
-     * @return Mage_Core_Controller_Response_Http|Mage_Core_Controller_Varien_Action
      */
     public function finishProcess($error = true)
     {

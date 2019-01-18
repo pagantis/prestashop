@@ -44,6 +44,7 @@ class Paylater extends PaymentModule
      */
     public function __construct()
     {
+        $this->_dotEnvError = null;
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
         $this->version = '7.0.6';
@@ -72,21 +73,18 @@ class Paylater extends PaymentModule
             $envFile = new Dotenv\Dotenv(__DIR__);
             $envFile->load();
         } catch (\Exception $exception) {
-            $continue = true;
-            $this->context->controller->errors[] = 'Unable to read file '. __DIR__.'/.env Ensure that the file . \n'.
-                'exists and have the correct permissions';
+            $this->context->controller->errors[] = $this->l('Unable to read file') . ' '. __DIR__.'/.env ' .
+                $this->l('Ensure that the file exists and have the correct permissions');
+            $this->_dotEnvError = $this->l('Unable to read file') . ' '. __DIR__.'/.env ' .
+                $this->l('Ensure that the file exists and have the correct permissions');
         }
 
-        if (!$continue) {
-            $this->context->controller->errors[] = 'Unable to write file '. __DIR__.'/.env PERMISSION DENIED. \n'.
-                'Please check the documentation at https://github.com/PagaMasTarde/prestashop';
-        }
         parent::__construct();
     }
 
     /**
      * Configure the variables for paga+tarde payment method.
-     *
+     *º
      * @return bool
      */
     public function install()
@@ -494,6 +492,9 @@ class Paylater extends PaymentModule
         if ($error) {
             $message = $this->displayError($error);
         }
+        if ($this->_dotEnvError) {
+            $message = $this->displayError($this->_dotEnvError);
+        }
 
         $logo = $this->getPathUri(). 'views/img/logo_pagamastarde.png';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
@@ -501,6 +502,7 @@ class Paylater extends PaymentModule
             'logo' => $logo,
             'form' => $this->renderForm($settings),
             'message' => $message,
+            'version' => 'v'.$this->version,
         ));
 
         return $this->context->smarty->fetch($tpl);
