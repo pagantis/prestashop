@@ -1,13 +1,13 @@
 <?php
 
-namespace Test\HiddenProperties;
+namespace Test\Dotenv;
 
 /**
- * Trait HiddenPropertiesPs15Trait
+ * Trait DotenvPs15Trait
  *
- * @package Test\HiddenProperties
+ * @package Test\Dotenv
  */
-trait HiddenPropertiesPsTrait
+trait DotenvPsTrait
 {
     /**
      * @return array

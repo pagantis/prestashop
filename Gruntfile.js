@@ -33,7 +33,7 @@ module.exports = function(grunt) {
                 'vendor/bin/phpunit --group prestashop17buy\n' +
                 'vendor/bin/phpunit --group prestashop17advanced\n' +
                 'vendor/bin/phpunit --group prestashop17validate\n' +
-                'vendor/bin/phpunit --group prestashop17hiddenProperties\n'
+                'vendor/bin/phpunit --group prestashop17dotenv\n'
             },
             runTestPrestashop16: {
                 command:
@@ -52,7 +52,7 @@ module.exports = function(grunt) {
                 'vendor/bin/phpunit --group prestashop16buy\n' +
                 'vendor/bin/phpunit --group prestashop16advanced\n' +
                 'vendor/bin/phpunit --group prestashop16validate\n' +
-                'vendor/bin/phpunit --group prestashop16hiddenProperties\n'
+                'vendor/bin/phpunit --group prestashop16dotenv\n'
             },
             runTestPrestashop15: {
                 command:
@@ -70,7 +70,7 @@ module.exports = function(grunt) {
                 'vendor/bin/phpunit --group prestashop15register\n' +
                 'vendor/bin/phpunit --group prestashop15buy\n' +
                 'vendor/bin/phpunit --group prestashop15validate\n' +
-                'vendor/bin/phpunit --group prestashop15hiddenProperties\n'
+                'vendor/bin/phpunit --group prestashop15dotenv\n'
             }
         },
         compress: {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\HiddenProperties;
+namespace Test\Dotenv;
 
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
@@ -11,11 +11,11 @@ use Test\Common\AbstractPs15Selenium;
  * @requires prestashop17install
  * @requires prestashop17register
  *
- * @group prestashop17hiddenProperties
+ * @group prestashop17dotenv
  */
-class HiddenPropertiesPs17Test extends AbstractPs15Selenium
+class DotenvPs17Test extends AbstractPs15Selenium
 {
-    use HiddenPropertiesPsTrait;
+    use DotenvPsTrait;
 
     /**
      * @throws \Exception
