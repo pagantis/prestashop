@@ -15,8 +15,6 @@ use Test\Common\AbstractPs15Selenium;
  */
 class DotenvPs17Test extends AbstractPs15Selenium
 {
-    use DotenvPsTrait;
-
     /**
      * @throws \Exception
      */

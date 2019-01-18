@@ -15,14 +15,11 @@ use Test\Common\AbstractPs15Selenium;
  */
 class DotenvPs15Test extends AbstractPs15Selenium
 {
-    use DotenvPsTrait;
-
     /**
      * @throws \Exception
      */
     public function testPmtTitleConfig()
     {
-        /*
         // modify .env
         $properties = $this->getProperties();
         $properties['PMT_TITLE'] = '\'Changed\'';
@@ -44,7 +41,6 @@ class DotenvPs15Test extends AbstractPs15Selenium
 
         // restore .env
         $this->saveDotEnvFile($this->getProperties());
-        */
 
         $this->quit();
     }
@@ -54,7 +50,6 @@ class DotenvPs15Test extends AbstractPs15Selenium
      */
     public function testPmtSimulatorDisplayTypeConfig()
     {
-        /*
         // modify .env
         $properties = $this->getProperties();
         $properties['PMT_SIMULATOR_DISPLAY_TYPE'] = '3';
@@ -74,7 +69,6 @@ class DotenvPs15Test extends AbstractPs15Selenium
 
         // restore .env
         $this->saveDotEnvFile($this->getProperties());
-        */
 
         $this->quit();
     }
@@ -84,7 +78,6 @@ class DotenvPs15Test extends AbstractPs15Selenium
      */
     public function testPmtSimulatorDisplayPositionConfig()
     {
-        /*
         // modify .env
         $properties = $this->getProperties();
         $properties['PMT_SIMULATOR_DISPLAY_POSITION'] = 'hookDisplayRightColumn';
@@ -101,7 +94,6 @@ class DotenvPs15Test extends AbstractPs15Selenium
 
         // restore .env
         $this->saveDotEnvFile($this->getProperties());
-        */
 
         $this->quit();
     }
@@ -111,7 +103,6 @@ class DotenvPs15Test extends AbstractPs15Selenium
      */
     public function testPmtSimulatorStartInstallmentsConfig()
     {
-        /*
         // modify .env
         $properties = $this->getProperties();
         $properties['PMT_SIMULATOR_START_INSTALLMENTS'] = '6';
@@ -132,7 +123,6 @@ class DotenvPs15Test extends AbstractPs15Selenium
         // restore .env
         $this->saveDotEnvFile($this->getProperties());
 
-        */
         $this->quit();
     }
 
@@ -141,7 +131,6 @@ class DotenvPs15Test extends AbstractPs15Selenium
      */
     public function testPmtSimulatorMaxInstallmentsConfig()
     {
-        /*
         // modify .env
         $properties = $this->getProperties();
         $properties['PMT_SIMULATOR_MAX_INSTALLMENTS'] = '10';
@@ -161,7 +150,6 @@ class DotenvPs15Test extends AbstractPs15Selenium
 
         // restore .env
         $this->saveDotEnvFile($this->getProperties());
-        */
 
         $this->quit();
     }
@@ -190,8 +178,9 @@ class DotenvPs15Test extends AbstractPs15Selenium
 
         // $this->assertSame($properties['PMT_FORM_DISPLAY_TYPE'], $value);
 
+        // in progress
         // restore .env
-        //$this->saveDotEnvFile($this->getProperties());
+        $this->saveDotEnvFile($this->getProperties());
 
         $this->quit();
     }
