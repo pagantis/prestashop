@@ -22,7 +22,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
     {
         // modify .env
         $properties = $this->getProperties();
-        $properties['PMT_TITLE'] = '\'Changed\'';
+        $properties['PMT_TITLE'] = 'Changed';
         $this->saveDotEnvFile($properties);
 
         // run test
@@ -37,7 +37,6 @@ class DotenvPs15Test extends AbstractPs15Selenium
         $this->assertTrue((bool) $condition);
         $value = $this->webDriver->findElement($paylaterCheckout)->getAttribute('title');
 
-        var_dump($properties['PMT_TITLE'], $value);
         $this->assertSame($properties['PMT_TITLE'], $value);
 
         // restore .env
@@ -64,7 +63,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($simulator);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $value = $this->webDriver->findElement($paylaterCheckout)->getAttribute('data-pmt-type');
+        $value = $this->webDriver->findElement($simulator)->getAttribute('data-pmt-type');
 
         $this->assertSame($properties['PMT_SIMULATOR_DISPLAY_TYPE'], $value);
 
@@ -145,7 +144,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($simulator);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $value = $this->webDriver->findElement($paylaterCheckout)->getAttribute('data-pmt-max-ins');
+        $value = $this->webDriver->findElement($simulator)->getAttribute('data-pmt-max-ins');
 
         $this->assertSame($properties['PMT_SIMULATOR_MAX_INSTALLMENTS'], $value);
 
@@ -177,9 +176,36 @@ class DotenvPs15Test extends AbstractPs15Selenium
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($paylaterCheckout)->click();
 
-        // $this->assertSame($properties['PMT_FORM_DISPLAY_TYPE'], $value);
+        $firstIframe = $this->webDriver->findElement(WebDriverBy::tagName('iframe'));
+        $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($firstIframe);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
 
-        // in progress
+        // restore .env
+        $this->saveDotEnvFile($this->getProperties());
+
+        $this->quit();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function testPmtDisplayMinAmountConfig()
+    {
+        // modify .env
+        $properties = $this->getProperties();
+        $properties['PMT_DISPLAY_MIN_AMOUNT'] = '5000';
+        $this->saveDotEnvFile($properties);
+
+        // run test
+        $this->loginToFrontend();
+        $this->goToProduct();
+        $this->addProduct(false);
+        $this->goToCheckout();
+
+        $paylaterCheckout = WebDriverBy::className('paylater-checkout');
+        $this->assertFalse((bool) ($this->webDriver->findElements($paylaterCheckout).size() > 0));
+
         // restore .env
         $this->saveDotEnvFile($this->getProperties());
 
