@@ -31,11 +31,11 @@ class DotenvPs17Test extends AbstractPs17Selenium
         $this->addProduct();
         $this->goToCheckout();
 
-        $paylaterCheckout = WebDriverBy::className('paylater-checkout');
+        $paylaterCheckout = WebDriverBy::cssSelector('#payment-option-3-container label span');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paylaterCheckout);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $value = $this->webDriver->findElement($paylaterCheckout)->getAttribute('title');
+        $value = $this->webDriver->findElement($paylaterCheckout)->getText();
 
         $this->assertSame($properties['PMT_TITLE'], $value);
 
@@ -66,31 +66,6 @@ class DotenvPs17Test extends AbstractPs17Selenium
         $value = $this->webDriver->findElement($simulator)->getAttribute('data-pmt-type');
 
         $this->assertSame($properties['PMT_SIMULATOR_DISPLAY_TYPE'], $value);
-
-        // restore .env
-        $this->saveDotEnvFile($this->getProperties(), '17');
-
-        $this->quit();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function testPmtSimulatorDisplayPositionConfig()
-    {
-        // modify .env
-        $properties = $this->getProperties();
-        $properties['PMT_SIMULATOR_DISPLAY_POSITION'] = '\'hookDisplayLeftColumnProduct\'';
-        $this->saveDotEnvFile($properties, '17');
-
-        // run test
-        $this->loginToFrontend();
-        $this->goToProduct();
-
-        $simulator = WebDriverBy::cssSelector('.pb-center-column .PmtSimulator');
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($simulator);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
 
         // restore .env
         $this->saveDotEnvFile($this->getProperties(), '17');
@@ -170,7 +145,7 @@ class DotenvPs17Test extends AbstractPs17Selenium
         $this->addProduct();
         $this->goToCheckout();
 
-        $paylaterCheckout = WebDriverBy::className('paylater-checkout');
+        $paylaterCheckout = WebDriverBy::cssSelector('#payment-option-3-container label span');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paylaterCheckout);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
@@ -203,7 +178,7 @@ class DotenvPs17Test extends AbstractPs17Selenium
         $this->addProduct();
         $this->goToCheckout();
 
-        $paylaterCheckout = WebDriverBy::className('paylater-checkout');
+        $paylaterCheckout = WebDriverBy::cssSelector('#payment-option-3-container label span');
         $this->assertFalse((bool) (count($this->webDriver->findElements($paylaterCheckout)) > 0));
 
         // restore .env
