@@ -37,6 +37,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         $this->assertTrue((bool) $condition);
         $value = $this->webDriver->findElement($paylaterCheckout)->getAttribute('title');
 
+        var_dump($properties['PMT_TITLE'], $value);
         $this->assertSame($properties['PMT_TITLE'], $value);
 
         // restore .env
@@ -80,7 +81,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
     {
         // modify .env
         $properties = $this->getProperties();
-        $properties['PMT_SIMULATOR_DISPLAY_POSITION'] = 'hookDisplayRightColumn';
+        $properties['PMT_SIMULATOR_DISPLAY_POSITION'] = '\'hookDisplayRightColumn\'';
         $this->saveDotEnvFile($properties);
 
         // run test
