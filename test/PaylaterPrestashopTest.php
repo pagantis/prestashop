@@ -180,8 +180,6 @@ abstract class PaylaterPrestashopTest extends TestCase
      */
     public function saveDotEnvFile($properties = array(), $psVersion = '15')
     {
-        $this->assertTrue(is_writable(__DIR__.'/../.env'));
-
         $file = '';
         foreach ($properties as $key => $value) {
             $file .= $key . '=' . $value . PHP_EOL;
