@@ -4,7 +4,6 @@ namespace Test\Dotenv;
 
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
-use PagaMasTarde\SeleniumFormUtils\SeleniumHelper;
 use Test\Common\AbstractPs15Selenium;
 
 /**
@@ -23,7 +22,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         // modify .env
         $properties = $this->getProperties();
         $properties['PMT_TITLE'] = 'Changed';
-        $this->saveDotEnvFile($properties);
+        $this->saveDotEnvFile($properties, '15');
 
         // run test
         $this->loginToFrontend();
@@ -40,7 +39,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         $this->assertSame($properties['PMT_TITLE'], $value);
 
         // restore .env
-        $this->saveDotEnvFile($this->getProperties());
+        $this->saveDotEnvFile($this->getProperties(), '15');
 
         $this->quit();
     }
@@ -53,7 +52,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         // modify .env
         $properties = $this->getProperties();
         $properties['PMT_SIMULATOR_DISPLAY_TYPE'] = '3';
-        $this->saveDotEnvFile($properties);
+        $this->saveDotEnvFile($properties, '15');
 
         // run test
         $this->loginToFrontend();
@@ -68,7 +67,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         $this->assertSame($properties['PMT_SIMULATOR_DISPLAY_TYPE'], $value);
 
         // restore .env
-        $this->saveDotEnvFile($this->getProperties());
+        $this->saveDotEnvFile($this->getProperties(), '15');
 
         $this->quit();
     }
@@ -81,7 +80,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         // modify .env
         $properties = $this->getProperties();
         $properties['PMT_SIMULATOR_DISPLAY_POSITION'] = '\'hookDisplayRightColumn\'';
-        $this->saveDotEnvFile($properties);
+        $this->saveDotEnvFile($properties, '15');
 
         // run test
         $this->loginToFrontend();
@@ -93,7 +92,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         $this->assertTrue((bool) $condition);
 
         // restore .env
-        $this->saveDotEnvFile($this->getProperties());
+        $this->saveDotEnvFile($this->getProperties(), '15');
 
         $this->quit();
     }
@@ -106,7 +105,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         // modify .env
         $properties = $this->getProperties();
         $properties['PMT_SIMULATOR_START_INSTALLMENTS'] = '6';
-        $this->saveDotEnvFile($properties);
+        $this->saveDotEnvFile($properties, '15');
 
         // run test
         $this->loginToFrontend();
@@ -121,7 +120,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         $this->assertSame($properties['PMT_SIMULATOR_START_INSTALLMENTS'], $value);
 
         // restore .env
-        $this->saveDotEnvFile($this->getProperties());
+        $this->saveDotEnvFile($this->getProperties(), '15');
 
         $this->quit();
     }
@@ -134,7 +133,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         // modify .env
         $properties = $this->getProperties();
         $properties['PMT_SIMULATOR_MAX_INSTALLMENTS'] = '10';
-        $this->saveDotEnvFile($properties);
+        $this->saveDotEnvFile($properties, '15');
 
         // run test
         $this->loginToFrontend();
@@ -149,7 +148,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         $this->assertSame($properties['PMT_SIMULATOR_MAX_INSTALLMENTS'], $value);
 
         // restore .env
-        $this->saveDotEnvFile($this->getProperties());
+        $this->saveDotEnvFile($this->getProperties(), '15');
 
         $this->quit();
     }
@@ -162,7 +161,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         // modify .env
         $properties = $this->getProperties();
         $properties['PMT_FORM_DISPLAY_TYPE'] = '1';
-        $this->saveDotEnvFile($properties);
+        $this->saveDotEnvFile($properties, '15');
 
         // run test
         $this->loginToFrontend();
@@ -182,7 +181,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
         $this->assertTrue((bool) $condition);
 
         // restore .env
-        $this->saveDotEnvFile($this->getProperties());
+        $this->saveDotEnvFile($this->getProperties(), '15');
 
         $this->quit();
     }
@@ -195,19 +194,19 @@ class DotenvPs15Test extends AbstractPs15Selenium
         // modify .env
         $properties = $this->getProperties();
         $properties['PMT_DISPLAY_MIN_AMOUNT'] = '5000';
-        $this->saveDotEnvFile($properties);
+        $this->saveDotEnvFile($properties, '15');
 
         // run test
         $this->loginToFrontend();
-        $this->goToProduct();
-        $this->addProduct(false);
+        $this->goToProduct(false);
+        $this->addProduct();
         $this->goToCheckout();
 
         $paylaterCheckout = WebDriverBy::className('paylater-checkout');
-        $this->assertFalse((bool) ($this->webDriver->findElements($paylaterCheckout).size() > 0));
+        $this->assertFalse((bool) (count($this->webDriver->findElements($paylaterCheckout)) > 0));
 
         // restore .env
-        $this->saveDotEnvFile($this->getProperties());
+        $this->saveDotEnvFile($this->getProperties(), '15');
 
         $this->quit();
     }
