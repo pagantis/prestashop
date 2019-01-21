@@ -176,11 +176,11 @@ abstract class PaylaterPrestashopTest extends TestCase
 
     /**
      * @param array  $properties
-     * @param string $container
+     * @param string $psVersion
      */
     public function saveDotEnvFile($properties = array(), $psVersion = '15')
     {
-        $this->assertTrue(is_writable(__DIR__.'/../../.env'));
+        $this->assertTrue(is_writable(__DIR__.'/../.env'));
 
         $file = '';
         foreach ($properties as $key => $value) {
