@@ -25,9 +25,15 @@
 </div>
 <script type="text/javascript">
     function findPrice()    {
-        var price = document.getElementById("our_price_display");
-        if (price) {
+        var price = '';
+        var priceDOM = document.getElementById("our_price_display");
+        if (priceDOM != null) {
             return price.innerText;
+        } else {
+            priceDOM = document.querySelector(".current-price span")
+            if (priceDOM != null) {
+                return priceDOM.innerText;
+            }
         }
 
         var all = document.getElementsByTagName("*");
@@ -61,8 +67,14 @@
     }
     changePrice(0); //Load the screen price into simulator to avoid the reload event
     window.onload = function() {
-        var productAttributeModifiers = document.getElementById('attributes').querySelectorAll('input, select, a');
+        var productAttributeModifiers = {};
+        var productAttributeModifiersDOM = document.getElementById('attributes');
         //<select> for size, <a> for color/texture, <input>for checkbox
+        if (productAttributeModifiersDOM != null) {
+            productAttributeModifiers = productAttributeModifiersDOM.querySelectorAll('input, select, a');
+        } else {
+            productAttributeModifiers = document.getElementsByClassName('product-variants')[0].querySelectorAll('input, select, a');
+        }
         productAttributeModifiers.forEach(function(modifier, index) {
             var eventType = (modifier.tagName == 'SELECT') ? 'change':'click';
             modifier.addEventListener(eventType, changePrice);

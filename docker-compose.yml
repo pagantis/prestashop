@@ -49,7 +49,7 @@ services:
     ports:
       - "8016:80"
     extra_hosts:
-    - "prestashop16-test.docker:127.0.0.1"
+      - "prestashop16-test.docker:127.0.0.1"
 
   prestashop17:
     container_name: prestashop17
@@ -74,7 +74,7 @@ services:
     ports:
       - "8017:80"
     extra_hosts:
-    - "prestashop17-test.docker:127.0.0.1"
+      - "prestashop17-test.docker:127.0.0.1"
 
   prestashop-dev17:
     container_name: prestashop17dev
@@ -101,34 +101,34 @@ services:
     ports:
       - "8018:80"
     extra_hosts:
-    - "prestashop-dev.docker:127.0.0.1"
+      - "prestashop-dev.docker:127.0.0.1"
 
   prestashop-dev16:
     container_name: prestashop16dev
     image: prestashop/prestashop:1.6.1.20
     depends_on:
-    - db-dev16
+      - db-dev16
     environment:
-    - PS_DEV_MODE=1
-    - PS_COUNTRY=ES
-    - PS_DOMAIN=prestashop-dev.docker:8019
-    - PS_FOLDER_ADMIN=adminTest
-    - PS_FOLDER_INSTALL=installTest
-    - PS_HANDLE_DYNAMIC_DOMAIN=1
-    - PS_INSTALL_AUTO=1
-    - DB_SERVER=db-dev16
-    - DB_NAME=ps-dev16
-    - DB_PREFIX=ps_
-    - DB_PASSWD=password
+      - PS_DEV_MODE=1
+      - PS_COUNTRY=ES
+      - PS_DOMAIN=prestashop-dev.docker:8019
+      - PS_FOLDER_ADMIN=adminTest
+      - PS_FOLDER_INSTALL=installTest
+      - PS_HANDLE_DYNAMIC_DOMAIN=1
+      - PS_INSTALL_AUTO=1
+      - DB_SERVER=db-dev16
+      - DB_NAME=ps-dev16
+      - DB_PREFIX=ps_
+      - DB_PASSWD=password
     networks:
-    - internal
-    - public
+      - internal
+      - public
     volumes:
-    - ./:/var/www/html/modules/paylater
+      - ./:/var/www/html/modules/paylater
     ports:
-    - "8019:80"
+      - "8019:80"
     extra_hosts:
-    - "prestashop-dev.docker:127.0.0.1"
+      - "prestashop-dev.docker:127.0.0.1"
 
   prestashop-dev15:
     container_name: prestashop15dev
@@ -169,10 +169,10 @@ services:
     container_name: prestashopDb16Dev
     image: mysql:5.6
     environment:
-        - MYSQL_ROOT_PASSWORD=password
-        - MYSQL_DATABASE=ps-dev16
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=ps-dev16
     networks:
-        - internal
+      - internal
   db-dev15:
     container_name: prestashopDb15Dev
     image: mysql:5.6
@@ -181,7 +181,6 @@ services:
       - MYSQL_DATABASE=ps-dev15
     networks:
       - internal
-
   db-ps17:
     container_name: prestashopDb17
     image: mysql:5.6
@@ -221,5 +220,5 @@ services:
       - "prestashop-dev.docker:${DOCKERHOST}"
 
 networks:
-    internal:
-    public:
+  internal:
+  public:

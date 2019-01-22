@@ -3,9 +3,9 @@ services:
   - docker
 addons:
   hosts:
-  - prestashop15-test.docker
-  - prestashop16-test.docker
-  - prestashop17-test.docker
+    - prestashop15-test.docker
+    - prestashop16-test.docker
+    - prestashop17-test.docker
 language: php
 php:
   - 5.6
@@ -31,11 +31,11 @@ before_script:
 
 matrix:
   include:
-  - name: "PrestaShop 1.7"
-    env: PRESTASHOP=shell:runTestPrestashop17 ISOLATED=true
-  - name: "PrestaShop 1.6"
-    env: PRESTASHOP=shell:runTestPrestashop16 ISOLATED=true
-  - name: "PrestaShop 1.5"
-    env: PRESTASHOP=shell:runTestPrestashop15 ISOLATED=true
+    - name: "PrestaShop 1.7"
+      env: PRESTASHOP=shell:runTestPrestashop17 ISOLATED=true
+    - name: "PrestaShop 1.6"
+      env: PRESTASHOP=shell:runTestPrestashop16 ISOLATED=true
+    - name: "PrestaShop 1.5"
+      env: PRESTASHOP=shell:runTestPrestashop15 ISOLATED=true
 script:
   - grunt $PRESTASHOP
