@@ -37,40 +37,40 @@ module.exports = function(grunt) {
             },
             runTestPrestashop16: {
                 command:
-                'chmod -R 777 vendor\n' +
-                'docker-compose down\n' +
-                'docker-compose up -d selenium\n' +
-                'docker-compose up -d prestashop16\n' +
-                'echo "Creating the prestashop16"\n' +
-                'sleep  90\n' +
-                'date\n' +
-                'docker-compose logs prestashop16\n' +
-                'set -e\n' +
-                'vendor/bin/phpunit --group prestashop16basic\n' +
-                'vendor/bin/phpunit --group prestashop16install\n' +
-                'vendor/bin/phpunit --group prestashop16register\n' +
-                'vendor/bin/phpunit --group prestashop16buy\n' +
-                'vendor/bin/phpunit --group prestashop16advanced\n' +
-                'vendor/bin/phpunit --group prestashop16validate\n' +
-                'vendor/bin/phpunit --group prestashop16dotenv\n'
+                    'chmod -R 777 vendor\n' +
+                    'docker-compose down\n' +
+                    'docker-compose up -d selenium\n' +
+                    'docker-compose up -d prestashop16\n' +
+                    'echo "Creating the prestashop16"\n' +
+                    'sleep  90\n' +
+                    'date\n' +
+                    'docker-compose logs prestashop16\n' +
+                    'set -e\n' +
+                    'vendor/bin/phpunit --group prestashop16basic\n' +
+                    'vendor/bin/phpunit --group prestashop16install\n' +
+                    'vendor/bin/phpunit --group prestashop16register\n' +
+                    'vendor/bin/phpunit --group prestashop16buy\n' +
+                    'vendor/bin/phpunit --group prestashop16advanced\n' +
+                    'vendor/bin/phpunit --group prestashop16validate\n' +
+                    'vendor/bin/phpunit --group prestashop16dotenv\n'
             },
             runTestPrestashop15: {
                 command:
-                'chmod -R 777 vendor\n' +
-                'docker-compose down\n' +
-                'docker-compose up -d selenium\n' +
-                'docker-compose up -d prestashop15\n' +
-                'echo "Creating the prestashop15"\n' +
-                'sleep 90\n' +
-                'date\n' +
-                'docker-compose logs prestashop15\n' +
-                'set -e\n' +
-                'vendor/bin/phpunit --group prestashop15basic\n' +
-                'vendor/bin/phpunit --group prestashop15install\n' +
-                'vendor/bin/phpunit --group prestashop15register\n' +
-                'vendor/bin/phpunit --group prestashop15buy\n' +
-                'vendor/bin/phpunit --group prestashop15validate\n' +
-                'vendor/bin/phpunit --group prestashop15dotenv\n'
+                    'chmod -R 777 vendor\n' +
+                    'docker-compose down\n' +
+                    'docker-compose up -d selenium\n' +
+                    'docker-compose up -d prestashop15\n' +
+                    'echo "Creating the prestashop15"\n' +
+                    'sleep 90\n' +
+                    'date\n' +
+                    'docker-compose logs prestashop15\n' +
+                    'set -e\n' +
+                    'vendor/bin/phpunit --group prestashop15basic\n' +
+                    'vendor/bin/phpunit --group prestashop15install\n' +
+                    'vendor/bin/phpunit --group prestashop15register\n' +
+                    'vendor/bin/phpunit --group prestashop15buy\n' +
+                    'vendor/bin/phpunit --group prestashop15validate\n' +
+                    'vendor/bin/phpunit --group prestashop15dotenv\n'
             }
         },
         compress: {
