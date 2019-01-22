@@ -3,8 +3,8 @@
 global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{paylater}prestashop>paylater_13e1ff5db6f35c83ed13a03f4db7e0fa'] = 'Paga+Tarde';
-$_MODULE['<{paylater}prestashop>paylater_92d4773a9f32fc3333cb8238471cf763'] = 'Il manque l''extension php: curl';
-$_MODULE['<{paylater}prestashop>paylater_5984afe5af3bc7d4a01ba1d722c00a38'] = 'La version PHP ci-dessous 5.3.0 n''est pas supportée';
+$_MODULE['<{paylater}prestashop>paylater_92d4773a9f32fc3333cb8238471cf763'] = 'Il manque l\'extension php: curl';
+$_MODULE['<{paylater}prestashop>paylater_5984afe5af3bc7d4a01ba1d722c00a38'] = 'La version PHP ci-dessous 5.3.0 n\'est pas supportée';
 $_MODULE['<{paylater}prestashop>paylater_da34b2e0a9be1c3ef75eeeafd0e3d1ba'] = 'La version Curl est inférieure à 7.34.0 et ne prend pas en charge TLS 1.2.';
 $_MODULE['<{paylater}prestashop>paylater_5f6b4e92693477bbe133f206f62eef8f'] = 'Financement instantané';
 $_MODULE['<{paylater}prestashop>paylater_2a94082b582d0620bae922fc14c36444'] = 'La configuration';
@@ -41,12 +41,12 @@ $_MODULE['<{paylater}prestashop>paylater_1b5434e98431893398787e4c19faa8b9'] = 'N
 $_MODULE['<{paylater}prestashop>paylater_60a4b145ba1dc424398f10aa099f618a'] = 'Par exemple: 19,99 €';
 $_MODULE['<{paylater}prestashop>paylater_1a889b959b89989e4d5868dba6d81868'] = 'Montant minimum à Paga+Tarde';
 $_MODULE['<{paylater}prestashop>paylater_40840687e5296618b7f21919489c3724'] = 'Rediriger pour le paiement OK';
-$_MODULE['<{paylater}prestashop>paylater_e1f7878e37311b2e9fdb33b64cbc4bb0'] = 'Rediriger en cas d''échec du paiement';
+$_MODULE['<{paylater}prestashop>paylater_e1f7878e37311b2e9fdb33b64cbc4bb0'] = 'Rediriger en cas d\'échec du paiement';
 $_MODULE['<{paylater}prestashop>paylater_c9cc8cce247e49bae79f15173ce97354'] = 'sauvegarder';
 $_MODULE['<{paylater}prestashop>paylater_f39f14ac1b12c3fb1aef387f44b7f288'] = 'Le montant minimum pour afficher Pay + Afternoon est invalide.';
-$_MODULE['<{paylater}prestashop>paylater_1fe40ce06393929d52e82051ee681d49'] = 'S''il vous plaît, ajoutez une clé publique correcte';
-$_MODULE['<{paylater}prestashop>paylater_8c4c63f6a01b1c5d4ef1690bb7c30a3a'] = 'S''il vous plaît, ajoutez une clé privée correcte';
-$_MODULE['<{paylater}prestashop>paylater_b5400e4f4fca6833a1cc52377dd08f1c'] = 'S''il vous plaît ajouter un titre à la méthode de paiement';
+$_MODULE['<{paylater}prestashop>paylater_1fe40ce06393929d52e82051ee681d49'] = 'S\'il vous plaît, ajoutez une clé publique correcte';
+$_MODULE['<{paylater}prestashop>paylater_8c4c63f6a01b1c5d4ef1690bb7c30a3a'] = 'S\'il vous plaît, ajoutez une clé privée correcte';
+$_MODULE['<{paylater}prestashop>paylater_b5400e4f4fca6833a1cc52377dd08f1c'] = 'S\'il vous plaît ajouter un titre à la méthode de paiement';
 $_MODULE['<{paylater}prestashop>paylater_a7139ef55f3c52d2de726ec1bab7d5e8'] = 'Toutes les modifications ont été mises à jour';
 $_MODULE['<{paylater}prestashop>config-info_07993d517fb8c6a677177b1e886d4b60'] = 'Mise en place Paga+Tarde';
 $_MODULE['<{paylater}prestashop>config-info_026bf71407899fd3f23498a7705f6c06'] = 'Accédez à votre backoffice';

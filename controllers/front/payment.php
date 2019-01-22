@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the official Paylater module for PrestaShop.
+ *
+ * @author    Paga+Tarde <soporte@pagamastarde.com>
+ * @copyright 2019 Paga+Tarde
+ * @license   proprietary
+ */
 
 require_once('AbstractController.php');
 
@@ -143,7 +150,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
                 if ($order['valid']) {
                     $orderHistory = new \PagaMasTarde\OrdersApiClient\Model\Order\User\OrderHistory();
                     $orderHistory
-                        ->setAmount(intval(100 * $order['total_paid']))
+                        ->setAmount((int) (100 * $order['total_paid']))
                         ->setDate(new \DateTime($order['date_add']))
                     ;
                     $orderUser->addOrderHistory($orderHistory);
@@ -151,12 +158,12 @@ class PaylaterPaymentModuleFrontController extends AbstractController
             }
 
             $details = new \PagaMasTarde\OrdersApiClient\Model\Order\ShoppingCart\Details();
-            $details->setShippingCost(intval(strval(100 * $cart->getTotalShippingCost())));
+            $details->setShippingCost((int) (100 * $cart->getTotalShippingCost()));
             $items = $cart->getProducts();
             foreach ($items as $key => $item) {
                 $product = new \PagaMasTarde\OrdersApiClient\Model\Order\ShoppingCart\Details\Product();
                 $product
-                    ->setAmount(intval(100 * $item['price_wt']))
+                    ->setAmount((int) (100 * $item['price_wt']))
                     ->setQuantity($item['quantity'])
                     ->setDescription($item['name']);
                 $details->addProduct($product);
@@ -167,7 +174,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
                 ->setDetails($details)
                 ->setOrderReference($cart->id)
                 ->setPromotedAmount(0)
-                ->setTotalAmount(intval(strval(100 * $cart->getOrderTotal(true))))
+                ->setTotalAmount((int) (100 * $cart->getOrderTotal(true)))
             ;
 
             $orderConfigurationUrls = new \PagaMasTarde\OrdersApiClient\Model\Order\Configuration\Urls();

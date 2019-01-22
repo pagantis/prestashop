@@ -3,7 +3,7 @@
 global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{paylater}prestashop>paylater_13e1ff5db6f35c83ed13a03f4db7e0fa'] = 'Paga+Tarde';
-$_MODULE['<{paylater}prestashop>paylater_92d4773a9f32fc3333cb8238471cf763'] = 'Manca l''estensione php: curl';
+$_MODULE['<{paylater}prestashop>paylater_92d4773a9f32fc3333cb8238471cf763'] = 'Manca l\'estensione php: curl';
 $_MODULE['<{paylater}prestashop>paylater_5984afe5af3bc7d4a01ba1d722c00a38'] = 'La versione di PHP qui sotto 5.3.0 non è supportata';
 $_MODULE['<{paylater}prestashop>paylater_da34b2e0a9be1c3ef75eeeafd0e3d1ba'] = 'La versione di Curl è inferiore a 7.34.0 e non supporta TLS 1.2';
 $_MODULE['<{paylater}prestashop>paylater_5f6b4e92693477bbe133f206f62eef8f'] = 'Finanziamento istantaneo';
@@ -43,7 +43,7 @@ $_MODULE['<{paylater}prestashop>paylater_1a889b959b89989e4d5868dba6d81868'] = 'I
 $_MODULE['<{paylater}prestashop>paylater_40840687e5296618b7f21919489c3724'] = 'Reindirizzare per il pagamento OK';
 $_MODULE['<{paylater}prestashop>paylater_e1f7878e37311b2e9fdb33b64cbc4bb0'] = 'Reindirizza per pagamento non andato a buon fine';
 $_MODULE['<{paylater}prestashop>paylater_c9cc8cce247e49bae79f15173ce97354'] = 'salvare';
-$_MODULE['<{paylater}prestashop>paylater_f39f14ac1b12c3fb1aef387f44b7f288'] = 'L''importo minimo per mostrare Paga+Tarde non è valido.';
+$_MODULE['<{paylater}prestashop>paylater_f39f14ac1b12c3fb1aef387f44b7f288'] = 'L\'importo minimo per mostrare Paga+Tarde non è valido.';
 $_MODULE['<{paylater}prestashop>paylater_1fe40ce06393929d52e82051ee681d49'] = 'Per favore, aggiungi una chiave pubblica corretta';
 $_MODULE['<{paylater}prestashop>paylater_8c4c63f6a01b1c5d4ef1690bb7c30a3a'] = 'Per favore, aggiungi una chiave privata corretta';
 $_MODULE['<{paylater}prestashop>paylater_b5400e4f4fca6833a1cc52377dd08f1c'] = 'Si prega di aggiungere un titolo al metodo di pagamento';

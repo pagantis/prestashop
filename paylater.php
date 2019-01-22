@@ -31,9 +31,9 @@ class Paylater extends PaymentModule
     public $bootstrap = true;
 
     /**
-     * @var _errors
+     * @var installErrors
      */
-    public $_errors = array();
+    public $installErrors = array();
 
     /**
      * Paylater constructor.
@@ -58,24 +58,29 @@ class Paylater extends PaymentModule
             'Instant, easy and effective financial tool for your customers'
         );
 
-        $continue = true;
+
         if (Module::isInstalled($this->name)) {
-            $continue = $this->upgrade();
+            $this->upgrade();
         } else {
-            copy(__DIR__.'/.env.dist', __DIR__.'/.env');
+            copy(
+                $_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env.dist',
+                $_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env'
+            );
         }
 
 
-        $sql_file = dirname(__FILE__).'/sql/install.sql';
+        $sql_file = dirname($_SERVER['DOCUMENT_ROOT'] . '/modules/paylater').'/sql/install.sql';
         $this->loadSQLFile($sql_file);
 
         try {
-            $envFile = new Dotenv\Dotenv(__DIR__);
+            $envFile = new Dotenv\Dotenv($_SERVER['DOCUMENT_ROOT'] . '/modules/paylater');
             $envFile->load();
         } catch (\Exception $exception) {
-            $this->context->controller->errors[] = $this->l('Unable to read file') . ' '. __DIR__.'/.env ' .
+            $this->context->controller->errors[] = $this->l('Unable to read file') .
+                ' ' . $_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env ' .
                 $this->l('Ensure that the file exists and have the correct permissions');
-            $this->_dotEnvError = $this->l('Unable to read file') . ' '. __DIR__.'/.env ' .
+            $this->_dotEnvError = $this->l('Unable to read file') .
+                ' ' . $_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env ' .
                 $this->l('Ensure that the file exists and have the correct permissions');
         }
 
@@ -90,17 +95,18 @@ class Paylater extends PaymentModule
     public function install()
     {
         if (!extension_loaded('curl')) {
-            $this->_errors[] = $this->l('You have to enable the cURL extension on your server to install this module');
+            $this->installErrors[] =
+                $this->l('You have to enable the cURL extension on your server to install this module');
             return false;
         }
         if (!version_compare(phpversion(), '5.3.0', '>=')) {
-            $this->_errors[] = $this->l('The PHP version bellow 5.3.0 is not supported');
+            $this->installErrors[] = $this->l('The PHP version bellow 5.3.0 is not supported');
             return false;
         }
         $curl_info = curl_version();
         $curl_version = $curl_info['version'];
         if (!version_compare($curl_version, '7.34.0', '>=')) {
-            $this->_errors[] = $this->l('Curl Version is lower than 7.34.0 and does not support TLS 1.2');
+            $this->installErrors[] = $this->l('Curl Version is lower than 7.34.0 and does not support TLS 1.2');
             return false;
         }
 
@@ -143,16 +149,16 @@ class Paylater extends PaymentModule
     public function upgrade()
     {
 
-        if (!is_writable(__DIR__.'/.env')) {
+        if (!is_writable($_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env')) {
             return false;
         }
-        $envFileVariables = $this->readEnvFileAsArray(__DIR__.'/.env');
-        $distFileVariables = $this->readEnvFileAsArray(__DIR__.'/.env.dist');
-        $distFile = file_get_contents(__DIR__.'/.env.dist');
+        $envFileVariables = $this->readEnvFileAsArray($_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env');
+        $distFileVariables = $this->readEnvFileAsArray($_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env.dist');
+        $distFile = Tools::file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env.dist');
 
         $newEnvFileArr = array_merge($distFileVariables, $envFileVariables);
         $newEnvFile = $this->replaceEnvFileValues($distFile, $newEnvFileArr);
-        file_put_contents(__DIR__.'/.env', $newEnvFile);
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env', $newEnvFile);
         return true;
     }
 
@@ -195,7 +201,7 @@ class Paylater extends PaymentModule
             $from = strpos($envFile, $key);
             if ($from !== false) {
                 $to = strpos($envFile, '#', $from);
-                $fromReplace = substr($envFile, $from, (($to - $from)-1));
+                $fromReplace = Tools::substr($envFile, $from, (($to - $from)-1));
                 $toReplace = $key . '=' . $value;
                 $envFile = str_replace($fromReplace, $toReplace, $envFile);
             }
@@ -296,7 +302,7 @@ class Paylater extends PaymentModule
             'pmtIsEnabled'          => $pmtIsEnabled,
             'pmtTitle'              => $pmtTitle,
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment'),
-            'ps_version'            => str_replace('.', '-', substr(_PS_VERSION_, 0, 3)),
+            'ps_version'            => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
         ));
 
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
@@ -541,7 +547,7 @@ class Paylater extends PaymentModule
             'pmtIsEnabled'          => $pmtIsEnabled,
             'pmtTitle'              => $pmtTitle,
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment'),
-            'ps_version'            => str_replace('.', '-', substr(_PS_VERSION_, 0, 3)),
+            'ps_version'            => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
         ));
 
         $supercheckout_enabled = Module::isEnabled('supercheckout');

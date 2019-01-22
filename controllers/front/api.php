@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the official Paylater module for PrestaShop.
+ *
+ * @author    Paga+Tarde <soporte@pagamastarde.com>
+ * @copyright 2019 Paga+Tarde
+ * @license   proprietary
+ */
 
 /**
  * Class PaylaterApiModuleFrontController

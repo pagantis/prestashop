@@ -1,6 +1,11 @@
 <?php
-
-use PagaMasTarde\ModuleUtils\Model\Log\LogEntry;
+/**
+ * This file is part of the official Paylater module for PrestaShop.
+ *
+ * @author    Paga+Tarde <soporte@pagamastarde.com>
+ * @copyright 2019 Paga+Tarde
+ * @license   proprietary
+ */
 
 /**
  * Class AbstractController
@@ -126,7 +131,6 @@ abstract class AbstractController extends ModuleFrontController
         $separator = ($parsedUrl['query'] == null) ? '?' : '&';
         $redirectUrl = $url. $separator . http_build_query($parameters);
         Tools::redirect($redirectUrl);
-        return;
     }
 
     /**
