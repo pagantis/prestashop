@@ -4,7 +4,6 @@ namespace Test\Dotenv;
 
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
-use PagaMasTarde\SeleniumFormUtils\SeleniumHelper;
 use Test\Common\AbstractPs17Selenium;
 
 /**

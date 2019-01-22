@@ -20,7 +20,7 @@ class PmtWebDriver extends RemoteWebDriver
      *
      * @return WebDriverWait
      */
-    public function wait($timeout_in_second = 12, $interval_in_millisecond = 25)
+    public function wait($timeout_in_second = 120, $interval_in_millisecond = 1000)
     {
         return new WebDriverWait(
             $this,
