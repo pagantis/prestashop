@@ -144,11 +144,14 @@ class DotenvPs17Test extends AbstractPs17Selenium
         $this->addProduct();
         $this->goToCheckout();
 
-        $paylaterCheckout = WebDriverBy::cssSelector('#payment-option-3-container label span');
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paylaterCheckout);
+        $paylaterOption = WebDriverBy::cssSelector('[for=payment-option-3]');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($paylaterOption);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->webDriver->findElement($paylaterCheckout)->click();
+        $this->webDriver->findElement($paylaterOption)->click();
+
+        $this->findById('conditions_to_approve[terms-and-conditions]')->click();
+        $this->findById('payment-confirmation')->click();
 
         $firstIframe = $this->webDriver->findElement(WebDriverBy::tagName('iframe'));
         $condition = WebDriverExpectedCondition::frameToBeAvailableAndSwitchToIt($firstIframe);
