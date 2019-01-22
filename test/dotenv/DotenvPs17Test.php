@@ -138,7 +138,7 @@ class DotenvPs17Test extends AbstractPs17Selenium
         $properties['PMT_FORM_DISPLAY_TYPE'] = '1';
         $this->saveDotEnvFile($properties, '17');
 
-        // run test
+        // run test:wq
         $this->loginToFrontend();
         $this->goToProduct();
         $this->addProduct();
