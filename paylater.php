@@ -89,7 +89,7 @@ class Paylater extends PaymentModule
 
     /**
      * Configure the variables for paga+tarde payment method.
-     *º
+     *
      * @return bool
      */
     public function install()
