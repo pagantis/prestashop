@@ -9,6 +9,8 @@
 
 require_once('AbstractController.php');
 
+use PagaMasTarde\ModuleUtils\Exception\OrderNotFoundException;
+
 /**
  * Class PaylaterRedirectModuleFrontController
  */
@@ -212,11 +214,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
                 ->setUser($orderUser)
             ;
         } catch (\Exception $exception) {
-            $this->saveLog(
-                array(
-                    'exception' => 'Exception for user ' . $customer->email . ' : ' . $exception->getMessage()
-                )
-            );
+            $this->saveLog(array(), $exception);
             Tools::redirect($cancelUrl);
         }
 
@@ -236,17 +234,13 @@ class PaylaterPaymentModuleFrontController extends AbstractController
                      ON DUPLICATE KEY UPDATE `order_id` = '$orderId'"
                 );
                 if (!$result) {
-                    throw new \Exception('Unable to save pmt-order-id');
+                    throw new UnknownException('Unable to save pmt-order-id');
                 }
             } else {
-                throw new \Exception('Order not created');
+                throw new OrderNotFoundException();
             }
         } catch (\Exception $exception) {
-            $this->saveLog(
-                array(
-                    'exception' => 'Exception for user ' . $customer->email . ' : ' . $exception->getMessage()
-                )
-            );
+            $this->saveLog(array(), $exception);
             Tools::redirect($cancelUrl);
         }
 
@@ -265,11 +259,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
                     $this->setTemplate('module:paylater/views/templates/front/payment-17.tpl');
                 }
             } catch (\Exception $exception) {
-                $this->saveLog(
-                    array(
-                        'exception' => 'Exception for user ' . $customer->email . ' : ' . $exception->getMessage()
-                    )
-                );
+                $this->saveLog(array(), $exception);
                 Tools::redirect($url);
             }
         }

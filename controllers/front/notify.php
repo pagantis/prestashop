@@ -367,10 +367,15 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         $method = $debug[1]['function'];
         $line = $debug[1]['line'];
         $this->saveLog(array(
-            'pmtOrderId' => $this->pmtOrderId,
-            'merchantOrderId' => $this->merchantOrderId,
-            'method' => $method,
+            'message' => array (
+                'pmtOrderId: ' . $this->pmtOrderId,
+                'pmtOrderId' => $this->pmtOrderId,
+                'merchantOrderId' => $this->merchantOrderId,
+                'method' => $method,
+            ),
+            'file' => __FILE__,
             'line' => $line,
+            'code' => 200
         ));
         return $this->finishProcess(true);
     }

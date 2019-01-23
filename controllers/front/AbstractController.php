@@ -7,6 +7,7 @@
  * @license   proprietary
  */
 
+use PagaMasTarde\ModuleUtils\Model\Log\LogEntry;
 /**
  * Class AbstractController
  */
@@ -38,48 +39,36 @@ abstract class AbstractController extends ModuleFrontController
     }
 
     /**
-     * Return the HttpStatusCode description
-     *
-     * @param int $statusCode
-     * @return string
-     */
-    public function getHttpStatusCode($statusCode = 200)
-    {
-        $httpStatusCodes = array(
-            200 => "OK",
-            201 => "Created",
-            202 => "Accepted",
-            400 => "Bad Request",
-            401 => "Unauthorized",
-            402 => "Payment Required",
-            403 => "Forbidden",
-            404 => "Not Found",
-            405 => "Method Not Allowed",
-            406 => "Not Acceptable",
-            407 => "Proxy Authentication Required",
-            408 => "Request Timeout",
-            409 => "Conflict",
-            429 => "Too Many Requests",
-            500 => "Internal Server Error",
-        );
-        return isset($httpStatusCodes)? $httpStatusCodes[$statusCode] : $httpStatusCodes[200];
-    }
-
-    /**
      * Save log in SQL database
      *
      * @param array $data
+     * @param null  $exception
      */
-    public function saveLog($data = array())
+    public function saveLog($data = array(), $exception = null)
     {
         try {
-            $data = array_merge($data, array(
-                'timestamp' => time(),
-                'date' => date("Y-m-d H:i:s"),
-            ));
+            $logObj = new LogEntry();
+            if ($exception !== null) {
+                $logObj->error($exception);
+            }
+            if (isset($data['message'])) {
+                $logObj->setMessage($data['message']);
+            }
+            if (isset($data['line'])) {
+                $logObj->setLine($data['line']);
+            }
+            if (isset($data['file'])) {
+                $logObj->setFile($data['file']);
+            }
+            if (isset($data['code'])) {
+                $logObj->setCode($data['code']);
+            }
+            if (isset($data['trace'])) {
+                $logObj->setTrace($data['trace']);
+            }
 
             Db::getInstance()->insert('pmt_logs', array(
-                'log' => json_encode(str_replace('\'', '`', $data)),
+                'log' => $logObj->toJson()
             ));
         } catch (\Exception $exception) {
             // Do nothing
