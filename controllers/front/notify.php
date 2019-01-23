@@ -15,8 +15,9 @@ use PagaMasTarde\ModuleUtils\Exception\AmountMismatchException;
 use PagaMasTarde\ModuleUtils\Exception\ConcurrencyException;
 use PagaMasTarde\ModuleUtils\Exception\MerchantOrderNotFoundException;
 use PagaMasTarde\ModuleUtils\Exception\NoIdentificationException;
-use PagaMasTarde\ModuleUtils\Exception\NoOrderFoundException;
-use PagaMasTarde\ModuleUtils\Exception\NoQuoteFoundException;
+use PagaMasTarde\ModuleUtils\Exception\OrderNotFoundException;
+use PagaMasTarde\ModuleUtils\Exception\QuoteNotFoundException;
+use PagaMasTarde\ModuleUtils\Exception\ConfigurationNotFoundException;
 use PagaMasTarde\ModuleUtils\Exception\UnknownException;
 use PagaMasTarde\ModuleUtils\Exception\WrongStatusException;
 use PagaMasTarde\ModuleUtils\Model\Response\JsonSuccessResponse;
@@ -140,17 +141,18 @@ class PaylaterNotifyModuleFrontController extends AbstractController
                 'secureKey' => Tools::getValue('key'),
             );
         } catch (\Exception $exception) {
-            throw new UnknownException(self::CC_NO_CONFIG);
+            throw new ConfigurationNotFoundException();
         }
 
         $this->merchantOrderId = Tools::getValue('id_cart');
         if ($this->merchantOrderId == '') {
-            throw new NoQuoteFoundException();
+            throw new QuoteNotFoundException();
         }
 
 
         if (!($this->config['secureKey'] && $this->merchantOrderId && Module::isEnabled(self::PMT_CODE))) {
-            throw new UnknownException(self::CC_MALFORMED);
+            // This exception is only for Prestashop
+            throw new UnknownException('Module may not be enabled');
         }
     }
 
@@ -176,7 +178,8 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         try {
             $this->merchantOrder = new Cart($this->merchantOrderId);
             if (!Validate::isLoadedObject($this->merchantOrder)) {
-                throw new \Exception(self::GMO_CART_NOT_LOADED, 500);
+                // This exception is only for Prestashop
+                throw new UnknownException('Unable to load cart');
             }
         } catch (\Exception $exception) {
             throw new MerchantOrderNotFoundException();
@@ -213,7 +216,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         $this->orderClient = new PmtClient($this->config['publicKey'], $this->config['privateKey']);
         $this->pmtOrder = $this->orderClient->getOrder($this->pmtOrderId);
         if (!($this->pmtOrder instanceof PmtModelOrder)) {
-            throw new NoOrderFoundException();
+            throw new OrderNotFoundException();
         }
     }
 
@@ -364,9 +367,6 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         $method = $debug[1]['function'];
         $line = $debug[1]['line'];
         $this->saveLog(array(
-            'pmtCode' => $this->statusCode,
-            'pmtMessage' => $this->errorMessage,
-            'pmtMessageDetail' => $this->errorDetail,
             'pmtOrderId' => $this->pmtOrderId,
             'merchantOrderId' => $this->merchantOrderId,
             'method' => $method,
@@ -393,6 +393,6 @@ class PaylaterNotifyModuleFrontController extends AbstractController
             'id_order' => ($this->pmtOrder)?$this->pmtOrder->getId(): null,
         );
         $url = ($error)? $this->config['urlKO'] : $this->config['urlOK'];
-        return $this->redirect($error, $url, $parameters);
+        return $this->redirect($url, $parameters);
     }
 }

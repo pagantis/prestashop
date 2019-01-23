@@ -13,7 +13,7 @@
       "pagamastarde/autoindex": "^1.0",
       "pagamastarde/orders-api-client": "^1.0",
       "pagamastarde/selenium-form-utils": "^1.0",
-      "pagamastarde/module-utils": "^1.0",
+      "pagamastarde/module-utils": "^1.1",
       "vlucas/phpdotenv": "^2.5"
     },
     "require-dev": {

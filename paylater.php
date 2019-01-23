@@ -44,7 +44,7 @@ class Paylater extends PaymentModule
      */
     public function __construct()
     {
-        $this->_dotEnvError = null;
+        $this->dotEnvError = null;
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
         $this->version = '7.1.0';
@@ -63,24 +63,24 @@ class Paylater extends PaymentModule
             $this->upgrade();
         } else {
             copy(
-                $_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env.dist',
-                $_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env'
+                $_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env.dist',
+                $_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env'
             );
         }
 
 
-        $sql_file = dirname($_SERVER['DOCUMENT_ROOT'] . '/modules/paylater').'/sql/install.sql';
+        $sql_file = dirname($_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name).'/sql/install.sql';
         $this->loadSQLFile($sql_file);
 
         try {
-            $envFile = new Dotenv\Dotenv($_SERVER['DOCUMENT_ROOT'] . '/modules/paylater');
+            $envFile = new Dotenv\Dotenv($_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name);
             $envFile->load();
         } catch (\Exception $exception) {
             $this->context->controller->errors[] = $this->l('Unable to read file') .
-                ' ' . $_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env ' .
+                ' ' . $_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env ' .
                 $this->l('Ensure that the file exists and have the correct permissions');
-            $this->_dotEnvError = $this->l('Unable to read file') .
-                ' ' . $_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env ' .
+            $this->dotEnvError = $this->l('Unable to read file') .
+                ' ' . $_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env ' .
                 $this->l('Ensure that the file exists and have the correct permissions');
         }
 
@@ -149,16 +149,16 @@ class Paylater extends PaymentModule
     public function upgrade()
     {
 
-        if (!is_writable($_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env')) {
+        if (!is_writable($_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env')) {
             return false;
         }
-        $envFileVariables = $this->readEnvFileAsArray($_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env');
-        $distFileVariables = $this->readEnvFileAsArray($_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env.dist');
-        $distFile = Tools::file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env.dist');
+        $envFileVariables = $this->readEnvFileAsArray($_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env');
+        $distFileVariables = $this->readEnvFileAsArray($_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env.dist');
+        $distFile = Tools::file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env.dist');
 
         $newEnvFileArr = array_merge($distFileVariables, $envFileVariables);
         $newEnvFile = $this->replaceEnvFileValues($distFile, $newEnvFileArr);
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/modules/paylater' . '/.env', $newEnvFile);
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env', $newEnvFile);
         return true;
     }
 
@@ -498,8 +498,8 @@ class Paylater extends PaymentModule
         if ($error) {
             $message = $this->displayError($error);
         }
-        if ($this->_dotEnvError) {
-            $message = $this->displayError($this->_dotEnvError);
+        if ($this->dotEnvError) {
+            $message = $this->displayError($this->dotEnvError);
         }
 
         $logo = $this->getPathUri(). 'views/img/logo_pagamastarde.png';

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1060f60f0e75b31206e9eb7e198d8e13",
+    "content-hash": "b2be87550b64ab6e12cfe72dedb342fe",
     "packages": [
         {
             "name": "nategood/httpful",
@@ -140,16 +140,16 @@
         },
         {
             "name": "pagamastarde/module-utils",
-            "version": "1.0.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PagaMasTarde/module-utils.git",
-                "reference": "3e5103843eabd08f7697ae3d2459116db5e5fe89"
+                "reference": "c24be8e2ee1b58c2d2612818ee5b2844d9a44c3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/module-utils/zipball/3e5103843eabd08f7697ae3d2459116db5e5fe89",
-                "reference": "3e5103843eabd08f7697ae3d2459116db5e5fe89",
+                "url": "https://api.github.com/repos/PagaMasTarde/module-utils/zipball/c24be8e2ee1b58c2d2612818ee5b2844d9a44c3b",
+                "reference": "c24be8e2ee1b58c2d2612818ee5b2844d9a44c3b",
                 "shasum": ""
             },
             "require": {
@@ -180,7 +180,7 @@
                 }
             ],
             "description": "Paga+Tarde PHP Library. Module utils",
-            "time": "2018-12-17T18:51:05+00:00"
+            "time": "2019-01-23T09:18:06+00:00"
         },
         {
             "name": "pagamastarde/orders-api-client",
