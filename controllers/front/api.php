@@ -3,7 +3,7 @@
  * This file is part of the official Paylater module for PrestaShop.
  *
  * @author    Paga+Tarde <soporte@pagamastarde.com>
- * @copyright 2015-2016 Paga+Tarde
+ * @copyright 2019 Paga+Tarde
  * @license   proprietary
  */
 
@@ -84,9 +84,7 @@ class PaylaterApiModuleFrontController extends ModuleFrontController
      */
     public function authorize()
     {
-        $paylaterProd = Configuration::get('PAYLATER_PROD');
-        $paylaterMode = $paylaterProd == 1 ? 'PROD' : 'TEST';
-        $privateKey = Configuration::get('PAYLATER_PRIVATE_KEY_'. $paylaterMode);
+        $privateKey = Configuration::get('pmt_private_key');
 
         if (Tools::getValue('secret', false) == $privateKey) {
             return true;

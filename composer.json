@@ -1,25 +1,29 @@
 {
-     "name": "pagamastarde/prestashop",
-    "description": "Prestashop module to add PagaMasTarde Edit",
+    "name": "pagamastarde/prestashop",
+    "description": "Prestashop module to add Paga + Tarde",
     "license": "proprietary",
     "type": "module",
     "authors": [
         {
-            "name": "DigitalOrigin",
-            "email": "cromero@digitalorigin.com"
+            "name": "Paga + Tarde",
+            "email": "integration@pagamastarde.com"
         }
     ],
     "require": {
       "pagamastarde/autoindex": "^1.0",
-      "pagamastarde/shopper-library": "^1.0",
-      "pagamastarde/pmt-api-client": "^1.0"
+      "pagamastarde/orders-api-client": "^1.0",
+      "pagamastarde/selenium-form-utils": "^1.0",
+      "pagamastarde/module-utils": "^1.1",
+      "vlucas/phpdotenv": "^2.5"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8",
         "phpunit/phpunit-selenium": "^2.0",
         "facebook/webdriver": "^1.1"
     },
-    "autoload": {
-        "psr-0": {"": "lib/"}
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\Common\\": "test/common", "Test\\": "test/"
+        }
     }
 }

@@ -1,1 +1,2 @@
-DROP TABLE `PREFIX_pmt_cart_process`;
+DROP TABLE IF EXISTS `PREFIX_pmt_cart_process`;
+DROP TABLE IF EXISTS `PREFIX_pmt_order`;
