@@ -196,7 +196,7 @@ abstract class PaylaterPrestashopTest extends TestCase
         $execResult = exec($command);
         $this->assertEmpty($execResult);
 
-        $command = 'docker exec -it prestashop' . $psVersion.' chown www-data. /var/www/html/modules/paylater/.env';
+        $command = 'docker exec -i prestashop' . $psVersion.' chown www-data. /var/www/html/modules/paylater/.env';
         $execResult = exec($command);
         $this->assertEmpty($execResult);
     }
