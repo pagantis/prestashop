@@ -59,31 +59,40 @@ class Paylater extends PaymentModule
         );
 
 
+        $continue = true;
         if (Module::isInstalled($this->name)) {
-            $this->upgrade();
+            if (!$this->upgrade()) {
+                $this->context->controller->errors[] = $this->l('Unable to write file') .
+                    ' ' . _PS_PAYLATER_DIR . '/.env ' .
+                    $this->l('Ensure that the file exists and have the correct permissions');
+                $this->dotEnvError = $this->l('Unable to write file') .
+                    ' ' . _PS_PAYLATER_DIR . '/.env ' .
+                    $this->l('Ensure that the file exists and have the correct permissions');
+                $continue = false;
+            }
         } else {
             copy(
-                $_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env.dist',
-                $_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env'
+                _PS_PAYLATER_DIR . '/.env.dist',
+                _PS_PAYLATER_DIR . '/.env'
             );
         }
 
+        if ($continue) {
+            $sql_file = dirname(_PS_PAYLATER_DIR).'/sql/install.sql';
+            $this->loadSQLFile($sql_file);
 
-        $sql_file = dirname($_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name).'/sql/install.sql';
-        $this->loadSQLFile($sql_file);
-
-        try {
-            $envFile = new Dotenv\Dotenv($_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name);
-            $envFile->load();
-        } catch (\Exception $exception) {
-            $this->context->controller->errors[] = $this->l('Unable to read file') .
-                ' ' . $_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env ' .
-                $this->l('Ensure that the file exists and have the correct permissions');
-            $this->dotEnvError = $this->l('Unable to read file') .
-                ' ' . $_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env ' .
-                $this->l('Ensure that the file exists and have the correct permissions');
+            try {
+                $envFile = new Dotenv\Dotenv(_PS_PAYLATER_DIR);
+                $envFile->load();
+            } catch (\Exception $exception) {
+                $this->context->controller->errors[] = $this->l('Unable to read file') .
+                    ' ' . _PS_PAYLATER_DIR . '/.env ' .
+                    $this->l('Ensure that the file exists and have the correct permissions');
+                $this->dotEnvError = $this->l('Unable to read file') .
+                    ' ' . _PS_PAYLATER_DIR . '/.env ' .
+                    $this->l('Ensure that the file exists and have the correct permissions');
+            }
         }
-
         parent::__construct();
     }
 
@@ -149,16 +158,31 @@ class Paylater extends PaymentModule
     public function upgrade()
     {
 
-        if (!is_writable($_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env')) {
+        if (file_exists(_PS_PAYLATER_DIR . '/.env') && !is_writable(_PS_PAYLATER_DIR . '/.env')) {
             return false;
         }
-        $envFileVariables = $this->readEnvFileAsArray($_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env');
-        $distFileVariables = $this->readEnvFileAsArray($_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env.dist');
-        $distFile = Tools::file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env.dist');
+        $envFileVariables = $this->readEnvFileAsArray(_PS_PAYLATER_DIR . '/.env');
+        $distFileVariables = $this->readEnvFileAsArray(_PS_PAYLATER_DIR . '/.env.dist');
+        $distFile = Tools::file_get_contents(_PS_PAYLATER_DIR . '/.env.dist');
 
         $newEnvFileArr = array_merge($distFileVariables, $envFileVariables);
         $newEnvFile = $this->replaceEnvFileValues($distFile, $newEnvFileArr);
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/modules/' . $this->name . '/.env', $newEnvFile);
+        file_put_contents(_PS_PAYLATER_DIR . '/.env', $newEnvFile);
+
+        // migrating pk/tk from previous version
+        if (Configuration::get('pmt_public_key') === false && Configuration::get('PAYLATER_PUBLIC_KEY_PROD')) {
+            Configuration::updateValue('pmt_public_key', Configuration::get('PAYLATER_PUBLIC_KEY_PROD'));
+        } elseif (Configuration::get('pmt_public_key') === false && Configuration::get('PAYLATER_PUBLIC_KEY_TEST')) {
+            Configuration::updateValue('pmt_public_key', Configuration::get('PAYLATER_PUBLIC_KEY_TEST'));
+        }
+
+        if (Configuration::get('pmt_private_key') === false && Configuration::get('PAYLATER_PRIVATE_KEY_PROD')) {
+            Configuration::updateValue('pmt_private_key', Configuration::get('PAYLATER_PRIVATE_KEY_PROD'));
+        } elseif (Configuration::get('pmt_private_key') === false && Configuration::get('PAYLATER_PRIVATE_KEY_TEST')) {
+            Configuration::updateValue('pmt_private_key', Configuration::get('PAYLATER_PRIVATE_KEY_TEST'));
+        }
+        Configuration::updateValue('pmt_is_enabled', 1);
+
         return true;
     }
 
@@ -244,9 +268,9 @@ class Paylater extends PaymentModule
         $cart                       = $this->context->cart;
         $currency                   = new Currency($cart->id_currency);
         $availableCurrencies        = array('EUR');
-        $pmtDisplayMinAmount          = getenv('PMT_DISPLAY_MIN_AMOUNT');
+        $pmtDisplayMinAmount        = getenv('PMT_DISPLAY_MIN_AMOUNT');
         $pmtPublicKey               = Configuration::get('pmt_public_key');
-        $pmtPrivateKey             = Configuration::get('pmt_private_key');
+        $pmtPrivateKey              = Configuration::get('pmt_private_key');
 
         return (
             $cart->getOrderTotal() >= $pmtDisplayMinAmount &&
