@@ -192,11 +192,11 @@ abstract class PaylaterPrestashopTest extends TestCase
         $execResult = exec($command);
         $this->assertEmpty($execResult);
 
-        $command = 'docker-compose exec prestashop' . $psVersion.' chmod 777 /var/www/html/modules/paylater/.env';
+        $command = 'docker-compose exec -T prestashop' . $psVersion.' chmod 777 /var/www/html/modules/paylater/.env';
         $execResult = exec($command);
         $this->assertEmpty($execResult);
 
-        $command = 'docker-compose exec prestashop' . $psVersion.' chown www-data. /var/www/html/modules/paylater/.env';
+        $command = 'docker-compose exec -T prestashop' . $psVersion.' chown www-data. /var/www/html/modules/paylater/.env';
         $execResult = exec($command);
         $this->assertEmpty($execResult);
     }
