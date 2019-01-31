@@ -8,6 +8,7 @@
  */
 
 use PagaMasTarde\ModuleUtils\Model\Log\LogEntry;
+
 /**
  * Class AbstractController
  */
