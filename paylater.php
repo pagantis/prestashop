@@ -122,7 +122,7 @@ class Paylater extends PaymentModule
         $sql_file = dirname(__FILE__).'/sql/install.sql';
         $this->loadSQLFile($sql_file);
 
-        Configuration::updateValue('pmt_is_enabled', 1);
+        Configuration::updateValue('pmt_is_enabled', 0);
         Configuration::updateValue('pmt_simulator_is_enabled', 1);
         Configuration::updateValue('pmt_public_key', '');
         Configuration::updateValue('pmt_private_key', '');
