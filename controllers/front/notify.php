@@ -69,7 +69,6 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function postProcess()
     {
-        $response = null;
         try {
             $this->checkConcurrency();
             $this->getMerchantOrder();
