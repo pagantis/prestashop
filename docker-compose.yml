@@ -102,6 +102,7 @@ services:
       - "8018:80"
     extra_hosts:
       - "prestashop-dev.docker:127.0.0.1"
+
   prestashop-dev16:
     container_name: prestashop16dev
     image: prestashop/prestashop:1.6.1.20
@@ -128,6 +129,7 @@ services:
       - "8019:80"
     extra_hosts:
       - "prestashop-dev.docker:127.0.0.1"
+
   prestashop-dev15:
     container_name: prestashop15dev
     image: prestashop/prestashop:1.5-5.5-apache
@@ -154,6 +156,7 @@ services:
       - "8020:80"
     extra_hosts:
       - "prestashop-dev.docker:127.0.0.1"
+
   db-dev17:
     container_name: prestashopDb17Dev
     image: mysql:5.6

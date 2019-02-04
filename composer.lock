@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dd70def8525b0340f1c7e7f534e2b933",
+    "content-hash": "b2be87550b64ab6e12cfe72dedb342fe",
     "packages": [
         {
             "name": "nategood/httpful",
@@ -139,31 +139,34 @@
             "time": "2017-08-08T15:38:57+00:00"
         },
         {
-            "name": "pagamastarde/pmt-api-client",
-            "version": "v1.2.4",
+            "name": "pagamastarde/module-utils",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/PagaMasTarde/pmtApiClient.git",
-                "reference": "fc16c13f5f232221716e48991594b7448362d1ab"
+                "url": "https://github.com/PagaMasTarde/module-utils.git",
+                "reference": "00b214250b818192d6fe9e0f52b68ee5b24c38d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/pmtApiClient/zipball/fc16c13f5f232221716e48991594b7448362d1ab",
-                "reference": "fc16c13f5f232221716e48991594b7448362d1ab",
+                "url": "https://api.github.com/repos/PagaMasTarde/module-utils/zipball/00b214250b818192d6fe9e0f52b68ee5b24c38d0",
+                "reference": "00b214250b818192d6fe9e0f52b68ee5b24c38d0",
                 "shasum": ""
             },
             "require": {
-                "nategood/httpful": "*",
-                "nayjest/str-case-converter": "^1.0",
+                "ext-json": "*",
                 "php": ">=5.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8"
+                "facebook/webdriver": "^1.1",
+                "fzaninotto/faker": "^1.7",
+                "nayjest/str-case-converter": "^1.0",
+                "phpunit/phpunit": "^4.8",
+                "phpunit/phpunit-selenium": "^2.0"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "PagaMasTarde": "src/"
+                "psr-4": {
+                    "PagaMasTarde\\ModuleUtils\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -176,38 +179,41 @@
                     "email": "cromero@digitalorigin.com"
                 }
             ],
-            "description": "PagaMasTarde Api Client in PHP. Use the api with simple methods and using POO.",
-            "time": "2018-02-15T10:24:48+00:00"
+            "description": "Paga+Tarde PHP Library. Module utils",
+            "time": "2019-01-23T10:59:08+00:00"
         },
         {
-            "name": "pagamastarde/shopper-library",
-            "version": "v1.1.0",
+            "name": "pagamastarde/orders-api-client",
+            "version": "v1.0.16",
             "source": {
                 "type": "git",
-                "url": "https://github.com/PagaMasTarde/shopperLibrary.git",
-                "reference": "d255ffe262d03b18044760c58e9e1cdf49427847"
+                "url": "https://github.com/PagaMasTarde/ordersApiClient.git",
+                "reference": "94ee56ac2f744d47d29c5ffbb4fe8e1a897b9e61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/shopperLibrary/zipball/d255ffe262d03b18044760c58e9e1cdf49427847",
-                "reference": "d255ffe262d03b18044760c58e9e1cdf49427847",
+                "url": "https://api.github.com/repos/PagaMasTarde/ordersApiClient/zipball/94ee56ac2f744d47d29c5ffbb4fe8e1a897b9e61",
+                "reference": "94ee56ac2f744d47d29c5ffbb4fe8e1a897b9e61",
                 "shasum": ""
             },
             "require": {
+                "nategood/httpful": "^0.2",
+                "nayjest/str-case-converter": "^1.0",
                 "php": ">=5.3"
             },
             "require-dev": {
+                "fzaninotto/faker": "^1.7",
                 "phpunit/phpunit": "^4.8"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "ShopperLibrary\\": "src/"
+                    "PagaMasTarde\\OrdersApiClient\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "proprietary"
             ],
             "authors": [
                 {
@@ -215,8 +221,101 @@
                     "email": "cromero@digitalorigin.com"
                 }
             ],
-            "description": "Library with the models of the shop modules and shopper client",
-            "time": "2017-11-06T09:22:04+00:00"
+            "description": "PagaMasTarde Orders Api Client in PHP. Use the api with simple methods and using OOP.",
+            "time": "2018-12-17T11:25:27+00:00"
+        },
+        {
+            "name": "pagamastarde/selenium-form-utils",
+            "version": "v1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PagaMasTarde/selenium-form-utils.git",
+                "reference": "4e6ecf61afd9eb0f099f67b738a29528277c8903"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PagaMasTarde/selenium-form-utils/zipball/4e6ecf61afd9eb0f099f67b738a29528277c8903",
+                "reference": "4e6ecf61afd9eb0f099f67b738a29528277c8903",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "facebook/webdriver": "^1.1",
+                "fzaninotto/faker": "^1.7",
+                "pagamastarde/orders-api-client": "^1.0",
+                "phpunit/phpunit": "^4.8",
+                "phpunit/phpunit-selenium": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PagaMasTarde\\SeleniumFormUtils\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "DigitalOrigin",
+                    "email": "cromero@digitalorigin.com"
+                }
+            ],
+            "description": "Paga+Tarde PHP Library. Selenium helper to end a test purchase. Helper to test the payment validation and redirection",
+            "time": "2018-08-27T08:26:26+00:00"
+        },
+        {
+            "name": "vlucas/phpdotenv",
+            "version": "v2.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vlucas/phpdotenv.git",
+                "reference": "8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e",
+                "reference": "8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35 || ^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Dotenv\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Vance Lucas",
+                    "email": "vance@vancelucas.com",
+                    "homepage": "http://www.vancelucas.com"
+                }
+            ],
+            "description": "Loads environment variables from `.env` to `getenv()`, `$_ENV` and `$_SERVER` automagically.",
+            "keywords": [
+                "dotenv",
+                "env",
+                "environment"
+            ],
+            "time": "2018-07-29T20:33:41+00:00"
         }
     ],
     "packages-dev": [
@@ -371,16 +470,16 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "1.7.6",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "33a7e3c4fda54e912ff6338c48823bd5c0f0b712"
+                "reference": "4ba436b55987b4bf311cb7c6ba82aa528aac0a06"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/33a7e3c4fda54e912ff6338c48823bd5c0f0b712",
-                "reference": "33a7e3c4fda54e912ff6338c48823bd5c0f0b712",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/4ba436b55987b4bf311cb7c6ba82aa528aac0a06",
+                "reference": "4ba436b55987b4bf311cb7c6ba82aa528aac0a06",
                 "shasum": ""
             },
             "require": {
@@ -392,12 +491,12 @@
             },
             "require-dev": {
                 "phpspec/phpspec": "^2.5|^3.2",
-                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5"
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5 || ^7.1"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.7.x-dev"
+                    "dev-master": "1.8.x-dev"
                 }
             },
             "autoload": {
@@ -430,7 +529,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2018-04-18T13:57:24+00:00"
+            "time": "2018-08-05T17:53:17+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -1245,26 +1344,94 @@
             "time": "2015-06-21T13:59:46+00:00"
         },
         {
-            "name": "symfony/yaml",
-            "version": "v2.8.39",
+            "name": "symfony/polyfill-ctype",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/yaml.git",
-                "reference": "d20bd2bdee063863e426297af41eda45ccad6f7e"
+                "url": "https://github.com/symfony/polyfill-ctype.git",
+                "reference": "e3d826245268269cd66f8326bd8bc066687b4a19"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/d20bd2bdee063863e426297af41eda45ccad6f7e",
-                "reference": "d20bd2bdee063863e426297af41eda45ccad6f7e",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/e3d826245268269cd66f8326bd8bc066687b4a19",
+                "reference": "e3d826245268269cd66f8326bd8bc066687b4a19",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.9"
+                "php": ">=5.3.3"
+            },
+            "suggest": {
+                "ext-ctype": "For best performance"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "1.9-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Ctype\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                },
+                {
+                    "name": "Gert de Pagter",
+                    "email": "BackEndTea@gmail.com"
+                }
+            ],
+            "description": "Symfony polyfill for ctype functions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "ctype",
+                "polyfill",
+                "portable"
+            ],
+            "time": "2018-08-06T14:22:27+00:00"
+        },
+        {
+            "name": "symfony/yaml",
+            "version": "v3.4.21",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/yaml.git",
+                "reference": "554a59a1ccbaac238a89b19c8e551a556fd0e2ea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/554a59a1ccbaac238a89b19c8e551a556fd0e2ea",
+                "reference": "554a59a1ccbaac238a89b19c8e551a556fd0e2ea",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.5.9|>=7.0.8",
+                "symfony/polyfill-ctype": "~1.8"
+            },
+            "conflict": {
+                "symfony/console": "<3.4"
+            },
+            "require-dev": {
+                "symfony/console": "~3.4|~4.0"
+            },
+            "suggest": {
+                "symfony/console": "For validating YAML files using the lint command"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.4-dev"
                 }
             },
             "autoload": {
@@ -1291,7 +1458,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2018-04-08T07:53:13+00:00"
+            "time": "2019-01-01T13:45:19+00:00"
         }
     ],
     "aliases": [],
