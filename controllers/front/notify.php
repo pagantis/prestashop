@@ -85,24 +85,22 @@ class PaylaterNotifyModuleFrontController extends AbstractController
             $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
             $this->jsonResponse->setException($exception);
             $response = $this->jsonResponse->toJson();
-            return $this->cancelProcess();
+            return $this->cancelProcess($response);
         }
 
         try {
-            if (!isset($response)) {
-                $this->jsonResponse = new JsonSuccessResponse();
-                $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
-                $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
-                $this->confirmPmtOrder();
-            }
+            $this->jsonResponse = new JsonSuccessResponse();
+            $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
+            $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
+            $this->confirmPmtOrder();
         } catch (\Exception $exception) {
             $this->rollbackMerchantOrder();
             $this->jsonResponse = new JsonExceptionResponse();
             $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
             $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
             $this->jsonResponse->setException($exception);
-            $this->jsonResponse->toJson();
-            return $this->cancelProcess();
+            $response = $this->jsonResponse->toJson();
+            return $this->cancelProcess($response);
         }
 
         try {
@@ -345,8 +343,10 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      * 1. Unblock concurrency
      * 2. Save log
      *
+     * @param String|null $response Response as json
+     *
      */
-    public function cancelProcess()
+    public function cancelProcess($response = null)
     {
         if ($this->merchantOrder) {
             $id = (!is_null($this->pmtOrder))?$this->pmtOrder->getId():null;
@@ -367,12 +367,8 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         $method = $debug[1]['function'];
         $line = $debug[1]['line'];
         $this->saveLog(array(
-            'message' => array (
-                'pmtOrderId: ' . $this->pmtOrderId,
-                'pmtOrderId' => $this->pmtOrderId,
-                'merchantOrderId' => $this->merchantOrderId,
-                'method' => $method,
-            ),
+            'message' => $response,
+            'method' => $method,
             'file' => __FILE__,
             'line' => $line,
             'code' => 200

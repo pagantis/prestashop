@@ -27,7 +27,6 @@ abstract class AbstractController extends ModuleFrontController
     /**
      * Configure redirection
      *
-     * @param bool   $error
      * @param string $url
      * @param array  $parameters
      */
@@ -48,28 +47,28 @@ abstract class AbstractController extends ModuleFrontController
     public function saveLog($data = array(), $exception = null)
     {
         try {
-            $logObj = new LogEntry();
+            $logEntry = new LogEntry();
             if ($exception !== null) {
-                $logObj->error($exception);
+                $logEntry->error($exception);
             }
             if (isset($data['message'])) {
-                $logObj->setMessage($data['message']);
+                $logEntry->setMessage($data['message']);
             }
             if (isset($data['line'])) {
-                $logObj->setLine($data['line']);
+                $logEntry->setLine($data['line']);
             }
             if (isset($data['file'])) {
-                $logObj->setFile($data['file']);
+                $logEntry->setFile($data['file']);
             }
             if (isset($data['code'])) {
-                $logObj->setCode($data['code']);
+                $logEntry->setCode($data['code']);
             }
             if (isset($data['trace'])) {
-                $logObj->setTrace($data['trace']);
+                $logEntry->setTrace($data['trace']);
             }
 
             Db::getInstance()->insert('pmt_logs', array(
-                'log' => $logObj->toJson()
+                'log' => $logEntry->toJson()
             ));
         } catch (\Exception $exception) {
             // Do nothing

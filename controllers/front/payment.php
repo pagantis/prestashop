@@ -10,6 +10,7 @@
 require_once('AbstractController.php');
 
 use PagaMasTarde\ModuleUtils\Exception\OrderNotFoundException;
+use PagaMasTarde\ModuleUtils\Exception\UnknownException;
 
 /**
  * Class PaylaterRedirectModuleFrontController
