@@ -40,6 +40,7 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
             // do nothing, no prompt
         };
 
+        $this->findByCss('#pmt_is_enabled_on + label')->click();
         $this->findById('pmt_public_key')->clear()->sendKeys($this->configuration['publicKey']);
         $this->findById('pmt_private_key')->clear()->sendKeys($this->configuration['secretKey']);
         $this->findById('module_form_submit_btn')->click();
