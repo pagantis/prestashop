@@ -10,6 +10,7 @@
 require_once('AbstractController.php');
 
 use PagaMasTarde\ModuleUtils\Exception\OrderNotFoundException;
+use PagaMasTarde\ModuleUtils\Exception\UnknownException;
 
 /**
  * Class PaylaterRedirectModuleFrontController
@@ -228,13 +229,12 @@ class PaylaterPaymentModuleFrontController extends AbstractController
             if ($order instanceof \PagaMasTarde\OrdersApiClient\Model\Order) {
                 $url = $order->getActionUrls()->getForm();
                 $orderId = $order->getId();
-                $result = Db::getInstance()->execute(
-                    "INSERT INTO `" . _DB_PREFIX_ . "pmt_order` (`id`, `order_id`)
+                $sql = "INSERT INTO `" . _DB_PREFIX_ . "pmt_order` (`id`, `order_id`)
                      VALUES ('$cart->id','$orderId') 
-                     ON DUPLICATE KEY UPDATE `order_id` = '$orderId'"
-                );
+                     ON DUPLICATE KEY UPDATE `order_id` = '$orderId'";
+                $result = Db::getInstance()->execute($sql);
                 if (!$result) {
-                    throw new UnknownException('Unable to save pmt-order-id');
+                    throw new UnknownException('Unable to save pmt-order-id in database: '. $sql);
                 }
             } else {
                 throw new OrderNotFoundException();

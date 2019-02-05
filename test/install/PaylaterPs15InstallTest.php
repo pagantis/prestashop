@@ -37,6 +37,7 @@ class PaylaterPs15InstallTest extends AbstractPs15Selenium
             $this->findByLinkText('Configure')->click();
         }
 
+        $this->findByCss('#pmt_is_enabled_true + label')->click();
         $this->findById('pmt_public_key')->clear()->sendKeys($this->configuration['publicKey']);
         $this->findById('pmt_private_key')->clear()->sendKeys($this->configuration['secretKey']);
         $this->webDriver->executeScript('window.scrollBy(0,250)');
