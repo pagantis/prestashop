@@ -47,7 +47,7 @@ class Paylater extends PaymentModule
         $this->dotEnvError = null;
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '7.1.3';
+        $this->version = '7.1.4';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -58,41 +58,27 @@ class Paylater extends PaymentModule
             'Instant, easy and effective financial tool for your customers'
         );
 
-
-        $continue = true;
-        if (Module::isInstalled($this->name)) {
-            if (!$this->upgrade()) {
-                $this->context->controller->errors[] = $this->l('Unable to write file') .
-                    ' ' . _PS_PAYLATER_DIR . '/.env ' .
-                    $this->l('Ensure that the file exists and have the correct permissions');
-                $this->dotEnvError = $this->l('Unable to write file') .
-                    ' ' . _PS_PAYLATER_DIR . '/.env ' .
-                    $this->l('Ensure that the file exists and have the correct permissions');
-                $continue = false;
-            }
-        } else {
+        if (!file_exists(_PS_PAYLATER_DIR . '/.env')) {
             copy(
                 _PS_PAYLATER_DIR . '/.env.dist',
                 _PS_PAYLATER_DIR . '/.env'
             );
         }
 
-        if ($continue) {
-            $sql_file = dirname(_PS_PAYLATER_DIR).'/sql/install.sql';
-            $this->loadSQLFile($sql_file);
+        $this->upgrade();
 
-            try {
-                $envFile = new Dotenv\Dotenv(_PS_PAYLATER_DIR);
-                $envFile->load();
-            } catch (\Exception $exception) {
-                $this->context->controller->errors[] = $this->l('Unable to read file') .
-                    ' ' . _PS_PAYLATER_DIR . '/.env ' .
-                    $this->l('Ensure that the file exists and have the correct permissions');
-                $this->dotEnvError = $this->l('Unable to read file') .
-                    ' ' . _PS_PAYLATER_DIR . '/.env ' .
-                    $this->l('Ensure that the file exists and have the correct permissions');
-            }
+        try {
+            $envFile = new Dotenv\Dotenv(_PS_PAYLATER_DIR);
+            $envFile->load();
+        } catch (\Exception $exception) {
+            $this->context->controller->errors[] = $this->l('Unable to read file') .
+                ' ' . _PS_PAYLATER_DIR . '/.env ' .
+                $this->l('Ensure that the file exists and have the correct permissions');
+            $this->dotEnvError = $this->l('Unable to read file') .
+                ' ' . _PS_PAYLATER_DIR . '/.env ' .
+                $this->l('Ensure that the file exists and have the correct permissions');
         }
+
         parent::__construct();
     }
 
@@ -119,8 +105,9 @@ class Paylater extends PaymentModule
             return false;
         }
 
-        $sql_file = dirname(__FILE__).'/sql/install.sql';
-        $this->loadSQLFile($sql_file);
+        if (file_exists(_PS_PAYLATER_DIR . '/.env')) {
+            $this->upgrade();
+        }
 
         Configuration::updateValue('pmt_is_enabled', 0);
         Configuration::updateValue('pmt_simulator_is_enabled', 1);
@@ -128,15 +115,15 @@ class Paylater extends PaymentModule
         Configuration::updateValue('pmt_private_key', '');
 
         return (parent::install()
-                && $this->registerHook('displayShoppingCart')
-                && $this->registerHook('payment')
-                && $this->registerHook('paymentOptions')
-                && $this->registerHook('displayRightColumn')
-                && $this->registerHook('displayLeftColumn')
-                && $this->registerHook('displayRightColumnProduct')
-                && $this->registerHook('displayLeftColumnProduct')
-                && $this->registerHook('displayProductButtons')
-                && $this->registerHook('displayOrderConfirmation')
+            && $this->registerHook('displayShoppingCart')
+            && $this->registerHook('payment')
+            && $this->registerHook('paymentOptions')
+            && $this->registerHook('displayRightColumn')
+            && $this->registerHook('displayLeftColumn')
+            && $this->registerHook('displayRightColumnProduct')
+            && $this->registerHook('displayLeftColumnProduct')
+            && $this->registerHook('displayProductButtons')
+            && $this->registerHook('displayOrderConfirmation')
         );
     }
 
@@ -157,33 +144,44 @@ class Paylater extends PaymentModule
      */
     public function upgrade()
     {
+        $sql_file = dirname(__FILE__).'/sql/install.sql';
+        $this->loadSQLFile($sql_file);
 
-        if (file_exists(_PS_PAYLATER_DIR . '/.env') && !is_writable(_PS_PAYLATER_DIR . '/.env')) {
-            return false;
+        if (file_exists(_PS_PAYLATER_DIR . '/.env') && file_exists(_PS_PAYLATER_DIR . '/.env.dist')) {
+            $envFileVariables = $this->readEnvFileAsArray(_PS_PAYLATER_DIR . '/.env');
+            $distFileVariables = $this->readEnvFileAsArray(_PS_PAYLATER_DIR . '/.env.dist');
+            $distFile = Tools::file_get_contents(_PS_PAYLATER_DIR . '/.env.dist');
+
+            if ($distFileVariables != $envFileVariables) {
+                $newEnvFileArr = array_merge($distFileVariables, $envFileVariables);
+                $newEnvFile = $this->replaceEnvFileValues($distFile, $newEnvFileArr);
+
+                file_put_contents(_PS_PAYLATER_DIR . '/.env', $newEnvFile);
+
+                // migrating pk/tk from previous version
+                if (Configuration::get('pmt_public_key') === false
+                    && Configuration::get('PAYLATER_PUBLIC_KEY_PROD')
+                ) {
+                    Configuration::updateValue('pmt_public_key', Configuration::get('PAYLATER_PUBLIC_KEY_PROD'));
+                } elseif (Configuration::get('pmt_public_key') === false
+                    && Configuration::get('PAYLATER_PUBLIC_KEY_TEST')
+                ) {
+                    Configuration::updateValue('pmt_public_key', Configuration::get('PAYLATER_PUBLIC_KEY_TEST'));
+                }
+
+                if (Configuration::get('pmt_private_key') === false
+                    && Configuration::get('PAYLATER_PRIVATE_KEY_PROD')
+                ) {
+                    Configuration::updateValue('pmt_private_key', Configuration::get('PAYLATER_PRIVATE_KEY_PROD'));
+                } elseif (Configuration::get('pmt_private_key') === false
+                    && Configuration::get('PAYLATER_PRIVATE_KEY_TEST')
+                ) {
+                    Configuration::updateValue('pmt_private_key', Configuration::get('PAYLATER_PRIVATE_KEY_TEST'));
+                }
+
+                Configuration::updateValue('pmt_is_enabled', 1);
+            }
         }
-        $envFileVariables = $this->readEnvFileAsArray(_PS_PAYLATER_DIR . '/.env');
-        $distFileVariables = $this->readEnvFileAsArray(_PS_PAYLATER_DIR . '/.env.dist');
-        $distFile = Tools::file_get_contents(_PS_PAYLATER_DIR . '/.env.dist');
-
-        $newEnvFileArr = array_merge($distFileVariables, $envFileVariables);
-        $newEnvFile = $this->replaceEnvFileValues($distFile, $newEnvFileArr);
-        file_put_contents(_PS_PAYLATER_DIR . '/.env', $newEnvFile);
-
-        // migrating pk/tk from previous version
-        if (Configuration::get('pmt_public_key') === false && Configuration::get('PAYLATER_PUBLIC_KEY_PROD')) {
-            Configuration::updateValue('pmt_public_key', Configuration::get('PAYLATER_PUBLIC_KEY_PROD'));
-        } elseif (Configuration::get('pmt_public_key') === false && Configuration::get('PAYLATER_PUBLIC_KEY_TEST')) {
-            Configuration::updateValue('pmt_public_key', Configuration::get('PAYLATER_PUBLIC_KEY_TEST'));
-        }
-
-        if (Configuration::get('pmt_private_key') === false && Configuration::get('PAYLATER_PRIVATE_KEY_PROD')) {
-            Configuration::updateValue('pmt_private_key', Configuration::get('PAYLATER_PRIVATE_KEY_PROD'));
-        } elseif (Configuration::get('pmt_private_key') === false && Configuration::get('PAYLATER_PRIVATE_KEY_TEST')) {
-            Configuration::updateValue('pmt_private_key', Configuration::get('PAYLATER_PRIVATE_KEY_TEST'));
-        }
-        Configuration::updateValue('pmt_is_enabled', 1);
-
-        return true;
     }
 
     /**
