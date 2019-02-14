@@ -5,43 +5,26 @@
  * @copyright 2015-2016 Paga+Tarde
  * @license   proprietary
  *}
-{if $pmtIsEnabled}
-    <style>
-        p.payment_module a.paylater-checkout {
-            padding-left:17px;
-        }
-    </style>
-    <script type="text/javascript" src="https://cdn.pagamastarde.com/pmt-js-client-sdk/3/js/client-sdk.min.jfffffffs"></script>
+{if ($pmtIsEnabled && $pmtSimulatorIsEnabled)}
+    <script type="text/javascript" src="https://cdn.pagamastarde.com/js/pmt-v2/sdk.js"></script>
     <script type="text/javascript">
-        if (typeof pmtClient !== 'undefined') {
-            pmtClient.setPublicKey('{$pmtPublicKey|escape:'quotes'}');
-            pmtClient.events.send('checkout', { basketAmount: {$amount|escape:'quotes'} } );
+        window.onload = function() {
+            if (typeof pmtSDK != 'undefined') {
+                var positionSelector = '.PmtSimulator';
+                var price = '{$amount|escape:'quotes'}'
+                var options = {
+                    publicKey: '{$pmtPublicKey|escape:'quotes'}',
+                    selector: positionSelector,
+                    numInstalments: '{$pmtQuotesStart|escape:'quotes'}',
+                    type: {$pmtSimulatorType|escape:'quotes'},
+                    skin: {$pmtSimulatorSkin|escape:'quotes'},
+                    position: {$pmtSimulatorPosition|escape:'quotes'},
+                    totalAmount: price
+                };
+                pmtSDK.simulator.init(options);
+            }
         }
     </script>
-    {if $pmtSimulatorIsEnabled}
-        <span class="js-pmt-payment-type"></span>
-        <div class="PmtSimulator"
-             data-pmt-num-quota="{$pmtQuotesStart|escape:'quotes'}"
-             data-pmt-max-ins="{$pmtQuotesMax|escape:'quotes'}"
-             data-pmt-style="blue"
-             data-pmt-type="{$pmtSimulatorCheckout|escape:'quotes'}"
-             data-pmt-discount="no"
-             data-pmt-amount="{$amount|escape:'quotes'}"
-             data-pmt-expanded="yes">
-        </div>
-        <script type="text/javascript">
-            if (typeof pmtClient !== 'undefined') {
-                pmtClient.simulator.init();
-            }
-
-            var paylaterButton  = document.querySelector("[data-module-name='Paylater']");
-            if (paylaterButton !== undefined)
-            {
-                paylaterButton.addEventListener("click", function(){
-                    pmtClient.simulator.reload();
-                });
-            }
-        </script>
-    {/if}
+    <div class="PmtSimulator"></div>
 {/if}
 

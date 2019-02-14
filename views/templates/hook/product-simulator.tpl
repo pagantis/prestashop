@@ -6,85 +6,53 @@
  * @license   proprietary
  *}
 {if ($pmtIsEnabled && $pmtSimulatorIsEnabled)}
-<script type="text/javascript" src="https://cdn.pagamastarde.com/pmt-js-client-sdk/3/js/client-sdk.min.js"></script>
+<script type="text/javascript" src="https://cdn.pagamastarde.com/js/pmt-v2/sdk.js"></script>
 <script type="text/javascript">
-    if (typeof pmtClient !== 'undefined') {
-        pmtClient.setPublicKey('{$pmtPublicKey|escape:'quotes'}');
-    }
-
-</script>
-<span class="js-pmt-payment-type"></span>
-<div class="PmtSimulator PmtSimulatorSelectable--claim"
-     data-pmt-num-quota="{$pmtQuotesStart|escape:'quotes'}"
-     data-pmt-max-ins="{$pmtQuotesMax|escape:'quotes'}"
-     data-pmt-style="Blue"
-     data-pmt-type="{$pmtSimulatorProduct|escape:'quotes'}"
-     data-pmt-discount="no"
-     data-pmt-amount="{$amount|escape:'quotes'}"
-     data-pmt-expanded="yes">
-</div>
-<script type="text/javascript">
-    function findPrice()    {
-        var price = '';
+    function findPriceSelector()    {
         var priceDOM = document.getElementById("our_price_display");
         if (priceDOM != null) {
-            return price.innerText;
+            return '#our_price_display';
         } else {
-            priceDOM = document.querySelector(".current-price span")
+            priceDOM = document.querySelector(".current-price span[itemprop=price]")
             if (priceDOM != null) {
-                return priceDOM.innerText;
+                return ".current-price span[itemprop=price]";
             }
         }
 
-        var all = document.getElementsByTagName("*");
-        // Extra search
-        var attribute = "itemprop";
-        var value = "price";
-        for (var i = 0; i < all.length; i++) {
-            if (all[i].getAttribute(attribute) == value) {
-                return all[i].innerText;
-            }
-        }
-        return false;
+        return 'default';
     }
-    function changePrice(miliseconds=1000)
-    {
-        setTimeout(
-            function() {
-                var newPrice = findPrice();
-                if (newPrice) {
-                    var currentPrice = document.getElementsByClassName('PmtSimulator')[0].getAttribute('data-pmt-amount');
 
-                    if (newPrice != currentPrice) {
-                        document.getElementsByClassName('PmtSimulator')[0].setAttribute('data-pmt-amount', newPrice);
-                        if (typeof pmtClient !== 'undefined') {
-                            pmtClient.simulator.reload();
-                        }
-                    }
+    window.onload = function() {
+        if (typeof pmtSDK != 'undefined') {
+            var price = null;
+            var positionSelector = '{$pmtCSSSelector|escape:'quotes'}';
+            var priceSelector = '{$pmtPriceSelector|escape:'quotes'}';
+            if (positionSelector === 'default') {
+                positionSelector = '.PmtSimulator';
+            }
+            if (priceSelector === 'default') {
+                priceSelector = findPriceSelector();
+                if (priceSelector === 'default') {
+                    price = '{$amount|escape:'quotes'}'
                 }
             }
-        ,miliseconds)
-    }
-    changePrice(0); //Load the screen price into simulator to avoid the reload event
-    window.onload = function() {
-        var productAttributeModifiers = {};
-        var productAttributeModifiersDOM = document.getElementById('attributes');
-        //<select> for size, <a> for color/texture, <input>for checkbox
-        if (productAttributeModifiersDOM != null) {
-            productAttributeModifiers = productAttributeModifiersDOM.querySelectorAll('input, select, a');
-        } else {
-            productAttributeModifiers = document.getElementsByClassName('product-variants')[0].querySelectorAll('input, select, a');
+            var options = {
+                publicKey: '{$pmtPublicKey|escape:'quotes'}',
+                selector: positionSelector,
+                numInstalments: '{$pmtQuotesStart|escape:'quotes'}',
+                type: {$pmtSimulatorType|escape:'quotes'},
+                skin: {$pmtSimulatorSkin|escape:'quotes'},
+                position: {$pmtSimulatorPosition|escape:'quotes'}
+            };
+            if (priceSelector !== 'default') {
+                options.itemAmountSelector = priceSelector;
+            }
+            if (price != null) {
+                options.totalAmount = price;
+            }
+            pmtSDK.simulator.init(options);
         }
-        productAttributeModifiers.forEach(function(modifier, index) {
-            var eventType = (modifier.tagName == 'SELECT') ? 'change':'click';
-            modifier.addEventListener(eventType, changePrice);
-        });
-    }
-
-    setInterval(function(){ changePrice(0); }, 2000);
-
-    if (typeof pmtClient !== 'undefined') {
-        pmtClient.simulator.init();
     }
 </script>
+<div class="PmtSimulator"></div>
 {/if}
