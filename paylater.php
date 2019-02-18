@@ -129,7 +129,6 @@ class Paylater extends PaymentModule
             && $this->registerHook('displayLeftColumnProduct')
             && $this->registerHook('displayProductButtons')
             && $this->registerHook('displayOrderConfirmation')
-            && $this->registerHook('header')
         );
     }
 
@@ -156,6 +155,8 @@ class Paylater extends PaymentModule
             $sql_file = dirname(__FILE__).'/sql/install.sql';
             $this->loadSQLFile($sql_file);
         }
+
+        $this->registerHook('header');
 
         if (file_exists(_PS_PAYLATER_DIR . '/.env') && file_exists(_PS_PAYLATER_DIR . '/.env.dist')) {
             $envFileVariables = $this->readEnvFileAsArray(_PS_PAYLATER_DIR . '/.env');
