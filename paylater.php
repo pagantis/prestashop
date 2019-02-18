@@ -156,7 +156,21 @@ class Paylater extends PaymentModule
             $this->loadSQLFile($sql_file);
         }
 
-        $this->registerHook('header');
+        $sql_content = 'select * from \'' . _DB_PREFIX_.  'hook_module\' where 
+            id_module = \'' . Module::getModuleIdByName($this->name) . '\' and 
+            id_shop = \'' . Shop::getContextShopID() . '\' and 
+            id_hook = \'' . Hook::getIdByName('header') . '\'';
+        $hook_exists = Db::getInstance()->ExecuteS($sql_content);
+        if (empty($hook_exists)) {
+            $sql_insert = 'insert into ' . _DB_PREFIX_.  'hook_module 
+            (id_module, id_shop, id_hook, position)
+            values
+            (\''. Module::getModuleIdByName($this->name) . '\',
+            \''. Shop::getContextShopID() . '\',
+            \''. Hook::getIdByName('header') . '\',
+            150)';
+            Db::getInstance()->execute($sql_insert);
+        }
 
         if (file_exists(_PS_PAYLATER_DIR . '/.env') && file_exists(_PS_PAYLATER_DIR . '/.env.dist')) {
             $envFileVariables = $this->readEnvFileAsArray(_PS_PAYLATER_DIR . '/.env');

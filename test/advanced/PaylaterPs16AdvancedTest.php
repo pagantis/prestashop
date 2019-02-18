@@ -71,11 +71,9 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
     {
         $this->goToProduct();
         $simulatorDiv = $this->findByClass('PmtSimulator');
-        $simulatorType = $simulatorDiv->getAttribute('data-pmt-type');
         $numQuota = $simulatorDiv->getAttribute('data-pmt-num-quota');
         $maxInstallments = $simulatorDiv->getAttribute('data-pmt-max-ins');
 
-        $this->assertEquals(6, $simulatorType);
         $this->assertEquals(3, $numQuota);
         $this->assertEquals(12, $maxInstallments);
 
