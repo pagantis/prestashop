@@ -13,25 +13,6 @@
                 {$pmtTitle|escape:'quotes'}
             </a>
         </p>
-        {if $pmtSimulatorIsEnabled}
-                <script type="text/javascript">
-                    if (typeof pmtSDK != 'undefined') {
-                        var positionSelector = '.PmtSimulator';
-                        var price = '{$amount|escape:'quotes'}'
-                        var options = {
-                            publicKey: '{$pmtPublicKey|escape:'quotes'}',
-                            selector: positionSelector,
-                            numInstalments: '{$pmtQuotesStart|escape:'quotes'}',
-                            type: {$pmtSimulatorType|escape:'quotes'},
-                            skin: {$pmtSimulatorSkin|escape:'quotes'},
-                            position: {$pmtSimulatorPosition|escape:'quotes'},
-                            totalAmount: price
-                        };
-                        pmtSDK.simulator.init(options);
-                    }
-                </script>
-                <div class="PmtSimulator"></div>
-        {/if}
         <style>
             p.payment_module a.paylater-checkout {
                 background: url(/modules/paylater/views/img/logo-64x64.png) no-repeat;

@@ -150,7 +150,7 @@ class Paylater extends PaymentModule
     public function upgrade()
     {
         $sql_content = 'show tables like \'' . _DB_PREFIX_.  'pmt_cart_process\'';
-        $table_exists = Db::getInstance()->execute($sql_content);
+        $table_exists = Db::getInstance()->ExecuteS($sql_content);
         if (empty($table_exists)) {
             $sql_file = dirname(__FILE__).'/sql/install.sql';
             $this->loadSQLFile($sql_file);
@@ -380,11 +380,7 @@ class Paylater extends PaymentModule
         ;
 
 
-        if (_PS_VERSION_ >= 1.7) {
-            $paymentOption->setAdditionalInformation(
-                $this->fetch('module:paylater/views/templates/hook/checkout-17.tpl')
-            );
-        } else {
+        if (_PS_VERSION_ < 1.7) {
             $paymentOption->setAdditionalInformation(
                 $this->fetch('module:paylater/views/templates/hook/checkout-15.tpl')
             );
@@ -584,7 +580,7 @@ class Paylater extends PaymentModule
      * Hook to show payment method, this only applies on prestashop <= 1.6
      *
      * @param $params
-     * @return bool
+     * @return bool | string
      * @throws Exception
      */
     public function hookPayment($params)
@@ -630,15 +626,16 @@ class Paylater extends PaymentModule
         $onepagecheckoutps_enabled = Module::isEnabled('onepagecheckoutps');
         $onepagecheckout_enabled = Module::isEnabled('onepagecheckout');
 
-
+        $return = true;
         if ($supercheckout_enabled || $onepagecheckout_enabled || $onepagecheckoutps_enabled) {
             $this->checkLogoExists();
-            return $this->display(__FILE__, 'views/templates/hook/onepagecheckout.tpl');
-        } elseif (_PS_VERSION_ > 1.7) {
-            return $this->display(__FILE__, 'views/templates/hook/checkout-17.tpl');
-        } else {
-            return $this->display(__FILE__, 'views/templates/hook/checkout-15.tpl');
+            $return = $this->display(__FILE__, 'views/templates/hook/onepagecheckout.tpl');
         }
+
+        if (_PS_VERSION_ < 1.7) {
+            $return = $this->display(__FILE__, 'views/templates/hook/checkout-15.tpl');
+        }
+        return $return;
     }
 
     /**
