@@ -156,7 +156,7 @@ class Paylater extends PaymentModule
             $this->loadSQLFile($sql_file);
         }
 
-        $sql_content = 'select * from \'' . _DB_PREFIX_.  'hook_module\' where 
+        $sql_content = 'select * from ' . _DB_PREFIX_.  'hook_module where 
             id_module = \'' . Module::getModuleIdByName($this->name) . '\' and 
             id_shop = \'' . Shop::getContextShopID() . '\' and 
             id_hook = \'' . Hook::getIdByName('header') . '\'';
