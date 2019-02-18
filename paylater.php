@@ -129,6 +129,7 @@ class Paylater extends PaymentModule
             && $this->registerHook('displayLeftColumnProduct')
             && $this->registerHook('displayProductButtons')
             && $this->registerHook('displayOrderConfirmation')
+            && $this->registerHook('header')
         );
     }
 
@@ -314,6 +315,15 @@ class Paylater extends PaymentModule
             'paylater_currency_iso' => $currency->iso_code,
             'paylater_cart_total' => $cart->getOrderTotal(),
         );
+    }
+
+    /**
+     *
+     */
+    public function hookHeader($options)
+    {
+        $this->context->controller->addJS('https://cdn.pagamastarde.com/js/pmt-v2/sdk.js');
+        $this->context->controller->addJS($this->getPathUri(). 'views/js/simulator.js');
     }
 
     /**
@@ -643,17 +653,18 @@ class Paylater extends PaymentModule
         /** @var ProductCore $product */
         $product = new Product(Tools::getValue('id_product'));
         $amount = $product->getPublicPrice();
-        $pmtPublicKey              = Configuration::get('pmt_public_key');
-        $pmtSimulatorIsEnabled     = Configuration::get('pmt_simulator_is_enabled');
-        $pmtIsEnabled              = Configuration::get('pmt_is_enabled');
-        $pmtSimulatorType          = getenv('PMT_SIMULATOR_DISPLAY_TYPE');
-        $pmtSimulatorCSSSelector   = getenv('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
-        $pmtSimulatorPriceSelector = getenv('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
-        $pmtSimulatorQuotesStart   = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
-        $pmtSimulatorQuotesMax     = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
-        $pmtSimulatorSkin           = getenv('PMT_SIMULATOR_DISPLAY_SKIN');
-        $pmtSimulatorPosition       = getenv('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
-        $pmtDisplayMinAmount       = getenv('PMT_DISPLAY_MIN_AMOUNT');
+        $pmtPublicKey                = Configuration::get('pmt_public_key');
+        $pmtSimulatorIsEnabled        = Configuration::get('pmt_simulator_is_enabled');
+        $pmtIsEnabled                 = Configuration::get('pmt_is_enabled');
+        $pmtSimulatorType             = getenv('PMT_SIMULATOR_DISPLAY_TYPE');
+        $pmtSimulatorCSSSelector      = getenv('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
+        $pmtSimulatorPriceSelector    = getenv('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
+        $pmtSimulatorQuantitySelector = getenv('PMT_SIMULATOR_CSS_QUANTITY_SELECTOR');
+        $pmtSimulatorQuotesStart      = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
+        $pmtSimulatorQuotesMax        = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
+        $pmtSimulatorSkin             = getenv('PMT_SIMULATOR_DISPLAY_SKIN');
+        $pmtSimulatorPosition         = getenv('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
+        $pmtDisplayMinAmount          = getenv('PMT_DISPLAY_MIN_AMOUNT');
 
         if ($functionName != $productConfiguration ||
             $amount <= 0 ||
@@ -668,6 +679,7 @@ class Paylater extends PaymentModule
             'pmtPublicKey'          => $pmtPublicKey,
             'pmtCSSSelector'        => $pmtSimulatorCSSSelector,
             'pmtPriceSelector'      => $pmtSimulatorPriceSelector,
+            'pmtQuantitySelector'   => $pmtSimulatorQuantitySelector,
             'pmtSimulatorIsEnabled' => $pmtSimulatorIsEnabled,
             'pmtIsEnabled'          => $pmtIsEnabled,
             'pmtSimulatorType'      => $pmtSimulatorType,

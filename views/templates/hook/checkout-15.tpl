@@ -12,24 +12,26 @@
             <a class="paylater-checkout ps_version_{$ps_version}" href="{$paymentUrl|escape:'html'}" title="{$pmtTitle|escape:'quotes'}">
                 {$pmtTitle|escape:'quotes'}
             </a>
-            {if $pmtSimulatorIsEnabled}
-                <span class="js-pmt-payment-type"></span>
-                <div class="PmtSimulator"
-                     data-pmt-num-quota="{$pmtQuotesStart|escape:'quotes'}"
-                     data-pmt-max-ins="{$pmtQuotesMax|escape:'quotes'}"
-                     data-pmt-style="blue"
-                     data-pmt-type="{$pmtSimulatorCheckout|escape:'quotes'}"
-                     data-pmt-discount="no"
-                     data-pmt-amount="{$amount|escape:'quotes'}"
-                     data-pmt-expanded="yes">
-                </div>
+        </p>
+        {if $pmtSimulatorIsEnabled}
                 <script type="text/javascript">
-                    if (typeof pmtClient !== 'undefined') {
-                        pmtClient.simulator.init();
+                    if (typeof pmtSDK != 'undefined') {
+                        var positionSelector = '.PmtSimulator';
+                        var price = '{$amount|escape:'quotes'}'
+                        var options = {
+                            publicKey: '{$pmtPublicKey|escape:'quotes'}',
+                            selector: positionSelector,
+                            numInstalments: '{$pmtQuotesStart|escape:'quotes'}',
+                            type: {$pmtSimulatorType|escape:'quotes'},
+                            skin: {$pmtSimulatorSkin|escape:'quotes'},
+                            position: {$pmtSimulatorPosition|escape:'quotes'},
+                            totalAmount: price
+                        };
+                        pmtSDK.simulator.init(options);
                     }
                 </script>
-            {/if}
-        </p>
+                <div class="PmtSimulator"></div>
+        {/if}
         <style>
             p.payment_module a.paylater-checkout {
                 background: url(/modules/paylater/views/img/logo-64x64.png) no-repeat;
@@ -50,12 +52,5 @@
             }
         </style>
     </div>
-    <script type="text/javascript" src="https://cdn.pagamastarde.com/pmt-js-client-sdk/3/js/client-sdk.min.js"></script>
-    <script type="text/javascript">
-        if (typeof pmtClient !== 'undefined') {
-            pmtClient.setPublicKey('{$pmtPublicKey|escape:'quotes'}');
-            pmtClient.events.send('checkout', { basketAmount: {$amount|escape:'quotes'} } );
-        }
-    </script>
 </div>
 {/if}
