@@ -156,7 +156,7 @@ class Paylater extends PaymentModule
             $this->loadSQLFile($sql_file);
         }
 
-        $sql_content = 'select * from ' . _DB_PREFIX_.  'hook_module where 
+        $sql_content = 'select * from ' . _DB_PREFIX_. 'hook_module where 
             id_module = \'' . Module::getModuleIdByName($this->name) . '\' and 
             id_shop = \'' . Shop::getContextShopID() . '\' and 
             id_hook = \'' . Hook::getIdByName('header') . '\'';
@@ -333,11 +333,15 @@ class Paylater extends PaymentModule
     }
 
     /**
-     *
+     * Header hook
      */
-    public function hookHeader($options)
+    public function hookHeader()
     {
-        $this->context->controller->addJS('https://cdn.pagamastarde.com/js/pmt-v2/sdk.js');
+        $this->context->controller->registerJavascript(
+            md5(getdate()),
+            'http://cdn.pagamastarde.com/js/pmt-v2/sdk.js',
+            array('server' => 'remote')
+        );
         $this->context->controller->addJS($this->getPathUri(). 'views/js/simulator.js');
     }
 
