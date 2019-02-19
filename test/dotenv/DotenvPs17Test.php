@@ -52,7 +52,7 @@ class DotenvPs17Test extends AbstractPs17Selenium
         // modify .env
         $properties = $this->getProperties();
         $properties['PMT_SIMULATOR_DISPLAY_TYPE'] = 'pmtSDK.simulator.types.TEXT';
-        $this->saveDotEnvFile($properties, '16');
+        $this->saveDotEnvFile($properties, '17');
 
         // run test
         $this->loginToFrontend();
@@ -67,7 +67,7 @@ class DotenvPs17Test extends AbstractPs17Selenium
         $this->assertSame('text', $value);
 
         // restore .env
-        $this->saveDotEnvFile($this->getProperties(), '16');
+        $this->saveDotEnvFile($this->getProperties(), '17');
 
         $this->quit();
     }
@@ -80,7 +80,7 @@ class DotenvPs17Test extends AbstractPs17Selenium
         // modify .env
         $properties = $this->getProperties();
         $properties['PMT_SIMULATOR_START_INSTALLMENTS'] = '6';
-        $this->saveDotEnvFile($properties, '16');
+        $this->saveDotEnvFile($properties, '17');
 
         // run test
         $this->loginToFrontend();
@@ -95,7 +95,7 @@ class DotenvPs17Test extends AbstractPs17Selenium
         $this->assertSame($properties['PMT_SIMULATOR_START_INSTALLMENTS'], $value);
 
         // restore .env
-        $this->saveDotEnvFile($this->getProperties(), '16');
+        $this->saveDotEnvFile($this->getProperties(), '17');
 
         $this->quit();
     }

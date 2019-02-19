@@ -16,11 +16,11 @@ class PmtWebDriver extends RemoteWebDriver
      * Override method to increase the default timeouts
      *
      * @param int $timeout_in_second
-     * @param int $interval_in_millisecond
+     * @pgit push orioginaram int $interval_in_millisecond
      *
      * @return WebDriverWait
      */
-    public function wait($timeout_in_second = 60, $interval_in_millisecond = 1000)
+    public function wait($timeout_in_second = 90, $interval_in_millisecond = 1000)
     {
         return new WebDriverWait(
             $this,
