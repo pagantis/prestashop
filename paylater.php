@@ -338,7 +338,7 @@ class Paylater extends PaymentModule
     public function hookHeader()
     {
         $this->context->controller->registerJavascript(
-            md5(getdate()),
+            sha1(mt_rand(1, 90000)),
             'http://cdn.pagamastarde.com/js/pmt-v2/sdk.js',
             array('server' => 'remote')
         );
