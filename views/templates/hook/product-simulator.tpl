@@ -33,6 +33,7 @@
             }
 
             pmtSDK.product_simulator = {};
+            pmtSDK.product_simulator.id = 'product-simulator';
             pmtSDK.product_simulator.publicKey = '{$pmtPublicKey|escape:'quotes'}';
             pmtSDK.product_simulator.selector = positionSelector;
             pmtSDK.product_simulator.numInstalments = '{$pmtQuotesStart|escape:'quotes'}';

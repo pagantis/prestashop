@@ -364,7 +364,6 @@ class Paylater extends PaymentModule
         $pmtSimulatorQuotesStart    = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
         $pmtSimulatorSkin           = getenv('PMT_SIMULATOR_DISPLAY_SKIN');
         $pmtSimulatorPosition       = getenv('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
-        $pmtSimulatorQuotesMax      = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
         $pmtTitle                   = $this->l(getenv('PMT_TITLE'));
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
@@ -374,7 +373,6 @@ class Paylater extends PaymentModule
             'pmtCSSSelector'        => $pmtSimulatorCSSSelector,
             'pmtPriceSelector'      => $pmtSimulatorPriceSelector,
             'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
-            'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
             'pmtSimulatorIsEnabled' => $pmtSimulatorIsEnabled,
             'pmtSimulatorType'      => $pmtSimulatorType,
             'pmtSimulatorSkin'      => $pmtSimulatorSkin,
@@ -614,7 +612,6 @@ class Paylater extends PaymentModule
         $pmtSimulatorCSSSelector    = getenv('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
         $pmtSimulatorPriceSelector  = getenv('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
         $pmtSimulatorQuotesStart    = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
-        $pmtSimulatorQuotesMax      = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
         $pmtSimulatorSkin           = getenv('PMT_SIMULATOR_DISPLAY_SKIN');
         $pmtSimulatorPosition       = getenv('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
         $pmtTitle                   = $this->l(getenv('PMT_TITLE'));
@@ -625,7 +622,6 @@ class Paylater extends PaymentModule
             'pmtCSSSelector'        => $pmtSimulatorCSSSelector,
             'pmtPriceSelector'      => $pmtSimulatorPriceSelector,
             'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
-            'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
             'pmtSimulatorIsEnabled' => $pmtSimulatorIsEnabled,
             'pmtSimulatorType'      => $pmtSimulatorType,
             'pmtSimulatorSkin'      => $pmtSimulatorSkin,
@@ -673,7 +669,6 @@ class Paylater extends PaymentModule
         $pmtSimulatorPriceSelector    = getenv('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
         $pmtSimulatorQuantitySelector = getenv('PMT_SIMULATOR_CSS_QUANTITY_SELECTOR');
         $pmtSimulatorQuotesStart      = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
-        $pmtSimulatorQuotesMax        = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
         $pmtSimulatorSkin             = getenv('PMT_SIMULATOR_DISPLAY_SKIN');
         $pmtSimulatorPosition         = getenv('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
         $pmtDisplayMinAmount          = getenv('PMT_DISPLAY_MIN_AMOUNT');
@@ -698,7 +693,6 @@ class Paylater extends PaymentModule
             'pmtSimulatorSkin'      => $pmtSimulatorSkin,
             'pmtSimulatorPosition'  => $pmtSimulatorPosition,
             'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
-            'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
         ));
 
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');
