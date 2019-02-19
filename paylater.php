@@ -337,11 +337,15 @@ class Paylater extends PaymentModule
      */
     public function hookHeader()
     {
-        $this->context->controller->registerJavascript(
-            sha1(mt_rand(1, 90000)),
-            'http://cdn.pagamastarde.com/js/pmt-v2/sdk.js',
-            array('server' => 'remote')
-        );
+        if (_PS_VERSION_ >= "1.7") {
+            $this->context->controller->registerJavascript(
+                sha1(mt_rand(1, 90000)),
+                'http://cdn.pagamastarde.com/js/pmt-v2/sdk.js',
+                array('server' => 'remote')
+            );
+        } else {
+            $this->context->controller->addJS('http://cdn.pagamastarde.com/js/pmt-v2/sdk.js');
+        }
         $this->context->controller->addJS($this->getPathUri(). 'views/js/simulator.js');
     }
 
