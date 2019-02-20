@@ -56,7 +56,7 @@ class DotenvPs15Test extends AbstractPs15Selenium
 
         // run test
         $this->loginToFrontend();
-        $this->goToProduct();;
+        $this->goToProduct();
 
         $value = $this->webDriver->executeScript('return pmtSDK.simulator.$pool.getAll()[0].simulatorConfig.type');
         $this->assertSame('text', $value);

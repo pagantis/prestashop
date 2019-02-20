@@ -5,9 +5,11 @@
  * @copyright 2015-2016 Paga+Tarde
  * @license   proprietary
  *}
+<!-- PMT Environment -->
 {if ($pmtIsEnabled && $pmtSimulatorIsEnabled)}
     <script>
-        window.onload = function() {
+        function loadSimulator()
+        {
             if (typeof pmtSDK != 'undefined') {
                 var price = null;
                 var quantity = null;
@@ -56,8 +58,12 @@
                 }
 
                 pmtSDK.simulator.init(pmtSDK.product_simulator);
+                clearInterval(window.PSSimulatorId);
             }
         }
+        window.PSSimulatorId = setInterval(function () {
+            loadSimulator();
+        }, 2000);
     </script>
     <div class="PmtSimulator"></div>
 {/if}

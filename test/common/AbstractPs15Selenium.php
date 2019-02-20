@@ -258,6 +258,8 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
             $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
+            // this sleep is to prevent simulator js render
+            sleep(5);
         }
     }
 
