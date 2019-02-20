@@ -58,11 +58,6 @@ class DotenvPs17Test extends AbstractPs17Selenium
         $this->loginToFrontend();
         $this->goToProduct();
 
-        $simulator = WebDriverBy::className('PmtSimulator');
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($simulator);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
-
         $value = $this->webDriver->executeScript('return pmtSDK.simulator.$pool.getAll()[0].simulatorConfig.type');
         $this->assertSame('text', $value);
 
@@ -86,10 +81,6 @@ class DotenvPs17Test extends AbstractPs17Selenium
         $this->loginToFrontend();
         $this->goToProduct();
 
-        $simulator = WebDriverBy::className('PmtSimulator');
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($simulator);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool)$condition);
         $value = $this->webDriver->executeScript('return pmtSDK.simulator.$pool.getAll()[0].simulatorConfig.numInstalments');
 
         $this->assertSame($properties['PMT_SIMULATOR_START_INSTALLMENTS'], $value);
@@ -112,7 +103,7 @@ class DotenvPs17Test extends AbstractPs17Selenium
 
         // run test:wq
         $this->loginToFrontend();
-        $this->goToProduct();
+        $this->goToProduct(false);
         $this->addProduct();
         $this->goToCheckout();
 

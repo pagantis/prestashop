@@ -129,6 +129,7 @@ class Paylater extends PaymentModule
             && $this->registerHook('displayLeftColumnProduct')
             && $this->registerHook('displayProductButtons')
             && $this->registerHook('displayOrderConfirmation')
+            && $this->registerHook('header')
         );
     }
 
