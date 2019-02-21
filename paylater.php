@@ -87,7 +87,7 @@ class Paylater extends PaymentModule
         $sql_file = dirname(__FILE__).'/sql/install.sql';
         $this->loadSQLFile($sql_file);
 
-        $sql_content = 'select * from ' . _DB_PREFIX_. 'pmt_configs';
+        $sql_content = 'select * from ' . _DB_PREFIX_. 'pmt_config';
         $dbConfigs = Db::getInstance()->executeS($sql_content);
 
         // Convert a multimple dimension array for SQL insert statements into a simple key/value
@@ -104,7 +104,7 @@ class Paylater extends PaymentModule
                     'value' => $value,
                 );
             }
-            Db::getInstance()->insert('pmt_configs', $data);
+            Db::getInstance()->insert('pmt_config', $data);
         }
 
         foreach (array_merge($this->defaultConfigs, $simpleDbConfigs) as $key => $value) {
@@ -181,7 +181,7 @@ class Paylater extends PaymentModule
         // If this configuration exists is because we came form a version lower than 7.x
         if (Configuration::get('PAYLATER_MIN_AMOUNT')) {
             Db::getInstance()->update(
-                'pmt_configs',
+                'pmt_config',
                 array('value' => Configuration::get('PAYLATER_MIN_AMOUNT')),
                 'config = \'PMT_DISPLAY_MIN_AMOUNT\''
             );
@@ -223,20 +223,24 @@ class Paylater extends PaymentModule
      */
     public function checkHooks()
     {
-        $sql_content = 'select * from ' . _DB_PREFIX_. 'hook_module where 
+        try {
+            $sql_content = 'select * from ' . _DB_PREFIX_. 'hook_module where 
             id_module = \'' . Module::getModuleIdByName($this->name) . '\' and 
             id_shop = \'' . Shop::getContextShopID() . '\' and 
             id_hook = \'' . Hook::getIdByName('header') . '\'';
-        $hook_exists = Db::getInstance()->ExecuteS($sql_content);
-        if (empty($hook_exists)) {
-            $sql_insert = 'insert into ' . _DB_PREFIX_.  'hook_module 
+            $hook_exists = Db::getInstance()->ExecuteS($sql_content);
+            if (empty($hook_exists)) {
+                $sql_insert = 'insert into ' . _DB_PREFIX_.  'hook_module 
             (id_module, id_shop, id_hook, position)
             values
             (\''. Module::getModuleIdByName($this->name) . '\',
             \''. Shop::getContextShopID() . '\',
             \''. Hook::getIdByName('header') . '\',
             150)';
-            Db::getInstance()->execute($sql_insert);
+                Db::getInstance()->execute($sql_insert);
+            } 
+        } catch (\Exception $exception) {
+            //continue without errors
         }
     }
 

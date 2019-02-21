@@ -67,7 +67,7 @@ abstract class AbstractController extends ModuleFrontController
                 $logEntry->setTrace($data['trace']);
             }
 
-            Db::getInstance()->insert('pmt_logs', array(
+            Db::getInstance()->insert('pmt_log', array(
                 'log' => $logEntry->toJson()
             ));
         } catch (\Exception $exception) {

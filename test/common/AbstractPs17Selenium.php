@@ -48,24 +48,15 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->findByLinkText('Modules')->click();
-
-        $elementSearch = WebDriverBy::partialLinkText('Module Catalog');
-        $condition = WebDriverExpectedCondition::elementToBeClickable($elementSearch);
-        $this->waitUntil($condition);
-        $this->assertTrue((bool) $condition);
-        $this->findByLinkText('Module Catalog')->click();
-
         $this->findById('page-header-desc-configuration-add_module')->click();
-
         $moduleInstallBlock = WebDriverBy::id('module_install');
         $fileInputSearch = $moduleInstallBlock->className('dz-hidden-input');
         $fileInput = $this->webDriver->findElement($fileInputSearch);
         $fileInput->setFileDetector(new LocalFileDetector());
         $fileInput->sendKeys(__DIR__.'/../../paylater.zip');
-
         $validatorSearch = WebDriverBy::className('module-import-success-msg');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
-        $this->webDriver->wait(5, 1000)->until($condition);
+        $this->webDriver->wait(45, 1000)->until($condition);
         $this->assertTrue((bool) $condition);
         $this->findByClass('module-import-success-configure')->click();
     }

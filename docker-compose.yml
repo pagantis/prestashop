@@ -53,7 +53,7 @@ services:
 
   prestashop17:
     container_name: prestashop17
-    image: prestashop/prestashop:1.7.5.1
+    image: prestashop/prestashop:1.7.3
     depends_on:
       - db-ps17
     environment:
