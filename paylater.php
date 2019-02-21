@@ -185,7 +185,7 @@ class Paylater extends PaymentModule
                 array('value' => Configuration::get('PAYLATER_MIN_AMOUNT')),
                 'config = \'PMT_DISPLAY_MIN_AMOUNT\''
             );
-            Configuradoction::updateValue('PAYLATER_MIN_AMOUNT', false);
+            Configuration::updateValue('PAYLATER_MIN_AMOUNT', false);
             Configuration::updateValue('pmt_is_enabled', 1);
             Configuration::updateValue('pmt_simulator_is_enabled', 1);
 
