@@ -21,4 +21,3 @@ vendor/bin/phpunit --group prestashop$1register
 vendor/bin/phpunit --group prestashop$1buy
 vendor/bin/phpunit --group prestashop$1advanced
 vendor/bin/phpunit --group prestashop$1validate
-vendor/bin/phpunit --group prestashop$1dotenv

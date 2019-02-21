@@ -41,6 +41,27 @@ class Paylater extends PaymentModule
     public $dotEnvError = null;
 
     /**
+     * Default module advanced configuration values
+     *
+     * @var array
+     */
+    public $defaultConfigs = array(
+        'PMT_TITLE' => 'Instant Financing',
+        'PMT_SIMULATOR_DISPLAY_TYPE' => 'pmtSDK.simulator.types.SIMPLE',
+        'PMT_SIMULATOR_DISPLAY_SKIN' => 'pmtSDK.simulator.skins.BLUE',
+        'PMT_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
+        'PMT_SIMULATOR_START_INSTALLMENTS' => '3',
+        'PMT_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
+        'PMT_SIMULATOR_DISPLAY_CSS_POSITION' => 'pmtSDK.simulator.positions.INNER',
+        'PMT_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
+        'PMT_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
+        'PMT_FORM_DISPLAY_TYPE' => '0',
+        'PMT_DISPLAY_MIN_AMOUNT' => '1',
+        'PMT_URL_OK' => '',
+        'PMT_URL_KO' => '',
+    );
+
+    /**
      * Paylater constructor.
      *
      * Define the module main properties so that prestashop understands what are the module requirements
@@ -52,7 +73,7 @@ class Paylater extends PaymentModule
         $this->dotEnvError = null;
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '7.1.5';
+        $this->version = '7.2.0';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -63,26 +84,37 @@ class Paylater extends PaymentModule
             'Instant, easy and effective financial tool for your customers'
         );
 
-        if (!file_exists(_PS_PAYLATER_DIR . '/.env')) {
-            copy(
-                _PS_PAYLATER_DIR . '/.env.dist',
-                _PS_PAYLATER_DIR . '/.env'
-            );
+        $sql_file = dirname(__FILE__).'/sql/install.sql';
+        $this->loadSQLFile($sql_file);
+
+        $sql_content = 'select * from ' . _DB_PREFIX_. 'pmt_configs';
+        $dbConfigs = Db::getInstance()->executeS($sql_content);
+
+        // Convert a multimple dimension array for SQL insert statements into a simple key/value
+        $simpleDbConfigs = array();
+        foreach ($dbConfigs as $config) {
+            $simpleDbConfigs[$config['config']] = $config['value'];
+        }
+        $newConfigs = array_diff_key($this->defaultConfigs, $simpleDbConfigs);
+        if (!empty($newConfigs)) {
+            $data = array();
+            foreach ($newConfigs as $key => $value) {
+                $data[] = array(
+                    'config' => $key,
+                    'value' => $value,
+                );
+            }
+            Db::getInstance()->insert('pmt_configs', $data);
         }
 
-        $this->upgrade();
-
-        try {
-            $envFile = new Dotenv\Dotenv(_PS_PAYLATER_DIR);
-            $envFile->load();
-        } catch (\Exception $exception) {
-            $this->context->controller->errors[] = $this->l('Unable to read file') .
-                ' ' . _PS_PAYLATER_DIR . '/.env ' .
-                $this->l('Ensure that the file exists and have the correct permissions');
-            $this->dotEnvError = $this->l('Unable to read file') .
-                ' ' . _PS_PAYLATER_DIR . '/.env ' .
-                $this->l('Ensure that the file exists and have the correct permissions');
+        foreach (array_merge($this->defaultConfigs, $simpleDbConfigs) as $key => $value) {
+            putenv($key . '=' . $value);
         }
+
+        //migrate data from old modules to 7x generation
+        $this->migrate();
+
+        $this->checkHooks();
 
         parent::__construct();
     }
@@ -108,10 +140,6 @@ class Paylater extends PaymentModule
         if (!version_compare($curl_version, '7.34.0', '>=')) {
             $this->installErrors[] = $this->l('Curl Version is lower than 7.34.0 and does not support TLS 1.2');
             return false;
-        }
-
-        if (file_exists(_PS_PAYLATER_DIR . '/.env')) {
-            $this->upgrade();
         }
 
         Configuration::updateValue('pmt_is_enabled', 1);
@@ -146,52 +174,20 @@ class Paylater extends PaymentModule
     }
 
     /**
-     * Upgrade module and generate/update .env file if needed
+     * Migrate the configs of older veresions < 7x to new configurations
      */
-    public function upgrade()
+    public function migrate()
     {
-        $sql_content = 'show tables like \'' . _DB_PREFIX_.  'pmt_cart_process\'';
-        $table_exists = Db::getInstance()->ExecuteS($sql_content);
-        if (empty($table_exists)) {
-            $sql_file = dirname(__FILE__).'/sql/install.sql';
-            $this->loadSQLFile($sql_file);
-        }
-
-        $sql_content = 'select * from ' . _DB_PREFIX_. 'hook_module where 
-            id_module = \'' . Module::getModuleIdByName($this->name) . '\' and 
-            id_shop = \'' . Shop::getContextShopID() . '\' and 
-            id_hook = \'' . Hook::getIdByName('header') . '\'';
-        $hook_exists = Db::getInstance()->ExecuteS($sql_content);
-        if (empty($hook_exists)) {
-            $sql_insert = 'insert into ' . _DB_PREFIX_.  'hook_module 
-            (id_module, id_shop, id_hook, position)
-            values
-            (\''. Module::getModuleIdByName($this->name) . '\',
-            \''. Shop::getContextShopID() . '\',
-            \''. Hook::getIdByName('header') . '\',
-            150)';
-            Db::getInstance()->execute($sql_insert);
-        }
-
-        if (file_exists(_PS_PAYLATER_DIR . '/.env') && file_exists(_PS_PAYLATER_DIR . '/.env.dist')) {
-            $envFileVariables = $this->readEnvFileAsArray(_PS_PAYLATER_DIR . '/.env');
-            $distFileVariables = $this->readEnvFileAsArray(_PS_PAYLATER_DIR . '/.env.dist');
-            $distFile = Tools::file_get_contents(_PS_PAYLATER_DIR . '/.env.dist');
-
-            // If this configuration exists is because we came form a version lower than 7.x
-            if (Configuration::get('PAYLATER_MIN_AMOUNT')) {
-                $envFileVariables['PMT_DISPLAY_MIN_AMOUNT'] = '\''.Configuration::get('PAYLATER_MIN_AMOUNT').'\'';
-                Configuration::updateValue('PAYLATER_MIN_AMOUNT', false);
-                Configuration::updateValue('pmt_is_enabled', 1);
-                Configuration::updateValue('pmt_simulator_is_enabled', 1);
-            }
-
-            if ($distFileVariables != $envFileVariables) {
-                $newEnvFileArr = array_merge($distFileVariables, $envFileVariables);
-                $newEnvFile = $this->replaceEnvFileValues($distFile, $newEnvFileArr);
-
-                file_put_contents(_PS_PAYLATER_DIR . '/.env', $newEnvFile);
-            }
+        // If this configuration exists is because we came form a version lower than 7.x
+        if (Configuration::get('PAYLATER_MIN_AMOUNT')) {
+            Db::getInstance()->update(
+                'pmt_configs',
+                array('value' => Configuration::get('PAYLATER_MIN_AMOUNT')),
+                'config = \'PMT_DISPLAY_MIN_AMOUNT\''
+            );
+            Configuradoction::updateValue('PAYLATER_MIN_AMOUNT', false);
+            Configuration::updateValue('pmt_is_enabled', 1);
+            Configuration::updateValue('pmt_simulator_is_enabled', 1);
 
             // migrating pk/tk from previous version
             if (Configuration::get('pmt_public_key') === false
@@ -221,50 +217,27 @@ class Paylater extends PaymentModule
     }
 
     /**
-     * readEnvFileAsArray and return it as a key=>value array
+     * Check if new hooks used in new 7x versions are enabled and activate them if needed
      *
-     * @param $filePath
-     * @return array
+     * @throws PrestaShopDatabaseException
      */
-    protected function readEnvFileAsArray($filePath)
+    public function checkHooks()
     {
-        $envFileVariables = array();
-
-        if (file_exists($filePath)) {
-            // Read file into an array of lines with auto-detected line endings
-            $autodetect = ini_get('auto_detect_line_endings');
-            ini_set('auto_detect_line_endings', '1');
-            $lines = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            ini_set('auto_detect_line_endings', $autodetect);
-
-            foreach ($lines as $line) {
-                // Is a variable line ?
-                if (!(isset($line[0]) && $line[0] === '#') && strpos($line, '=') !== false) {
-                    list($name, $value) = array_map('trim', explode('=', $line, 2));
-                    $envFileVariables[$name] = $value;
-                }
-            }
+        $sql_content = 'select * from ' . _DB_PREFIX_. 'hook_module where 
+            id_module = \'' . Module::getModuleIdByName($this->name) . '\' and 
+            id_shop = \'' . Shop::getContextShopID() . '\' and 
+            id_hook = \'' . Hook::getIdByName('header') . '\'';
+        $hook_exists = Db::getInstance()->ExecuteS($sql_content);
+        if (empty($hook_exists)) {
+            $sql_insert = 'insert into ' . _DB_PREFIX_.  'hook_module 
+            (id_module, id_shop, id_hook, position)
+            values
+            (\''. Module::getModuleIdByName($this->name) . '\',
+            \''. Shop::getContextShopID() . '\',
+            \''. Hook::getIdByName('header') . '\',
+            150)';
+            Db::getInstance()->execute($sql_insert);
         }
-        return $envFileVariables;
-    }
-
-    /**
-     * @param $envFile
-     * @param $replacements
-     * @return mixed
-     */
-    protected function replaceEnvFileValues($envFile, $replacements)
-    {
-        foreach ($replacements as $key => $value) {
-            $from = strpos($envFile, $key);
-            if ($from !== false) {
-                $to = strpos($envFile, '#', $from);
-                $fromReplace = Tools::substr($envFile, $from, (($to - $from)-1));
-                $toReplace = $key . '=' . $value;
-                $envFile = str_replace($fromReplace, $toReplace, $envFile);
-            }
-        }
-        return $envFile;
     }
 
     /**
