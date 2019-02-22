@@ -31,9 +31,30 @@ class Paylater extends PaymentModule
     public $bootstrap = true;
 
     /**
-     * @var installErrors
+     * @var array
      */
     public $installErrors = array();
+
+    /**
+     * Default module advanced configuration values
+     *
+     * @var array
+     */
+    public $defaultConfigs = array(
+        'PMT_TITLE' => 'Instant Financing',
+        'PMT_SIMULATOR_DISPLAY_TYPE' => 'pmtSDK.simulator.types.SIMPLE',
+        'PMT_SIMULATOR_DISPLAY_SKIN' => 'pmtSDK.simulator.skins.BLUE',
+        'PMT_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
+        'PMT_SIMULATOR_START_INSTALLMENTS' => '3',
+        'PMT_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
+        'PMT_SIMULATOR_DISPLAY_CSS_POSITION' => 'pmtSDK.simulator.positions.INNER',
+        'PMT_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
+        'PMT_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
+        'PMT_FORM_DISPLAY_TYPE' => '0',
+        'PMT_DISPLAY_MIN_AMOUNT' => '1',
+        'PMT_URL_OK' => '',
+        'PMT_URL_KO' => '',
+    );
 
     /**
      * Paylater constructor.
@@ -44,10 +65,9 @@ class Paylater extends PaymentModule
      */
     public function __construct()
     {
-        $this->dotEnvError = null;
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '7.1.4';
+        $this->version = '7.2.0';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -58,26 +78,14 @@ class Paylater extends PaymentModule
             'Instant, easy and effective financial tool for your customers'
         );
 
-        if (!file_exists(_PS_PAYLATER_DIR . '/.env')) {
-            copy(
-                _PS_PAYLATER_DIR . '/.env.dist',
-                _PS_PAYLATER_DIR . '/.env'
-            );
-        }
+        $sql_file = dirname(__FILE__).'/sql/install.sql';
+        $this->loadSQLFile($sql_file);
 
-        $this->upgrade();
+        $this->loadEnvVariables();
 
-        try {
-            $envFile = new Dotenv\Dotenv(_PS_PAYLATER_DIR);
-            $envFile->load();
-        } catch (\Exception $exception) {
-            $this->context->controller->errors[] = $this->l('Unable to read file') .
-                ' ' . _PS_PAYLATER_DIR . '/.env ' .
-                $this->l('Ensure that the file exists and have the correct permissions');
-            $this->dotEnvError = $this->l('Unable to read file') .
-                ' ' . _PS_PAYLATER_DIR . '/.env ' .
-                $this->l('Ensure that the file exists and have the correct permissions');
-        }
+        $this->migrate();
+
+        $this->checkHooks();
 
         parent::__construct();
     }
@@ -105,11 +113,7 @@ class Paylater extends PaymentModule
             return false;
         }
 
-        if (file_exists(_PS_PAYLATER_DIR . '/.env')) {
-            $this->upgrade();
-        }
-
-        Configuration::updateValue('pmt_is_enabled', 0);
+        Configuration::updateValue('pmt_is_enabled', 1);
         Configuration::updateValue('pmt_simulator_is_enabled', 1);
         Configuration::updateValue('pmt_public_key', '');
         Configuration::updateValue('pmt_private_key', '');
@@ -124,6 +128,7 @@ class Paylater extends PaymentModule
             && $this->registerHook('displayLeftColumnProduct')
             && $this->registerHook('displayProductButtons')
             && $this->registerHook('displayOrderConfirmation')
+            && $this->registerHook('header')
         );
     }
 
@@ -140,95 +145,102 @@ class Paylater extends PaymentModule
     }
 
     /**
-     * Upgrade module and generate/update .env file if needed
+     * Migrate the configs of older versions < 7x to new configurations
      */
-    public function upgrade()
+    public function migrate()
     {
-        $sql_file = dirname(__FILE__).'/sql/install.sql';
-        $this->loadSQLFile($sql_file);
+        if (Configuration::get('PAYLATER_MIN_AMOUNT')) {
+            Db::getInstance()->update(
+                'pmt_config',
+                array('value' => Configuration::get('PAYLATER_MIN_AMOUNT')),
+                'config = \'PMT_DISPLAY_MIN_AMOUNT\''
+            );
+            Configuration::updateValue('PAYLATER_MIN_AMOUNT', false);
+            Configuration::updateValue('pmt_is_enabled', 1);
+            Configuration::updateValue('pmt_simulator_is_enabled', 1);
 
-        if (file_exists(_PS_PAYLATER_DIR . '/.env') && file_exists(_PS_PAYLATER_DIR . '/.env.dist')) {
-            $envFileVariables = $this->readEnvFileAsArray(_PS_PAYLATER_DIR . '/.env');
-            $distFileVariables = $this->readEnvFileAsArray(_PS_PAYLATER_DIR . '/.env.dist');
-            $distFile = Tools::file_get_contents(_PS_PAYLATER_DIR . '/.env.dist');
+            // migrating pk/tk from previous version
+            if (Configuration::get('pmt_public_key') === false
+                && Configuration::get('PAYLATER_PUBLIC_KEY_PROD')
+            ) {
+                Configuration::updateValue('pmt_public_key', Configuration::get('PAYLATER_PUBLIC_KEY_PROD'));
+                Configuration::updateValue('PAYLATER_PUBLIC_KEY_PROD', false);
+            } elseif (Configuration::get('pmt_public_key') === false
+                && Configuration::get('PAYLATER_PUBLIC_KEY_TEST')
+            ) {
+                Configuration::updateValue('pmt_public_key', Configuration::get('PAYLATER_PUBLIC_KEY_TEST'));
+                Configuration::updateValue('PAYLATER_PUBLIC_KEY_TEST', false);
+            }
 
-            if ($distFileVariables != $envFileVariables) {
-                $newEnvFileArr = array_merge($distFileVariables, $envFileVariables);
-                $newEnvFile = $this->replaceEnvFileValues($distFile, $newEnvFileArr);
-
-                file_put_contents(_PS_PAYLATER_DIR . '/.env', $newEnvFile);
-
-                // migrating pk/tk from previous version
-                if (Configuration::get('pmt_public_key') === false
-                    && Configuration::get('PAYLATER_PUBLIC_KEY_PROD')
-                ) {
-                    Configuration::updateValue('pmt_public_key', Configuration::get('PAYLATER_PUBLIC_KEY_PROD'));
-                } elseif (Configuration::get('pmt_public_key') === false
-                    && Configuration::get('PAYLATER_PUBLIC_KEY_TEST')
-                ) {
-                    Configuration::updateValue('pmt_public_key', Configuration::get('PAYLATER_PUBLIC_KEY_TEST'));
-                }
-
-                if (Configuration::get('pmt_private_key') === false
-                    && Configuration::get('PAYLATER_PRIVATE_KEY_PROD')
-                ) {
-                    Configuration::updateValue('pmt_private_key', Configuration::get('PAYLATER_PRIVATE_KEY_PROD'));
-                } elseif (Configuration::get('pmt_private_key') === false
-                    && Configuration::get('PAYLATER_PRIVATE_KEY_TEST')
-                ) {
-                    Configuration::updateValue('pmt_private_key', Configuration::get('PAYLATER_PRIVATE_KEY_TEST'));
-                }
-
-                Configuration::updateValue('pmt_is_enabled', 1);
+            if (Configuration::get('pmt_private_key') === false
+                && Configuration::get('PAYLATER_PRIVATE_KEY_PROD')
+            ) {
+                Configuration::updateValue('pmt_private_key', Configuration::get('PAYLATER_PRIVATE_KEY_PROD'));
+                Configuration::updateValue('PAYLATER_PRIVATE_KEY_PROD', false);
+            } elseif (Configuration::get('pmt_private_key') === false
+                && Configuration::get('PAYLATER_PRIVATE_KEY_TEST')
+            ) {
+                Configuration::updateValue('pmt_private_key', Configuration::get('PAYLATER_PRIVATE_KEY_TEST'));
+                Configuration::updateValue('PAYLATER_PRIVATE_KEY_TEST', false);
             }
         }
     }
 
     /**
-     * readEnvFileAsArray and return it as a key=>value array
+     * Check if new hooks used in new 7x versions are enabled and activate them if needed
      *
-     * @param $filePath
-     * @return array
+     * @throws PrestaShopDatabaseException
      */
-    protected function readEnvFileAsArray($filePath)
+    public function checkHooks()
     {
-        $envFileVariables = array();
-
-        if (file_exists($filePath)) {
-            // Read file into an array of lines with auto-detected line endings
-            $autodetect = ini_get('auto_detect_line_endings');
-            ini_set('auto_detect_line_endings', '1');
-            $lines = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            ini_set('auto_detect_line_endings', $autodetect);
-
-            foreach ($lines as $line) {
-                // Is a variable line ?
-                if (!(isset($line[0]) && $line[0] === '#') && strpos($line, '=') !== false) {
-                    list($name, $value) = array_map('trim', explode('=', $line, 2));
-                    $envFileVariables[$name] = $value;
-                }
+        try {
+            $sql_content = 'select * from ' . _DB_PREFIX_. 'hook_module where 
+            id_module = \'' . Module::getModuleIdByName($this->name) . '\' and 
+            id_shop = \'' . Shop::getContextShopID() . '\' and 
+            id_hook = \'' . Hook::getIdByName('header') . '\'';
+            $hook_exists = Db::getInstance()->ExecuteS($sql_content);
+            if (empty($hook_exists)) {
+                $sql_insert = 'insert into ' . _DB_PREFIX_.  'hook_module 
+            (id_module, id_shop, id_hook, position)
+            values
+            (\''. Module::getModuleIdByName($this->name) . '\',
+            \''. Shop::getContextShopID() . '\',
+            \''. Hook::getIdByName('header') . '\',
+            150)';
+                Db::getInstance()->execute($sql_insert);
             }
+        } catch (\Exception $exception) {
+            // continue without errors
         }
-        return $envFileVariables;
     }
 
-    /**
-     * @param $envFile
-     * @param $replacements
-     * @return mixed
-     */
-    protected function replaceEnvFileValues($envFile, $replacements)
+    public function loadEnvVariables()
     {
-        foreach ($replacements as $key => $value) {
-            $from = strpos($envFile, $key);
-            if ($from !== false) {
-                $to = strpos($envFile, '#', $from);
-                $fromReplace = Tools::substr($envFile, $from, (($to - $from)-1));
-                $toReplace = $key . '=' . $value;
-                $envFile = str_replace($fromReplace, $toReplace, $envFile);
-            }
+        $sql_content = 'select * from ' . _DB_PREFIX_. 'pmt_config';
+        $dbConfigs = Db::getInstance()->executeS($sql_content);
+
+        // Convert a multimple dimension array for SQL insert statements into a simple key/value
+        $simpleDbConfigs = array();
+        foreach ($dbConfigs as $config) {
+            $simpleDbConfigs[$config['config']] = $config['value'];
         }
-        return $envFile;
+        $newConfigs = array_diff_key($this->defaultConfigs, $simpleDbConfigs);
+        if (!empty($newConfigs)) {
+            $data = array();
+            foreach ($newConfigs as $key => $value) {
+                $data[] = array(
+                    'config' => $key,
+                    'value' => $value,
+                );
+            }
+            Db::getInstance()->insert('pmt_config', $data);
+        }
+
+        foreach (array_merge($this->defaultConfigs, $simpleDbConfigs) as $key => $value) {
+            putenv($key . '=' . $value);
+        }
+
+        putenv("PMT_DEFAULT_CONFIGS" . '=' . json_encode($this->defaultConfigs));
     }
 
     /**
@@ -238,8 +250,6 @@ class Paylater extends PaymentModule
     public function loadSQLFile($sql_file)
     {
         $sql_content = Tools::file_get_contents($sql_file);
-
-        // Replace prefix and store SQL command in array
         $sql_content = str_replace('PREFIX_', _DB_PREFIX_, $sql_content);
         $sql_requests = preg_split("/;\s*[\r\n]+/", $sql_content);
 
@@ -250,7 +260,6 @@ class Paylater extends PaymentModule
             }
         }
 
-        // Return result
         return $result;
     }
 
@@ -260,6 +269,8 @@ class Paylater extends PaymentModule
      * Check API variables are set
      *
      * @return bool
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function isPaymentMethodAvailable()
     {
@@ -282,6 +293,7 @@ class Paylater extends PaymentModule
      * @param Cart $cart
      *
      * @return array
+     * @throws Exception
      */
     private function getButtonTemplateVars(Cart $cart)
     {
@@ -295,7 +307,25 @@ class Paylater extends PaymentModule
     }
 
     /**
+     * Header hook
+     */
+    public function hookHeader()
+    {
+        if (_PS_VERSION_ >= "1.7") {
+            $this->context->controller->registerJavascript(
+                sha1(mt_rand(1, 90000)),
+                'http://cdn.pagamastarde.com/js/pmt-v2/sdk.js',
+                array('server' => 'remote')
+            );
+        } else {
+            $this->context->controller->addJS('http://cdn.pagamastarde.com/js/pmt-v2/sdk.js');
+        }
+        $this->context->controller->addJS($this->getPathUri(). 'views/js/simulator.js');
+    }
+
+    /**
      * @return array
+     * @throws Exception
      */
     public function hookPaymentOptions()
     {
@@ -310,17 +340,25 @@ class Paylater extends PaymentModule
         $pmtPublicKey               = Configuration::get('pmt_public_key');
         $pmtSimulatorIsEnabled      = Configuration::get('pmt_simulator_is_enabled');
         $pmtIsEnabled               = Configuration::get('pmt_is_enabled');
+        $pmtSimulatorType           = getenv('PMT_SIMULATOR_DISPLAY_TYPE');
+        $pmtSimulatorCSSSelector    = getenv('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
+        $pmtSimulatorPriceSelector  = getenv('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
         $pmtSimulatorQuotesStart    = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
-        $pmtSimulatorQuotesMax      = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
+        $pmtSimulatorSkin           = getenv('PMT_SIMULATOR_DISPLAY_SKIN');
+        $pmtSimulatorPosition       = getenv('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
         $pmtTitle                   = $this->l(getenv('PMT_TITLE'));
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
             'amount'                => $orderTotal,
             'pmtPublicKey'          => $pmtPublicKey,
+            'pmtCSSSelector'        => $pmtSimulatorCSSSelector,
+            'pmtPriceSelector'      => $pmtSimulatorPriceSelector,
             'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
-            'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
             'pmtSimulatorIsEnabled' => $pmtSimulatorIsEnabled,
+            'pmtSimulatorType'      => $pmtSimulatorType,
+            'pmtSimulatorSkin'      => $pmtSimulatorSkin,
+            'pmtSimulatorPosition'  => $pmtSimulatorPosition,
             'pmtIsEnabled'          => $pmtIsEnabled,
             'pmtTitle'              => $pmtTitle,
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment'),
@@ -336,11 +374,7 @@ class Paylater extends PaymentModule
         ;
 
 
-        if (_PS_VERSION_ >= 1.7) {
-            $paymentOption->setAdditionalInformation(
-                $this->fetch('module:paylater/views/templates/hook/checkout-17.tpl')
-            );
-        } else {
+        if (_PS_VERSION_ < 1.7) {
             $paymentOption->setAdditionalInformation(
                 $this->fetch('module:paylater/views/templates/hook/checkout-15.tpl')
             );
@@ -520,9 +554,6 @@ class Paylater extends PaymentModule
         if ($error) {
             $message = $this->displayError($error);
         }
-        if ($this->dotEnvError) {
-            $message = $this->displayError($this->dotEnvError);
-        }
 
         $logo = $this->getPathUri(). 'views/img/logo_pagamastarde.png';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
@@ -539,9 +570,9 @@ class Paylater extends PaymentModule
     /**
      * Hook to show payment method, this only applies on prestashop <= 1.6
      *
-     * @param mixed $params
-     *
-     * @return string
+     * @param $params
+     * @return bool | string
+     * @throws Exception
      */
     public function hookPayment($params)
     {
@@ -556,16 +587,24 @@ class Paylater extends PaymentModule
         $pmtPublicKey               = Configuration::get('pmt_public_key');
         $pmtSimulatorIsEnabled      = Configuration::get('pmt_simulator_is_enabled');
         $pmtIsEnabled               = Configuration::get('pmt_is_enabled');
+        $pmtSimulatorType           = getenv('PMT_SIMULATOR_DISPLAY_TYPE');
+        $pmtSimulatorCSSSelector    = getenv('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
+        $pmtSimulatorPriceSelector  = getenv('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
         $pmtSimulatorQuotesStart    = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
-        $pmtSimulatorQuotesMax      = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
+        $pmtSimulatorSkin           = getenv('PMT_SIMULATOR_DISPLAY_SKIN');
+        $pmtSimulatorPosition       = getenv('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
         $pmtTitle                   = $this->l(getenv('PMT_TITLE'));
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
             'amount'                => $orderTotal,
             'pmtPublicKey'          => $pmtPublicKey,
+            'pmtCSSSelector'        => $pmtSimulatorCSSSelector,
+            'pmtPriceSelector'      => $pmtSimulatorPriceSelector,
             'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
-            'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
             'pmtSimulatorIsEnabled' => $pmtSimulatorIsEnabled,
+            'pmtSimulatorType'      => $pmtSimulatorType,
+            'pmtSimulatorSkin'      => $pmtSimulatorSkin,
+            'pmtSimulatorPosition'  => $pmtSimulatorPosition,
             'pmtIsEnabled'          => $pmtIsEnabled,
             'pmtTitle'              => $pmtTitle,
             'paymentUrl'            => $link->getModuleLink('paylater', 'payment'),
@@ -576,15 +615,16 @@ class Paylater extends PaymentModule
         $onepagecheckoutps_enabled = Module::isEnabled('onepagecheckoutps');
         $onepagecheckout_enabled = Module::isEnabled('onepagecheckout');
 
-
+        $return = true;
         if ($supercheckout_enabled || $onepagecheckout_enabled || $onepagecheckoutps_enabled) {
             $this->checkLogoExists();
-            return $this->display(__FILE__, 'views/templates/hook/onepagecheckout.tpl');
-        } elseif (_PS_VERSION_ > 1.7) {
-            return $this->display(__FILE__, 'views/templates/hook/checkout-17.tpl');
-        } else {
-            return $this->display(__FILE__, 'views/templates/hook/checkout-15.tpl');
+            $return = $this->display(__FILE__, 'views/templates/hook/onepagecheckout.tpl');
         }
+
+        if (_PS_VERSION_ < 1.7) {
+            $return = $this->display(__FILE__, 'views/templates/hook/checkout-15.tpl');
+        }
+        return $return;
     }
 
     /**
@@ -600,18 +640,22 @@ class Paylater extends PaymentModule
         /** @var ProductCore $product */
         $product = new Product(Tools::getValue('id_product'));
         $amount = $product->getPublicPrice();
-        $pmtPublicKey             = Configuration::get('pmt_public_key');
-        $pmtSimulatorIsEnabled    = Configuration::get('pmt_simulator_is_enabled');
-        $pmtIsEnabled             = Configuration::get('pmt_is_enabled');
-        $pmtSimulatorProduct      = getenv('PMT_SIMULATOR_DISPLAY_TYPE');
-        $pmtSimulatorQuotesStart  = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
-        $pmtSimulatorQuotesMax    = getenv('PMT_SIMULATOR_MAX_INSTALLMENTS');
-        $pmtDisplayMinAmount      = getenv('PMT_DISPLAY_MIN_AMOUNT');
+        $pmtPublicKey                = Configuration::get('pmt_public_key');
+        $pmtSimulatorIsEnabled        = Configuration::get('pmt_simulator_is_enabled');
+        $pmtIsEnabled                 = Configuration::get('pmt_is_enabled');
+        $pmtSimulatorType             = getenv('PMT_SIMULATOR_DISPLAY_TYPE');
+        $pmtSimulatorCSSSelector      = getenv('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
+        $pmtSimulatorPriceSelector    = getenv('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
+        $pmtSimulatorQuantitySelector = getenv('PMT_SIMULATOR_CSS_QUANTITY_SELECTOR');
+        $pmtSimulatorQuotesStart      = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
+        $pmtSimulatorSkin             = getenv('PMT_SIMULATOR_DISPLAY_SKIN');
+        $pmtSimulatorPosition         = getenv('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
+        $pmtDisplayMinAmount          = getenv('PMT_DISPLAY_MIN_AMOUNT');
 
         if ($functionName != $productConfiguration ||
             $amount <= 0 ||
             $amount < $pmtDisplayMinAmount ||
-            !$pmtSimulatorProduct
+            !$pmtSimulatorType
         ) {
             return null;
         }
@@ -619,11 +663,15 @@ class Paylater extends PaymentModule
         $this->context->smarty->assign(array(
             'amount'                => $amount,
             'pmtPublicKey'          => $pmtPublicKey,
+            'pmtCSSSelector'        => $pmtSimulatorCSSSelector,
+            'pmtPriceSelector'      => $pmtSimulatorPriceSelector,
+            'pmtQuantitySelector'   => $pmtSimulatorQuantitySelector,
             'pmtSimulatorIsEnabled' => $pmtSimulatorIsEnabled,
             'pmtIsEnabled'          => $pmtIsEnabled,
-            'pmtSimulatorProduct'   => $pmtSimulatorProduct,
+            'pmtSimulatorType'      => $pmtSimulatorType,
+            'pmtSimulatorSkin'      => $pmtSimulatorSkin,
+            'pmtSimulatorPosition'  => $pmtSimulatorPosition,
             'pmtQuotesStart'        => $pmtSimulatorQuotesStart,
-            'pmtQuotesMax'          => $pmtSimulatorQuotesMax,
         ));
 
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');

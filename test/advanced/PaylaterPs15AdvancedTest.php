@@ -59,31 +59,6 @@ class PaylaterPs15InstallTest extends AbstractPs15Selenium
     }
 
     /**
-     * @REQ9 BackOffice Simulator Product Page
-     * @REQ11 BackOffice Simulator Start and Max installments
-     * @REQ12 BackOffice MinAmount (product simulator part)
-     * @REQ19 Simulator Shown
-     * @REQ20 Simulator Installments check
-     * @REQ21 Simulator Min Amount
-     *
-     * @throws \Exception
-     */
-    public function testSimulatorInProductPage()
-    {
-        $this->goToProduct();
-        $simulatorDiv = $this->findByClass('PmtSimulator');
-        $simulatorType = $simulatorDiv->getAttribute('data-pmt-type');
-        $numQuota = $simulatorDiv->getAttribute('data-pmt-num-quota');
-        $maxInstallments = $simulatorDiv->getAttribute('data-pmt-max-ins');
-
-        $this->assertEquals(6, $simulatorType);
-        $this->assertEquals(3, $numQuota);
-        $this->assertEquals(12, $maxInstallments);
-
-        $this->quit();
-    }
-
-    /**
      * @REQ17 BackOffice Panel should have visible Logo and links
      *
      * @throws \Exception

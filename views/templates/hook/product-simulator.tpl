@@ -6,85 +6,63 @@
  * @license   proprietary
  *}
 {if ($pmtIsEnabled && $pmtSimulatorIsEnabled)}
-<script type="text/javascript" src="https://cdn.pagamastarde.com/pmt-js-client-sdk/3/js/client-sdk.min.js"></script>
-<script type="text/javascript">
-    if (typeof pmtClient !== 'undefined') {
-        pmtClient.setPublicKey('{$pmtPublicKey|escape:'quotes'}');
-    }
+    <script>
+        function loadSimulator()
+        {
+            if (typeof pmtSDK != 'undefined') {
+                var price = null;
+                var quantity = null;
+                var positionSelector = '{$pmtCSSSelector|escape:'quotes'}';
+                var priceSelector = '{$pmtPriceSelector|escape:'quotes'}';
+                var quantitySelector = '{$pmtQuantitySelector|escape:'quotes'}';
 
-</script>
-<span class="js-pmt-payment-type"></span>
-<div class="PmtSimulator PmtSimulatorSelectable--claim"
-     data-pmt-num-quota="{$pmtQuotesStart|escape:'quotes'}"
-     data-pmt-max-ins="{$pmtQuotesMax|escape:'quotes'}"
-     data-pmt-style="Blue"
-     data-pmt-type="{$pmtSimulatorProduct|escape:'quotes'}"
-     data-pmt-discount="no"
-     data-pmt-amount="{$amount|escape:'quotes'}"
-     data-pmt-expanded="yes">
-</div>
-<script type="text/javascript">
-    function findPrice()    {
-        var price = '';
-        var priceDOM = document.getElementById("our_price_display");
-        if (priceDOM != null) {
-            return price.innerText;
-        } else {
-            priceDOM = document.querySelector(".current-price span")
-            if (priceDOM != null) {
-                return priceDOM.innerText;
-            }
-        }
+                if (positionSelector === 'default') {
+                    positionSelector = '.PmtSimulator';
+                }
 
-        var all = document.getElementsByTagName("*");
-        // Extra search
-        var attribute = "itemprop";
-        var value = "price";
-        for (var i = 0; i < all.length; i++) {
-            if (all[i].getAttribute(attribute) == value) {
-                return all[i].innerText;
-            }
-        }
-        return false;
-    }
-    function changePrice(miliseconds=1000)
-    {
-        setTimeout(
-            function() {
-                var newPrice = findPrice();
-                if (newPrice) {
-                    var currentPrice = document.getElementsByClassName('PmtSimulator')[0].getAttribute('data-pmt-amount');
-
-                    if (newPrice != currentPrice) {
-                        document.getElementsByClassName('PmtSimulator')[0].setAttribute('data-pmt-amount', newPrice);
-                        if (typeof pmtClient !== 'undefined') {
-                            pmtClient.simulator.reload();
-                        }
+                if (priceSelector === 'default') {
+                    priceSelector = findPriceSelector();
+                    if (priceSelector === 'default') {
+                        price = '{$amount|escape:'quotes'}'
                     }
                 }
+
+                if (quantitySelector === 'default') {
+                    quantitySelector = findQuantitySelector();
+                    if (quantitySelector === 'default') {
+                        quantity = '1'
+                    }
+                }
+
+                pmtSDK.product_simulator = {};
+                pmtSDK.product_simulator.id = 'product-simulator';
+                pmtSDK.product_simulator.publicKey = '{$pmtPublicKey|escape:'quotes'}';
+                pmtSDK.product_simulator.selector = positionSelector;
+                pmtSDK.product_simulator.numInstalments = '{$pmtQuotesStart|escape:'quotes'}';
+                pmtSDK.product_simulator.type = {$pmtSimulatorType|escape:'quotes'};
+                pmtSDK.product_simulator.skin = {$pmtSimulatorSkin|escape:'quotes'};
+                pmtSDK.product_simulator.position = {$pmtSimulatorPosition|escape:'quotes'};
+
+                if (priceSelector !== 'default') {
+                    pmtSDK.product_simulator.itemAmountSelector = priceSelector;
+                }
+                if (quantitySelector !== 'default' && quantitySelector !== 'none') {
+                    pmtSDK.product_simulator.itemQuantitySelector = quantitySelector;
+                }
+                if (price != null) {
+                    pmtSDK.product_simulator.itemAmount = price;
+                }
+                if (quantity != null) {
+                    pmtSDK.product_simulator.itemQuantity = quantity;
+                }
+
+                pmtSDK.simulator.init(pmtSDK.product_simulator);
+                clearInterval(window.PSSimulatorId);
             }
-        ,miliseconds)
-    }
-    changePrice(0); //Load the screen price into simulator to avoid the reload event
-    window.onload = function() {
-        var productAttributeModifiers = {};
-        var productAttributeModifiersDOM = document.getElementById('attributes');
-        //<select> for size, <a> for color/texture, <input>for checkbox
-        if (productAttributeModifiersDOM != null) {
-            productAttributeModifiers = productAttributeModifiersDOM.querySelectorAll('input, select, a');
-        } else {
-            productAttributeModifiers = document.getElementsByClassName('product-variants')[0].querySelectorAll('input, select, a');
         }
-        productAttributeModifiers.forEach(function(modifier, index) {
-            var eventType = (modifier.tagName == 'SELECT') ? 'change':'click';
-            modifier.addEventListener(eventType, changePrice);
-        });
-    }
-
-    setInterval(function(){ changePrice(0); }, 2000);
-
-    if (typeof pmtClient !== 'undefined') {
-        pmtClient.simulator.init();
-    }
-</script>
+        window.PSSimulatorId = setInterval(function () {
+            loadSimulator();
+        }, 2000);
+    </script>
+    <div class="PmtSimulator"></div>
 {/if}

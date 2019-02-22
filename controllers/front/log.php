@@ -32,7 +32,7 @@ class PaylaterLogModuleFrontController extends ModuleFrontController
         };
 
 
-        $sql = 'SELECT * FROM '._DB_PREFIX_.'pmt_logs ORDER BY id desc LIMIT 200';
+        $sql = 'SELECT * FROM '._DB_PREFIX_.'pmt_log ORDER BY id desc LIMIT 200';
         if ($results = Db::getInstance()->ExecuteS($sql)) {
             foreach ($results as $row) {
                 $this->message[] = json_decode($row['log']);
