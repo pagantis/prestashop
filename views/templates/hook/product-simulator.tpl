@@ -5,7 +5,6 @@
  * @copyright 2015-2016 Paga+Tarde
  * @license   proprietary
  *}
-<!-- PMT Environment -->
 {if ($pmtIsEnabled && $pmtSimulatorIsEnabled)}
     <script>
         function loadSimulator()
