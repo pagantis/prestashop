@@ -5,7 +5,8 @@
 * @copyright 2015-2016 Paga+Tarde
 * @license   proprietary
 */
-function findPriceSelector()    {
+function findPriceSelector()
+{
     var priceDOM = document.getElementById("our_price_display");
     if (priceDOM != null) {
         return '#our_price_display';
@@ -19,7 +20,8 @@ function findPriceSelector()    {
     return 'default';
 }
 
-function findQuantitySelector()    {
+function findQuantitySelector()
+{
     var quantityDOM = document.getElementById("quantity_wanted");
     if (quantityDOM != null) {
         return '#quantity_wanted';
