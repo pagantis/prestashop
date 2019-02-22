@@ -87,29 +87,7 @@ class Paylater extends PaymentModule
         $sql_file = dirname(__FILE__).'/sql/install.sql';
         $this->loadSQLFile($sql_file);
 
-        $sql_content = 'select * from ' . _DB_PREFIX_. 'pmt_config';
-        $dbConfigs = Db::getInstance()->executeS($sql_content);
-
-        // Convert a multimple dimension array for SQL insert statements into a simple key/value
-        $simpleDbConfigs = array();
-        foreach ($dbConfigs as $config) {
-            $simpleDbConfigs[$config['config']] = $config['value'];
-        }
-        $newConfigs = array_diff_key($this->defaultConfigs, $simpleDbConfigs);
-        if (!empty($newConfigs)) {
-            $data = array();
-            foreach ($newConfigs as $key => $value) {
-                $data[] = array(
-                    'config' => $key,
-                    'value' => $value,
-                );
-            }
-            Db::getInstance()->insert('pmt_config', $data);
-        }
-
-        foreach (array_merge($this->defaultConfigs, $simpleDbConfigs) as $key => $value) {
-            putenv($key . '=' . $value);
-        }
+        $this->loadEnvVariables();
 
         //migrate data from old modules to 7x generation
         $this->migrate();
@@ -238,10 +216,40 @@ class Paylater extends PaymentModule
             \''. Hook::getIdByName('header') . '\',
             150)';
                 Db::getInstance()->execute($sql_insert);
-            } 
+            }
         } catch (\Exception $exception) {
             //continue without errors
         }
+    }
+
+    public function loadEnvVariables()
+    {
+        $sql_content = 'select * from ' . _DB_PREFIX_. 'pmt_config';
+        $dbConfigs = Db::getInstance()->executeS($sql_content);
+
+        // Convert a multimple dimension array for SQL insert statements into a simple key/value
+        $simpleDbConfigs = array();
+        foreach ($dbConfigs as $config) {
+            $simpleDbConfigs[$config['config']] = $config['value'];
+        }
+        $newConfigs = array_diff_key($this->defaultConfigs, $simpleDbConfigs);
+        if (!empty($newConfigs)) {
+            $data = array();
+            foreach ($newConfigs as $key => $value) {
+                $data[] = array(
+                    'config' => $key,
+                    'value' => $value,
+                );
+            }
+            Db::getInstance()->insert('pmt_config', $data);
+        }
+
+        foreach (array_merge($this->defaultConfigs, $simpleDbConfigs) as $key => $value) {
+            putenv($key . '=' . $value);
+        }
+
+        // Save defaultOptions as a env varible to have it in configController
+        putenv("PMT_DEFAULT_CONFIGS" . '=' . json_encode($this->defaultConfigs));
     }
 
     /**
