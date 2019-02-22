@@ -18,12 +18,13 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
     public function initContent()
     {
         $this->authorize();
-        $method = strtolower($_SERVER['REQUEST_METHOD']) . "Method";
+        $method = Tools::strtolower($_SERVER['REQUEST_METHOD']) . "Method";
         if (method_exists($this, $method)) {
             header('HTTP/1.1 200 Ok', true, 200);
             header('Content-Type: application/json', true);
+            $result = json_encode($this->{$method}());
             header('Content-Length: ' . Tools::strlen($result));
-            echo json_encode($this->{$method}());
+            echo $result;
             exit();
         }
         header('HTTP/1.1 405 Method not allowed', true, 405);
