@@ -72,7 +72,6 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
         $sql_content = 'select * from ' . _DB_PREFIX_. 'pmt_config';
         $dbConfigs = Db::getInstance()->executeS($sql_content);
 
-        // Convert a multimple dimension array for SQL insert statements into a simple key/value
         $simpleDbConfigs = array();
         foreach ($dbConfigs as $config) {
             $simpleDbConfigs[$config['config']] = $config['value'];

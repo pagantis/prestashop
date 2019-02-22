@@ -36,11 +36,6 @@ class Paylater extends PaymentModule
     public $installErrors = array();
 
     /**
-     * @var array
-     */
-    public $dotEnvError = null;
-
-    /**
      * Default module advanced configuration values
      *
      * @var array
@@ -70,7 +65,6 @@ class Paylater extends PaymentModule
      */
     public function __construct()
     {
-        $this->dotEnvError = null;
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
         $this->version = '7.2.0';
@@ -89,7 +83,6 @@ class Paylater extends PaymentModule
 
         $this->loadEnvVariables();
 
-        //migrate data from old modules to 7x generation
         $this->migrate();
 
         $this->checkHooks();
@@ -152,11 +145,10 @@ class Paylater extends PaymentModule
     }
 
     /**
-     * Migrate the configs of older veresions < 7x to new configurations
+     * Migrate the configs of older versions < 7x to new configurations
      */
     public function migrate()
     {
-        // If this configuration exists is because we came form a version lower than 7.x
         if (Configuration::get('PAYLATER_MIN_AMOUNT')) {
             Db::getInstance()->update(
                 'pmt_config',
@@ -218,7 +210,7 @@ class Paylater extends PaymentModule
                 Db::getInstance()->execute($sql_insert);
             }
         } catch (\Exception $exception) {
-            //continue without errors
+            // continue without errors
         }
     }
 
@@ -248,7 +240,6 @@ class Paylater extends PaymentModule
             putenv($key . '=' . $value);
         }
 
-        // Save defaultOptions as a env varible to have it in configController
         putenv("PMT_DEFAULT_CONFIGS" . '=' . json_encode($this->defaultConfigs));
     }
 
@@ -259,8 +250,6 @@ class Paylater extends PaymentModule
     public function loadSQLFile($sql_file)
     {
         $sql_content = Tools::file_get_contents($sql_file);
-
-        // Replace prefix and store SQL command in array
         $sql_content = str_replace('PREFIX_', _DB_PREFIX_, $sql_content);
         $sql_requests = preg_split("/;\s*[\r\n]+/", $sql_content);
 
@@ -271,7 +260,6 @@ class Paylater extends PaymentModule
             }
         }
 
-        // Return result
         return $result;
     }
 
@@ -565,9 +553,6 @@ class Paylater extends PaymentModule
 
         if ($error) {
             $message = $this->displayError($error);
-        }
-        if ($this->dotEnvError) {
-            $message = $this->displayError($this->dotEnvError);
         }
 
         $logo = $this->getPathUri(). 'views/img/logo_pagamastarde.png';
