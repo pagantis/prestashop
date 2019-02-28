@@ -39,14 +39,21 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
     public function postMethod()
     {
         $errors = array();
-        if (count($_POST)) {
-            foreach ($_POST as $config => $value) {
+        $post = Tools::getAllValues();
+        unset($post['fc']);
+        unset($post['module']);
+        unset($post['controller']);
+        unset($post['secret']);
+        if (count($post)) {
+            foreach ($post as $config => $value) {
                 $defaultConfigs = json_decode(getenv('PMT_DEFAULT_CONFIGS'), true);
                 if (isset($defaultConfigs[$config])) {
                     Db::getInstance()->update(
                         'pmt_config',
-                        array('value' => $value),
-                        'config = \''. $config .'\''
+                        array(
+                            'config' => pSQL($config),
+                            'value' => pSQL($value),
+                        )
                     );
                 } else {
                     $errors[$config] = $value;
