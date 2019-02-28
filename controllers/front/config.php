@@ -50,10 +50,8 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
                 if (isset($defaultConfigs[$config])) {
                     Db::getInstance()->update(
                         'pmt_config',
-                        array(
-                            'config' => pSQL($config),
-                            'value' => pSQL($value),
-                        )
+                        array('value' => pSQL($value)),
+                        'config = \''. pSQL($config) .'\''
                     );
                 } else {
                     $errors[$config] = $value;
