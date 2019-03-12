@@ -81,7 +81,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
         $cancelUrl = (getenv('PMT_URL_KO') !== '') ? getenv('PMT_URL_KO') : $koUrl;
         $paylaterPublicKey = Configuration::get('pmt_public_key');
         $paylaterPrivateKey = Configuration::get('pmt_private_key');
-        $okUrl = _PS_BASE_URL_.__PS_BASE_URI__
+        $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
                  .'index.php?canonical=true&fc=module&module=paylater&controller=notify&'
                  .http_build_query($query)
         ;
