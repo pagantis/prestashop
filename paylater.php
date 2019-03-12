@@ -619,9 +619,7 @@ class Paylater extends PaymentModule
         if ($supercheckout_enabled || $onepagecheckout_enabled || $onepagecheckoutps_enabled) {
             $this->checkLogoExists();
             $return = $this->display(__FILE__, 'views/templates/hook/onepagecheckout.tpl');
-        }
-
-        if (_PS_VERSION_ < 1.7) {
+        } elseif (_PS_VERSION_ < 1.7) {
             $return = $this->display(__FILE__, 'views/templates/hook/checkout-15.tpl');
         }
         return $return;
@@ -629,7 +627,7 @@ class Paylater extends PaymentModule
 
     /**
      * @param string $functionName
-     *
+     *:
      * @return string
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
