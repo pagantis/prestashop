@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b2be87550b64ab6e12cfe72dedb342fe",
+    "content-hash": "70c4bcb5074043fb2fbad0e51ad8a728",
     "packages": [
         {
             "name": "nategood/httpful",
@@ -100,12 +100,12 @@
             "version": "v1.0.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/PagaMasTarde/autoindex.git",
+                "url": "https://github.com/pagantis/autoindex.git",
                 "reference": "1a32f749f86fa5bcc985511bc7e570e99e721b45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/autoindex/zipball/1a32f749f86fa5bcc985511bc7e570e99e721b45",
+                "url": "https://api.github.com/repos/pagantis/autoindex/zipball/1a32f749f86fa5bcc985511bc7e570e99e721b45",
                 "reference": "1a32f749f86fa5bcc985511bc7e570e99e721b45",
                 "shasum": ""
             },
@@ -136,6 +136,7 @@
                 "module",
                 "prestashop"
             ],
+            "abandoned": "pagantis/autoindex",
             "time": "2017-08-08T15:38:57+00:00"
         },
         {
@@ -180,6 +181,7 @@
                 }
             ],
             "description": "Paga+Tarde PHP Library. Module utils",
+            "abandoned": "pagantis/module-utils",
             "time": "2019-01-23T10:59:08+00:00"
         },
         {
@@ -187,12 +189,12 @@
             "version": "v1.0.16",
             "source": {
                 "type": "git",
-                "url": "https://github.com/PagaMasTarde/ordersApiClient.git",
+                "url": "https://github.com/pagantis/orders-api-client.git",
                 "reference": "94ee56ac2f744d47d29c5ffbb4fe8e1a897b9e61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/ordersApiClient/zipball/94ee56ac2f744d47d29c5ffbb4fe8e1a897b9e61",
+                "url": "https://api.github.com/repos/pagantis/orders-api-client/zipball/94ee56ac2f744d47d29c5ffbb4fe8e1a897b9e61",
                 "reference": "94ee56ac2f744d47d29c5ffbb4fe8e1a897b9e61",
                 "shasum": ""
             },
@@ -229,12 +231,12 @@
             "version": "v1.0.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/PagaMasTarde/selenium-form-utils.git",
+                "url": "https://github.com/pagantis/selenium-form-utils.git",
                 "reference": "4e6ecf61afd9eb0f099f67b738a29528277c8903"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PagaMasTarde/selenium-form-utils/zipball/4e6ecf61afd9eb0f099f67b738a29528277c8903",
+                "url": "https://api.github.com/repos/pagantis/selenium-form-utils/zipball/4e6ecf61afd9eb0f099f67b738a29528277c8903",
                 "reference": "4e6ecf61afd9eb0f099f67b738a29528277c8903",
                 "shasum": ""
             },
@@ -265,57 +267,8 @@
                 }
             ],
             "description": "Paga+Tarde PHP Library. Selenium helper to end a test purchase. Helper to test the payment validation and redirection",
+            "abandoned": "pagantis/selenium-form-utils",
             "time": "2018-08-27T08:26:26+00:00"
-        },
-        {
-            "name": "vlucas/phpdotenv",
-            "version": "v2.5.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e",
-                "reference": "8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.9"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.5-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Dotenv\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Vance Lucas",
-                    "email": "vance@vancelucas.com",
-                    "homepage": "http://www.vancelucas.com"
-                }
-            ],
-            "description": "Loads environment variables from `.env` to `getenv()`, `$_ENV` and `$_SERVER` automagically.",
-            "keywords": [
-                "dotenv",
-                "env",
-                "environment"
-            ],
-            "time": "2018-07-29T20:33:41+00:00"
         }
     ],
     "packages-dev": [
@@ -418,6 +371,56 @@
                 "webdriver"
             ],
             "time": "2016-08-10T00:44:08+00:00"
+        },
+        {
+            "name": "fzaninotto/faker",
+            "version": "v1.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fzaninotto/Faker.git",
+                "reference": "f72816b43e74063c8b10357394b6bba8cb1c10de"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/f72816b43e74063c8b10357394b6bba8cb1c10de",
+                "reference": "f72816b43e74063c8b10357394b6bba8cb1c10de",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3.3 || ^7.0"
+            },
+            "require-dev": {
+                "ext-intl": "*",
+                "phpunit/phpunit": "^4.8.35 || ^5.7",
+                "squizlabs/php_codesniffer": "^1.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.8-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Faker\\": "src/Faker/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "François Zaninotto"
+                }
+            ],
+            "description": "Faker is a PHP library that generates fake data for you.",
+            "keywords": [
+                "data",
+                "faker",
+                "fixtures"
+            ],
+            "time": "2018-07-12T10:23:15+00:00"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -1459,6 +1462,56 @@
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
             "time": "2019-01-01T13:45:19+00:00"
+        },
+        {
+            "name": "vlucas/phpdotenv",
+            "version": "v2.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vlucas/phpdotenv.git",
+                "reference": "8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e",
+                "reference": "8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35 || ^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Dotenv\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Vance Lucas",
+                    "email": "vance@vancelucas.com",
+                    "homepage": "http://www.vancelucas.com"
+                }
+            ],
+            "description": "Loads environment variables from `.env` to `getenv()`, `$_ENV` and `$_SERVER` automagically.",
+            "keywords": [
+                "dotenv",
+                "env",
+                "environment"
+            ],
+            "time": "2018-07-29T20:33:41+00:00"
         }
     ],
     "aliases": [],

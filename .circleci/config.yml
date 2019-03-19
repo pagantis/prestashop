@@ -1,0 +1,123 @@
+version: 2
+jobs:
+  runTestPrestashop17:
+    environment:
+      PS_VERSION: shell:runTestPrestashop17
+    machine: true
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Add Docker Host
+          command: |
+            export DOCKERHOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
+            echo 127.0.0.1 prestashop15-test.docker | sudo tee -a /etc/hosts
+            echo 127.0.0.1 prestashop16-test.docker | sudo tee -a /etc/hosts
+            echo 127.0.0.1 prestashop17-test.docker | sudo tee -a /etc/hosts
+      - run:
+          name: Composer Install
+          command: |
+            sudo apt install -y python-software-properties
+            sudo add-apt-repository -y ppa:ondrej/php
+            find /etc/apt/sources.list.d -type f -name '*.list' -exec sudo apt-get update -o Dir::Etc::sourcelist="{}" ';'
+            sudo apt install -y php7.2-fpm php7.2-gd php7.2-curl php7.2-mysql php7.2-dev php7.2-cli php7.2-common php7.2-mbstring php7.2-intl php7.2-zip php7.2-bcmath php7.2-dom node
+            curl -s https://getcomposer.org/installer | php
+            sudo mv composer.phar /usr/local/bin/composer
+            composer install
+      - run:
+          name: Npm Install && Grunt
+          command: |
+            npm install
+            node_modules/.bin/grunt
+      - run:
+          name: Run Tests
+          command: |
+            export DOCKERHOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
+            grunt $PS_VERSION
+  runTestPrestashop16:
+    environment:
+      PS_VERSION: shell:runTestPrestashop16
+    machine: true
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Add Docker Host
+          command: |
+            export DOCKERHOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
+            echo 127.0.0.1 prestashop15-test.docker | sudo tee -a /etc/hosts
+            echo 127.0.0.1 prestashop16-test.docker | sudo tee -a /etc/hosts
+            echo 127.0.0.1 prestashop17-test.docker | sudo tee -a /etc/hosts
+      - run:
+          name: Composer Install
+          command: |
+            sudo apt install -y python-software-properties
+            sudo add-apt-repository -y ppa:ondrej/php
+            find /etc/apt/sources.list.d -type f -name '*.list' -exec sudo apt-get update -o Dir::Etc::sourcelist="{}" ';'
+            sudo apt install -y php7.2-fpm php7.2-gd php7.2-curl php7.2-mysql php7.2-dev php7.2-cli php7.2-common php7.2-mbstring php7.2-intl php7.2-zip php7.2-bcmath php7.2-dom node
+            curl -s https://getcomposer.org/installer | php
+            sudo mv composer.phar /usr/local/bin/composer
+            composer install
+      - run:
+          name: Npm Install && Grunt
+          command: |
+            npm install
+            node_modules/.bin/grunt
+      - run:
+          name: Run Tests
+          command: |
+            export DOCKERHOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
+            grunt $PS_VERSION
+  runTestPrestashop15:
+    environment:
+      PS_VERSION: shell:runTestPrestashop15
+    machine: true
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Add Docker Host
+          command: |
+            export DOCKERHOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
+            echo 127.0.0.1 prestashop15-test.docker | sudo tee -a /etc/hosts
+            echo 127.0.0.1 prestashop16-test.docker | sudo tee -a /etc/hosts
+            echo 127.0.0.1 prestashop17-test.docker | sudo tee -a /etc/hosts
+      - run:
+          name: Composer Install
+          command: |
+            sudo apt install -y python-software-properties
+            sudo add-apt-repository -y ppa:ondrej/php
+            find /etc/apt/sources.list.d -type f -name '*.list' -exec sudo apt-get update -o Dir::Etc::sourcelist="{}" ';'
+            sudo apt install -y php7.2-fpm php7.2-gd php7.2-curl php7.2-mysql php7.2-dev php7.2-cli php7.2-common php7.2-mbstring php7.2-intl php7.2-zip php7.2-bcmath php7.2-dom node
+            curl -s https://getcomposer.org/installer | php
+            sudo mv composer.phar /usr/local/bin/composer
+            composer install
+      - run:
+          name: Npm Install && Grunt
+          command: |
+            npm install
+            node_modules/.bin/grunt
+      - run:
+          name: Run Tests
+          command: |
+            export DOCKERHOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
+            grunt $PS_VERSION
+  test:
+    machine: true
+    working_directory: ~/repo
+    steps:
+      - run:
+          name: Test Resume
+          command: echo "Tests Passed"
+workflows:
+  version: 2
+    run-tests:
+      jobs:
+        - runTestPrestashop17
+        - runTestPrestashop16
+        - runTestPrestashop15
+        - test:
+            requires:
+              - runTestPrestashop17
+              - runTestPrestashop16
+              - runTestPrestashop15

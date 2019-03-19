@@ -8,6 +8,7 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
 use Facebook\WebDriver\WebDriverExpectedCondition;
+use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -42,6 +43,45 @@ abstract class PaylaterPrestashopTest extends TestCase
         'extra'         => 'Free Finance',
         'confirmationMessage' => 'Great, you have completed your purchase',
     );
+
+    /**
+     * WooCommerce constructor.
+     *
+     * @param null   $name
+     * @param array  $data
+     * @param string $dataName
+     */
+    public function __construct($name = null, array $data = array(), $dataName = '')
+    {
+        $faker = Factory::create();
+        $this->configuration['dni'] = $this->getDNI();
+        $this->configuration['birthdate'] =
+            $faker->numberBetween(1, 28) . '/' .
+            $faker->numberBetween(1, 12). '/1975'
+        ;
+        $this->configuration['firstname'] = $faker->firstName;
+        $this->configuration['lastname'] = $faker->lastName . ' ' . $faker->lastName;
+        $this->configuration['company'] = $faker->company;
+        $this->configuration['zip'] = '28'.$faker->randomNumber(3, true);
+        $this->configuration['street'] = $faker->streetAddress;
+        $this->configuration['phone'] = '6' . $faker->randomNumber(8);
+        $this->configuration['email'] = date('ymd') . '@pagamastarde.com';
+        parent::__construct($name, $data, $dataName);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDNI()
+    {
+        $dni = '0000' . rand(pow(10, 4-1), pow(10, 4)-1);
+        $value = (int) ($dni / 23);
+        $value *= 23;
+        $value= $dni - $value;
+        $letter= "TRWAGMYFPDXBNJZSQVHLCKEO";
+        $dniLetter= substr($letter, $value, 1);
+        return $dni.$dniLetter;
+    }
 
     /**
      * @var RemoteWebDriver
