@@ -111,13 +111,13 @@ jobs:
           command: echo "Tests Passed"
 workflows:
   version: 2
-    build:
-      jobs:
-        - runTestPrestashop17
-        - runTestPrestashop16
-        - runTestPrestashop15
-        - test:
-            requires:
-              - runTestPrestashop17
-              - runTestPrestashop16
-              - runTestPrestashop15
+  build:
+    jobs:
+      - runTestPrestashop17
+      - runTestPrestashop16
+      - runTestPrestashop15
+      - test:
+          requires:
+            - runTestPrestashop17
+            - runTestPrestashop16
+            - runTestPrestashop15
