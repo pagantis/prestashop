@@ -6,7 +6,7 @@ use Facebook\WebDriver\Remote\LocalFileDetector;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
-use PagaMasTarde\SeleniumFormUtils\SeleniumHelper;
+use Pagantis\SeleniumFormUtils\SeleniumHelper;
 use Test\PaylaterPrestashopTest;
 
 /**
@@ -56,7 +56,7 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
         $fileInput->sendKeys(__DIR__.'/../../paylater.zip');
         $validatorSearch = WebDriverBy::className('module-import-success-msg');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
-        $this->webDriver->wait(45, 1000)->until($condition);
+        $this->webDriver->wait(90, 3000)->until($condition);
         $this->assertTrue((bool) $condition);
         $this->findByClass('module-import-success-configure')->click();
     }
