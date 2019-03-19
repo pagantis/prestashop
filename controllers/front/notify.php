@@ -347,6 +347,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function cancelProcess($response = null)
     {
+        sleep(5);
         if ($this->merchantOrder) {
             $id = (!is_null($this->pmtOrder))?$this->pmtOrder->getId():null;
             $this->module->validateOrder(
