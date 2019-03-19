@@ -6,7 +6,7 @@ use Facebook\WebDriver\Remote\LocalFileDetector;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
-use PagaMasTarde\SeleniumFormUtils\SeleniumHelper;
+use Pagantis\SeleniumFormUtils\SeleniumHelper;
 use Test\PaylaterPrestashopTest;
 
 /**
@@ -112,10 +112,6 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
         $condition = WebDriverExpectedCondition::elementToBeClickable($logoutButtonSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->assertContains(
-            $this->configuration['firstname'],
-            $this->findById('header_user_info')->getText()
-        );
     }
 
     /**
