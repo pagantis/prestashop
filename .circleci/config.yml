@@ -8,12 +8,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Add Docker Host
+          name: Add Docker Host && DockerCompose install
           command: |
             export DOCKERHOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
             echo 127.0.0.1 prestashop15-test.docker | sudo tee -a /etc/hosts
             echo 127.0.0.1 prestashop16-test.docker | sudo tee -a /etc/hosts
             echo 127.0.0.1 prestashop17-test.docker | sudo tee -a /etc/hosts
+            sudo curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
       - run:
           name: Composer Install
           command: |

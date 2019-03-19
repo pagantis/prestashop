@@ -35,7 +35,6 @@ module.exports = function(grunt) {
             },
             runTestPrestashop16: {
                 command:
-                    'chmod -R 777 vendor\n' +
                     'docker-compose down\n' +
                     'docker-compose up -d selenium\n' +
                     'docker-compose up -d prestashop16-test\n' +
@@ -53,7 +52,6 @@ module.exports = function(grunt) {
             },
             runTestPrestashop15: {
                 command:
-                    'chmod -R 777 vendor\n' +
                     'docker-compose down\n' +
                     'docker-compose up -d selenium\n' +
                     'docker-compose up -d prestashop15-test\n' +

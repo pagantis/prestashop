@@ -205,7 +205,7 @@ services:
     networks:
       - public
     ports:
-      - 4444:4444
+      - "4444:4444"
     extra_hosts:
       - "prestashop15-test.docker:${DOCKERHOST}"
       - "prestashop16-test.docker:${DOCKERHOST}"
