@@ -18,14 +18,13 @@ module.exports = function(grunt) {
             },
             runTestPrestashop17: {
                 command:
-                    'chmod -R 777 vendor\n' +
                     'docker-compose down\n' +
                     'docker-compose up -d selenium\n' +
-                    'docker-compose up -d prestashop17\n' +
-                    'echo "Creating the prestashop17"\n' +
+                    'docker-compose up -d prestashop17-test\n' +
+                    'echo "Creating the prestashop17-test"\n' +
                     'sleep 100\n' +
                     'date\n' +
-                    'docker-compose logs prestashop17\n' +
+                    'docker-compose logs prestashop17-test\n' +
                     'set -e\n' +
                     'vendor/bin/phpunit --group prestashop17basic\n' +
                     'vendor/bin/phpunit --group prestashop17install\n' +
@@ -36,14 +35,13 @@ module.exports = function(grunt) {
             },
             runTestPrestashop16: {
                 command:
-                    'chmod -R 777 vendor\n' +
                     'docker-compose down\n' +
                     'docker-compose up -d selenium\n' +
-                    'docker-compose up -d prestashop16\n' +
-                    'echo "Creating the prestashop16"\n' +
+                    'docker-compose up -d prestashop16-test\n' +
+                    'echo "Creating the prestashop16-test"\n' +
                     'sleep  90\n' +
                     'date\n' +
-                    'docker-compose logs prestashop16\n' +
+                    'docker-compose logs prestashop16-test\n' +
                     'set -e\n' +
                     'vendor/bin/phpunit --group prestashop16basic\n' +
                     'vendor/bin/phpunit --group prestashop16install\n' +
@@ -54,14 +52,13 @@ module.exports = function(grunt) {
             },
             runTestPrestashop15: {
                 command:
-                    'chmod -R 777 vendor\n' +
                     'docker-compose down\n' +
                     'docker-compose up -d selenium\n' +
-                    'docker-compose up -d prestashop15\n' +
-                    'echo "Creating the prestashop15"\n' +
+                    'docker-compose up -d prestashop15-test\n' +
+                    'echo "Creating the prestashop15-test"\n' +
                     'sleep 90\n' +
                     'date\n' +
-                    'docker-compose logs prestashop15\n' +
+                    'docker-compose logs prestashop15-test\n' +
                     'set -e\n' +
                     'vendor/bin/phpunit --group prestashop15basic\n' +
                     'vendor/bin/phpunit --group prestashop15install\n' +
