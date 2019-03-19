@@ -1,5 +1,4 @@
 version: "3.5"
-
 services:
   prestashop15-test:
     container_name: prestashop15-test
@@ -18,9 +17,6 @@ services:
       - DB_NAME=db15-test
       - DB_PREFIX=ps_
       - DB_PASSWD=password
-    networks:
-      - internal
-      - public
     ports:
       - "8015:80"
     extra_hosts:
@@ -42,9 +38,6 @@ services:
       - DB_NAME=db16-test
       - DB_PREFIX=ps_
       - DB_PASSWD=password
-    networks:
-      - internal
-      - public
     ports:
       - "8016:80"
     extra_hosts:
@@ -66,9 +59,6 @@ services:
       - DB_NAME=db17-test
       - DB_PREFIX=ps_
       - DB_PASSWD=password
-    networks:
-      - internal
-      - public
     ports:
       - "8017:80"
     extra_hosts:
@@ -90,9 +80,6 @@ services:
       - DB_NAME=db17-dev
       - DB_PREFIX=ps_
       - DB_PASSWD=password
-    networks:
-      - internal
-      - public
     volumes:
       - ./:/var/www/html/modules/paylater
     ports:
@@ -116,9 +103,6 @@ services:
       - DB_NAME=db16-dev
       - DB_PREFIX=ps_
       - DB_PASSWD=password
-    networks:
-      - internal
-      - public
     volumes:
       - ./:/var/www/html/modules/paylater
     ports:
@@ -142,9 +126,6 @@ services:
       - DB_NAME=db15-dev
       - DB_PREFIX=ps_
       - DB_PASSWD=password
-    networks:
-      - internal
-      - public
     volumes:
       - ./:/var/www/html/modules/paylater
     ports:
@@ -157,53 +138,39 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=db17-dev
-    networks:
-      - internal
   db16-dev:
     container_name:  db16-dev
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=db16-dev
-    networks:
-      - internal
   db15-dev:
     container_name: db15-dev
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=db15-dev
-    networks:
-      - internal
   db17-test:
     container_name:  db17-test
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=db17-test
-    networks:
-      - internal
   db16-test:
     container_name: db16-test
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=db16-test
-    networks:
-      - internal
   db15-test:
-    container_name: db16-test
+    container_name: db15-test
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=db16-test
-    networks:
-      - internal
+      - MYSQL_DATABASE=db15-test
   selenium:
     container_name: prestashopSelenium
     image: selenium/standalone-chrome:3.7.1
-    networks:
-      - public
     ports:
       - "4444:4444"
     extra_hosts:
@@ -211,6 +178,3 @@ services:
       - "prestashop16-test.docker:${DOCKERHOST}"
       - "prestashop17-test.docker:${DOCKERHOST}"
       - "prestashop-dev.docker:${DOCKERHOST}"
-networks:
-  internal:
-  public:

@@ -41,7 +41,7 @@ module.exports = function(grunt) {
                     'echo "Creating the prestashop16-test"\n' +
                     'sleep  90\n' +
                     'date\n' +
-                    'docker-compose logs prestashop16\n' +
+                    'docker-compose logs prestashop16-test\n' +
                     'set -e\n' +
                     'vendor/bin/phpunit --group prestashop16basic\n' +
                     'vendor/bin/phpunit --group prestashop16install\n' +
@@ -58,7 +58,7 @@ module.exports = function(grunt) {
                     'echo "Creating the prestashop15-test"\n' +
                     'sleep 90\n' +
                     'date\n' +
-                    'docker-compose logs prestashop15\n' +
+                    'docker-compose logs prestashop15-test\n' +
                     'set -e\n' +
                     'vendor/bin/phpunit --group prestashop15basic\n' +
                     'vendor/bin/phpunit --group prestashop15install\n' +
