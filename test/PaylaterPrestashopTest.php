@@ -12,10 +12,10 @@ use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class PaylaterPrestashopTest
+ * Class PagantisPrestashopTest
  * @package Test\Selenium
  */
-abstract class PaylaterPrestashopTest extends TestCase
+abstract class PagantisPrestashopTest extends TestCase
 {
     const PS17URL = 'http://prestashop17-test.docker:8017';
     const PS16URL = 'http://prestashop16-test.docker:8016';
@@ -34,8 +34,8 @@ abstract class PaylaterPrestashopTest extends TestCase
         'birthdate'     => '05/05/1989',
         'firstname'     => 'Jøhn',
         'lastname'      => 'Dōès',
-        'email'         => 'john_doe_testing@digitalorigin.com',
-        'company'       => 'Digital Origin SL',
+        'email'         => 'john_doe_testing@pagantis.com',
+        'company'       => 'Pagantis SA',
         'zip'           => '08023',
         'city'          => 'Barcelona',
         'phone'         => '600123123',
@@ -65,7 +65,7 @@ abstract class PaylaterPrestashopTest extends TestCase
         $this->configuration['zip'] = '28'.$faker->randomNumber(3, true);
         $this->configuration['street'] = $faker->streetAddress;
         $this->configuration['phone'] = '6' . $faker->randomNumber(8);
-        $this->configuration['email'] = date('ymd') . '@pagamastarde.com';
+        $this->configuration['email'] = date('ymd') . '@pagantis.com';
         parent::__construct($name, $data, $dataName);
     }
 
@@ -201,19 +201,19 @@ abstract class PaylaterPrestashopTest extends TestCase
     public function getProperties()
     {
         return array(
-            'PMT_TITLE' => '\'Instant Financing\'',
-            'PMT_SIMULATOR_DISPLAY_TYPE' => 'pmtSDK.simulator.types.SIMPLE',
-            'PMT_SIMULATOR_DISPLAY_SKIN' => 'pmtSDK.simulator.skins.BLUE ',
-            'PMT_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
-            'PMT_SIMULATOR_START_INSTALLMENTS' => '3',
-            'PMT_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
-            'PMT_SIMULATOR_DISPLAY_CSS_POSITION' => 'pmtSDK.simulator.positions.INNER',
-            'PMT_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
-            'PMT_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
-            'PMT_FORM_DISPLAY_TYPE' => '0',
-            'PMT_DISPLAY_MIN_AMOUNT' => '1',
-            'PMT_URL_OK' => '',
-            'PMT_URL_KO' => '',
+            'PAGANTIS_TITLE' => '\'Instant Financing\'',
+            'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'pmtSDK.simulator.types.SIMPLE',
+            'PAGANTIS_SIMULATOR_DISPLAY_SKIN' => 'pmtSDK.simulator.skins.BLUE ',
+            'PAGANTIS_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
+            'PAGANTIS_SIMULATOR_START_INSTALLMENTS' => '3',
+            'PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
+            'PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION' => 'pmtSDK.simulator.positions.INNER',
+            'PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
+            'PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
+            'PAGANTIS_FORM_DISPLAY_TYPE' => '0',
+            'PAGANTIS_DISPLAY_MIN_AMOUNT' => '1',
+            'PAGANTIS_URL_OK' => '',
+            'PAGANTIS_URL_KO' => '',
         );
     }
 
@@ -232,15 +232,15 @@ abstract class PaylaterPrestashopTest extends TestCase
         fwrite($fp, $file);
         fclose($fp);
 
-        $command = 'docker cp /tmp/.env prestashop' . $psVersion . ':/var/www/html/modules/paylater/.env 2>&1';
+        $command = 'docker cp /tmp/.env prestashop' . $psVersion . ':/var/www/html/modules/pagantis/.env 2>&1';
         $execResult = exec($command);
         $this->assertEmpty($execResult);
 
-        $command = 'docker-compose exec -T prestashop' . $psVersion.' chmod 777 /var/www/html/modules/paylater/.env';
+        $command = 'docker-compose exec -T prestashop' . $psVersion.' chmod 777 /var/www/html/modules/pagantis/.env';
         $execResult = exec($command);
         $this->assertEmpty($execResult);
 
-        $command = 'docker-compose exec -T prestashop' . $psVersion.' chown www-data. /var/www/html/modules/paylater/.env';
+        $command = 'docker-compose exec -T prestashop' . $psVersion.' chown www-data. /var/www/html/modules/pagantis/.env';
         $execResult = exec($command);
         $this->assertEmpty($execResult);
     }

@@ -1,16 +1,16 @@
 <?php
 /**
- * This file is part of the official Paylater module for PrestaShop.
+ * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Paga+Tarde <soporte@pagamastarde.com>
- * @copyright 2019 Paga+Tarde
+ * @author    Pagantis <integration@pagantis.com>
+ * @copyright 2019 Pagantis
  * @license   proprietary
  */
 
 /**
- * Class PaylaterApiModuleFrontController
+ * Class PagantisApiModuleFrontController
  */
-class PaylaterApiModuleFrontController extends ModuleFrontController
+class PagantisApiModuleFrontController extends ModuleFrontController
 {
     /**
      * @var string $message
@@ -35,7 +35,7 @@ class PaylaterApiModuleFrontController extends ModuleFrontController
         $from = Tools::getValue('from', false);
         $payment = Tools::getValue('payment', false);
         if ($payment == 'Paga Tarde') {
-            $payment = 'Paga+Tarde';
+            $payment = 'Pagantis';
         }
 
         if (_PS_VERSION_ > '1.6') {
@@ -84,7 +84,7 @@ class PaylaterApiModuleFrontController extends ModuleFrontController
      */
     public function authorize()
     {
-        $privateKey = Configuration::get('pmt_private_key');
+        $privateKey = Configuration::get('pagantis_private_key');
 
         if (Tools::getValue('secret', false) == $privateKey) {
             return true;

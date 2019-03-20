@@ -1,13 +1,13 @@
 <?php
 /**
- * This file is part of the official Paylater module for PrestaShop.
+ * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Paga+Tarde <soporte@pagamastarde.com>
- * @copyright 2019 Paga+Tarde
+ * @author    Pagantis <integration@pagantis.com>
+ * @copyright 2019 Pagantis
  * @license   proprietary
  */
 
-use PagaMasTarde\ModuleUtils\Model\Log\LogEntry;
+use Pagantis\ModuleUtils\Model\Log\LogEntry;
 
 /**
  * Class AbstractController
@@ -15,9 +15,9 @@ use PagaMasTarde\ModuleUtils\Model\Log\LogEntry;
 abstract class AbstractController extends ModuleFrontController
 {
     /**
-     * PMT_CODE
+     * PAGANTIS_CODE
      */
-    const PMT_CODE = 'paylater';
+    const PAGANTIS_CODE = 'pagantis';
 
     /**
      * @var array $headers
@@ -67,7 +67,7 @@ abstract class AbstractController extends ModuleFrontController
                 $logEntry->setTrace($data['trace']);
             }
 
-            Db::getInstance()->insert('pmt_log', array(
+            Db::getInstance()->insert('pagantis_log', array(
                 'log' => $logEntry->toJson()
             ));
         } catch (\Exception $exception) {

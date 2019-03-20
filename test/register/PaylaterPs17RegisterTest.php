@@ -8,7 +8,7 @@ use Test\Common\AbstractPs17Selenium;
  * @requires prestashop17basic
  * @group prestashop17register
  */
-class PaylaterPs17RegisterTest extends AbstractPs17Selenium
+class PagantisPs17RegisterTest extends AbstractPs17Selenium
 {
     /**
      * @throws \Exception

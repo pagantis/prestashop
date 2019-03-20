@@ -12,7 +12,7 @@ use Test\Common\AbstractPs15Selenium;
  *
  * @group prestashop15advanced
  */
-class PaylaterPs15InstallTest extends AbstractPs15Selenium
+class PagantisPs15InstallTest extends AbstractPs15Selenium
 {
     /**
      * @REQ5 BackOffice should have 2 inputs for setting the public and private API key
@@ -23,37 +23,37 @@ class PaylaterPs15InstallTest extends AbstractPs15Selenium
     public function testPublicAndPrivateKeysInputs()
     {
         $this->loginToBackOffice();
-        $this->getPaylaterBackOffice();
+        $this->getPagantisBackOffice();
 
         //2 elements exist:
-        $validatorSearch = WebDriverBy::id('pmt_public_key');
+        $validatorSearch = WebDriverBy::id('pagantis_public_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $validatorSearch = WebDriverBy::id('pmt_private_key');
+        $validatorSearch = WebDriverBy::id('pagantis_private_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
 
         //save with empty public Key
-        $this->findById('pmt_public_key')->clear();
+        $this->findById('pagantis_public_key')->clear();
         $this->findById('module_form')->submit();
         $validatorSearch = WebDriverBy::className('module_error');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->assertContains('Please add a Paga+Tarde API Public Key', $this->webDriver->getPageSource());
-        $this->findById('pmt_public_key')->clear()->sendKeys($this->configuration['publicKey']);
+        $this->assertContains('Please add a Pagantis API Public Key', $this->webDriver->getPageSource());
+        $this->findById('pagantis_public_key')->clear()->sendKeys($this->configuration['publicKey']);
 
         //save with empty private Key
-        $this->findById('pmt_private_key')->clear();
+        $this->findById('pagantis_private_key')->clear();
         $this->findById('module_form')->submit();
         $validatorSearch = WebDriverBy::className('module_error');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->assertContains('Please add a Paga+Tarde API Private Key', $this->webDriver->getPageSource());
-        $this->findById('pmt_private_key')->clear()->sendKeys($this->configuration['secretKey']);
+        $this->assertContains('Please add a Pagantis API Private Key', $this->webDriver->getPageSource());
+        $this->findById('pagantis_private_key')->clear()->sendKeys($this->configuration['secretKey']);
 
         $this->quit();
     }
@@ -67,11 +67,11 @@ class PaylaterPs15InstallTest extends AbstractPs15Selenium
     {
         //Change Title
         $this->loginToBackOffice();
-        $this->getPaylaterBackOffice();
+        $this->getPagantisBackOffice();
         $html = $this->webDriver->getPageSource();
-        $this->assertContains('logo_pagamastarde.png', $html);
-        $this->assertContains('Login Paga+Tarde', $html);
-        $this->assertContains('https://bo.pagamastarde.com', $html);
+        $this->assertContains('logo_pagantis.png', $html);
+        $this->assertContains('Login Pagantis', $html);
+        $this->assertContains('https://bo.pagantis.com', $html);
         $this->quit();
     }
 }

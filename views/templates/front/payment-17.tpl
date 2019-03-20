@@ -1,29 +1,28 @@
 {*
- * This file is part of the official Paga+Tarde module for PrestaShop.
+ * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Paga+Tarde <soporte@pagamastarde.com>
- * @copyright 2015-2016 Paga+Tarde
+ * @author    Pagantis <integration@pagantis.com>
+ * @copyright 2015-2016 Pagantis
  * @license   proprietary
  *}
 
 {extends file='page.tpl'}
 {block name="page_content"}
-    <script type="text/javascript" src="https://cdn.pagamastarde.com/pmt-js-client-sdk/3/js/client-sdk.min.js"></script>
     <script type="application/javascript">
-        if (typeof pmtClient !== 'undefined') {
+        if (typeof pmtSDK !== 'undefined') {
             document.addEventListener("DOMContentLoaded", function(){
-                pmtClient.modal.open(
+                pmtSDK.modal.open(
                     "{$url|escape:'quotes'}",
                     {
                         closeOnBackDropClick: false,
                         closeOnEscPress: false,
                         backDropDark: false,
                         largeSize: true,
-                        closeConfirmationMessage: "{l s='Sure you want to leave?' mod='paylater'}"
+                        closeConfirmationMessage: "{l s='Sure you want to leave?' mod='pagantis'}"
                     }
                 );
             });
-            pmtClient.modal.onClose(function() {
+            pmtSDK.modal.onClose(function() {
                 window.location.href = "{$checkoutUrl|escape:'quotes'}";
             });
         }

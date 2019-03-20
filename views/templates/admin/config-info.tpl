@@ -1,8 +1,8 @@
 {*
- * This file is part of the official Paga+Tarde module for PrestaShop.
+ * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Paga+Tarde <soporte@pagamastarde.com>
- * @copyright 2015-2016 Paga+Tarde
+ * @author    Pagantis <integration@pagantis.com>
+ * @copyright 2015-2016 Pagantis
  * @license   proprietary
  *}
 
@@ -25,23 +25,23 @@
             display: inline-block;
             width: 33%;
         }
-        .paylater-content-form {
+        .pagantis-content-form {
             overflow-x: hidden;
             overflow-y: hidden;
             text-align: center;
             width: 97%;
         }
 
-        .paylater-content-form input{
+        .pagantis-content-form input{
             margin-left: 15px;
             margin-right: 5px;
         }
 
-        .paylater-content-form label{
+        .pagantis-content-form label{
             margin-left: 15px;
         }
 
-        .paylater-content-form img{
+        .pagantis-content-form img{
             margin-top: 20px;
             display: inline-block;
             vertical-align: middle;
@@ -50,18 +50,18 @@
         }
     </style>
     {$message|escape:'quotes'}
-    <div class="panel paylater-content-form">
-        <h3><i class="icon icon-credit-card"></i> {l s='Paylater Configuration Panel' mod='paylater'}</h3>
+    <div class="panel pagantis-content-form">
+        <h3><i class="icon icon-credit-card"></i> {l s='Pagantis Configuration Panel' mod='pagantis'}</h3>
         <div class="column-left">
-                <a target="_blank" href="https://bo.pagamastarde.com" class="btn btn-default" title="Login Paga+Tarde"><i class="icon-user"></i> {l s='Paylater Backoffice Login' mod='paylater'}</a>
+                <a target="_blank" href="https://bo.pagantis.com" class="btn btn-default" title="Login Pagantis"><i class="icon-user"></i> {l s='Pagantis Backoffice Login' mod='pagantis'}</a>
             </div>
             <div class="column-center">
                 <p>
-                    {l s='Paylater configuration panel, please take your time to configure the payment method behavior' mod='paylater'}
+                    {l s='Pagantis configuration panel, please take your time to configure the payment method behavior' mod='pagantis'}
                 </p>
                 <p>
-                    {l s='If you need help or want to customize the module, please take a look to our documentation on' mod='paylater'}
-                    <a href="https://github.com/PagaMasTarde/prestashop/tree/{$version|escape:'quotes'}">GitHub </a>
+                    {l s='If you need help or want to customize the module, please take a look to our documentation on' mod='pagantis'}
+                    <a href="https://github.com/Pagantis/prestashop/tree/{$version|escape:'quotes'}">GitHub </a>
                 </p>
             </div>
             <div class="column-right">
