@@ -15,7 +15,7 @@ fi
 
 grunt default;
 
-vendor/bin/phpunit --group prestashop$1basic
+vendor/bin/phpunit --group prestashop$1ba
 vendor/bin/phpunit --group prestashop$1install
 vendor/bin/phpunit --group prestashop$1register
 vendor/bin/phpunit --group prestashop$1buy

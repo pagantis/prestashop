@@ -1,23 +1,23 @@
 {*
- * This file is part of the official Paga+Tarde module for PrestaShop.
+ * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Paga+Tarde <soporte@pagamastarde.com>
- * @copyright 2015-2016 Paga+Tarde
+ * @author    Pagantis <integration@pagantis.com>
+ * @copyright 2015-2016 Pagantis
  * @license   proprietary
  *}
-{if ($pmtIsEnabled && $pmtSimulatorIsEnabled)}
+{if ($pagantisIsEnabled && $pagantisSimulatorIsEnabled)}
     <script>
         function loadSimulator()
         {
             if (typeof pmtSDK != 'undefined') {
                 var price = null;
                 var quantity = null;
-                var positionSelector = '{$pmtCSSSelector|escape:'quotes'}';
-                var priceSelector = '{$pmtPriceSelector|escape:'quotes'}';
-                var quantitySelector = '{$pmtQuantitySelector|escape:'quotes'}';
+                var positionSelector = '{$pagantisCSSSelector|escape:'quotes'}';
+                var priceSelector = '{$pagantisPriceSelector|escape:'quotes'}';
+                var quantitySelector = '{$pagantisQuantitySelector|escape:'quotes'}';
 
                 if (positionSelector === 'default') {
-                    positionSelector = '.PmtSimulator';
+                    positionSelector = '.pagantisSimulator';
                 }
 
                 if (priceSelector === 'default') {
@@ -36,12 +36,12 @@
 
                 pmtSDK.product_simulator = {};
                 pmtSDK.product_simulator.id = 'product-simulator';
-                pmtSDK.product_simulator.publicKey = '{$pmtPublicKey|escape:'quotes'}';
+                pmtSDK.product_simulator.publicKey = '{$pagantisPublicKey|escape:'quotes'}';
                 pmtSDK.product_simulator.selector = positionSelector;
-                pmtSDK.product_simulator.numInstalments = '{$pmtQuotesStart|escape:'quotes'}';
-                pmtSDK.product_simulator.type = {$pmtSimulatorType|escape:'quotes'};
-                pmtSDK.product_simulator.skin = {$pmtSimulatorSkin|escape:'quotes'};
-                pmtSDK.product_simulator.position = {$pmtSimulatorPosition|escape:'quotes'};
+                pmtSDK.product_simulator.numInstalments = '{$pagantisQuotesStart|escape:'quotes'}';
+                pmtSDK.product_simulator.type = {$pagantisSimulatorType|escape:'quotes'};
+                pmtSDK.product_simulator.skin = {$pagantisSimulatorSkin|escape:'quotes'};
+                pmtSDK.product_simulator.position = {$pagantisSimulatorPosition|escape:'quotes'};
 
                 if (priceSelector !== 'default') {
                     pmtSDK.product_simulator.itemAmountSelector = priceSelector;
@@ -64,5 +64,5 @@
             loadSimulator();
         }, 2000);
     </script>
-    <div class="PmtSimulator"></div>
+    <div class="pagantisSimulator"></div>
 {/if}

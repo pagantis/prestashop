@@ -10,26 +10,26 @@ use Test\Common\AbstractPs16Selenium;
  * @requires prestashop16basic
  * @group prestashop16install
  */
-class PaylaterPs16InstallTest extends AbstractPs16Selenium
+class PagantisPs16InstallTest extends AbstractPs16Selenium
 {
     /**
      * @throws \Exception
      */
-    public function testInstallAndConfigurePaylaterInPrestashop16()
+    public function testInstallAndConfigurePagantisInPrestashop16()
     {
         $this->loginToBackOffice();
-        $this->uploadPaylater();
-        $this->configurePaylater();
+        $this->uploadPagantis();
+        $this->configurePagantis();
         $this->quit();
     }
 
     /**
      * @throws \Exception
      */
-    public function configurePaylater()
+    public function configurePagantis()
     {
         $this->findByLinkText('Modules and Services')->click();
-        $this->findById('moduleQuicksearch')->clear()->sendKeys('paga+tarde');
+        $this->findById('moduleQuicksearch')->clear()->sendKeys('Pagantis');
         $this->installOrConfigureModule();
 
         // new prompt in module installation no thusted
@@ -40,9 +40,9 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
             // do nothing, no prompt
         };
 
-        $this->findByCss('#pmt_is_enabled_on + label')->click();
-        $this->findById('pmt_public_key')->clear()->sendKeys($this->configuration['publicKey']);
-        $this->findById('pmt_private_key')->clear()->sendKeys($this->configuration['secretKey']);
+        $this->findByCss('#pagantis_is_enabled_on + label')->click();
+        $this->findById('pagantis_public_key')->clear()->sendKeys($this->configuration['publicKey']);
+        $this->findById('pagantis_private_key')->clear()->sendKeys($this->configuration['secretKey']);
         $this->findById('module_form_submit_btn')->click();
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(
@@ -56,17 +56,17 @@ class PaylaterPs16InstallTest extends AbstractPs16Selenium
     public function installOrConfigureModule()
     {
         try {
-            $paylaterAnchor = $this->findById('anchorPaylater');
-            $paylaterAnchorParent = $this->getParent($paylaterAnchor);
-            $paylaterAnchorGrandParent = $this->getParent($paylaterAnchorParent);
-            $this->moveToElementAndClick($paylaterAnchorGrandParent->findElement(
+            $pagantisAnchor = $this->findById('anchorPagantis');
+            $pagantisAnchorParent = $this->getParent($pagantisAnchor);
+            $pagantisAnchorGrandParent = $this->getParent($pagantisAnchorParent);
+            $this->moveToElementAndClick($pagantisAnchorGrandParent->findElement(
                 WebDriverBy::partialLinkText('Install')
             ));
         } catch (\Exception $exception) {
-            $paylaterAnchor = $this->findById('anchorPaylater');
-            $paylaterAnchorParent = $this->getParent($paylaterAnchor);
-            $paylaterAnchorGrandParent = $this->getParent($paylaterAnchorParent);
-            $this->moveToElementAndClick($paylaterAnchorGrandParent->findElement(
+            $pagantisAnchor = $this->findById('anchorPagantis');
+            $pagantisAnchorParent = $this->getParent($pagantisAnchor);
+            $pagantisAnchorGrandParent = $this->getParent($pagantisAnchorParent);
+            $this->moveToElementAndClick($pagantisAnchorGrandParent->findElement(
                 WebDriverBy::partialLinkText('Configure')
             ));
         }

@@ -1,16 +1,16 @@
 <?php
 /**
- * This file is part of the official Paylater module for PrestaShop.
+ * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Paga+Tarde <soporte@pagamastarde.com>
- * @copyright 2019 Paga+Tarde
+ * @author    Pagantis <integration@pagantis.com>
+ * @copyright 2019 Pagantis
  * @license   proprietary
  */
 
 /**
- * Class PaylaterLogModuleFrontController
+ * Class PagantisLogModuleFrontController
  */
-class PaylaterConfigModuleFrontController extends ModuleFrontController
+class PagantisConfigModuleFrontController extends ModuleFrontController
 {
     /**
      * Initial method
@@ -46,10 +46,10 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
         unset($post['secret']);
         if (count($post)) {
             foreach ($post as $config => $value) {
-                $defaultConfigs = json_decode(getenv('PMT_DEFAULT_CONFIGS'), true);
+                $defaultConfigs = json_decode(getenv('PAGANTIS_DEFAULT_CONFIGS'), true);
                 if (isset($defaultConfigs[$config])) {
                     Db::getInstance()->update(
-                        'pmt_config',
+                        'pagantis_config',
                         array('value' => pSQL($value)),
                         'config = \''. pSQL($config) .'\''
                     );
@@ -75,7 +75,7 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
      */
     public function getMethod()
     {
-        $sql_content = 'select * from ' . _DB_PREFIX_. 'pmt_config';
+        $sql_content = 'select * from ' . _DB_PREFIX_. 'pagantis_config';
         $dbConfigs = Db::getInstance()->executeS($sql_content);
 
         $simpleDbConfigs = array();
@@ -90,7 +90,7 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
      */
     public function authorize()
     {
-        $privateKey = Configuration::get('pmt_private_key');
+        $privateKey = Configuration::get('pagantis_private_key');
 
         if (Tools::getValue('secret', false) == $privateKey) {
             return true;

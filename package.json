@@ -1,7 +1,7 @@
 {
-  "name": "paylater",
-  "version": "7.2.1",
-  "description": "Paga+Tarde integration in prestashop",
+  "name": "pagantis",
+  "version": "7.2.2",
+  "description": "Pagantis integration in prestashop",
   "main": "Gruntfile.js",
   "dependencies": {},
   "devDependencies": {
@@ -15,12 +15,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pagantis/pagamastarde-prestashop.git"
+    "url": "git+https://github.com/pagantis/prestashop.git"
   },
-  "author": "DigitalOrigin",
+  "author": "Pagantis",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/pagantis/pagamastarde-prestashop/issues"
+    "url": "https://github.com/pagantis/prestashop/issues"
   },
-  "homepage": "https://github.com/pagantis/pagamastarde-prestashop#readme"
+  "homepage": "https://github.com/pagantis/prestashop"
 }

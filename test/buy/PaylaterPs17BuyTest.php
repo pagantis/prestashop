@@ -10,7 +10,7 @@ use Test\Common\AbstractPs17Selenium;
  *
  * @group prestashop17buy
  */
-class PaylaterPs17BuyTest extends AbstractPs17Selenium
+class PagantisPs17BuyTest extends AbstractPs17Selenium
 {
     /**
      * @throws  \Exception
@@ -21,7 +21,7 @@ class PaylaterPs17BuyTest extends AbstractPs17Selenium
         $this->goToProduct();
         $this->addProduct();
         $this->goToCheckout();
-        $this->verifyPaylater();
+        $this->verifyPagantis();
         $this->quit();
     }
 }
