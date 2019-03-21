@@ -23,7 +23,7 @@ services:
       - "prestashop15-test.docker:127.0.0.1"
   prestashop16-test:
     container_name: prestashop16-test
-    image: prestashop/prestashop:1.6.1.20
+    image: prestashop/prestashop:1.6.1.20F
     depends_on:
       - db16-test
     environment:
