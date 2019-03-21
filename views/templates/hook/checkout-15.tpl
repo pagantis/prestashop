@@ -1,11 +1,11 @@
 {*
  * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Pagantis <integration@pagantis.com>
+ * @author    Pagantis <integrations@pagantis.com>
  * @copyright 2015-2016 Pagantis
  * @license   proprietary
  *}
-{if $IsEnabled}
+{if $pagantisIsEnabled}
 <div class="row">
     <div class="col-xs-12">
         <p class="payment_module">
@@ -15,9 +15,9 @@
         </p>
         <style>
             p.payment_module a.pagantis-checkout {
-                background: url(/modules/pagantis/views/img/logo-64x64.png) no-repeat;
-                background-position: 15px;
-                background-size: 64px 64px;
+                background: url(/modules/pagantis/views/img/logo_pagantis.png) no-repeat;
+                background-position: 4px;
+                background-size: 95px;
             }
             p.payment_module a.pagantis-checkout.ps_version_1-6 {
                 background-color: #fbfbfb;

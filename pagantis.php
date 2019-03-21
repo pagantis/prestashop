@@ -2,7 +2,7 @@
 /**
  * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Pagantis <integration@pagantis.com>
+ * @author    Pagantis <integrations@pagantis.com>
  * @copyright 2015-2016 Pagantis
  * @license   proprietary
  */
@@ -329,14 +329,15 @@ class Pagantis extends PaymentModule
      */
     public function hookPaymentOptions()
     {
+        die("dsfdsf");
         if (!$this->isPaymentMethodAvailable()) {
             return array();
         }
 
         /** @var Cart $cart */
-        $cart                       = $this->context->cart;
-        $orderTotal                 = $cart->getOrderTotal();
-        $link                       = $this->context->link;
+        $cart                            = $this->context->cart;
+        $orderTotal                      = $cart->getOrderTotal();
+        $link                            = $this->context->link;
         $pagantisPublicKey               = Configuration::get('pagantis_public_key');
         $pagantisSimulatorIsEnabled      = Configuration::get('pagantis_simulator_is_enabled');
         $pagantisIsEnabled               = Configuration::get('pagantis_is_enabled');
@@ -350,7 +351,7 @@ class Pagantis extends PaymentModule
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
-            'amount'                => $orderTotal,
+            'amount'                     => $orderTotal,
             'pagantisPublicKey'          => $pagantisPublicKey,
             'pagantisCSSSelector'        => $pagantisSimulatorCSSSelector,
             'pagantisPriceSelector'      => $pagantisSimulatorPriceSelector,
@@ -361,8 +362,8 @@ class Pagantis extends PaymentModule
             'pagantisSimulatorPosition'  => $pagantisSimulatorPosition,
             'pagantisIsEnabled'          => $pagantisIsEnabled,
             'pagantisTitle'              => $pagantisTitle,
-            'paymentUrl'            => $link->getModuleLink('pagantis', 'payment'),
-            'ps_version'            => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
+            'paymentUrl'                 => $link->getModuleLink('pagantis', 'payment'),
+            'ps_version'                 => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
         ));
 
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
@@ -581,9 +582,9 @@ class Pagantis extends PaymentModule
         }
 
         /** @var Cart $cart */
-        $cart                       = $params['cart'];
-        $orderTotal                 = $cart->getOrderTotal();
-        $link                       = $this->context->link;
+        $cart                            = $params['cart'];
+        $orderTotal                      = $cart->getOrderTotal();
+        $link                            = $this->context->link;
         $pagantisPublicKey               = Configuration::get('pagantis_public_key');
         $pagantisSimulatorIsEnabled      = Configuration::get('pagantis_simulator_is_enabled');
         $pagantisIsEnabled               = Configuration::get('pagantis_is_enabled');
@@ -596,7 +597,7 @@ class Pagantis extends PaymentModule
         $pagantisTitle                   = $this->l(getenv('PAGANTIS_TITLE'));
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
-            'amount'                => $orderTotal,
+            'amount'                     => $orderTotal,
             'pagantisPublicKey'          => $pagantisPublicKey,
             'pagantisCSSSelector'        => $pagantisSimulatorCSSSelector,
             'pagantisPriceSelector'      => $pagantisSimulatorPriceSelector,
@@ -607,8 +608,8 @@ class Pagantis extends PaymentModule
             'pagantisSimulatorPosition'  => $pagantisSimulatorPosition,
             'pagantisIsEnabled'          => $pagantisIsEnabled,
             'pagantisTitle'              => $pagantisTitle,
-            'paymentUrl'            => $link->getModuleLink('pagantis', 'payment'),
-            'ps_version'            => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
+            'paymentUrl'                 => $link->getModuleLink('pagantis', 'payment'),
+            'ps_version'                 => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
         ));
 
         $supercheckout_enabled = Module::isEnabled('supercheckout');
@@ -638,7 +639,7 @@ class Pagantis extends PaymentModule
         /** @var ProductCore $product */
         $product = new Product(Tools::getValue('id_product'));
         $amount = $product->getPublicPrice();
-        $pagantisPublicKey                = Configuration::get('pagantis_public_key');
+        $pagantisPublicKey                 = Configuration::get('pagantis_public_key');
         $pagantisSimulatorIsEnabled        = Configuration::get('pagantis_simulator_is_enabled');
         $pagantisIsEnabled                 = Configuration::get('pagantis_is_enabled');
         $pagantisSimulatorType             = getenv('PAGANTIS_SIMULATOR_DISPLAY_TYPE');
@@ -659,7 +660,7 @@ class Pagantis extends PaymentModule
         }
 
         $this->context->smarty->assign(array(
-            'amount'                => $amount,
+            'amount'                     => $amount,
             'pagantisPublicKey'          => $pagantisPublicKey,
             'pagantisCSSSelector'        => $pagantisSimulatorCSSSelector,
             'pagantisPriceSelector'      => $pagantisSimulatorPriceSelector,

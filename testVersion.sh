@@ -4,7 +4,7 @@ if [ $2 == 'build' ]
 then
     chmod -R 777 vendor
     docker-compose down
-    docker-compose up -d prestashop$1
+    docker-compose up -d prestashop$1-test
     docker-compose up -d selenium
     echo "Creating the prestashop $1"
     sleep 40

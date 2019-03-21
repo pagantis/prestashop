@@ -133,7 +133,7 @@
             "authors": [
                 {
                     "name": "Pagantis",
-                    "email": "integration@pagantis.com"
+                    "email": "integrations@pagantis.com"
                 }
             ],
             "description": "Pagantis PHP Library. Module utils",
@@ -372,7 +372,7 @@
             "authors": [
                 {
                     "name": "Pagantis",
-                    "email": "integration@pagantis.com"
+                    "email": "integrations@pagantis.com"
                 }
             ],
             "description": "Generate index.php file in all directories that does not contain index.php file. This is helpful for Prestashop",

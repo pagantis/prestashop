@@ -2,7 +2,7 @@
 /**
  * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Pagantis <integration@pagantis.com>
+ * @author    Pagantis <integrations@pagantis.com>
  * @copyright 2019 Pagantis
  * @license   proprietary
  */

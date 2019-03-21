@@ -2,7 +2,7 @@
 /**
  * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Pagantis <integration@pagantis.com>
+ * @author    Pagantis <integrations@pagantis.com>
  * @copyright 2019 Pagantis
  * @license   proprietary
  */
@@ -224,7 +224,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function checkOrderStatus()
     {
-        if ($this->pagantisOrder->getStatus() !== PagantisModelOrder::STATUS_AUTHORIZED) {
+        if ($this->pagantisOrder->getStatus() !== PmtModelOrder::STATUS_AUTHORIZED) {
             $status = '-';
             if ($this->pagantisOrder instanceof \Pagantis\OrdersApiClient\Model\Order) {
                 $status = $this->pagantisOrder->getStatus();
