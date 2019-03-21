@@ -329,7 +329,6 @@ class Pagantis extends PaymentModule
      */
     public function hookPaymentOptions()
     {
-        die("dsfdsf");
         if (!$this->isPaymentMethodAvailable()) {
             return array();
         }
