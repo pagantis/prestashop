@@ -62,7 +62,7 @@ class PagantisPs16InstallTest extends AbstractPs16Selenium
      *
      * @throws \Exception
      */
-    public function testBackOfficeHasLogoAndLinkToPmt()
+    public function testBackOfficeHasLogoAndLinkToPagantis()
     {
         //Change Title
         $this->loginToBackOffice();

@@ -9,8 +9,8 @@
 
 require_once('AbstractController.php');
 
-use Pagantis\OrdersApiClient\Client as PmtClient;
-use Pagantis\OrdersApiClient\Model\Order as PmtModelOrder;
+use Pagantis\OrdersApiClient\Client as PagantisClient;
+use Pagantis\OrdersApiClient\Model\Order as PagantisModelOrder;
 use Pagantis\ModuleUtils\Exception\AmountMismatchException;
 use Pagantis\ModuleUtils\Exception\ConcurrencyException;
 use Pagantis\ModuleUtils\Exception\MerchantOrderNotFoundException;
@@ -210,9 +210,9 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     private function getPagantisOrder()
     {
-        $this->orderClient = new PmtClient($this->config['publicKey'], $this->config['privateKey']);
+        $this->orderClient = new PagantisClient($this->config['publicKey'], $this->config['privateKey']);
         $this->pagantisOrder = $this->orderClient->getOrder($this->pagantisOrderId);
-        if (!($this->pagantisOrder instanceof PmtModelOrder)) {
+        if (!($this->pagantisOrder instanceof PagantisModelOrder)) {
             throw new OrderNotFoundException();
         }
     }
@@ -224,7 +224,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function checkOrderStatus()
     {
-        if ($this->pagantisOrder->getStatus() !== PmtModelOrder::STATUS_AUTHORIZED) {
+        if ($this->pagantisOrder->getStatus() !== PagantisModelOrder::STATUS_AUTHORIZED) {
             $status = '-';
             if ($this->pagantisOrder instanceof \Pagantis\OrdersApiClient\Model\Order) {
                 $status = $this->pagantisOrder->getStatus();

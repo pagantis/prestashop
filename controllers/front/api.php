@@ -34,9 +34,6 @@ class PagantisApiModuleFrontController extends ModuleFrontController
         $userId = Tools::getValue('user_id', false);
         $from = Tools::getValue('from', false);
         $payment = Tools::getValue('payment', false);
-        if ($payment == 'Paga Tarde') {
-            $payment = 'Pagantis';
-        }
 
         if (_PS_VERSION_ > '1.6') {
             $orders = new PrestaShopCollection('Order');
