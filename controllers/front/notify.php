@@ -224,7 +224,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function checkOrderStatus()
     {
-        if ($this->pagantisOrder->getStatus() !== PmtModelOrder::STATUS_AUTHORIZED) {
+        if ($this->pagantisOrder->getStatus() !== PagantisModelOrder::STATUS_AUTHORIZED) {
             $status = '-';
             if ($this->pagantisOrder instanceof \Pagantis\OrdersApiClient\Model\Order) {
                 $status = $this->pagantisOrder->getStatus();
@@ -272,7 +272,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 Configuration::get('PS_OS_PAYMENT'),
                 $this->merchantOrder->getOrderTotal(true),
                 $this->module->displayName,
-                'pagantisOrderId: ' . $this->pagantisOrder->getId(),
+                'pagantisOrderId: ' . $this->pagantisOrder->getId().
+                'pagantisOrderStatus: '. $this->pagantisOrder->getStatus(),
                 array('transaction_id' => $this->pagantisOrderId),
                 null,
                 false,
@@ -350,12 +351,14 @@ class PagantisNotifyModuleFrontController extends AbstractController
         sleep(5);
         if ($this->merchantOrder) {
             $id = (!is_null($this->pagantisOrder))?$this->pagantisOrder->getId():null;
+            $status = (!is_null($this->pagantisOrder))?$this->pagantisOrder->getStatus():null;
             $this->module->validateOrder(
                 $this->merchantOrderId,
                 Configuration::get('PS_OS_ERROR'),
                 $this->merchantOrder->getOrderTotal(true),
                 $this->module->displayName,
-                'pagantisOrderId: ' . $id,
+                'pagantisOrderId: ' . $id.
+                'pagantisOrderStatus: '. $status,
                 null,
                 null,
                 false,
