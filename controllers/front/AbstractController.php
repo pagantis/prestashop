@@ -67,8 +67,13 @@ abstract class AbstractController extends ModuleFrontController
                 $logEntry->setTrace($data['trace']);
             }
 
+            $response = $logEntry->toJson();
+            if ($response == null) {
+                $response = json_encode($data);
+            }
+
             Db::getInstance()->insert('pagantis_log', array(
-                'log' => $logEntry->toJson()
+                'log' => $response
             ));
         } catch (\Exception $exception) {
             // Do nothing
