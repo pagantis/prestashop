@@ -64,14 +64,15 @@ abstract class AbstractController extends ModuleFrontController
                 if (isset($data['trace'])) {
                     $logEntry->setTrace($data['trace']);
                 }
-            }  elseif (!isNull($exception)) {
+            }  elseif (!is_null($exception)) {
                 $logEntry->error($exception);
             }
+
             $response = $logEntry->toJson();
-            if (isNull($response)) {
+            if (is_null($response)) {
                 if (count($data) > 0) {
                     $response = json_encode($data);
-                } elseif (!isNull($exception)) {
+                } elseif (!is_null($exception)) {
                     $response = $exception->getMessage();
                 } else {
                     $response = 'Unable to serialize log.'.
@@ -79,7 +80,8 @@ abstract class AbstractController extends ModuleFrontController
                         'exception: '. json_encode($exception);
                 }
             }
-            Db::getInstance()->insert('pagantis_log', array(
+
+            Db::getInstance()->insert('pmt_log', array(
                 'log' => $response
             ));
         } catch (\Exception $exception) {

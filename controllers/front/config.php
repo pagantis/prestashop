@@ -34,6 +34,24 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
     }
 
     /**
+     * @return false|string
+     * @throws PrestaShopDatabaseException
+     */
+    public function getExtraConfigs()
+    {
+        $sql_content = 'select * from ' . _DB_PREFIX_. 'pmt_config';
+        $dbConfigs = Db::getInstance()->executeS($sql_content);
+
+        // Convert a multimple dimension array for SQL insert statements into a simple key/value
+        $simpleDbConfigs = array();
+        foreach ($dbConfigs as $config) {
+            $simpleDbConfigs[$config['config']] = $config['value'];
+        }
+
+        return json_encode($simpleDbConfigs);
+    }
+
+    /**
      * Update POST params in DB
      */
     public function postMethod()
@@ -46,7 +64,7 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
         unset($post['secret']);
         if (count($post)) {
             foreach ($post as $config => $value) {
-                $defaultConfigs = json_decode(getenv('PMT_DEFAULT_CONFIGS'), true);
+                $defaultConfigs = $this->getExtraConfigs();
                 if (isset($defaultConfigs[$config])) {
                     Db::getInstance()->update(
                         'pmt_config',

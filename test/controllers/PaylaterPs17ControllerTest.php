@@ -9,7 +9,7 @@ use Httpful\Mime;
  * Class ControllerTest
  * @package Test
  *
- * @group prestashop15Controller
+ * @group prestashop17Controller
  */
 class PaylaterPs17ControllerTest extends PaylaterPrestashopTest
 {
@@ -44,7 +44,7 @@ class PaylaterPs17ControllerTest extends PaylaterPrestashopTest
      */
     public function testLogDownload()
     {
-        $logUrl = self::PS15URL.self::LOG_FOLDER.'&secret='.$this->configuration['secretKey'];
+        $logUrl = self::PS17URL.self::LOG_FOLDER.'&secret='.$this->configuration['secretKey'];
         $response = Request::get($logUrl)->expects('json')->send();
         $this->assertEquals(3, count($response->body));
         $this->quit();
@@ -55,7 +55,7 @@ class PaylaterPs17ControllerTest extends PaylaterPrestashopTest
      */
     public function testSetConfig()
     {
-        $notifyUrl = self::PS15URL.self::CONFIG_FOLDER.'&secret='.$this->configuration['secretKey'];
+        $notifyUrl = self::PS17URL.self::CONFIG_FOLDER.'&secret='.$this->configuration['secretKey'];
         $body = array('PMT_TITLE' => 'changed');
         $response = Request::post($notifyUrl)
             ->body($body, Mime::FORM)
@@ -70,7 +70,7 @@ class PaylaterPs17ControllerTest extends PaylaterPrestashopTest
      */
     public function testGetConfigs()
     {
-        $notifyUrl = self::PS15URL.self::CONFIG_FOLDER.'get?secret='.$this->configuration['secretKey'];
+        $notifyUrl = self::PS17URL.self::CONFIG_FOLDER.'get?secret='.$this->configuration['secretKey'];
         $response = Request::get($notifyUrl)->expects('json')->send();
 
         foreach ($this->configs as $config) {

@@ -4,7 +4,7 @@ if [ $2 == 'build' ]
 then
     chmod -R 777 vendor
     docker-compose down
-    docker-compose up -d prestashop$1
+    docker-compose up -d prestashop$1-test
     docker-compose up -d selenium
     echo "Creating the prestashop $1"
     sleep 40
@@ -21,3 +21,4 @@ vendor/bin/phpunit --group prestashop$1register
 vendor/bin/phpunit --group prestashop$1buy
 vendor/bin/phpunit --group prestashop$1advanced
 vendor/bin/phpunit --group prestashop$1validate
+vendor/bin/phpunit --group prestashop$1controller

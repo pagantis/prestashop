@@ -77,8 +77,8 @@ class PaylaterPaymentModuleFrontController extends AbstractController
             null,
             array('step'=>3)
         );
-        $iframe = getenv('PMT_FORM_DISPLAY_TYPE');
-        $cancelUrl = (getenv('PMT_URL_KO') !== '') ? getenv('PMT_URL_KO') : $koUrl;
+        $iframe = Paylater::getExtraConfig('PMT_FORM_DISPLAY_TYPE');
+        $cancelUrl = (Paylater::getExtraConfig('PMT_URL_KO') !== '') ? Paylater::getExtraConfig('PMT_URL_KO') : $koUrl;
         $paylaterPublicKey = Configuration::get('pmt_public_key');
         $paylaterPrivateKey = Configuration::get('pmt_private_key');
         $okUrl = _PS_BASE_URL_.__PS_BASE_URI__
