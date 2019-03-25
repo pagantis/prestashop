@@ -258,7 +258,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     public function validateAmount()
     {
         $totalAmount = $this->pmtOrder->getShoppingCart()->getTotalAmount();
-        $merchantAmount = (int)((string) (100 * $this->merchantOrder->getOrderTotal(true)));
+        $merchantAmount = (int) (100 * $this->merchantOrder->getOrderTotal(true));
         if ($totalAmount != $merchantAmount) {
             $this->error = true;
             throw new AmountMismatchException($totalAmount, $merchantAmount);
