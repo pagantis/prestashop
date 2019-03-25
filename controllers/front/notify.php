@@ -28,6 +28,10 @@ use PagaMasTarde\ModuleUtils\Model\Response\JsonExceptionResponse;
  */
 class PaylaterNotifyModuleFrontController extends AbstractController
 {
+    /**
+     * @var bool $error
+     */
+    protected $error;
 
     /**
      * @var string $merchantOrderId
@@ -118,6 +122,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function prepareVariables()
     {
+        $this->error = false;
         $callbackOkUrl = $this->context->link->getPageLink(
             'order-confirmation',
             null,
@@ -255,6 +260,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         $totalAmount = $this->pmtOrder->getShoppingCart()->getTotalAmount();
         $merchantAmount = (int)((string) (100 * $this->merchantOrder->getOrderTotal(true)));
         if ($totalAmount != $merchantAmount) {
+            $this->error = true;
             throw new AmountMismatchException($totalAmount, $merchantAmount);
         }
     }
@@ -347,14 +353,17 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function cancelProcess($response = null)
     {
-        if ($this->merchantOrder) {
+       if ($this->merchantOrder && $this->error === true) {
+            sleep(5);
             $id = (!is_null($this->pmtOrder))?$this->pmtOrder->getId():null;
+            $status = (!is_null($this->pmtOrder))?$this->pmtOrder->getStatus():null;
             $this->module->validateOrder(
                 $this->merchantOrderId,
                 Configuration::get('PS_OS_ERROR'),
                 $this->merchantOrder->getOrderTotal(true),
                 $this->module->displayName,
-                'pmtOrderId: ' . $id,
+                ' pmtOrderId: ' . $id .
+                ' pmtStatusId:' . $status,
                 null,
                 null,
                 false,
