@@ -9,7 +9,7 @@ use Httpful\Mime;
  * Class ControllerTest
  * @package Test
  *
- * @group prestashop15Controller
+ * @group prestashop15controller
  */
 class PaylaterPs15ControllerTest extends PaylaterPrestashopTest
 {
@@ -52,26 +52,26 @@ class PaylaterPs15ControllerTest extends PaylaterPrestashopTest
 
     /**
      * Test testSetConfig
-     */
+     *
     public function testSetConfig()
     {
-        $notifyUrl = self::PS15URL.self::CONFIG_FOLDER.'&secret='.$this->configuration['secretKey'];
+        $configUrl = self::PS15URL.self::CONFIG_FOLDER.'&secret='.$this->configuration['secretKey'];
         $body = array('PMT_TITLE' => 'changed');
-        $response = Request::post($notifyUrl)
+        $response = Request::post($configUrl)
             ->body($body, Mime::FORM)
             ->expectsJSON()
             ->send();
         $this->assertEquals('changed', $response->body->PMT_TITLE);
         $this->quit();
-    }
+    }*/
 
     /**
      * Test testGetConfig
      */
     public function testGetConfigs()
     {
-        $notifyUrl = self::PS15URL.self::CONFIG_FOLDER.'$secret='.$this->configuration['secretKey'];
-        $response = Request::get($notifyUrl)->expects('json')->send();
+        $configUrl = self::PS15URL.self::CONFIG_FOLDER.'&secret='.$this->configuration['secretKey'];
+        $response = Request::get($configUrl)->expects('json')->send();
 
         foreach ($this->configs as $config) {
             $this->assertArrayHasKey($config, (array) $response->body);
