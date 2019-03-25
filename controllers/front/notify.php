@@ -28,6 +28,10 @@ use Pagantis\ModuleUtils\Model\Response\JsonExceptionResponse;
  */
 class PagantisNotifyModuleFrontController extends AbstractController
 {
+    /**
+     * @var bool $error
+     */
+    protected $error;
 
     /**
      * @var string $merchantOrderId
@@ -118,6 +122,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function prepareVariables()
     {
+        $this->error = false;
         $callbackOkUrl = $this->context->link->getPageLink(
             'order-confirmation',
             null,
@@ -255,6 +260,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
         $totalAmount = $this->pagantisOrder->getShoppingCart()->getTotalAmount();
         $merchantAmount = (int)((string) (100 * $this->merchantOrder->getOrderTotal(true)));
         if ($totalAmount != $merchantAmount) {
+            $this->error = true;
             throw new AmountMismatchException($totalAmount, $merchantAmount);
         }
     }
@@ -347,8 +353,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function cancelProcess($response = null)
     {
-        sleep(5);
-        if ($this->merchantOrder) {
+        if ($this->merchantOrder && $this->error === true) {
+            sleep(5);
             $id = (!is_null($this->pagantisOrder))?$this->pagantisOrder->getId():null;
             $this->module->validateOrder(
                 $this->merchantOrderId,
