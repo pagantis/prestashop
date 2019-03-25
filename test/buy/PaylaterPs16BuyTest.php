@@ -26,11 +26,11 @@ class PaylaterPs16BuyTest extends AbstractPs16Selenium
      */
     public function testBuy()
     {
-//        $this->loginToFrontend();
-//        $this->goToProduct();
-//        $this->addProduct();
-//        $this->goToCheckout();
-//        $this->verifyPaylater();
+        $this->loginToFrontend();
+        $this->goToProduct();
+        $this->addProduct();
+        $this->goToCheckout();
+        $this->verifyPaylater();
         $this->checkConcurrency();
         $this->checkPmtOrderId();
         $this->checkAlreadyProcessed();
@@ -42,8 +42,7 @@ class PaylaterPs16BuyTest extends AbstractPs16Selenium
      */
     protected function checkConcurrency()
     {
-        $notifyUrl = self::PS16URL.self::NOTIFICATION_FOLDER.'&order=';
-        var_dump($notifyUrl);
+        $notifyUrl = self::PS16URL.self::NOTIFICATION_FOLDER.'&cart_id=';
         $this->assertNotEmpty($notifyUrl, $notifyUrl);
         $response = Request::post($notifyUrl)->expects('json')->send();
         $this->assertNotEmpty($response->body->result, $response);
@@ -51,13 +50,14 @@ class PaylaterPs16BuyTest extends AbstractPs16Selenium
         $this->assertNotEmpty($response->body->timestamp, $response);
         $this->assertContains(QuoteNotFoundException::ERROR_MESSAGE, $response->body->result, "PR=>".$response->body->result);
     }
+
     /**
      * Check if with a parameter called order-received set to a invalid identification, we can get a NoIdentificationException
      */
     protected function checkPmtOrderId()
     {
         $orderId=0;
-        $notifyUrl = self::PS16URL.self::NOTIFICATION_FOLDER.'?order='.$orderId;
+        $notifyUrl = self::PS16URL.self::NOTIFICATION_FOLDER.'&cart_id='.$orderId;
         $this->assertNotEmpty($notifyUrl, $notifyUrl);
         $response = Request::post($notifyUrl)->expects('json')->send();
         $this->assertNotEmpty($response->body->result, $response);
@@ -68,8 +68,9 @@ class PaylaterPs16BuyTest extends AbstractPs16Selenium
             $orderId,
             $response->body->merchant_order_id.'!='. $orderId
         );
+
         $this->assertContains(
-            NoIdentificationException::ERROR_MESSAGE,
+            QuoteNotFoundException::ERROR_MESSAGE,
             $response->body->result,
             "PR=>".$response->body->result
         );
@@ -81,13 +82,11 @@ class PaylaterPs16BuyTest extends AbstractPs16Selenium
      */
     protected function checkAlreadyProcessed()
     {
-        $notifyUrl = self::PS16URL.self::NOTIFICATION_FOLDER.'?order=145000008';
+        $notifyUrl = self::PS16URL.self::NOTIFICATION_FOLDER.'&cart_id=6';
         $response = Request::post($notifyUrl)->expects('json')->send();
         $this->assertNotEmpty($response->body->result, $response);
         $this->assertNotEmpty($response->body->status_code, $response);
         $this->assertNotEmpty($response->body->timestamp, $response);
-        $this->assertNotEmpty($response->body->merchant_order_id, $response);
-        $this->assertNotEmpty($response->body->pmt_order_id, $response);
-        $this->assertContains(AlreadyProcessedException::ERROR_MESSAGE, $response->body->result, "PR51=>".$response->body->result);
+        $this->assertContains(QuoteNotFoundException::ERROR_MESSAGE, $response->body->result, "PR51=>".$response->body->result);
     }
 }
