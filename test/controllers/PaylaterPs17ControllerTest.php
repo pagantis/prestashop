@@ -70,7 +70,7 @@ class PaylaterPs17ControllerTest extends PaylaterPrestashopTest
      */
     public function testGetConfigs()
     {
-        $notifyUrl = self::PS17URL.self::CONFIG_FOLDER.'get?secret='.$this->configuration['secretKey'];
+        $notifyUrl = self::PS17URL.self::CONFIG_FOLDER.'$secret='.$this->configuration['secretKey'];
         $response = Request::get($notifyUrl)->expects('json')->send();
 
         foreach ($this->configs as $config) {
