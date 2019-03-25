@@ -3,6 +3,7 @@
 namespace Test\Buy;
 
 use Test\Common\AbstractPs15Selenium;
+use Httpful\Request;
 use PagaMasTarde\ModuleUtils\Exception\AlreadyProcessedException;
 use PagaMasTarde\ModuleUtils\Exception\NoIdentificationException;
 use PagaMasTarde\ModuleUtils\Exception\QuoteNotFoundException;
