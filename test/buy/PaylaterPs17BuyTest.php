@@ -16,6 +16,11 @@ use PagaMasTarde\ModuleUtils\Exception\QuoteNotFoundException;
 class PaylaterPs17BuyTest extends AbstractPs17Selenium
 {
     /**
+     * config route
+     */
+    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=paylater&controller=notify';
+
+    /**
      * @throws  \Exception
      */
     public function testBuy()
