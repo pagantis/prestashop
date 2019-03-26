@@ -7,7 +7,7 @@ use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
 use Pagantis\SeleniumFormUtils\SeleniumHelper;
-use Test\PagantisPrestashopTest;
+use Test\Pagantis\PrestashopTest;
 
 /**
  * Class AbstractPrestashop15CommonTest
