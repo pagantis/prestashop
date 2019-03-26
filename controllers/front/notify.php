@@ -303,10 +303,12 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         try {
             $this->orderClient->confirmOrder($this->pmtOrderId);
             try {
+                $mode = ($_SERVER['REQUEST_METHOD'] == 'POST') ? 'NOTIFICATION' : 'REDIRECTION';
+                $message = 'Order CONFIRMED. The order was confirmed by a ' . $mode .
+                    '. Pagantis OrderId=' . $this->pmtOrderId .
+                    '. Prestashop OrderId=' . $this->merchantOrderId;
                 $this->saveLog(array(
-                    'message' => "Order CONFIRMED. " .
-                    'The order was confirmed by a ' .
-                    ($_SERVER['REQUEST_METHOD'] == 'POST') ? 'NOTIFICATION' : 'REDIRECTION'
+                    'message' => $message
                 ));
             } catch (\Exception $e) {
                 // Do nothing
