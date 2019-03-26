@@ -230,6 +230,9 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function checkOrderStatus()
     {
         if ($this->pagantisOrder->getStatus() === PagantisModelOrder::STATUS_CONFIRMED) {
+            $this->jsonResponse = new JsonSuccessResponse();
+            $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
+            $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
             return $this->finishProcess(false);
         }
 
@@ -304,10 +307,12 @@ class PagantisNotifyModuleFrontController extends AbstractController
         try {
             $this->orderClient->confirmOrder($this->pagantisOrderId);
             try {
+                $mode = ($_SERVER['REQUEST_METHOD'] == 'POST') ? 'NOTIFICATION' : 'REDIRECTION';
+                $message = 'Order CONFIRMED. The order was confirmed by a ' . $mode .
+                    '. Pagantis OrderId=' . $this->pmtOrderId .
+                    '. Prestashop OrderId=' . $this->merchantOrderId;
                 $this->saveLog(array(
-                    'message' => "Order CONFIRMED. " .
-                    'The order was confirmed by a ' .
-                    ($_SERVER['REQUEST_METHOD'] == 'POST') ? 'NOTIFICATION' : 'REDIRECTION'
+                    'message' => $message
                 ));
             } catch (\Exception $e) {
                 // Do nothing
