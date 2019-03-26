@@ -9,8 +9,8 @@
 <div class="row">
     <div class="col-xs-12">
         <p class="payment_module">
-            <a class="pagantis-checkout ps_version_{$ps_version}" href="{$paymentUrl|escape:'html'}" title="{$pagantisTitle|escape:'quotes'}">
-                {$pagantisTitle|escape:'quotes'}
+            <a class="paylater-checkout ps_version_{$ps_version|escape:'quotes'}" href="{$paymentUrl|escape:'html'}" title="{$pmtTitle|escape:'quotes'}">
+                {$pmtTitle|escape:'quotes'}
             </a>
         </p>
         <style>

@@ -67,8 +67,13 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
+<<<<<<< HEAD:pagantis.php
         $this->version = '8.0.0';
         $this->author = 'Pagantis';
+=======
+        $this->version = '7.2.2';
+        $this->author = 'Paga+Tarde';
+>>>>>>> baa9ffd6dc8be8aa8739e095731c2af1e9011fdf:paylater.php
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
         $this->module_key = '2b9bc901b4d834bb7069e7ea6510438f';
@@ -81,7 +86,7 @@ class Pagantis extends PaymentModule
         $sql_file = dirname(__FILE__).'/sql/install.sql';
         $this->loadSQLFile($sql_file);
 
-        $this->loadEnvVariables();
+        $this->checkEnvVariables();
 
         $this->migrate();
 
@@ -214,7 +219,10 @@ class Pagantis extends PaymentModule
         }
     }
 
-    public function loadEnvVariables()
+    /**
+     * @throws PrestaShopDatabaseException
+     */
+    public function checkEnvVariables()
     {
         $sql_content = 'select * from ' . _DB_PREFIX_. 'pagantis_config';
         $dbConfigs = Db::getInstance()->executeS($sql_content);
@@ -235,12 +243,15 @@ class Pagantis extends PaymentModule
             }
             Db::getInstance()->insert('pagantis_config', $data);
         }
+<<<<<<< HEAD:pagantis.php
 
         foreach (array_merge($this->defaultConfigs, $simpleDbConfigs) as $key => $value) {
             putenv($key . '=' . $value);
         }
 
         putenv("PAGANTIS_DEFAULT_CONFIGS" . '=' . json_encode($this->defaultConfigs));
+=======
+>>>>>>> baa9ffd6dc8be8aa8739e095731c2af1e9011fdf:paylater.php
     }
 
     /**
@@ -277,9 +288,15 @@ class Pagantis extends PaymentModule
         $cart                       = $this->context->cart;
         $currency                   = new Currency($cart->id_currency);
         $availableCurrencies        = array('EUR');
+<<<<<<< HEAD:pagantis.php
         $pagantisDisplayMinAmount        = getenv('PAGANTIS_DISPLAY_MIN_AMOUNT');
         $pagantisPublicKey               = Configuration::get('pagantis_public_key');
         $pagantisPrivateKey              = Configuration::get('pagantis_private_key');
+=======
+        $pmtDisplayMinAmount        = Paylater::getExtraConfig('PMT_DISPLAY_MIN_AMOUNT');
+        $pmtPublicKey               = Configuration::get('pmt_public_key');
+        $pmtPrivateKey              = Configuration::get('pmt_private_key');
+>>>>>>> baa9ffd6dc8be8aa8739e095731c2af1e9011fdf:paylater.php
 
         return (
             $cart->getOrderTotal() >= $pagantisDisplayMinAmount &&
@@ -334,6 +351,7 @@ class Pagantis extends PaymentModule
         }
 
         /** @var Cart $cart */
+<<<<<<< HEAD:pagantis.php
         $cart                            = $this->context->cart;
         $orderTotal                      = $cart->getOrderTotal();
         $link                            = $this->context->link;
@@ -347,6 +365,21 @@ class Pagantis extends PaymentModule
         $pagantisSimulatorSkin           = getenv('PAGANTIS_SIMULATOR_DISPLAY_SKIN');
         $pagantisSimulatorPosition       = getenv('PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION');
         $pagantisTitle                   = $this->l(getenv('PAGANTIS_TITLE'));
+=======
+        $cart                       = $this->context->cart;
+        $orderTotal                 = $cart->getOrderTotal();
+        $link                       = $this->context->link;
+        $pmtPublicKey               = Configuration::get('pmt_public_key');
+        $pmtSimulatorIsEnabled      = Configuration::get('pmt_simulator_is_enabled');
+        $pmtIsEnabled               = Configuration::get('pmt_is_enabled');
+        $pmtSimulatorType           = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_TYPE');
+        $pmtSimulatorCSSSelector    = Paylater::getExtraConfig('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
+        $pmtSimulatorPriceSelector  = Paylater::getExtraConfig('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
+        $pmtSimulatorQuotesStart    = Paylater::getExtraConfig('PMT_SIMULATOR_START_INSTALLMENTS');
+        $pmtSimulatorSkin           = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_SKIN');
+        $pmtSimulatorPosition       = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
+        $pmtTitle                   = $this->l(Paylater::getExtraConfig('PMT_TITLE'));
+>>>>>>> baa9ffd6dc8be8aa8739e095731c2af1e9011fdf:paylater.php
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
@@ -581,6 +614,7 @@ class Pagantis extends PaymentModule
         }
 
         /** @var Cart $cart */
+<<<<<<< HEAD:pagantis.php
         $cart                            = $params['cart'];
         $orderTotal                      = $cart->getOrderTotal();
         $link                            = $this->context->link;
@@ -594,6 +628,21 @@ class Pagantis extends PaymentModule
         $pagantisSimulatorSkin           = getenv('PAGANTIS_SIMULATOR_DISPLAY_SKIN');
         $pagantisSimulatorPosition       = getenv('PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION');
         $pagantisTitle                   = $this->l(getenv('PAGANTIS_TITLE'));
+=======
+        $cart                       = $params['cart'];
+        $orderTotal                 = $cart->getOrderTotal();
+        $link                       = $this->context->link;
+        $pmtPublicKey               = Configuration::get('pmt_public_key');
+        $pmtSimulatorIsEnabled      = Configuration::get('pmt_simulator_is_enabled');
+        $pmtIsEnabled               = Configuration::get('pmt_is_enabled');
+        $pmtSimulatorType           = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_TYPE');
+        $pmtSimulatorCSSSelector    = Paylater::getExtraConfig('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
+        $pmtSimulatorPriceSelector  = Paylater::getExtraConfig('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
+        $pmtSimulatorQuotesStart    = Paylater::getExtraConfig('PMT_SIMULATOR_START_INSTALLMENTS');
+        $pmtSimulatorSkin           = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_SKIN');
+        $pmtSimulatorPosition       = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
+        $pmtTitle                   = $this->l(Paylater::getExtraConfig('PMT_TITLE'));
+>>>>>>> baa9ffd6dc8be8aa8739e095731c2af1e9011fdf:paylater.php
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
             'amount'                     => $orderTotal,
@@ -634,6 +683,7 @@ class Pagantis extends PaymentModule
      */
     public function productPageSimulatorDisplay($functionName)
     {
+<<<<<<< HEAD:pagantis.php
         $productConfiguration = getenv('PAGANTIS_SIMULATOR_DISPLAY_POSITION');
         /** @var ProductCore $product */
         $product = new Product(Tools::getValue('id_product'));
@@ -649,6 +699,23 @@ class Pagantis extends PaymentModule
         $pagantisSimulatorSkin             = getenv('PAGANTIS_SIMULATOR_DISPLAY_SKIN');
         $pagantisSimulatorPosition         = getenv('PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION');
         $pagantisDisplayMinAmount          = getenv('PAGANTIS_DISPLAY_MIN_AMOUNT');
+=======
+        $productConfiguration = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_POSITION');
+        /** @var ProductCore $product */
+        $product = new Product(Tools::getValue('id_product'));
+        $amount = $product->getPublicPrice();
+        $pmtPublicKey                 = Configuration::get('pmt_public_key');
+        $pmtSimulatorIsEnabled        = Configuration::get('pmt_simulator_is_enabled');
+        $pmtIsEnabled                 = Configuration::get('pmt_is_enabled');
+        $pmtSimulatorType             = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_TYPE');
+        $pmtSimulatorCSSSelector      = Paylater::getExtraConfig('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
+        $pmtSimulatorPriceSelector    = Paylater::getExtraConfig('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
+        $pmtSimulatorQuantitySelector = Paylater::getExtraConfig('PMT_SIMULATOR_CSS_QUANTITY_SELECTOR');
+        $pmtSimulatorQuotesStart      = Paylater::getExtraConfig('PMT_SIMULATOR_START_INSTALLMENTS');
+        $pmtSimulatorSkin             = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_SKIN');
+        $pmtSimulatorPosition         = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
+        $pmtDisplayMinAmount          = Paylater::getExtraConfig('PMT_DISPLAY_MIN_AMOUNT');
+>>>>>>> baa9ffd6dc8be8aa8739e095731c2af1e9011fdf:paylater.php
 
         if ($functionName != $productConfiguration ||
             $amount <= 0 ||
@@ -754,5 +821,21 @@ class Pagantis extends PaymentModule
                 $logo
             );
         }
+    }
+
+    public static function getExtraConfig($config = null, $default = '')
+    {
+        if (is_null($config)) {
+            return '';
+        }
+
+        $sql = 'SELECT value FROM '._DB_PREFIX_.'pmt_config where config = \'' . pSQL($config) . '\' limit 1';
+        if ($results = Db::getInstance()->ExecuteS($sql)) {
+            if (is_array($results) && count($results) === 1 && isset($results[0]['value'])) {
+                return $results[0]['value'];
+            }
+        }
+
+        return $default;
     }
 }

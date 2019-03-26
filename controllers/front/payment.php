@@ -77,11 +77,12 @@ class PagantisPaymentModuleFrontController extends AbstractController
             null,
             array('step'=>3)
         );
-        $iframe = getenv('PAGANTIS_FORM_DISPLAY_TYPE');
-        $cancelUrl = (getenv('PAGANTIS_URL_KO') !== '') ? getenv('PAGANTIS_URL_KO') : $koUrl;
+        $iframe = Pagantis::getExtraConfig('PAGANTIS_FORM_DISPLAY_TYPE');
+        $cancelUrl = (Pagantis::getExtraConfig('PAGANTIS_URL_KO') !== '') ?
+            Pagantis::getExtraConfig('PAGANTIS_URL_KO') : $koUrl;
         $pagantisPublicKey = Configuration::get('pagantis_public_key');
         $pagantisPrivateKey = Configuration::get('pagantis_private_key');
-        $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
+        $okUrl = _PS_BASE_URL_.__PS_BASE_URI__
                  .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&'
                  .http_build_query($query)
         ;

@@ -28,6 +28,10 @@ use Pagantis\ModuleUtils\Model\Response\JsonExceptionResponse;
  */
 class PagantisNotifyModuleFrontController extends AbstractController
 {
+    /**
+     * @var bool $processError
+     */
+    protected $processError;
 
     /**
      * @var string $merchantOrderId
@@ -83,8 +87,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
             $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
             $this->jsonResponse->setException($exception);
-            $response = $this->jsonResponse->toJson();
-            return $this->cancelProcess($response);
+            return $this->cancelProcess($this->jsonResponse);
         }
 
         try {
@@ -98,8 +101,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
             $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
             $this->jsonResponse->setException($exception);
-            $response = $this->jsonResponse->toJson();
-            return $this->cancelProcess($response);
+            return $this->cancelProcess($this->jsonResponse);
         }
 
         try {
@@ -112,12 +114,25 @@ class PagantisNotifyModuleFrontController extends AbstractController
     }
 
     /**
+     * Check the concurrency of the purchase
+     *
+     * @throws Exception
+     */
+    public function checkConcurrency()
+    {
+        $this->prepareVariables();
+        $this->unblockConcurrency();
+        $this->blockConcurrency($this->merchantOrderId);
+    }
+
+    /**
      * Find and init variables needed to process payment
      *
      * @throws Exception
      */
     public function prepareVariables()
     {
+        $this->processError = false;
         $callbackOkUrl = $this->context->link->getPageLink(
             'order-confirmation',
             null,
@@ -131,8 +146,10 @@ class PagantisNotifyModuleFrontController extends AbstractController
         );
         try {
             $this->config = array(
-                'urlOK' => (getenv('PAGANTIS_URL_OK') !== '') ? getenv('PAGANTIS_URL_OK') : $callbackOkUrl,
-                'urlKO' => (getenv('PAGANTIS_URL_KO') !== '') ? getenv('PAGANTIS_URL_KO') : $callbackKoUrl,
+                'urlOK' => (Pagantis::getExtraConfig('PAGANTIS_URL_OK') !== '') ?
+                    Pagantis::getExtraConfig('PAGANTIS_URL_OK') : $callbackOkUrl,
+                'urlKO' => (Pagantis::getExtraConfig('PAGANTIS_URL_KO') !== '') ?
+                    Pagantis::getExtraConfig('PAGANTIS_URL_KO') : $callbackKoUrl,
                 'publicKey' => Configuration::get('pagantis_public_key'),
                 'privateKey' => Configuration::get('pagantis_private_key'),
                 'secureKey' => Tools::getValue('key'),
@@ -151,18 +168,6 @@ class PagantisNotifyModuleFrontController extends AbstractController
             // This exception is only for Prestashop
             throw new UnknownException('Module may not be enabled');
         }
-    }
-
-    /**
-     * Check the concurrency of the purchase
-     *
-     * @throws Exception
-     */
-    public function checkConcurrency()
-    {
-        $this->prepareVariables();
-        $this->unblockConcurrency();
-        $this->blockConcurrency($this->merchantOrderId);
     }
 
     /**
@@ -253,8 +258,9 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function validateAmount()
     {
         $totalAmount = $this->pagantisOrder->getShoppingCart()->getTotalAmount();
-        $merchantAmount = (int)((string) (100 * $this->merchantOrder->getOrderTotal(true)));
+        $merchantAmount = (int) (100 * $this->merchantOrder->getOrderTotal(true));
         if ($totalAmount != $merchantAmount) {
+            $this->processError = true;
             throw new AmountMismatchException($totalAmount, $merchantAmount);
         }
     }
@@ -348,8 +354,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function cancelProcess($response = null)
     {
-        sleep(5);
-        if ($this->merchantOrder) {
+        if ($this->merchantOrder && $this->processError === true) {
+            sleep(5);
             $id = (!is_null($this->pagantisOrder))?$this->pagantisOrder->getId():null;
             $status = (!is_null($this->pagantisOrder))?$this->pagantisOrder->getStatus():null;
             $this->module->validateOrder(
@@ -357,8 +363,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 Configuration::get('PS_OS_ERROR'),
                 $this->merchantOrder->getOrderTotal(true),
                 $this->module->displayName,
-                'pagantisOrderId: ' . $id.
-                'pagantisOrderStatus: '. $status,
+                ' pagantisOrderId: ' . $id.
+                ' pagantisOrderStatus: '. $status,
                 null,
                 null,
                 false,
