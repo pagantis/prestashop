@@ -231,7 +231,6 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         if ($this->pagantisOrder->getStatus() === PagantisModelOrder::STATUS_CONFIRMED) {
             return $this->finishProcess(false);
-            exit;
         }
 
         if ($this->pagantisOrder->getStatus() !== PagantisModelOrder::STATUS_AUTHORIZED) {
