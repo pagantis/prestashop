@@ -52,7 +52,7 @@ class PaylaterPs16ControllerTest extends PaylaterPrestashopTest
 
     /**
      * Test testSetConfig
-     *
+     */
     public function testSetConfig()
     {
         $notifyUrl = self::PS16URL.self::CONFIG_FOLDER.'&secret='.$this->configuration['secretKey'];
@@ -63,7 +63,7 @@ class PaylaterPs16ControllerTest extends PaylaterPrestashopTest
             ->send();
         $this->assertEquals('changed', $response->body->PMT_TITLE);
         $this->quit();
-    }*/
+    }
 
     /**
      * Test testGetConfig

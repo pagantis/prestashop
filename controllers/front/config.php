@@ -48,7 +48,7 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
             $simpleDbConfigs[$config['config']] = $config['value'];
         }
 
-        return json_encode($simpleDbConfigs);
+        return $simpleDbConfigs;
     }
 
     /**
