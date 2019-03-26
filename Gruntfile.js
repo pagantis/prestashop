@@ -7,11 +7,10 @@ module.exports = function(grunt) {
             },
             autoindex: {
                 command:
-                    'php vendor/pagamastarde/autoindex/index.php . \n' +
-                    'rm -rf vendor/pagamastarde/autoindex \n'
+                    'php vendor/pagantis/autoindex/index.php . \n'
             },
             composerProd: {
-                command: 'rm -rf vendor && composer install --no-dev'
+                command: 'composer install --no-dev'
             },
             composerDev: {
                 command: 'composer install'
@@ -106,8 +105,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.registerTask('default', [
         'shell:composerDev',
-        'shell:composerProd',
         'shell:autoindex',
+        'shell:composerProd',
         'compress',
         'shell:composerDev',
         'shell:rename'
