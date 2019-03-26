@@ -67,7 +67,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '7.2.1';
+        $this->version = '7.2.2';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -81,7 +81,7 @@ class Paylater extends PaymentModule
         $sql_file = dirname(__FILE__).'/sql/install.sql';
         $this->loadSQLFile($sql_file);
 
-        $this->loadEnvVariables();
+        $this->checkEnvVariables();
 
         $this->migrate();
 
@@ -214,7 +214,10 @@ class Paylater extends PaymentModule
         }
     }
 
-    public function loadEnvVariables()
+    /**
+     * @throws PrestaShopDatabaseException
+     */
+    public function checkEnvVariables()
     {
         $sql_content = 'select * from ' . _DB_PREFIX_. 'pmt_config';
         $dbConfigs = Db::getInstance()->executeS($sql_content);
@@ -235,12 +238,6 @@ class Paylater extends PaymentModule
             }
             Db::getInstance()->insert('pmt_config', $data);
         }
-
-        foreach (array_merge($this->defaultConfigs, $simpleDbConfigs) as $key => $value) {
-            putenv($key . '=' . $value);
-        }
-
-        putenv("PMT_DEFAULT_CONFIGS" . '=' . json_encode($this->defaultConfigs));
     }
 
     /**
@@ -277,7 +274,7 @@ class Paylater extends PaymentModule
         $cart                       = $this->context->cart;
         $currency                   = new Currency($cart->id_currency);
         $availableCurrencies        = array('EUR');
-        $pmtDisplayMinAmount        = getenv('PMT_DISPLAY_MIN_AMOUNT');
+        $pmtDisplayMinAmount        = Paylater::getExtraConfig('PMT_DISPLAY_MIN_AMOUNT');
         $pmtPublicKey               = Configuration::get('pmt_public_key');
         $pmtPrivateKey              = Configuration::get('pmt_private_key');
 
@@ -340,13 +337,13 @@ class Paylater extends PaymentModule
         $pmtPublicKey               = Configuration::get('pmt_public_key');
         $pmtSimulatorIsEnabled      = Configuration::get('pmt_simulator_is_enabled');
         $pmtIsEnabled               = Configuration::get('pmt_is_enabled');
-        $pmtSimulatorType           = getenv('PMT_SIMULATOR_DISPLAY_TYPE');
-        $pmtSimulatorCSSSelector    = getenv('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
-        $pmtSimulatorPriceSelector  = getenv('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
-        $pmtSimulatorQuotesStart    = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
-        $pmtSimulatorSkin           = getenv('PMT_SIMULATOR_DISPLAY_SKIN');
-        $pmtSimulatorPosition       = getenv('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
-        $pmtTitle                   = $this->l(getenv('PMT_TITLE'));
+        $pmtSimulatorType           = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_TYPE');
+        $pmtSimulatorCSSSelector    = Paylater::getExtraConfig('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
+        $pmtSimulatorPriceSelector  = Paylater::getExtraConfig('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
+        $pmtSimulatorQuotesStart    = Paylater::getExtraConfig('PMT_SIMULATOR_START_INSTALLMENTS');
+        $pmtSimulatorSkin           = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_SKIN');
+        $pmtSimulatorPosition       = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
+        $pmtTitle                   = $this->l(Paylater::getExtraConfig('PMT_TITLE'));
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
@@ -587,13 +584,13 @@ class Paylater extends PaymentModule
         $pmtPublicKey               = Configuration::get('pmt_public_key');
         $pmtSimulatorIsEnabled      = Configuration::get('pmt_simulator_is_enabled');
         $pmtIsEnabled               = Configuration::get('pmt_is_enabled');
-        $pmtSimulatorType           = getenv('PMT_SIMULATOR_DISPLAY_TYPE');
-        $pmtSimulatorCSSSelector    = getenv('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
-        $pmtSimulatorPriceSelector  = getenv('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
-        $pmtSimulatorQuotesStart    = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
-        $pmtSimulatorSkin           = getenv('PMT_SIMULATOR_DISPLAY_SKIN');
-        $pmtSimulatorPosition       = getenv('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
-        $pmtTitle                   = $this->l(getenv('PMT_TITLE'));
+        $pmtSimulatorType           = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_TYPE');
+        $pmtSimulatorCSSSelector    = Paylater::getExtraConfig('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
+        $pmtSimulatorPriceSelector  = Paylater::getExtraConfig('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
+        $pmtSimulatorQuotesStart    = Paylater::getExtraConfig('PMT_SIMULATOR_START_INSTALLMENTS');
+        $pmtSimulatorSkin           = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_SKIN');
+        $pmtSimulatorPosition       = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
+        $pmtTitle                   = $this->l(Paylater::getExtraConfig('PMT_TITLE'));
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
             'amount'                => $orderTotal,
@@ -636,21 +633,21 @@ class Paylater extends PaymentModule
      */
     public function productPageSimulatorDisplay($functionName)
     {
-        $productConfiguration = getenv('PMT_SIMULATOR_DISPLAY_POSITION');
+        $productConfiguration = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_POSITION');
         /** @var ProductCore $product */
         $product = new Product(Tools::getValue('id_product'));
         $amount = $product->getPublicPrice();
-        $pmtPublicKey                = Configuration::get('pmt_public_key');
+        $pmtPublicKey                 = Configuration::get('pmt_public_key');
         $pmtSimulatorIsEnabled        = Configuration::get('pmt_simulator_is_enabled');
         $pmtIsEnabled                 = Configuration::get('pmt_is_enabled');
-        $pmtSimulatorType             = getenv('PMT_SIMULATOR_DISPLAY_TYPE');
-        $pmtSimulatorCSSSelector      = getenv('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
-        $pmtSimulatorPriceSelector    = getenv('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
-        $pmtSimulatorQuantitySelector = getenv('PMT_SIMULATOR_CSS_QUANTITY_SELECTOR');
-        $pmtSimulatorQuotesStart      = getenv('PMT_SIMULATOR_START_INSTALLMENTS');
-        $pmtSimulatorSkin             = getenv('PMT_SIMULATOR_DISPLAY_SKIN');
-        $pmtSimulatorPosition         = getenv('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
-        $pmtDisplayMinAmount          = getenv('PMT_DISPLAY_MIN_AMOUNT');
+        $pmtSimulatorType             = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_TYPE');
+        $pmtSimulatorCSSSelector      = Paylater::getExtraConfig('PMT_SIMULATOR_CSS_POSITION_SELECTOR');
+        $pmtSimulatorPriceSelector    = Paylater::getExtraConfig('PMT_SIMULATOR_CSS_PRICE_SELECTOR');
+        $pmtSimulatorQuantitySelector = Paylater::getExtraConfig('PMT_SIMULATOR_CSS_QUANTITY_SELECTOR');
+        $pmtSimulatorQuotesStart      = Paylater::getExtraConfig('PMT_SIMULATOR_START_INSTALLMENTS');
+        $pmtSimulatorSkin             = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_SKIN');
+        $pmtSimulatorPosition         = Paylater::getExtraConfig('PMT_SIMULATOR_DISPLAY_CSS_POSITION');
+        $pmtDisplayMinAmount          = Paylater::getExtraConfig('PMT_DISPLAY_MIN_AMOUNT');
 
         if ($functionName != $productConfiguration ||
             $amount <= 0 ||
@@ -756,5 +753,21 @@ class Paylater extends PaymentModule
                 $logo
             );
         }
+    }
+
+    public static function getExtraConfig($config = null, $default = '')
+    {
+        if (is_null($config)) {
+            return '';
+        }
+
+        $sql = 'SELECT value FROM '._DB_PREFIX_.'pmt_config where config = \'' . pSQL($config) . '\' limit 1';
+        if ($results = Db::getInstance()->ExecuteS($sql)) {
+            if (is_array($results) && count($results) === 1 && isset($results[0]['value'])) {
+                return $results[0]['value'];
+            }
+        }
+
+        return $default;
     }
 }
