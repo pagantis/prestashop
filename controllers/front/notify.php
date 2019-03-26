@@ -230,6 +230,9 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     public function checkOrderStatus()
     {
         if ($this->pmtOrder->getStatus() === PmtModelOrder::STATUS_CONFIRMED) {
+            $this->jsonResponse = new JsonSuccessResponse();
+            $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
+            $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
             return $this->finishProcess(false);
         }
 
