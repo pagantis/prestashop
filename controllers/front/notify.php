@@ -146,8 +146,10 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         );
         try {
             $this->config = array(
-                'urlOK' => (Paylater::getExtraConfig('PMT_URL_OK') !== '') ? Paylater::getExtraConfig('PMT_URL_OK') : $callbackOkUrl,
-                'urlKO' => (Paylater::getExtraConfig('PMT_URL_KO') !== '') ? Paylater::getExtraConfig('PMT_URL_KO') : $callbackKoUrl,
+                'urlOK' => (Paylater::getExtraConfig('PMT_URL_OK') !== '') ?
+                    Paylater::getExtraConfig('PMT_URL_OK') : $callbackOkUrl,
+                'urlKO' => (Paylater::getExtraConfig('PMT_URL_KO') !== '') ?
+                    Paylater::getExtraConfig('PMT_URL_KO') : $callbackKoUrl,
                 'publicKey' => Configuration::get('pmt_public_key'),
                 'privateKey' => Configuration::get('pmt_private_key'),
                 'secureKey' => Tools::getValue('key'),
@@ -351,7 +353,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function cancelProcess($response = null)
     {
-       if ($this->merchantOrder && $this->processError === true) {
+        if ($this->merchantOrder && $this->processError === true) {
             sleep(5);
             $id = (!is_null($this->pmtOrder))?$this->pmtOrder->getId():null;
             $status = (!is_null($this->pmtOrder))?$this->pmtOrder->getStatus():null;

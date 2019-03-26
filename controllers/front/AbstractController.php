@@ -64,7 +64,7 @@ abstract class AbstractController extends ModuleFrontController
                 if (isset($data['trace'])) {
                     $logEntry->setTrace($data['trace']);
                 }
-            }  elseif (!is_null($exception)) {
+            } elseif (!is_null($exception)) {
                 $logEntry->error($exception);
             }
 
@@ -84,7 +84,7 @@ abstract class AbstractController extends ModuleFrontController
             Db::getInstance()->insert('pmt_log', array(
                 'log' => $response
             ));
-        } catch (\Exception $exception) {
+        } catch (\Exception $error) {
             // Do nothing
         }
     }

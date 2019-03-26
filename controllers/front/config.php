@@ -57,7 +57,7 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
     public function postMethod()
     {
         $errors = array();
-        $post = Tools::getAllValues();
+        $post = (_PS_VERSION_ < 1.6) ? $_POST + $_GET : Tools::getAllValues();
         unset($post['fc']);
         unset($post['module']);
         unset($post['controller']);

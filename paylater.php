@@ -763,11 +763,11 @@ class Paylater extends PaymentModule
 
         $sql = 'SELECT value FROM '._DB_PREFIX_.'pmt_config where config = \'' . pSQL($config) . '\' limit 1';
         if ($results = Db::getInstance()->ExecuteS($sql)) {
-            if ( is_array($results) && count($results) === 1 && isset($results[0]['value']) ) {
+            if (is_array($results) && count($results) === 1 && isset($results[0]['value'])) {
                 return $results[0]['value'];
             }
         }
 
-       return $default;
+        return $default;
     }
 }
