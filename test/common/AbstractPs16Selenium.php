@@ -6,7 +6,7 @@ use Facebook\WebDriver\Remote\LocalFileDetector;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Pagantis\SeleniumFormUtils\SeleniumHelper;
-use Test\Pagantis\PrestashopTest;
+use Test\PagantisPrestashopTest;
 
 /**
  * Class AbstractPrestashop16CommonTest
