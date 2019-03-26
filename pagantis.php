@@ -42,12 +42,12 @@ class Pagantis extends PaymentModule
      */
     public $defaultConfigs = array(
         'PAGANTIS_TITLE' => 'Instant Financing',
-        'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'pmtSDK.simulator.types.SIMPLE',
-        'PAGANTIS_SIMULATOR_DISPLAY_SKIN' => 'pmtSDK.simulator.skins.BLUE',
+        'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'pgSDK.simulator.types.SIMPLE',
+        'PAGANTIS_SIMULATOR_DISPLAY_SKIN' => 'pgSDK.simulator.skins.BLUE',
         'PAGANTIS_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
         'PAGANTIS_SIMULATOR_START_INSTALLMENTS' => '3',
         'PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
-        'PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION' => 'pmtSDK.simulator.positions.INNER',
+        'PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION' => 'pgSDK.simulator.positions.INNER',
         'PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
         'PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
         'PAGANTIS_FORM_DISPLAY_TYPE' => '0',
@@ -311,11 +311,11 @@ class Pagantis extends PaymentModule
         if (_PS_VERSION_ >= "1.7") {
             $this->context->controller->registerJavascript(
                 sha1(mt_rand(1, 90000)),
-                'https://cdn.pagamastarde.com/js/pmt-v2/sdk.js',
+                'https://cdn.pagantis.com/js/pg-v2/sdk.js',
                 array('server' => 'remote')
             );
         } else {
-            $this->context->controller->addJS('https://cdn.pagamastarde.com/js/pmt-v2/sdk.js');
+            $this->context->controller->addJS('https://cdn.pagantis.com/js/pg-v2/sdk.js');
         }
         $this->context->controller->addJS($this->getPathUri(). 'views/js/simulator.js');
     }

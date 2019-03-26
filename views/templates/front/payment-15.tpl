@@ -6,9 +6,9 @@
  * @license   proprietary
  *}
 <script type="application/javascript">
-    if (typeof pmtSDK !== 'undefined') {
+    if (typeof pgSDK !== 'undefined') {
         document.addEventListener("DOMContentLoaded", function(){
-            pmtSDK.modal.open(
+            pgSDK.modal.open(
                 "{$url|escape:'quotes'}",
                 {
                     closeOnBackDropClick: false,
@@ -19,7 +19,7 @@
                 }
             );
         });
-        pmtSDK.modal.onClose(function() {
+        pgSDK.modal.onClose(function() {
             window.location.href = "{$checkoutUrl|escape:'quotes'}";
         });
     }

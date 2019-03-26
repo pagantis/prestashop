@@ -9,9 +9,9 @@
 {extends file='page.tpl'}
 {block name="page_content"}
     <script type="application/javascript">
-        if (typeof pmtSDK !== 'undefined') {
+        if (typeof pgSDK !== 'undefined') {
             document.addEventListener("DOMContentLoaded", function(){
-                pmtSDK.modal.open(
+                pgSDK.modal.open(
                     "{$url|escape:'quotes'}",
                     {
                         closeOnBackDropClick: false,
@@ -22,7 +22,7 @@
                     }
                 );
             });
-            pmtSDK.modal.onClose(function() {
+            pgSDK.modal.onClose(function() {
                 window.location.href = "{$checkoutUrl|escape:'quotes'}";
             });
         }
