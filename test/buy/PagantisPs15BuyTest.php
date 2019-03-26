@@ -4,9 +4,7 @@ namespace Test\Buy;
 
 use Test\Common\AbstractPs15Selenium;
 use Httpful\Request;
-use PagaMasTarde\ModuleUtils\Exception\AlreadyProcessedException;
-use PagaMasTarde\ModuleUtils\Exception\NoIdentificationException;
-use PagaMasTarde\ModuleUtils\Exception\QuoteNotFoundException;
+use Pagantis\ModuleUtils\Exception\QuoteNotFoundException;
 
 /**
  * @requires prestashop15install
@@ -32,7 +30,7 @@ class PagantisPs15BuyTest extends AbstractPs15Selenium
         $this->goToCheckout();
         $this->verifyPagantis();
         $this->checkConcurrency();
-        $this->checkPmtOrderId();
+        $this->checkPagantisOrderId();
         $this->checkAlreadyProcessed();
         $this->quit();
     }
@@ -59,7 +57,7 @@ class PagantisPs15BuyTest extends AbstractPs15Selenium
      * Check if with a parameter called order-received set to a invalid identification,
      * we can get a NoIdentificationException
      */
-    protected function checkPmtOrderId()
+    protected function checkPagantisOrderId()
     {
         $orderId=0;
         $notifyUrl = self::PS15URL.self::NOTIFICATION_FOLDER.'&cart_id='.$orderId;

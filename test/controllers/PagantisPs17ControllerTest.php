@@ -11,7 +11,7 @@ use Httpful\Mime;
  *
  * @group prestashop17controller
  */
-class PaylaterPs17ControllerTest extends PaylaterPrestashopTest
+class PagantisPs17ControllerTest extends PagantisPrestashopTest
 {
     /**
      * log route
@@ -24,19 +24,19 @@ class PaylaterPs17ControllerTest extends PaylaterPrestashopTest
     const CONFIG_FOLDER = '/index.php?fc=module&module=paylater&controller=config';
 
     protected $configs = array(
-        "PMT_TITLE",
-        "PMT_SIMULATOR_DISPLAY_TYPE",
-        "PMT_SIMULATOR_DISPLAY_SKIN",
-        "PMT_SIMULATOR_DISPLAY_POSITION",
-        "PMT_SIMULATOR_START_INSTALLMENTS",
-        "PMT_SIMULATOR_CSS_POSITION_SELECTOR",
-        "PMT_SIMULATOR_DISPLAY_CSS_POSITION",
-        "PMT_SIMULATOR_CSS_PRICE_SELECTOR",
-        "PMT_SIMULATOR_CSS_QUANTITY_SELECTOR",
-        "PMT_FORM_DISPLAY_TYPE",
-        "PMT_DISPLAY_MIN_AMOUNT",
-        "PMT_URL_OK",
-        "PMT_URL_KO",
+        "PAGANTIS_TITLE",
+        "PAGANTIS_SIMULATOR_DISPLAY_TYPE",
+        "PAGANTIS_SIMULATOR_DISPLAY_SKIN",
+        "PAGANTIS_SIMULATOR_DISPLAY_POSITION",
+        "PAGANTIS_SIMULATOR_START_INSTALLMENTS",
+        "PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR",
+        "PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION",
+        "PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR",
+        "PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR",
+        "PAGANTIS_FORM_DISPLAY_TYPE",
+        "PAGANTIS_DISPLAY_MIN_AMOUNT",
+        "PAGANTIS_URL_OK",
+        "PAGANTIS_URL_KO",
     );
 
     /**
@@ -56,12 +56,12 @@ class PaylaterPs17ControllerTest extends PaylaterPrestashopTest
     public function testSetConfig()
     {
         $notifyUrl = self::PS17URL.self::CONFIG_FOLDER.'&secret='.$this->configuration['secretKey'];
-        $body = array('PMT_TITLE' => 'changed');
+        $body = array('PAGANTIS_TITLE' => 'changed');
         $response = Request::post($notifyUrl)
             ->body($body, Mime::FORM)
             ->expectsJSON()
             ->send();
-        $this->assertEquals('changed', $response->body->PMT_TITLE);
+        $this->assertEquals('changed', $response->body->PAGANTIS_TITLE);
         $this->quit();
     }
 

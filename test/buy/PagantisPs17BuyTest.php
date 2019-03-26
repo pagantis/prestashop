@@ -4,7 +4,7 @@ namespace Test\Buy;
 
 use Test\Common\AbstractPs17Selenium;
 use Httpful\Request;
-use PagaMasTarde\ModuleUtils\Exception\QuoteNotFoundException;
+use Pagantis\ModuleUtils\Exception\QuoteNotFoundException;
 
 /**
  * @requires prestashop17install
@@ -30,7 +30,7 @@ class PagantisPs17BuyTest extends AbstractPs17Selenium
         $this->goToCheckout();
         $this->verifyPagantis();
         $this->checkConcurrency();
-        $this->checkPmtOrderId();
+        $this->checkPagantisOrderId();
         $this->checkAlreadyProcessed();
         $this->quit();
     }
@@ -57,7 +57,7 @@ class PagantisPs17BuyTest extends AbstractPs17Selenium
      * Check if with a parameter called order-received set to a invalid identification,
      * we can get a NoIdentificationException
      */
-    protected function checkPmtOrderId()
+    protected function checkPagantisOrderId()
     {
         $orderId=0;
         $notifyUrl = self::PS17URL.self::NOTIFICATION_FOLDER.'&cart_id='.$orderId;
