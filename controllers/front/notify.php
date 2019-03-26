@@ -231,7 +231,6 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     {
         if ($this->pmtOrder->getStatus() === PmtModelOrder::STATUS_CONFIRMED) {
             return $this->finishProcess(false);
-            exit;
         }
 
         if ($this->pmtOrder->getStatus() !== PmtModelOrder::STATUS_AUTHORIZED) {
