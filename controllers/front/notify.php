@@ -302,6 +302,15 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     {
         try {
             $this->orderClient->confirmOrder($this->pmtOrderId);
+            try {
+                $this->saveLog(array(
+                    'message' => "Order CONFIRMED. " .
+                    'The order was confirmed by a ' .
+                    ($_SERVER['REQUEST_METHOD'] == 'POST') ? 'NOTIFICATION' : 'REDIRECTION'
+                ));
+            } catch (\Exception $e) {
+                // Do nothing
+            }
         } catch (\Exception $exception) {
             throw new UnknownException($exception->getMessage());
         }
@@ -316,7 +325,6 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     {
         // Do nothing because the order is created only when the purchase was successfully
     }
-
 
     /**
      * Lock the concurrency to prevent duplicated inputs
