@@ -303,6 +303,15 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             $this->orderClient->confirmOrder($this->pagantisOrderId);
+            try {
+                $this->saveLog(array(
+                    'message' => "Order CONFIRMED. " .
+                    'The order was confirmed by a ' .
+                    ($_SERVER['REQUEST_METHOD'] == 'POST') ? 'NOTIFICATION' : 'REDIRECTION'
+                ));
+            } catch (\Exception $e) {
+                // Do nothing
+            }
         } catch (\Exception $exception) {
             throw new UnknownException($exception->getMessage());
         }
