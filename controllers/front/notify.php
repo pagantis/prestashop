@@ -229,6 +229,11 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function checkOrderStatus()
     {
+        if ($this->pmtOrder->getStatus() === PmtModelOrder::STATUS_CONFIRMED) {
+            return $this->finishProcess(false);
+            exit;
+        }
+
         if ($this->pmtOrder->getStatus() !== PmtModelOrder::STATUS_AUTHORIZED) {
             $status = '-';
             if ($this->pmtOrder instanceof \PagaMasTarde\OrdersApiClient\Model\Order) {
