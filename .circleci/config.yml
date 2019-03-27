@@ -75,10 +75,58 @@ jobs:
       - install_dependencies
       - npm_grunt
       - run_tests
+  pushRelease:
+    docker:
+      - image: circleci/php:7.1-node-browsers
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: NPM Install
+          command: npm install
+      - run:
+          name: Package Generation
+          command: |
+            grunt default
+            mv paylater.zip paylater-$CIRCLE_TAG.zip
+            ls *.zip
+      - run:
+          name: Install GitHub CLI
+          command: |
+            curl -LO https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2
+            tar xfv linux-amd64-github-release.tar.bz2
+            mv bin/linux/amd64/github-release /usr/local/bin/github-release
+            chmod +x /usr/local/bin/github-release
+      - run:
+          name: Push ZIP to GitHub
+          command: |
+            github-release upload \
+                --user pagamastarde \
+                --repo prestashop \
+                --tag $CIRCLE_TAG \
+                --name paylater-$CIRCLE_TAG.zip \
+                --file paylater-$CIRCLE_TAG.zip
 workflows:
   version: 2
   build:
     jobs:
-      - runTestPrestashop17
-      - runTestPrestashop16
-      - runTestPrestashop15
+      - runTestPrestashop17:
+          filters:
+            branches:
+              only: /.*/
+      - runTestPrestashop16:
+          filters:
+            branches:
+              only: /.*/
+      - runTestPrestashop15:
+          filters:
+            branches:
+              only: /.*/
+  release:
+    jobs:
+      - pushRelease:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
