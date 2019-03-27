@@ -232,7 +232,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
         if ($this->pagantisOrder->getStatus() === PagantisModelOrder::STATUS_CONFIRMED) {
             $this->jsonResponse = new JsonSuccessResponse();
             $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
-            $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
+            $this->jsonResponse->setPmtOrderId($this->pagantisOrderId);
             return $this->finishProcess(false);
         }
 
@@ -309,7 +309,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             try {
                 $mode = ($_SERVER['REQUEST_METHOD'] == 'POST') ? 'NOTIFICATION' : 'REDIRECTION';
                 $message = 'Order CONFIRMED. The order was confirmed by a ' . $mode .
-                    '. Pagantis OrderId=' . $this->pmtOrderId .
+                    '. Pagantis OrderId=' . $this->pagantisOrderId .
                     '. Prestashop OrderId=' . $this->merchantOrderId;
                 $this->saveLog(array(
                     'message' => $message
@@ -331,7 +331,6 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         // Do nothing because the order is created only when the purchase was successfully
     }
-
 
     /**
      * Lock the concurrency to prevent duplicated inputs
