@@ -87,7 +87,7 @@ jobs:
       - run:
           name: Package Generation
           command: |
-            grunt default
+            ./node_modules/.bin/grunt
             mv paylater.zip paylater-$CIRCLE_TAG.zip
             ls *.zip
       - run:
@@ -95,8 +95,9 @@ jobs:
           command: |
             curl -LO https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2
             tar xfv linux-amd64-github-release.tar.bz2
-            mv bin/linux/amd64/github-release /usr/local/bin/github-release
-            chmod +x /usr/local/bin/github-release
+            rm linux-amd64-github-release.tar.bz2
+            sudo mv bin/linux/amd64/github-release /usr/local/bin/github-release
+            sudo chmod +x /usr/local/bin/github-release
       - run:
           name: Push ZIP to GitHub
           command: |
