@@ -229,6 +229,13 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function checkOrderStatus()
     {
+        if ($this->pmtOrder->getStatus() === PmtModelOrder::STATUS_CONFIRMED) {
+            $this->jsonResponse = new JsonSuccessResponse();
+            $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
+            $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
+            return $this->finishProcess(false);
+        }
+
         if ($this->pmtOrder->getStatus() !== PmtModelOrder::STATUS_AUTHORIZED) {
             $status = '-';
             if ($this->pmtOrder instanceof \PagaMasTarde\OrdersApiClient\Model\Order) {
@@ -298,6 +305,17 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     {
         try {
             $this->orderClient->confirmOrder($this->pmtOrderId);
+            try {
+                $mode = ($_SERVER['REQUEST_METHOD'] == 'POST') ? 'NOTIFICATION' : 'REDIRECTION';
+                $message = 'Order CONFIRMED. The order was confirmed by a ' . $mode .
+                    '. Pagantis OrderId=' . $this->pmtOrderId .
+                    '. Prestashop OrderId=' . $this->merchantOrderId;
+                $this->saveLog(array(
+                    'message' => $message
+                ));
+            } catch (\Exception $e) {
+                // Do nothing
+            }
         } catch (\Exception $exception) {
             throw new UnknownException($exception->getMessage());
         }
@@ -312,7 +330,6 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     {
         // Do nothing because the order is created only when the purchase was successfully
     }
-
 
     /**
      * Lock the concurrency to prevent duplicated inputs
