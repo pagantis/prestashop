@@ -101,10 +101,10 @@ jobs:
           name: Push ZIP to GitHub
           command: |
             github-release upload \
-                --user pagantis \
+                --user pagamastarde \
                 --repo prestashop \
                 --tag $CIRCLE_TAG \
-                --name "paylater-$CIRCLE_TAG.zip" \
+                --name paylater-$CIRCLE_TAG.zip \
                 --file paylater-$CIRCLE_TAG.zip
 workflows:
   version: 2
