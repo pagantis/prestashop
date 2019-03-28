@@ -24,6 +24,11 @@ abstract class PagantisPrestashopTest extends TestCase
     const BACKOFFICE_FOLDER = '/adminTest';
 
     /**
+     * @todo: change when LS change the form title
+     */
+    const PAGANTIS_TITLE = 'Paga+Tarde';
+
+    /**
      * @var array
      */
     protected $configuration = array(
@@ -215,33 +220,5 @@ abstract class PagantisPrestashopTest extends TestCase
             'PAGANTIS_URL_OK' => '',
             'PAGANTIS_URL_KO' => '',
         );
-    }
-
-    /**
-     * @param array  $properties
-     * @param string $psVersion
-     */
-    public function saveDotEnvFile($properties = array(), $psVersion = '15')
-    {
-        $file = '';
-        foreach ($properties as $key => $value) {
-            $file .= $key . '=' . $value . PHP_EOL;
-        }
-
-        $fp = fopen('/tmp/.env', 'w');
-        fwrite($fp, $file);
-        fclose($fp);
-
-        $command = 'docker cp /tmp/.env prestashop' . $psVersion . ':/var/www/html/modules/pagantis/.env 2>&1';
-        $execResult = exec($command);
-        $this->assertEmpty($execResult);
-
-        $command = 'docker-compose exec -T prestashop' . $psVersion.' chmod 777 /var/www/html/modules/pagantis/.env';
-        $execResult = exec($command);
-        $this->assertEmpty($execResult);
-
-        $command = 'docker-compose exec -T prestashop' . $psVersion.' chown www-data. /var/www/html/modules/pagantis/.env';
-        $execResult = exec($command);
-        $this->assertEmpty($execResult);
     }
 }

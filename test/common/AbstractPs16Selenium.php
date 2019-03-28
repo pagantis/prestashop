@@ -260,6 +260,10 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($pagantisCheckout)->click();
 
+        $condition = WebDriverExpectedCondition::titleContains(self::PAGANTIS_TITLE);
+        $this->webDriver->wait(300)->until($condition, $this->webDriver->getCurrentURL());
+        $this->assertTrue((bool)$condition, "PR32");
+
         SeleniumHelper::finishForm($this->webDriver);
     }
 }
