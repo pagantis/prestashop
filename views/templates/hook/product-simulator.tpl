@@ -58,11 +58,16 @@
 
                 pgSDK.simulator.init(pgSDK.product_simulator);
                 clearInterval(window.PSSimulatorId);
+                return true;
             }
+            return false;
         }
-        window.PSSimulatorId = setInterval(function () {
-            loadSimulator();
-        }, 2000);
+        if (!loadSimulator()) {
+            window.PSSimulatorId = setInterval(function () {
+                loadSimulator();
+            }, 2000);
+        }
     </script>
     <div class="pagantisSimulator"></div>
 {/if}
+
