@@ -285,8 +285,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 Configuration::get('PS_OS_PAYMENT'),
                 $this->merchantOrder->getOrderTotal(true),
                 $this->module->displayName,
-                'pagantisOrderId: ' . $this->pagantisOrder->getId().
-                'pagantisOrderStatus: '. $this->pagantisOrder->getStatus(),
+                ' pagantisOrderId: ' . $this->pagantisOrder->getId().
+                ' pagantisOrderStatus: '. $this->pagantisOrder->getStatus(),
                 array('transaction_id' => $this->pagantisOrderId),
                 null,
                 false,
