@@ -7,14 +7,14 @@ use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
 use Pagantis\SeleniumFormUtils\SeleniumHelper;
-use Test\PaylaterPrestashopTest;
+use Test\PagantisPrestashopTest;
 
 /**
  * Class AbstractPrestashop17CommonTest
  *
  * @package Test\Common
  */
-abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
+abstract class AbstractPs17Selenium extends PagantisPrestashopTest
 {
     /**
      * @throws \Exception
@@ -39,7 +39,7 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
      *
      * @throws \Exception
      */
-    public function uploadPaylater()
+    public function uploadPagantis()
     {
         $this->webDriver->executeScript('document.querySelector(\'.onboarding-button-shut-down\').click();');
         sleep(10);
@@ -53,7 +53,7 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
         $fileInputSearch = $moduleInstallBlock->className('dz-hidden-input');
         $fileInput = $this->webDriver->findElement($fileInputSearch);
         $fileInput->setFileDetector(new LocalFileDetector());
-        $fileInput->sendKeys(__DIR__.'/../../paylater.zip');
+        $fileInput->sendKeys(__DIR__.'/../../pagantis.zip');
         $validatorSearch = WebDriverBy::className('module-import-success-msg');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->webDriver->wait(90, 3000)->until($condition);
@@ -66,18 +66,18 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
      *
      * @throws \Exception
      */
-    public function getPaylaterBackOffice()
+    public function getPagantisBackOffice()
     {
         $this->webDriver->get(self::PS17URL.self::BACKOFFICE_FOLDER);
         $this->findByLinkText('Modules')->click();
         $this->findByLinkText('Installed modules')->click();
         $this->findByClass('pstaggerAddTagInput')
             ->clear()
-            ->sendKeys('Paga+Tarde')
+            ->sendKeys('Pagantis')
             ->sendKeys(WebDriverKeys::ENTER)
         ;
         $this->findByClass('module_action_menu_configure')->click();
-        $verify = WebDriverBy::id('pmt_public_key');
+        $verify = WebDriverBy::id('pagantis_public_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
     }
@@ -223,8 +223,8 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
         if ($verifySimulator) {
-            $pmtSimulator = WebDriverBy::className('PmtSimulator');
-            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+            $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
+            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
             // this sleep is to prevent simulator js render
@@ -233,20 +233,24 @@ abstract class AbstractPs17Selenium extends PaylaterPrestashopTest
     }
 
     /**
-     * Verify paylater
+     * Verify pagantis
      *
      * @throws \Exception
      */
-    public function verifyPaylater()
+    public function verifyPagantis()
     {
-        $paylaterCheckout = WebDriverBy::cssSelector('[for=payment-option-3]');
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paylaterCheckout);
+        $pagantisCheckout = WebDriverBy::cssSelector('[for=payment-option-3]');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($pagantisCheckout);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->webDriver->findElement($paylaterCheckout)->click();
+        $this->webDriver->findElement($pagantisCheckout)->click();
 
         $this->findById('conditions_to_approve[terms-and-conditions]')->click();
         $this->findById('payment-confirmation')->click();
+
+        $condition = WebDriverExpectedCondition::titleContains(self::PAGANTIS_TITLE);
+        $this->webDriver->wait(300)->until($condition, $this->webDriver->getCurrentURL());
+        $this->assertTrue((bool)$condition, "PR32");
 
         SeleniumHelper::finishForm($this->webDriver);
     }

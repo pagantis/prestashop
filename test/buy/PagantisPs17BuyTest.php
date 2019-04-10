@@ -4,9 +4,7 @@ namespace Test\Buy;
 
 use Test\Common\AbstractPs17Selenium;
 use Httpful\Request;
-use PagaMasTarde\ModuleUtils\Exception\AlreadyProcessedException;
-use PagaMasTarde\ModuleUtils\Exception\NoIdentificationException;
-use PagaMasTarde\ModuleUtils\Exception\QuoteNotFoundException;
+use Pagantis\ModuleUtils\Exception\QuoteNotFoundException;
 
 /**
  * @requires prestashop17install
@@ -14,12 +12,12 @@ use PagaMasTarde\ModuleUtils\Exception\QuoteNotFoundException;
  *
  * @group prestashop17buy
  */
-class PaylaterPs17BuyTest extends AbstractPs17Selenium
+class PagantisPs17BuyTest extends AbstractPs17Selenium
 {
     /**
      * config route
      */
-    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=paylater&controller=notify';
+    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=pagantis&controller=notify';
 
     /**
      * @throws  \Exception
@@ -30,9 +28,9 @@ class PaylaterPs17BuyTest extends AbstractPs17Selenium
         $this->goToProduct();
         $this->addProduct();
         $this->goToCheckout();
-        $this->verifyPaylater();
+        $this->verifyPagantis();
         $this->checkConcurrency();
-        $this->checkPmtOrderId();
+        $this->checkPagantisOrderId();
         $this->checkAlreadyProcessed();
         $this->quit();
     }
@@ -48,13 +46,18 @@ class PaylaterPs17BuyTest extends AbstractPs17Selenium
         $this->assertNotEmpty($response->body->result, $response);
         $this->assertNotEmpty($response->body->status_code, $response);
         $this->assertNotEmpty($response->body->timestamp, $response);
-        $this->assertContains(QuoteNotFoundException::ERROR_MESSAGE, $response->body->result, "PR=>".$response->body->result);
+        $this->assertContains(
+            QuoteNotFoundException::ERROR_MESSAGE,
+            $response->body->result,
+            "PR=>".$response->body->result
+        );
     }
 
     /**
-     * Check if with a parameter called order-received set to a invalid identification, we can get a NoIdentificationException
+     * Check if with a parameter called order-received set to a invalid identification,
+     * we can get a NoIdentificationException
      */
-    protected function checkPmtOrderId()
+    protected function checkPagantisOrderId()
     {
         $orderId=0;
         $notifyUrl = self::PS17URL.self::NOTIFICATION_FOLDER.'&cart_id='.$orderId;
@@ -87,6 +90,10 @@ class PaylaterPs17BuyTest extends AbstractPs17Selenium
         $this->assertNotEmpty($response->body->result, $response);
         $this->assertNotEmpty($response->body->status_code, $response);
         $this->assertNotEmpty($response->body->timestamp, $response);
-        $this->assertContains(QuoteNotFoundException::ERROR_MESSAGE, $response->body->result, "PR51=>".$response->body->result);
+        $this->assertContains(
+            QuoteNotFoundException::ERROR_MESSAGE,
+            $response->body->result,
+            "PR51=>".$response->body->result
+        );
     }
 }

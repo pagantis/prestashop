@@ -1,17 +1,17 @@
 {
-    "name": "pagamastarde/prestashop",
-    "description": "Prestashop module to add Paga + Tarde",
+    "name": "pagangtis/prestashop",
+    "description": "Prestashop module to add Pagantis",
     "license": "proprietary",
     "type": "module",
     "authors": [
         {
-            "name": "Paga + Tarde",
-            "email": "integration@pagamastarde.com"
+            "name": "Pagantis",
+            "email": "integrations@pagantis.com"
         }
     ],
     "require": {
-        "pagamastarde/orders-api-client": "^1.0",
-        "pagamastarde/module-utils": "^1.1"
+        "pagantis/orders-api-client": "^2.0",
+        "pagantis/module-utils": "^2.0"
     },
     "require-dev": {
         "pagantis/autoindex": "^1.0",

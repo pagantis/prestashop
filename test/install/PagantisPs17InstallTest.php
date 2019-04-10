@@ -10,27 +10,27 @@ use Test\Common\AbstractPs17Selenium;
  * @requires prestashop17basic
  * @group prestashop17install
  */
-class PaylaterPs17InstallTest extends AbstractPs17Selenium
+class PagantisPs17InstallTest extends AbstractPs17Selenium
 {
     /**
      * @throws \Exception
      */
-    public function testInstallAndConfigurePaylaterInPrestashop17()
+    public function testInstallAndConfigurePagantisInPrestashop17()
     {
         $this->loginToBackOffice();
-        $this->uploadPaylater();
-        $this->configurePaylater();
+        $this->uploadPagantis();
+        $this->configurePagantis();
         $this->quit();
     }
 
     /**
      * @throws \Exception
      */
-    public function configurePaylater()
+    public function configurePagantis()
     {
-        $this->findByCss('#pmt_is_enabled_on + label')->click();
-        $this->findById('pmt_public_key')->clear()->sendKeys($this->configuration['publicKey']);
-        $this->findById('pmt_private_key')->clear()->sendKeys($this->configuration['secretKey']);
+        $this->findByCss('#pagantis_is_enabled_on + label')->click();
+        $this->findById('pagantis_public_key')->clear()->sendKeys($this->configuration['publicKey']);
+        $this->findById('pagantis_private_key')->clear()->sendKeys($this->configuration['secretKey']);
         $this->findById('module_form_submit_btn')->click();
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(

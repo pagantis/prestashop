@@ -1,32 +1,32 @@
 <?php
 /**
- * This file is part of the official Paylater module for PrestaShop.
+ * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Paga+Tarde <soporte@pagamastarde.com>
- * @copyright 2019 Paga+Tarde
+ * @author    Pagantis <integrations@pagantis.com>
+ * @copyright 2019 Pagantis
  * @license   proprietary
  */
 
 require_once('AbstractController.php');
 
-use PagaMasTarde\OrdersApiClient\Client as PmtClient;
-use PagaMasTarde\OrdersApiClient\Model\Order as PmtModelOrder;
-use PagaMasTarde\ModuleUtils\Exception\AmountMismatchException;
-use PagaMasTarde\ModuleUtils\Exception\ConcurrencyException;
-use PagaMasTarde\ModuleUtils\Exception\MerchantOrderNotFoundException;
-use PagaMasTarde\ModuleUtils\Exception\NoIdentificationException;
-use PagaMasTarde\ModuleUtils\Exception\OrderNotFoundException;
-use PagaMasTarde\ModuleUtils\Exception\QuoteNotFoundException;
-use PagaMasTarde\ModuleUtils\Exception\ConfigurationNotFoundException;
-use PagaMasTarde\ModuleUtils\Exception\UnknownException;
-use PagaMasTarde\ModuleUtils\Exception\WrongStatusException;
-use PagaMasTarde\ModuleUtils\Model\Response\JsonSuccessResponse;
-use PagaMasTarde\ModuleUtils\Model\Response\JsonExceptionResponse;
+use Pagantis\OrdersApiClient\Client as PagantisClient;
+use Pagantis\OrdersApiClient\Model\Order as PagantisModelOrder;
+use Pagantis\ModuleUtils\Exception\AmountMismatchException;
+use Pagantis\ModuleUtils\Exception\ConcurrencyException;
+use Pagantis\ModuleUtils\Exception\MerchantOrderNotFoundException;
+use Pagantis\ModuleUtils\Exception\NoIdentificationException;
+use Pagantis\ModuleUtils\Exception\OrderNotFoundException;
+use Pagantis\ModuleUtils\Exception\QuoteNotFoundException;
+use Pagantis\ModuleUtils\Exception\ConfigurationNotFoundException;
+use Pagantis\ModuleUtils\Exception\UnknownException;
+use Pagantis\ModuleUtils\Exception\WrongStatusException;
+use Pagantis\ModuleUtils\Model\Response\JsonSuccessResponse;
+use Pagantis\ModuleUtils\Model\Response\JsonExceptionResponse;
 
 /**
- * Class PaylaterNotifyModuleFrontController
+ * Class PagantisNotifyModuleFrontController
  */
-class PaylaterNotifyModuleFrontController extends AbstractController
+class PagantisNotifyModuleFrontController extends AbstractController
 {
     /**
      * @var bool $processError
@@ -44,17 +44,17 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     protected $merchantOrder;
 
     /**
-     * @var string $pmtOrderId
+     * @var string $pagantisOrderId
      */
-    protected $pmtOrderId;
+    protected $pagantisOrderId;
 
     /**
-     * @var \PagaMasTarde\OrdersApiClient\Model\Order $pmtOrder
+     * @var \Pagantis\OrdersApiClient\Model\Order $pagantisOrder
      */
-    protected $pmtOrder;
+    protected $pagantisOrder;
 
     /**
-     * @var PagaMasTarde\OrdersApiClient\Client $orderClient
+     * @var Pagantis\OrdersApiClient\Client $orderClient
      */
     protected $orderClient;
 
@@ -76,8 +76,8 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         try {
             $this->checkConcurrency();
             $this->getMerchantOrder();
-            $this->getPmtOrderId();
-            $this->getPmtOrder();
+            $this->getPagantisOrderId();
+            $this->getPagantisOrder();
             $this->checkOrderStatus();
             $this->checkMerchantOrderStatus();
             $this->validateAmount();
@@ -85,7 +85,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         } catch (\Exception $exception) {
             $this->jsonResponse = new JsonExceptionResponse();
             $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
-            $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
+            $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
             $this->jsonResponse->setException($exception);
             return $this->cancelProcess($this->jsonResponse);
         }
@@ -93,13 +93,13 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         try {
             $this->jsonResponse = new JsonSuccessResponse();
             $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
-            $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
-            $this->confirmPmtOrder();
+            $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
+            $this->confirmPagantisOrder();
         } catch (\Exception $exception) {
             $this->rollbackMerchantOrder();
             $this->jsonResponse = new JsonExceptionResponse();
             $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
-            $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
+            $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
             $this->jsonResponse->setException($exception);
             return $this->cancelProcess($this->jsonResponse);
         }
@@ -146,12 +146,12 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         );
         try {
             $this->config = array(
-                'urlOK' => (Paylater::getExtraConfig('PMT_URL_OK') !== '') ?
-                    Paylater::getExtraConfig('PMT_URL_OK') : $callbackOkUrl,
-                'urlKO' => (Paylater::getExtraConfig('PMT_URL_KO') !== '') ?
-                    Paylater::getExtraConfig('PMT_URL_KO') : $callbackKoUrl,
-                'publicKey' => Configuration::get('pmt_public_key'),
-                'privateKey' => Configuration::get('pmt_private_key'),
+                'urlOK' => (Pagantis::getExtraConfig('PAGANTIS_URL_OK') !== '') ?
+                    Pagantis::getExtraConfig('PAGANTIS_URL_OK') : $callbackOkUrl,
+                'urlKO' => (Pagantis::getExtraConfig('PAGANTIS_URL_KO') !== '') ?
+                    Pagantis::getExtraConfig('PAGANTIS_URL_KO') : $callbackKoUrl,
+                'publicKey' => Configuration::get('pagantis_public_key'),
+                'privateKey' => Configuration::get('pagantis_private_key'),
                 'secureKey' => Tools::getValue('key'),
             );
         } catch (\Exception $exception) {
@@ -164,7 +164,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         }
 
 
-        if (!($this->config['secureKey'] && $this->merchantOrderId && Module::isEnabled(self::PMT_CODE))) {
+        if (!($this->config['secureKey'] && $this->merchantOrderId && Module::isEnabled(self::PAGANTIS_CODE))) {
             // This exception is only for Prestashop
             throw new UnknownException('Module may not be enabled');
         }
@@ -189,18 +189,18 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Find PMT Order Id in AbstractController::PMT_ORDERS_TABLE
+     * Find PAGANTIS Order Id in AbstractController::PAGANTIS_ORDERS_TABLE
      *
      * @throws Exception
      */
-    private function getPmtOrderId()
+    private function getPagantisOrderId()
     {
         try {
-            $this->pmtOrderId= Db::getInstance()->getValue(
-                'select order_id from '._DB_PREFIX_.'pmt_order where id = '.$this->merchantOrderId
+            $this->pagantisOrderId= Db::getInstance()->getValue(
+                'select order_id from '._DB_PREFIX_.'pagantis_order where id = '.$this->merchantOrderId
             );
 
-            if (is_null($this->pmtOrderId)) {
+            if (is_null($this->pagantisOrderId)) {
                 throw new NoIdentificationException();
             }
         } catch (\Exception $exception) {
@@ -209,37 +209,37 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Find PMT Order in Orders Server using PagaMasTarde\OrdersApiClient
+     * Find PAGANTIS Order in Orders Server using Pagantis\OrdersApiClient
      *
      * @throws Exception
      */
-    private function getPmtOrder()
+    private function getPagantisOrder()
     {
-        $this->orderClient = new PmtClient($this->config['publicKey'], $this->config['privateKey']);
-        $this->pmtOrder = $this->orderClient->getOrder($this->pmtOrderId);
-        if (!($this->pmtOrder instanceof PmtModelOrder)) {
+        $this->orderClient = new PagantisClient($this->config['publicKey'], $this->config['privateKey']);
+        $this->pagantisOrder = $this->orderClient->getOrder($this->pagantisOrderId);
+        if (!($this->pagantisOrder instanceof PagantisModelOrder)) {
             throw new OrderNotFoundException();
         }
     }
 
     /**
-     * Compare statuses of merchant order and PMT order, witch have to be the same.
+     * Compare statuses of merchant order and PAGANTIS order, witch have to be the same.
      *
      * @throws Exception
      */
     public function checkOrderStatus()
     {
-        if ($this->pmtOrder->getStatus() === PmtModelOrder::STATUS_CONFIRMED) {
+        if ($this->pagantisOrder->getStatus() === PagantisModelOrder::STATUS_CONFIRMED) {
             $this->jsonResponse = new JsonSuccessResponse();
             $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
-            $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
+            $this->jsonResponse->setPmtOrderId($this->pagantisOrderId);
             return $this->finishProcess(false);
         }
 
-        if ($this->pmtOrder->getStatus() !== PmtModelOrder::STATUS_AUTHORIZED) {
+        if ($this->pagantisOrder->getStatus() !== PagantisModelOrder::STATUS_AUTHORIZED) {
             $status = '-';
-            if ($this->pmtOrder instanceof \PagaMasTarde\OrdersApiClient\Model\Order) {
-                $status = $this->pmtOrder->getStatus();
+            if ($this->pagantisOrder instanceof \Pagantis\OrdersApiClient\Model\Order) {
+                $status = $this->pagantisOrder->getStatus();
             }
             throw new WrongStatusException($status);
         }
@@ -258,13 +258,13 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Check that the merchant order and the order in PMT have the same amount to prevent hacking
+     * Check that the merchant order and the order in PAGANTIS have the same amount to prevent hacking
      *
      * @throws Exception
      */
     public function validateAmount()
     {
-        $totalAmount = $this->pmtOrder->getShoppingCart()->getTotalAmount();
+        $totalAmount = $this->pagantisOrder->getShoppingCart()->getTotalAmount();
         $merchantAmount = (int) (100 * $this->merchantOrder->getOrderTotal(true));
         if ($totalAmount != $merchantAmount) {
             $this->processError = true;
@@ -285,8 +285,9 @@ class PaylaterNotifyModuleFrontController extends AbstractController
                 Configuration::get('PS_OS_PAYMENT'),
                 $this->merchantOrder->getOrderTotal(true),
                 $this->module->displayName,
-                'pmtOrderId: ' . $this->pmtOrder->getId(),
-                array('transaction_id' => $this->pmtOrderId),
+                'pagantisOrderId: ' . $this->pagantisOrder->getId().
+                'pagantisOrderStatus: '. $this->pagantisOrder->getStatus(),
+                array('transaction_id' => $this->pagantisOrderId),
                 null,
                 false,
                 $this->config['secureKey']
@@ -297,18 +298,18 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Confirm the order in PMT
+     * Confirm the order in PAGANTIS
      *
      * @throws Exception
      */
-    private function confirmPmtOrder()
+    private function confirmPagantisOrder()
     {
         try {
-            $this->orderClient->confirmOrder($this->pmtOrderId);
+            $this->orderClient->confirmOrder($this->pagantisOrderId);
             try {
                 $mode = ($_SERVER['REQUEST_METHOD'] == 'POST') ? 'NOTIFICATION' : 'REDIRECTION';
                 $message = 'Order CONFIRMED. The order was confirmed by a ' . $mode .
-                    '. Pagantis OrderId=' . $this->pmtOrderId .
+                    '. Pagantis OrderId=' . $this->pagantisOrderId .
                     '. Prestashop OrderId=' . $this->merchantOrderId;
                 $this->saveLog(array(
                     'message' => $message
@@ -340,7 +341,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     protected function blockConcurrency($orderId)
     {
         try {
-            Db::getInstance()->insert('pmt_cart_process', array('id' => $orderId, 'timestamp' => (time())));
+            Db::getInstance()->insert('pagantis_cart_process', array('id' => $orderId, 'timestamp' => (time())));
         } catch (\Exception $exception) {
             throw new ConcurrencyException();
         }
@@ -354,7 +355,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     protected function unblockConcurrency()
     {
         try {
-            Db::getInstance()->delete('pmt_cart_process', 'timestamp < ' . (time() - 6));
+            Db::getInstance()->delete('pagantis_cart_process', 'timestamp < ' . (time() - 6));
         } catch (\Exception $exception) {
             throw new ConcurrencyException();
         }
@@ -372,15 +373,15 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     {
         if ($this->merchantOrder && $this->processError === true) {
             sleep(5);
-            $id = (!is_null($this->pmtOrder))?$this->pmtOrder->getId():null;
-            $status = (!is_null($this->pmtOrder))?$this->pmtOrder->getStatus():null;
+            $id = (!is_null($this->pagantisOrder))?$this->pagantisOrder->getId():null;
+            $status = (!is_null($this->pagantisOrder))?$this->pagantisOrder->getStatus():null;
             $this->module->validateOrder(
                 $this->merchantOrderId,
                 Configuration::get('PS_OS_ERROR'),
                 $this->merchantOrder->getOrderTotal(true),
                 $this->module->displayName,
-                ' pmtOrderId: ' . $id .
-                ' pmtStatusId:' . $status,
+                ' pagantisOrderId: ' . $id.
+                ' pagantisOrderStatus: '. $status,
                 null,
                 null,
                 false,
@@ -416,7 +417,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
             'id_cart' => $this->merchantOrderId,
             'key' => $this->config['secureKey'],
             'id_module' => $this->module->id,
-            'id_order' => ($this->pmtOrder)?$this->pmtOrder->getId(): null,
+            'id_order' => ($this->pagantisOrder)?$this->pagantisOrder->getId(): null,
         );
         $url = ($error)? $this->config['urlKO'] : $this->config['urlOK'];
         return $this->redirect($url, $parameters);

@@ -1,8 +1,8 @@
 /**
-* This file is part of the official Paga+Tarde module for PrestaShop.
+* This file is part of the official Pagantis module for PrestaShop.
 *
-* @author    Paga+Tarde <soporte@pagamastarde.com>
-* @copyright 2015-2016 Paga+Tarde
+* @author    Pagantis <integrations@pagantis.com>
+* @copyright 2015-2016 Pagantis
 * @license   proprietary
 */
 function findPriceSelector()

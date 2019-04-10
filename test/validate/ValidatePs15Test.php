@@ -21,7 +21,7 @@ class ValidatePs15Test extends AbstractPs15Selenium
     public function testConfirmationPage()
     {
         $this->loginToBackOffice();
-        $this->getPaylaterBackOffice();
+        $this->getPagantisBackOffice();
         $this->findById('module_form_submit_btn')->click();
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(
@@ -35,11 +35,11 @@ class ValidatePs15Test extends AbstractPs15Selenium
         $this->goToProduct();
         $this->addProduct();
         $this->goToCheckout(true);
-        $paylaterCheckout = WebDriverBy::className('paylater-checkout');
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paylaterCheckout);
+        $pagantisCheckout = WebDriverBy::className('pagantis-checkout');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($pagantisCheckout);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->webDriver->findElement($paylaterCheckout)->click();
+        $this->webDriver->findElement($pagantisCheckout)->click();
         SeleniumHelper::finishForm($this->webDriver);
 
         $confirmationMessage = WebDriverBy::id('order-confirmation');

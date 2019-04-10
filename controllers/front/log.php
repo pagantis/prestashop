@@ -1,16 +1,16 @@
 <?php
 /**
- * This file is part of the official Paylater module for PrestaShop.
+ * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Paga+Tarde <soporte@pagamastarde.com>
- * @copyright 2019 Paga+Tarde
+ * @author    Pagantis <integrations@pagantis.com>
+ * @copyright 2019 Pagantis
  * @license   proprietary
  */
 
 /**
- * Class PaylaterLogModuleFrontController
+ * Class PagantisLogModuleFrontController
  */
-class PaylaterLogModuleFrontController extends ModuleFrontController
+class PagantisLogModuleFrontController extends ModuleFrontController
 {
     /**
      * @var string $message
@@ -31,7 +31,7 @@ class PaylaterLogModuleFrontController extends ModuleFrontController
             return;
         };
 
-        $sql = 'SELECT * FROM '._DB_PREFIX_.'pmt_log ORDER BY id desc LIMIT 200';
+        $sql = 'SELECT * FROM '._DB_PREFIX_.'pagantis_log ORDER BY id desc LIMIT 200';
         if ($results = Db::getInstance()->ExecuteS($sql)) {
             foreach ($results as $row) {
                 $this->message[] = (is_null(json_decode($row['log']))) ? $row['log'] : json_decode($row['log']);
@@ -60,7 +60,7 @@ class PaylaterLogModuleFrontController extends ModuleFrontController
      */
     public function authorize()
     {
-        $privateKey = Configuration::get('pmt_private_key');
+        $privateKey = Configuration::get('pagantis_private_key');
 
         if (Tools::getValue('secret', false) == $privateKey) {
             return true;

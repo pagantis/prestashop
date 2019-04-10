@@ -1,16 +1,16 @@
 <?php
 /**
- * This file is part of the official Paylater module for PrestaShop.
+ * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Paga+Tarde <soporte@pagamastarde.com>
- * @copyright 2019 Paga+Tarde
+ * @author    Pagantis <integrations@pagantis.com>
+ * @copyright 2019 Pagantis
  * @license   proprietary
  */
 
 /**
- * Class PaylaterLogModuleFrontController
+ * Class PagantisLogModuleFrontController
  */
-class PaylaterConfigModuleFrontController extends ModuleFrontController
+class PagantisConfigModuleFrontController extends ModuleFrontController
 {
     /**
      * Initial method
@@ -34,15 +34,13 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @return false|string
-     * @throws PrestaShopDatabaseException
+     * @return array
      */
     public function getExtraConfigs()
     {
-        $sql_content = 'select * from ' . _DB_PREFIX_. 'pmt_config';
+        $sql_content = 'select * from ' . _DB_PREFIX_. 'pagantis_config';
         $dbConfigs = Db::getInstance()->executeS($sql_content);
 
-        // Convert a multimple dimension array for SQL insert statements into a simple key/value
         $simpleDbConfigs = array();
         foreach ($dbConfigs as $config) {
             $simpleDbConfigs[$config['config']] = $config['value'];
@@ -67,7 +65,7 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
                 $defaultConfigs = $this->getExtraConfigs();
                 if (isset($defaultConfigs[$config])) {
                     Db::getInstance()->update(
-                        'pmt_config',
+                        'pagantis_config',
                         array('value' => pSQL($value)),
                         'config = \''. pSQL($config) .'\''
                     );
@@ -93,7 +91,7 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
      */
     public function getMethod()
     {
-        $sql_content = 'select * from ' . _DB_PREFIX_. 'pmt_config';
+        $sql_content = 'select * from ' . _DB_PREFIX_. 'pagantis_config';
         $dbConfigs = Db::getInstance()->executeS($sql_content);
 
         $simpleDbConfigs = array();
@@ -108,7 +106,7 @@ class PaylaterConfigModuleFrontController extends ModuleFrontController
      */
     public function authorize()
     {
-        $privateKey = Configuration::get('pmt_private_key');
+        $privateKey = Configuration::get('pagantis_private_key');
 
         if (Tools::getValue('secret', false) == $privateKey) {
             return true;

@@ -1,21 +1,21 @@
 <?php
 /**
- * This file is part of the official Paylater module for PrestaShop.
+ * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Paga+Tarde <soporte@pagamastarde.com>
- * @copyright 2019 Paga+Tarde
+ * @author    Pagantis <integrations@pagantis.com>
+ * @copyright 2019 Pagantis
  * @license   proprietary
  */
 
 require_once('AbstractController.php');
 
-use PagaMasTarde\ModuleUtils\Exception\OrderNotFoundException;
-use PagaMasTarde\ModuleUtils\Exception\UnknownException;
+use Pagantis\ModuleUtils\Exception\OrderNotFoundException;
+use Pagantis\ModuleUtils\Exception\UnknownException;
 
 /**
- * Class PaylaterRedirectModuleFrontController
+ * Class PagantisRedirectModuleFrontController
  */
-class PaylaterPaymentModuleFrontController extends AbstractController
+class PagantisPaymentModuleFrontController extends AbstractController
 {
     /**
      * @param $customer
@@ -25,7 +25,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
     {
         if (_PS_VERSION_ < 1.6) {
             Logger::addLog(
-                'PagaMasTarde Exception For user ' .
+                'Pagantis Exception For user ' .
                 $customer->email .
                 ' : ' .
                 $exception->getMessage(),
@@ -37,7 +37,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
             );
         } else {
             PrestaShopLogger::addLog(
-                'PagaMasTarde Exception For user ' .
+                'Pagantis Exception For user ' .
                 $customer->email .
                 ' : ' .
                 $exception->getMessage(),
@@ -77,12 +77,13 @@ class PaylaterPaymentModuleFrontController extends AbstractController
             null,
             array('step'=>3)
         );
-        $iframe = Paylater::getExtraConfig('PMT_FORM_DISPLAY_TYPE');
-        $cancelUrl = (Paylater::getExtraConfig('PMT_URL_KO') !== '') ? Paylater::getExtraConfig('PMT_URL_KO') : $koUrl;
-        $paylaterPublicKey = Configuration::get('pmt_public_key');
-        $paylaterPrivateKey = Configuration::get('pmt_private_key');
+        $iframe = Pagantis::getExtraConfig('PAGANTIS_FORM_DISPLAY_TYPE');
+        $cancelUrl = (Pagantis::getExtraConfig('PAGANTIS_URL_KO') !== '') ?
+            Pagantis::getExtraConfig('PAGANTIS_URL_KO') : $koUrl;
+        $pagantisPublicKey = Configuration::get('pagantis_public_key');
+        $pagantisPrivateKey = Configuration::get('pagantis_private_key');
         $okUrl = _PS_BASE_URL_.__PS_BASE_URI__
-                 .'index.php?canonical=true&fc=module&module=paylater&controller=notify&'
+                 .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&'
                  .http_build_query($query)
         ;
 
@@ -92,13 +93,13 @@ class PaylaterPaymentModuleFrontController extends AbstractController
         $curlVersion = $curlInfo['version'];
         $metadata = array(
             'ps' => _PS_VERSION_,
-            'pmt' => $this->module->version,
+            'pagantis' => $this->module->version,
             'php' => phpversion(),
             'curl' => $curlVersion,
         );
 
         try {
-            $userAddress =  new \PagaMasTarde\OrdersApiClient\Model\Order\User\Address();
+            $userAddress =  new \Pagantis\OrdersApiClient\Model\Order\User\Address();
             $userAddress
                 ->setZipCode($shippingAddress->postcode)
                 ->setFullName($shippingAddress->firstname . ' ' . $shippingAddress->lastname)
@@ -107,7 +108,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
                 ->setAddress($shippingAddress->address1 . ' ' . $shippingAddress->address2)
             ;
 
-            $orderShippingAddress =  new \PagaMasTarde\OrdersApiClient\Model\Order\User\Address();
+            $orderShippingAddress =  new \Pagantis\OrdersApiClient\Model\Order\User\Address();
             $orderShippingAddress
                 ->setZipCode($shippingAddress->postcode)
                 ->setFullName($shippingAddress->firstname . ' ' . $shippingAddress->lastname)
@@ -119,7 +120,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
                 ->setMobilePhone($shippingAddress->phone_mobile)
             ;
 
-            $orderBillingAddress = new \PagaMasTarde\OrdersApiClient\Model\Order\User\Address();
+            $orderBillingAddress = new \Pagantis\OrdersApiClient\Model\Order\User\Address();
             $orderBillingAddress
                 ->setZipCode($billingAddress->postcode)
                 ->setFullName($billingAddress->firstname . ' ' . $billingAddress->lastname)
@@ -131,7 +132,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
                 ->setMobilePhone($billingAddress->phone_mobile)
             ;
 
-            $orderUser = new \PagaMasTarde\OrdersApiClient\Model\Order\User();
+            $orderUser = new \Pagantis\OrdersApiClient\Model\Order\User();
             $orderUser
                 ->setAddress($userAddress)
                 ->setFullName($orderShippingAddress->getFullName())
@@ -151,7 +152,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
             /** @var \PrestaShop\PrestaShop\Adapter\Entity\Order $order */
             foreach ($orders as $order) {
                 if ($order['valid']) {
-                    $orderHistory = new \PagaMasTarde\OrdersApiClient\Model\Order\User\OrderHistory();
+                    $orderHistory = new \Pagantis\OrdersApiClient\Model\Order\User\OrderHistory();
                     $orderHistory
                         ->setAmount((int) (100 * $order['total_paid']))
                         ->setDate(new \DateTime($order['date_add']))
@@ -160,11 +161,11 @@ class PaylaterPaymentModuleFrontController extends AbstractController
                 }
             }
 
-            $details = new \PagaMasTarde\OrdersApiClient\Model\Order\ShoppingCart\Details();
+            $details = new \Pagantis\OrdersApiClient\Model\Order\ShoppingCart\Details();
             $details->setShippingCost((int) (100 * $cart->getTotalShippingCost()));
             $items = $cart->getProducts();
             foreach ($items as $key => $item) {
-                $product = new \PagaMasTarde\OrdersApiClient\Model\Order\ShoppingCart\Details\Product();
+                $product = new \Pagantis\OrdersApiClient\Model\Order\ShoppingCart\Details\Product();
                 $product
                     ->setAmount((int) (100 * $item['price_wt']))
                     ->setQuantity($item['quantity'])
@@ -172,7 +173,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
                 $details->addProduct($product);
             }
 
-            $orderShoppingCart = new \PagaMasTarde\OrdersApiClient\Model\Order\ShoppingCart();
+            $orderShoppingCart = new \Pagantis\OrdersApiClient\Model\Order\ShoppingCart();
             $orderShoppingCart
                 ->setDetails($details)
                 ->setOrderReference($cart->id)
@@ -180,7 +181,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
                 ->setTotalAmount((int) (100 * $cart->getOrderTotal(true)))
             ;
 
-            $orderConfigurationUrls = new \PagaMasTarde\OrdersApiClient\Model\Order\Configuration\Urls();
+            $orderConfigurationUrls = new \Pagantis\OrdersApiClient\Model\Order\Configuration\Urls();
             $orderConfigurationUrls
                 ->setCancel($cancelUrl)
                 ->setKo($cancelUrl)
@@ -189,25 +190,25 @@ class PaylaterPaymentModuleFrontController extends AbstractController
                 ->setOk($okUrl)
             ;
 
-            $orderChannel = new \PagaMasTarde\OrdersApiClient\Model\Order\Configuration\Channel();
+            $orderChannel = new \Pagantis\OrdersApiClient\Model\Order\Configuration\Channel();
             $orderChannel
                 ->setAssistedSale(false)
-                ->setType(\PagaMasTarde\OrdersApiClient\Model\Order\Configuration\Channel::ONLINE)
+                ->setType(\Pagantis\OrdersApiClient\Model\Order\Configuration\Channel::ONLINE)
             ;
 
-            $orderConfiguration = new \PagaMasTarde\OrdersApiClient\Model\Order\Configuration();
+            $orderConfiguration = new \Pagantis\OrdersApiClient\Model\Order\Configuration();
             $orderConfiguration
                 ->setChannel($orderChannel)
                 ->setUrls($orderConfigurationUrls)
             ;
 
-            $metadataOrder = new \PagaMasTarde\OrdersApiClient\Model\Order\Metadata();
+            $metadataOrder = new \Pagantis\OrdersApiClient\Model\Order\Metadata();
             foreach ($metadata as $key => $metadatum) {
                 $metadataOrder
                     ->addMetadata($key, $metadatum);
             }
 
-            $order = new \PagaMasTarde\OrdersApiClient\Model\Order();
+            $order = new \Pagantis\OrdersApiClient\Model\Order();
             $order
                 ->setConfiguration($orderConfiguration)
                 ->setMetadata($metadataOrder)
@@ -221,20 +222,20 @@ class PaylaterPaymentModuleFrontController extends AbstractController
 
         $url ='';
         try {
-            $orderClient = new \PagaMasTarde\OrdersApiClient\Client(
-                $paylaterPublicKey,
-                $paylaterPrivateKey
+            $orderClient = new \Pagantis\OrdersApiClient\Client(
+                $pagantisPublicKey,
+                $pagantisPrivateKey
             );
             $order = $orderClient->createOrder($order);
-            if ($order instanceof \PagaMasTarde\OrdersApiClient\Model\Order) {
+            if ($order instanceof \Pagantis\OrdersApiClient\Model\Order) {
                 $url = $order->getActionUrls()->getForm();
                 $orderId = $order->getId();
-                $sql = "INSERT INTO `" . _DB_PREFIX_ . "pmt_order` (`id`, `order_id`)
+                $sql = "INSERT INTO `" . _DB_PREFIX_ . "pagantis_order` (`id`, `order_id`)
                      VALUES ('$cart->id','$orderId') 
                      ON DUPLICATE KEY UPDATE `order_id` = '$orderId'";
                 $result = Db::getInstance()->execute($sql);
                 if (!$result) {
-                    throw new UnknownException('Unable to save pmt-order-id in database: '. $sql);
+                    throw new UnknownException('Unable to save pagantis-order-id in database: '. $sql);
                 }
             } else {
                 throw new OrderNotFoundException();
@@ -256,7 +257,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
                 if (_PS_VERSION_ < 1.7) {
                     $this->setTemplate('payment-15.tpl');
                 } else {
-                    $this->setTemplate('module:paylater/views/templates/front/payment-17.tpl');
+                    $this->setTemplate('module:pagantis/views/templates/front/payment-17.tpl');
                 }
             } catch (\Exception $exception) {
                 $this->saveLog(array(), $exception);

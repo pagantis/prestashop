@@ -2,13 +2,13 @@
 
 namespace Test\Register;
 
-use Test\Common\AbstractPs15Selenium;
+use Test\Common\AbstractPs16Selenium;
 
 /**
- * @requires prestashop15basic
- * @group prestashop15register
+ * @requires prestashop16basic
+ * @group prestashop16register
  */
-class PaylaterPs15RegisterTest extends AbstractPs15Selenium
+class PagantisPs16RegisterTest extends AbstractPs16Selenium
 {
     /**
      * @throws \Exception

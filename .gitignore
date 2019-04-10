@@ -1,6 +1,7 @@
 /node_modules
 /vendor
 /views/css/
+pagantis*.zip
 paylater*.zip
 config_es.xml
 .env

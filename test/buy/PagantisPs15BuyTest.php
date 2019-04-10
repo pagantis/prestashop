@@ -2,24 +2,22 @@
 
 namespace Test\Buy;
 
-use Test\Common\AbstractPs16Selenium;
+use Test\Common\AbstractPs15Selenium;
 use Httpful\Request;
-use PagaMasTarde\ModuleUtils\Exception\AlreadyProcessedException;
-use PagaMasTarde\ModuleUtils\Exception\NoIdentificationException;
-use PagaMasTarde\ModuleUtils\Exception\QuoteNotFoundException;
+use Pagantis\ModuleUtils\Exception\QuoteNotFoundException;
 
 /**
- * @requires prestashop16install
- * @requires prestashop16register
+ * @requires prestashop15install
+ * @requires prestashop15register
  *
- * @group prestashop16buy
+ * @group prestashop15buy
  */
-class PaylaterPs16BuyTest extends AbstractPs16Selenium
+class PagantisPs15BuyTest extends AbstractPs15Selenium
 {
     /**
      * config route
      */
-    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=paylater&controller=notify';
+    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=pagantis&controller=notify';
 
     /**
      * @throws  \Exception
@@ -30,9 +28,9 @@ class PaylaterPs16BuyTest extends AbstractPs16Selenium
         $this->goToProduct();
         $this->addProduct();
         $this->goToCheckout();
-        $this->verifyPaylater();
+        $this->verifyPagantis();
         $this->checkConcurrency();
-        $this->checkPmtOrderId();
+        $this->checkPagantisOrderId();
         $this->checkAlreadyProcessed();
         $this->quit();
     }
@@ -42,22 +40,27 @@ class PaylaterPs16BuyTest extends AbstractPs16Selenium
      */
     protected function checkConcurrency()
     {
-        $notifyUrl = self::PS16URL.self::NOTIFICATION_FOLDER.'&cart_id=';
+        $notifyUrl = self::PS15URL.self::NOTIFICATION_FOLDER.'&cart_id=';
         $this->assertNotEmpty($notifyUrl, $notifyUrl);
         $response = Request::post($notifyUrl)->expects('json')->send();
         $this->assertNotEmpty($response->body->result, $response);
         $this->assertNotEmpty($response->body->status_code, $response);
         $this->assertNotEmpty($response->body->timestamp, $response);
-        $this->assertContains(QuoteNotFoundException::ERROR_MESSAGE, $response->body->result, "PR=>".$response->body->result);
+        $this->assertContains(
+            QuoteNotFoundException::ERROR_MESSAGE,
+            $response->body->result,
+            "PR=>".$response->body->result
+        );
     }
 
     /**
-     * Check if with a parameter called order-received set to a invalid identification, we can get a NoIdentificationException
+     * Check if with a parameter called order-received set to a invalid identification,
+     * we can get a NoIdentificationException
      */
-    protected function checkPmtOrderId()
+    protected function checkPagantisOrderId()
     {
         $orderId=0;
-        $notifyUrl = self::PS16URL.self::NOTIFICATION_FOLDER.'&cart_id='.$orderId;
+        $notifyUrl = self::PS15URL.self::NOTIFICATION_FOLDER.'&cart_id='.$orderId;
         $this->assertNotEmpty($notifyUrl, $notifyUrl);
         $response = Request::post($notifyUrl)->expects('json')->send();
         $this->assertNotEmpty($response->body->result, $response);
@@ -82,11 +85,15 @@ class PaylaterPs16BuyTest extends AbstractPs16Selenium
      */
     protected function checkAlreadyProcessed()
     {
-        $notifyUrl = self::PS16URL.self::NOTIFICATION_FOLDER.'&cart_id=6';
+        $notifyUrl = self::PS15URL.self::NOTIFICATION_FOLDER.'&cart_id=6';
         $response = Request::post($notifyUrl)->expects('json')->send();
         $this->assertNotEmpty($response->body->result, $response);
         $this->assertNotEmpty($response->body->status_code, $response);
         $this->assertNotEmpty($response->body->timestamp, $response);
-        $this->assertContains(QuoteNotFoundException::ERROR_MESSAGE, $response->body->result, "PR51=>".$response->body->result);
+        $this->assertContains(
+            QuoteNotFoundException::ERROR_MESSAGE,
+            $response->body->result,
+            "PR51=>".$response->body->result
+        );
     }
 }

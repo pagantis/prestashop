@@ -7,14 +7,14 @@ use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
 use Pagantis\SeleniumFormUtils\SeleniumHelper;
-use Test\PaylaterPrestashopTest;
+use Test\PagantisPrestashopTest;
 
 /**
  * Class AbstractPrestashop15CommonTest
  *
  * @package Test\Common
  */
-abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
+abstract class AbstractPs15Selenium extends PagantisPrestashopTest
 {
     /**
      * @throws \Exception
@@ -39,7 +39,7 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
      *
      * @throws \Exception
      */
-    public function uploadPaylater()
+    public function uploadPagantis()
     {
         $this->webDriver->get(self::PS15URL.self::BACKOFFICE_FOLDER);
         $this->findByLinkText('New module')->click();
@@ -48,12 +48,12 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
         $fileInputSearch = $moduleInstallBlock->name('file');
         $fileInput = $this->webDriver->findElement($fileInputSearch);
         $fileInput->setFileDetector(new LocalFileDetector());
-        $fileInput->sendKeys(__DIR__.'/../../paylater.zip');
+        $fileInput->sendKeys(__DIR__.'/../../pagantis.zip');
         $submitButton = WebDriverBy::name('download');
         $condition = WebDriverExpectedCondition::elementToBeClickable($submitButton);
         $this->waitUntil($condition);
         $this->findByName('download')->click();
-        $validatorSearch = WebDriverBy::id('anchorPaylater');
+        $validatorSearch = WebDriverBy::id('anchorPagantis');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
@@ -64,7 +64,7 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
      *
      * @throws \Exception
      */
-    public function getPaylaterBackOffice()
+    public function getPagantisBackOffice()
     {
         $this->webDriver->get(self::PS15URL.self::BACKOFFICE_FOLDER);
         $this->findByLinkText('New module')->click();
@@ -72,11 +72,11 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
         $this->findByLinkText('Modules')->click();
         $this->findByName('quicksearch')
             ->clear()
-            ->sendKeys('Paga+Tarde')
+            ->sendKeys('Pagantis')
             ->sendKeys(WebDriverKeys::ENTER)
         ;
         $this->findByLinkText('Configure')->click();
-        $verify = WebDriverBy::id('pmt_public_key');
+        $verify = WebDriverBy::id('pagantis_public_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
     }
@@ -206,8 +206,8 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
         if ($verifySimulator) {
             //TODO UNCOMMENT THIS WHEN ORDERS HAVE CHECKOUT SIMULATOR
             /*
-            $pmtSimulator = WebDriverBy::className('PmtSimulator');
-            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+            $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
+            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
             */
@@ -250,8 +250,8 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
         $product = $featuredProductCenterSearch->className('s_title_block');
         $this->webDriver->findElement($product)->click();
         if ($verifySimulator) {
-            $pmtSimulator = WebDriverBy::className('PmtSimulator');
-            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pmtSimulator);
+            $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
+            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
             // this sleep is to prevent simulator js render
@@ -260,17 +260,21 @@ abstract class AbstractPs15Selenium extends PaylaterPrestashopTest
     }
 
     /**
-     * Verify paylater
+     * Verify pagantis
      *
      * @throws \Exception
      */
-    public function verifyPaylater()
+    public function verifyPagantis()
     {
-        $paylaterCheckout = WebDriverBy::className('paylater-checkout');
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($paylaterCheckout);
+        $pagantisCheckout = WebDriverBy::className('pagantis-checkout');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($pagantisCheckout);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->webDriver->findElement($paylaterCheckout)->click();
+        $this->webDriver->findElement($pagantisCheckout)->click();
+
+        $condition = WebDriverExpectedCondition::titleContains(self::PAGANTIS_TITLE);
+        $this->webDriver->wait(300)->until($condition, $this->webDriver->getCurrentURL());
+        $this->assertTrue((bool)$condition, "PR32");
 
         SeleniumHelper::finishForm($this->webDriver);
     }

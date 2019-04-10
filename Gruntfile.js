@@ -3,7 +3,7 @@ module.exports = function(grunt) {
         shell: {
             rename: {
                 command:
-                    'cp paylater.zip paylater-$(git rev-parse --abbrev-ref HEAD).zip \n'
+                    'cp pagantis.zip pagantis-$(git rev-parse --abbrev-ref HEAD).zip \n'
             },
             autoindex: {
                 command:
@@ -72,30 +72,30 @@ module.exports = function(grunt) {
         compress: {
             main: {
                 options: {
-                    archive: 'paylater.zip'
+                    archive: 'pagantis.zip'
                 },
                 files: [
-                    {src: ['controllers/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: ['classes/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: ['docs/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: ['override/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: ['logs/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: ['vendor/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: ['translations/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: ['upgrade/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: ['optionaloverride/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: ['oldoverride/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: ['sql/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: ['lib/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: ['defaultoverride/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: ['views/**'], dest: 'paylater/', filter: 'isFile'},
-                    {src: 'index.php', dest: 'paylater/'},
-                    {src: 'paylater.php', dest: 'paylater/'},
-                    {src: 'logo.png', dest: 'paylater/'},
-                    {src: 'logo.gif', dest: 'paylater/'},
-                    {src: 'LICENSE.md', dest: 'paylater/'},
-                    {src: 'CONTRIBUTORS.md', dest: 'paylater/'},
-                    {src: 'README.md', dest: 'paylater/'}
+                    {src: ['controllers/**'], dest: 'pagantis/', filter: 'isFile'},
+                    {src: ['classes/**'], dest: 'pagantis/', filter: 'isFile'},
+                    {src: ['docs/**'], dest: 'pagantis/', filter: 'isFile'},
+                    {src: ['override/**'], dest: 'pagantis/', filter: 'isFile'},
+                    {src: ['logs/**'], dest: 'pagantis/', filter: 'isFile'},
+                    {src: ['vendor/**'], dest: 'pagantis/', filter: 'isFile'},
+                    {src: ['translations/**'], dest: 'pagantis/', filter: 'isFile'},
+                    {src: ['upgrade/**'], dest: 'pagantis/', filter: 'isFile'},
+                    {src: ['optionaloverride/**'], dest: 'pagantis/', filter: 'isFile'},
+                    {src: ['oldoverride/**'], dest: 'pagantis/', filter: 'isFile'},
+                    {src: ['sql/**'], dest: 'pagantis/', filter: 'isFile'},
+                    {src: ['lib/**'], dest: 'pagantis/', filter: 'isFile'},
+                    {src: ['defaultoverride/**'], dest: 'pagantis/', filter: 'isFile'},
+                    {src: ['views/**'], dest: 'pagantis/', filter: 'isFile'},
+                    {src: 'index.php', dest: 'pagantis/'},
+                    {src: 'pagantis.php', dest: 'pagantis/'},
+                    {src: 'logo.png', dest: 'pagantis/'},
+                    {src: 'logo.gif', dest: 'pagantis/'},
+                    {src: 'LICENSE.md', dest: 'pagantis/'},
+                    {src: 'CONTRIBUTORS.md', dest: 'pagantis/'},
+                    {src: 'README.md', dest: 'pagantis/'}
                 ]
             }
         }

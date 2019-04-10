@@ -12,10 +12,10 @@ use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class PaylaterPrestashopTest
+ * Class PagantisPrestashopTest
  * @package Test\Selenium
  */
-abstract class PaylaterPrestashopTest extends TestCase
+abstract class PagantisPrestashopTest extends TestCase
 {
     const PS17URL = 'http://prestashop17-test.docker:8017';
     const PS16URL = 'http://prestashop16-test.docker:8016';
@@ -24,18 +24,23 @@ abstract class PaylaterPrestashopTest extends TestCase
     const BACKOFFICE_FOLDER = '/adminTest';
 
     /**
+     * @todo: change when LS change the form title
+     */
+    const PAGANTIS_TITLE = 'Paga+Tarde';
+
+    /**
      * @var array
      */
     protected $configuration = array(
         'username'      => 'demo@prestashop.com',
         'password'      => 'prestashop_demo',
-        'publicKey'     => 'tk_b406b913ce3b477a8f59bbc4',
-        'secretKey'     => 'cf72f300a2994e42',
+        'publicKey'     => 'tk_34f03879ad2245bfb14ceed0',
+        'secretKey'     => 'ba2fa40476d14047',
         'birthdate'     => '05/05/1989',
         'firstname'     => 'Jøhn',
         'lastname'      => 'Dōès',
-        'email'         => 'john_doe_testing@digitalorigin.com',
-        'company'       => 'Digital Origin SL',
+        'email'         => 'john_doe_testing@pagantis.com',
+        'company'       => 'Pagantis SA',
         'zip'           => '08023',
         'city'          => 'Barcelona',
         'phone'         => '600123123',
@@ -65,7 +70,7 @@ abstract class PaylaterPrestashopTest extends TestCase
         $this->configuration['zip'] = '28'.$faker->randomNumber(3, true);
         $this->configuration['street'] = $faker->streetAddress;
         $this->configuration['phone'] = '6' . $faker->randomNumber(8);
-        $this->configuration['email'] = date('ymd') . '@pagamastarde.com';
+        $this->configuration['email'] = date('ymd') . '@pagantis.com';
         parent::__construct($name, $data, $dataName);
     }
 
@@ -93,7 +98,7 @@ abstract class PaylaterPrestashopTest extends TestCase
      */
     protected function setUp()
     {
-        $this->webDriver = PmtWebDriver::create(
+        $this->webDriver = PagantisWebDriver::create(
             'http://localhost:4444/wd/hub',
             DesiredCapabilities::chrome(),
             120000,
@@ -201,47 +206,19 @@ abstract class PaylaterPrestashopTest extends TestCase
     public function getProperties()
     {
         return array(
-            'PMT_TITLE' => '\'Instant Financing\'',
-            'PMT_SIMULATOR_DISPLAY_TYPE' => 'pmtSDK.simulator.types.SIMPLE',
-            'PMT_SIMULATOR_DISPLAY_SKIN' => 'pmtSDK.simulator.skins.BLUE ',
-            'PMT_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
-            'PMT_SIMULATOR_START_INSTALLMENTS' => '3',
-            'PMT_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
-            'PMT_SIMULATOR_DISPLAY_CSS_POSITION' => 'pmtSDK.simulator.positions.INNER',
-            'PMT_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
-            'PMT_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
-            'PMT_FORM_DISPLAY_TYPE' => '0',
-            'PMT_DISPLAY_MIN_AMOUNT' => '1',
-            'PMT_URL_OK' => '',
-            'PMT_URL_KO' => '',
+            'PAGANTIS_TITLE' => '\'Instant Financing\'',
+            'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'pgSDK.simulator.types.SIMPLE',
+            'PAGANTIS_SIMULATOR_DISPLAY_SKIN' => 'pgSDK.simulator.skins.BLUE ',
+            'PAGANTIS_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
+            'PAGANTIS_SIMULATOR_START_INSTALLMENTS' => '3',
+            'PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
+            'PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION' => 'pgSDK.simulator.positions.INNER',
+            'PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
+            'PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
+            'PAGANTIS_FORM_DISPLAY_TYPE' => '0',
+            'PAGANTIS_DISPLAY_MIN_AMOUNT' => '1',
+            'PAGANTIS_URL_OK' => '',
+            'PAGANTIS_URL_KO' => '',
         );
-    }
-
-    /**
-     * @param array  $properties
-     * @param string $psVersion
-     */
-    public function saveDotEnvFile($properties = array(), $psVersion = '15')
-    {
-        $file = '';
-        foreach ($properties as $key => $value) {
-            $file .= $key . '=' . $value . PHP_EOL;
-        }
-
-        $fp = fopen('/tmp/.env', 'w');
-        fwrite($fp, $file);
-        fclose($fp);
-
-        $command = 'docker cp /tmp/.env prestashop' . $psVersion . ':/var/www/html/modules/paylater/.env 2>&1';
-        $execResult = exec($command);
-        $this->assertEmpty($execResult);
-
-        $command = 'docker-compose exec -T prestashop' . $psVersion.' chmod 777 /var/www/html/modules/paylater/.env';
-        $execResult = exec($command);
-        $this->assertEmpty($execResult);
-
-        $command = 'docker-compose exec -T prestashop' . $psVersion.' chown www-data. /var/www/html/modules/paylater/.env';
-        $execResult = exec($command);
-        $this->assertEmpty($execResult);
     }
 }
