@@ -232,7 +232,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
         if ($this->pagantisOrder->getStatus() === PagantisModelOrder::STATUS_CONFIRMED) {
             $this->jsonResponse = new JsonSuccessResponse();
             $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
-            $this->jsonResponse->setPmtOrderId($this->pagantisOrderId);
+            $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
             return $this->finishProcess(false);
         }
 

@@ -88,7 +88,7 @@ jobs:
           name: Package Generation
           command: |
             ./node_modules/.bin/grunt
-            mv paylater.zip paylater-$CIRCLE_TAG.zip
+            mv pagantis.zip pagantis-$CIRCLE_TAG.zip
             ls *.zip
       - run:
           name: Install GitHub CLI
@@ -102,11 +102,11 @@ jobs:
           name: Push ZIP to GitHub
           command: |
             github-release upload \
-                --user pagamastarde \
+                --user pagantis \
                 --repo prestashop \
                 --tag $CIRCLE_TAG \
-                --name paylater-$CIRCLE_TAG.zip \
-                --file paylater-$CIRCLE_TAG.zip
+                --name pagantis-$CIRCLE_TAG.zip \
+                --file pagantis-$CIRCLE_TAG.zip
 workflows:
   version: 2
   build:

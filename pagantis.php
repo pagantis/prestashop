@@ -150,39 +150,39 @@ class Pagantis extends PaymentModule
      */
     public function migrate()
     {
-        if (Configuration::get('PAYLATER_MIN_AMOUNT')) {
+        if (Configuration::get('PAGANTIS_MIN_AMOUNT')) {
             Db::getInstance()->update(
                 'pagantis_config',
-                array('value' => Configuration::get('PAYLATER_MIN_AMOUNT')),
+                array('value' => Configuration::get('PAGANTIS_MIN_AMOUNT')),
                 'config = \'PAGANTIS_DISPLAY_MIN_AMOUNT\''
             );
-            Configuration::updateValue('PAYLATER_MIN_AMOUNT', false);
+            Configuration::updateValue('PAGANTIS_MIN_AMOUNT', false);
             Configuration::updateValue('pagantis_is_enabled', 1);
             Configuration::updateValue('pagantis_simulator_is_enabled', 1);
 
             // migrating pk/tk from previous version
             if (Configuration::get('pagantis_public_key') === false
-                && Configuration::get('PAYLATER_PUBLIC_KEY_PROD')
+                && Configuration::get('PAGANTIS_PUBLIC_KEY_PROD')
             ) {
-                Configuration::updateValue('pagantis_public_key', Configuration::get('PAYLATER_PUBLIC_KEY_PROD'));
-                Configuration::updateValue('PAYLATER_PUBLIC_KEY_PROD', false);
+                Configuration::updateValue('pagantis_public_key', Configuration::get('PAGANTIS_PUBLIC_KEY_PROD'));
+                Configuration::updateValue('PAGANTIS_PUBLIC_KEY_PROD', false);
             } elseif (Configuration::get('pagantis_public_key') === false
-                && Configuration::get('PAYLATER_PUBLIC_KEY_TEST')
+                && Configuration::get('PAGANTIS_PUBLIC_KEY_TEST')
             ) {
-                Configuration::updateValue('pagantis_public_key', Configuration::get('PAYLATER_PUBLIC_KEY_TEST'));
-                Configuration::updateValue('PAYLATER_PUBLIC_KEY_TEST', false);
+                Configuration::updateValue('pagantis_public_key', Configuration::get('PAGANTIS_PUBLIC_KEY_TEST'));
+                Configuration::updateValue('PAGANTIS_PUBLIC_KEY_TEST', false);
             }
 
             if (Configuration::get('pagantis_private_key') === false
-                && Configuration::get('PAYLATER_PRIVATE_KEY_PROD')
+                && Configuration::get('PAGANTIS_PRIVATE_KEY_PROD')
             ) {
-                Configuration::updateValue('pagantis_private_key', Configuration::get('PAYLATER_PRIVATE_KEY_PROD'));
-                Configuration::updateValue('PAYLATER_PRIVATE_KEY_PROD', false);
+                Configuration::updateValue('pagantis_private_key', Configuration::get('PAGANTIS_PRIVATE_KEY_PROD'));
+                Configuration::updateValue('PAGANTIS_PRIVATE_KEY_PROD', false);
             } elseif (Configuration::get('pagantis_private_key') === false
-                && Configuration::get('PAYLATER_PRIVATE_KEY_TEST')
+                && Configuration::get('PAGANTIS_PRIVATE_KEY_TEST')
             ) {
-                Configuration::updateValue('pagantis_private_key', Configuration::get('PAYLATER_PRIVATE_KEY_TEST'));
-                Configuration::updateValue('PAYLATER_PRIVATE_KEY_TEST', false);
+                Configuration::updateValue('pagantis_private_key', Configuration::get('PAGANTIS_PRIVATE_KEY_TEST'));
+                Configuration::updateValue('PAGANTIS_PRIVATE_KEY_TEST', false);
             }
         }
     }
