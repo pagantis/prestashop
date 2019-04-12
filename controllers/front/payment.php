@@ -87,8 +87,37 @@ class PagantisPaymentModuleFrontController extends AbstractController
                  .http_build_query($query)
         ;
 
+        $firstName = $customer->firstname;
+        $lastName = $customer->lastname;
         $shippingAddress = new Address($cart->id_address_delivery);
         $billingAddress = new Address($cart->id_address_invoice);
+        $fullAddress = $billingAddress->address1 . ' ' . $billingAddress->address2;
+        $city = $billingAddress->city;
+        $postCode = $billingAddress->postcode;
+
+        // order secuence -> user data -> billingAddress data -> shippingAddress data
+        if (empty($firstName)) {
+            $firstName = $billingAddress->firstname;
+            if (empty($firstName)) {
+                $firstName = $shippingAddress->firstname;
+            }
+        }
+        if (empty($lastName)) {
+            $lastName = $billingAddress->lastname;
+            if (empty($lastName)) {
+                $lastName = $shippingAddress->lastname;
+            }
+        }
+        if ($fullAddress == ' ') {
+            $fullAddress = $shippingAddress->address1 . ' ' . $shippingAddress->address2;
+        }
+        if (empty($city)) {
+            $city = $shippingAddress->city;
+        }
+        if (empty($postCode)) {
+            $postCode = $shippingAddress->postcode;
+        }
+
         $curlInfo = curl_version();
         $curlVersion = $curlInfo['version'];
         $metadata = array(
@@ -101,11 +130,11 @@ class PagantisPaymentModuleFrontController extends AbstractController
         try {
             $userAddress =  new \Pagantis\OrdersApiClient\Model\Order\User\Address();
             $userAddress
-                ->setZipCode($shippingAddress->postcode)
-                ->setFullName($shippingAddress->firstname . ' ' . $shippingAddress->lastname)
+                ->setZipCode($postCode)
+                ->setFullName($firstName . ' ' . $lastName)
                 ->setCountryCode('ES')
-                ->setCity($shippingAddress->city)
-                ->setAddress($shippingAddress->address1 . ' ' . $shippingAddress->address2)
+                ->setCity($city)
+                ->setAddress($fullAddress)
             ;
 
             $orderShippingAddress =  new \Pagantis\OrdersApiClient\Model\Order\User\Address();
@@ -135,7 +164,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
             $orderUser = new \Pagantis\OrdersApiClient\Model\Order\User();
             $orderUser
                 ->setAddress($userAddress)
-                ->setFullName($orderShippingAddress->getFullName())
+                ->setFullName($userAddress->getFullName())
                 ->setBillingAddress($orderBillingAddress)
                 ->setEmail($this->context->cookie->logged ? $this->context->cookie->email : $customer->email)
                 ->setFixPhone($shippingAddress->phone)
