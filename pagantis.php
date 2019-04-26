@@ -31,11 +31,6 @@ class Pagantis extends PaymentModule
     public $bootstrap = true;
 
     /**
-     * @var array
-     */
-    public $installErrors = array();
-
-    /**
      * Default module advanced configuration values
      *
      * @var array
@@ -67,7 +62,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.0.0';
+        $this->version = '8.0.1';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -98,18 +93,18 @@ class Pagantis extends PaymentModule
     public function install()
     {
         if (!extension_loaded('curl')) {
-            $this->installErrors[] =
+            $this->_errors[] =
                 $this->l('You have to enable the cURL extension on your server to install this module');
             return false;
         }
         if (!version_compare(phpversion(), '5.3.0', '>=')) {
-            $this->installErrors[] = $this->l('The PHP version bellow 5.3.0 is not supported');
+            $this->_errors[] = $this->l('The PHP version bellow 5.3.0 is not supported');
             return false;
         }
         $curl_info = curl_version();
         $curl_version = $curl_info['version'];
         if (!version_compare($curl_version, '7.34.0', '>=')) {
-            $this->installErrors[] = $this->l('Curl Version is lower than 7.34.0 and does not support TLS 1.2');
+            $this->_errors[] = $this->l('Curl Version is lower than 7.34.0 and does not support TLS 1.2');
             return false;
         }
 
