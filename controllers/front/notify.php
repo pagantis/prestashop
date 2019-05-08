@@ -49,6 +49,11 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     protected $pmtOrderId;
 
     /**
+     * @var string $amountMismatchError
+     */
+    protected $amountMismatchError = '';
+
+    /**
      * @var \PagaMasTarde\OrdersApiClient\Model\Order $pmtOrder
      */
     protected $pmtOrder;
@@ -267,8 +272,15 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         $totalAmount = $this->pmtOrder->getShoppingCart()->getTotalAmount();
         $merchantAmount = (int) (100 * $this->merchantOrder->getOrderTotal(true));
         if ($totalAmount != $merchantAmount) {
-            $this->processError = true;
-            throw new AmountMismatchException($totalAmount, $merchantAmount);
+            try {
+                $this->amountMismatchError = ' Amount mismatch in PrestaShop Order: '. $this->merchantOrderId .
+                    ' with ' . $merchantAmount . ' vs PmtOrder: ' . $this->pmtOrderId . ' with ' . $totalAmount;
+                $this->saveLog(array(
+                    'message' => $this->amountMismatchError
+                ));
+            } catch (\Exception $e) {
+                // Do nothing
+            }
         }
     }
 
@@ -280,12 +292,16 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     public function processMerchantOrder()
     {
         try {
+            $totalAmountInCents = (string) $this->pmtOrder->getShoppingCart()->getTotalAmount();
+            $totalAmount = substr_replace($totalAmountInCents, '.', (strlen($totalAmountInCents) -2), 0);
             $this->module->validateOrder(
                 $this->merchantOrderId,
                 Configuration::get('PS_OS_PAYMENT'),
-                $this->merchantOrder->getOrderTotal(true),
+                $totalAmount,
                 $this->module->displayName,
-                'pmtOrderId: ' . $this->pmtOrder->getId(),
+                'pmtOrderId: ' . $this->pmtOrder->getId() .
+                'pmtOrderStatus: '. $this->pmtOrder->getStatus() .
+                $this->amountMismatchError,
                 array('transaction_id' => $this->pmtOrderId),
                 null,
                 false,
