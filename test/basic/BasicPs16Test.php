@@ -44,15 +44,15 @@ class BasicPs16Test extends AbstractPs16Selenium
      */
     public function testPStotalAmount()
     {
-        $this->assertEquals('500', $this->getPSTotalAmount(5));
-        $this->assertEquals('55500', $this->getPSTotalAmount(555));
-        $this->assertEquals('55555', $this->getPSTotalAmount(555.55));
-        $this->assertEquals('500', $this->getPSTotalAmount('5'));
-        $this->assertEquals('55555', $this->getPSTotalAmount('555.55'));
-        $this->assertEquals('500', $this->getPSTotalAmount((float) 5));
-        $this->assertEquals('55555', $this->getPSTotalAmount((float) 555.55));
-        $this->assertEquals('500', $this->getPSTotalAmount((int) 5));
-        $this->assertEquals('55500', $this->getPSTotalAmount((int) 555.55));
+        $this->assertEquals('900', $this->getPSTotalAmount(9));
+        $this->assertEquals('99900', $this->getPSTotalAmount(999));
+        $this->assertEquals('99999', $this->getPSTotalAmount(999.99));
+        $this->assertEquals('900', $this->getPSTotalAmount('9'));
+        $this->assertEquals('99999', $this->getPSTotalAmount('999.99'));
+        $this->assertEquals('900', $this->getPSTotalAmount((float) 9));
+        $this->assertEquals('99999', $this->getPSTotalAmount((float) 999.99));
+        $this->assertEquals('900', $this->getPSTotalAmount((int) 9));
+        $this->assertEquals('99900', $this->getPSTotalAmount((int) 999.99));
         $this->quit();
     }
 
