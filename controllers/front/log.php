@@ -13,9 +13,9 @@
 class PaylaterLogModuleFrontController extends ModuleFrontController
 {
     /**
-     * @var string $message
+     * @var string $log
      */
-    protected $message;
+    protected $log;
 
     /**
      * @var bool $error
@@ -34,7 +34,19 @@ class PaylaterLogModuleFrontController extends ModuleFrontController
         $sql = 'SELECT * FROM '._DB_PREFIX_.'pmt_log ORDER BY id desc LIMIT 200';
         if ($results = Db::getInstance()->ExecuteS($sql)) {
             foreach ($results as $row) {
-                $this->message[] = (is_null(json_decode($row['log']))) ? $row['log'] : json_decode($row['log']);
+                if (is_null(json_decode($row['log']))) {
+                    $message = $row['log'];
+                } else {
+                    $message = json_decode($row['log'], true);
+                    //var_dump($message);
+                    if (isset($message['message'])) {
+                        $message = $message['message'];
+                    }
+                }
+                $this->log[] = array(
+                    'message' => $message,
+                    'created_at' => $row['createdAt']
+                );
             }
         }
         $this->jsonResponse();
@@ -45,7 +57,7 @@ class PaylaterLogModuleFrontController extends ModuleFrontController
      */
     public function jsonResponse()
     {
-        $result = json_encode($this->message);
+        $result = json_encode($this->log);
 
         header('HTTP/1.1 200 Ok', true, 200);
         header('Content-Type: application/json', true);

@@ -68,10 +68,7 @@ abstract class AbstractController extends ModuleFrontController
                 $logEntry->error($exception);
             }
 
-            $response = json_decode($logEntry->toJson(), true);
-            $response['timestamp'] = time();
-            $response['created_at'] = date('m/d/Y H:i:s', time());
-            $response = json_encode($response);
+            $response = $logEntry->toJson();
 
             if (is_null($response)) {
                 if (count($data) > 0) {
