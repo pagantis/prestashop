@@ -69,6 +69,7 @@ abstract class AbstractController extends ModuleFrontController
             }
 
             $response = $logEntry->toJson();
+
             if (is_null($response)) {
                 if (count($data) > 0) {
                     $response = json_encode($data);

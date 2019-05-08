@@ -173,12 +173,15 @@ class PaylaterPaymentModuleFrontController extends AbstractController
             }
 
             $orderShoppingCart = new \PagaMasTarde\OrdersApiClient\Model\Order\ShoppingCart();
+            $totalAmount = (string) (100 * $cart->getOrderTotal(true));
+            $totalAmount = explode('.', explode(',', $totalAmount)[0])[0];
             $orderShoppingCart
                 ->setDetails($details)
                 ->setOrderReference($cart->id)
                 ->setPromotedAmount(0)
-                ->setTotalAmount((int) (100 * $cart->getOrderTotal(true)))
+                ->setTotalAmount($totalAmount)
             ;
+
 
             $orderConfigurationUrls = new \PagaMasTarde\OrdersApiClient\Model\Order\Configuration\Urls();
             $orderConfigurationUrls

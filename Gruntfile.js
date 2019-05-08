@@ -10,10 +10,10 @@ module.exports = function(grunt) {
                     'php vendor/pagantis/autoindex/index.php . \n'
             },
             composerProd: {
-                command: 'composer install --no-dev'
+                command: 'composer install --no-dev --ignore-platform-reqs'
             },
             composerDev: {
-                command: 'composer install'
+                command: 'composer install --ignore-platform-reqs'
             },
             runTestPrestashop17: {
                 command:

@@ -38,4 +38,31 @@ class BasicPs16Test extends AbstractPs16Selenium
         $this->assertTrue((bool) $condition);
         $this->quit();
     }
+
+    /**
+     * @throws \Exception
+     */
+    public function testPStotalAmount()
+    {
+        $this->assertEquals('900', $this->getPSTotalAmount(9));
+        $this->assertEquals('99900', $this->getPSTotalAmount(999));
+        $this->assertEquals('99999', $this->getPSTotalAmount(999.99));
+        $this->assertEquals('900', $this->getPSTotalAmount('9'));
+        $this->assertEquals('99999', $this->getPSTotalAmount('999.99'));
+        $this->assertEquals('900', $this->getPSTotalAmount((float) 9));
+        $this->assertEquals('99999', $this->getPSTotalAmount((float) 999.99));
+        $this->assertEquals('900', $this->getPSTotalAmount((int) 9));
+        $this->assertEquals('99900', $this->getPSTotalAmount((int) 999.99));
+        $this->quit();
+    }
+
+    /**
+     * @param null $amount
+     * @return mixed
+     */
+    public function getPSTotalAmount($amount = null)
+    {
+        $totalAmount = (string)(100 * $amount);
+        return explode('.', explode(',', $totalAmount)[0])[0];
+    }
 }
