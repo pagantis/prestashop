@@ -273,8 +273,14 @@ class PaylaterNotifyModuleFrontController extends AbstractController
         $merchantAmount = (int) (100 * $this->merchantOrder->getOrderTotal(true));
         if ($totalAmount != $merchantAmount) {
             try {
-                $this->amountMismatchError = ' Amount mismatch in PrestaShop Order: '. $this->merchantOrderId .
-                    ' with ' . $merchantAmount . ' vs PmtOrder: ' . $this->pmtOrderId . ' with ' . $totalAmount;
+                $PsTotalAmount = substr_replace($merchantAmount, '.', (strlen($merchantAmount) -2), 0);
+
+                $PmtTotalAmountInCents = (string) $this->pmtOrder->getShoppingCart()->getTotalAmount();
+                $PmtTotalAmount = substr_replace($PmtTotalAmountInCents, '.', (strlen($PmtTotalAmountInCents) -2), 0);
+
+                $this->amountMismatchError = '. Amount mismatch in PrestaShop Order #'. $this->merchantOrderId .
+                    ' compared with Paga+Tarde Order: ' . $this->pmtOrderId . '. The order in PrestaShop has an amount'.
+                    ' of ' . $PsTotalAmount . ' and in Paga+Tarde ' . $PmtTotalAmount . ' PLEASE REVIEW THE ORDER';
                 $this->saveLog(array(
                     'message' => $this->amountMismatchError
                 ));
@@ -299,7 +305,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
                 Configuration::get('PS_OS_PAYMENT'),
                 $totalAmount,
                 $this->module->displayName,
-                'pmtOrderId: ' . $this->pmtOrder->getId() .
+                'pmtOrderId: ' . $this->pmtOrder->getId() . ' ' .
                 'pmtOrderStatus: '. $this->pmtOrder->getStatus() .
                 $this->amountMismatchError,
                 array('transaction_id' => $this->pmtOrderId),
@@ -308,7 +314,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
                 $this->config['secureKey']
             );
         } catch (\Exception $exception) {
-            throw new UnknownException($exception->getMessage());
+            throw new UnknownException('processMerchantOrder: ' . $exception->getMessage());
         }
     }
 
@@ -324,7 +330,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
             try {
                 $mode = ($_SERVER['REQUEST_METHOD'] == 'POST') ? 'NOTIFICATION' : 'REDIRECTION';
                 $message = 'Order CONFIRMED. The order was confirmed by a ' . $mode .
-                    '. Pagantis OrderId=' . $this->pmtOrderId .
+                    '. Pagantis OrderId=' . $this->pmtOrderId . ' ' .
                     '. Prestashop OrderId=' . $this->merchantOrderId;
                 $this->saveLog(array(
                     'message' => $message
@@ -333,7 +339,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
                 // Do nothing
             }
         } catch (\Exception $exception) {
-            throw new UnknownException($exception->getMessage());
+            throw new UnknownException('confirmPmtOrder: '. $exception->getMessage());
         }
     }
 
@@ -386,24 +392,6 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function cancelProcess($response = null)
     {
-        if ($this->merchantOrder && $this->processError === true) {
-            sleep(5);
-            $id = (!is_null($this->pmtOrder))?$this->pmtOrder->getId():null;
-            $status = (!is_null($this->pmtOrder))?$this->pmtOrder->getStatus():null;
-            $this->module->validateOrder(
-                $this->merchantOrderId,
-                Configuration::get('PS_OS_ERROR'),
-                $this->merchantOrder->getOrderTotal(true),
-                $this->module->displayName,
-                ' pmtOrderId: ' . $id .
-                ' pmtStatusId:' . $status,
-                null,
-                null,
-                false,
-                $this->config['secureKey']
-            );
-        }
-
         $debug = debug_backtrace();
         $method = $debug[1]['function'];
         $line = $debug[1]['line'];
