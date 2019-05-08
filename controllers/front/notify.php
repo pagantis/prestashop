@@ -269,8 +269,9 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function validateAmount()
     {
-        $totalAmount = $this->pmtOrder->getShoppingCart()->getTotalAmount();
-        $merchantAmount = (int) (100 * $this->merchantOrder->getOrderTotal(true));
+        $totalAmount = (string) $this->pmtOrder->getShoppingCart()->getTotalAmount();
+        $merchantAmount = (string) (100 * $this->merchantOrder->getOrderTotal(true));
+        $merchantAmount = explode('.', explode(',', $merchantAmount)[0])[0];
         if ($totalAmount != $merchantAmount) {
             try {
                 $PsTotalAmount = substr_replace($merchantAmount, '.', (strlen($merchantAmount) -2), 0);
