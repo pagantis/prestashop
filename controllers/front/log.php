@@ -38,7 +38,6 @@ class PaylaterLogModuleFrontController extends ModuleFrontController
                     $message = $row['log'];
                 } else {
                     $message = json_decode($row['log'], true);
-                    //var_dump($message);
                     if (isset($message['message'])) {
                         $message = $message['message'];
                     }
