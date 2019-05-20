@@ -372,7 +372,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
                     $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
                     return $this->finishProcess(false);
                 }
-                throw new ConcurrencyException();:
+                throw new ConcurrencyException();
             };
         } catch (\Exception $exception) {
             throw new ConcurrencyException();
