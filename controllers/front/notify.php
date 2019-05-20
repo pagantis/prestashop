@@ -11,7 +11,6 @@ require_once('AbstractController.php');
 
 use PagaMasTarde\OrdersApiClient\Client as PmtClient;
 use PagaMasTarde\OrdersApiClient\Model\Order as PmtModelOrder;
-use PagaMasTarde\ModuleUtils\Exception\AmountMismatchException;
 use PagaMasTarde\ModuleUtils\Exception\ConcurrencyException;
 use PagaMasTarde\ModuleUtils\Exception\MerchantOrderNotFoundException;
 use PagaMasTarde\ModuleUtils\Exception\NoIdentificationException;
@@ -79,6 +78,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     public function postProcess()
     {
         try {
+            $this->prepareVariables();
             $this->checkConcurrency();
             $this->getMerchantOrder();
             $this->getPmtOrderId();
@@ -125,7 +125,6 @@ class PaylaterNotifyModuleFrontController extends AbstractController
      */
     public function checkConcurrency()
     {
-        $this->prepareVariables();
         $this->unblockConcurrency();
         $this->blockConcurrency($this->merchantOrderId);
     }
@@ -243,7 +242,7 @@ class PaylaterNotifyModuleFrontController extends AbstractController
 
         if ($this->pmtOrder->getStatus() !== PmtModelOrder::STATUS_AUTHORIZED) {
             $status = '-';
-            if ($this->pmtOrder instanceof \PagaMasTarde\OrdersApiClient\Model\Order) {
+            if ($this->pmtOrder instanceof PmtModelOrder) {
                 $status = $this->pmtOrder->getStatus();
             }
             throw new WrongStatusException($status);
@@ -363,7 +362,18 @@ class PaylaterNotifyModuleFrontController extends AbstractController
     protected function blockConcurrency($orderId)
     {
         try {
-            Db::getInstance()->insert('pmt_cart_process', array('id' => $orderId, 'timestamp' => (time())));
+            $table = 'pmt_cart_process';
+            if (Db::getInstance()->insert($table, array('id' => $orderId, 'timestamp' => (time()))) === false) {
+                $this->getPmtOrderId();
+                $this->getPmtOrder();
+                if ($this->pmtOrder->getStatus() === PmtModelOrder::STATUS_CONFIRMED) {
+                    $this->jsonResponse = new JsonSuccessResponse();
+                    $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
+                    $this->jsonResponse->setPmtOrderId($this->pmtOrderId);
+                    return $this->finishProcess(false);
+                }
+                throw new ConcurrencyException();:
+            };
         } catch (\Exception $exception) {
             throw new ConcurrencyException();
         }
