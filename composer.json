@@ -14,7 +14,6 @@
         "pagamastarde/module-utils": "^1.1"
     },
     "require-dev": {
-        "doctrine/instantiator": "1.0.5",
         "pagantis/autoindex": "^1.0",
         "pagantis/selenium-form-utils": "^2.0"
     },

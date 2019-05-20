@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ca7ac1a36139a322ecc204d5286e3f38",
+    "content-hash": "a37592b570259d2a43729c660bcc71f0",
     "packages": [
         {
             "name": "nategood/httpful",
@@ -389,16 +389,16 @@
         },
         {
             "name": "pagantis/orders-api-client",
-            "version": "v2.0.1",
+            "version": "v2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pagantis/orders-api-client.git",
-                "reference": "096417dcbc53d2d2d80905758ce58b889c99b632"
+                "reference": "082916c356c901d9c4aa88392c43790272930d0e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pagantis/orders-api-client/zipball/096417dcbc53d2d2d80905758ce58b889c99b632",
-                "reference": "096417dcbc53d2d2d80905758ce58b889c99b632",
+                "url": "https://api.github.com/repos/pagantis/orders-api-client/zipball/082916c356c901d9c4aa88392c43790272930d0e",
+                "reference": "082916c356c901d9c4aa88392c43790272930d0e",
                 "shasum": ""
             },
             "require": {
@@ -407,7 +407,7 @@
                 "php": ">=5.3"
             },
             "require-dev": {
-                "fzaninotto/faker": "^1.7",
+                "fzaninotto/faker": "^1.8",
                 "phpunit/phpunit": "^4.8"
             },
             "type": "library",
@@ -427,7 +427,7 @@
                 }
             ],
             "description": "Pagantis Orders Api Client in PHP. Use the api with simple methods and using OOP.",
-            "time": "2019-03-14T10:56:53+00:00"
+            "time": "2019-05-09T13:55:03+00:00"
         },
         {
             "name": "pagantis/selenium-form-utils",
@@ -447,7 +447,7 @@
                 "facebook/webdriver": "^1.1",
                 "fzaninotto/faker": "^1.8",
                 "pagantis/orders-api-client": "^2.0",
-                "php": ">=7.1",
+                "php": ">=7.0",
                 "phpunit/phpunit": "^4.8",
                 "phpunit/phpunit-selenium": "^2.0"
             },
@@ -464,11 +464,11 @@
             "authors": [
                 {
                     "name": "Pagantis",
-                    "email": "integrations@pagantis.com"
+                    "email": "integration@pagantis.com"
                 }
             ],
             "description": "Pagantis PHP Library. Selenium helper to end a test purchase. Helper to test the payment validation and redirection",
-            "time": "2019-03-19T10:46:23+00:00"
+            "time": "2019-03-13T15:21:40+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -1543,7 +1543,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "backendtea@gmail.com"
+                    "email": "BackEndTea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -1558,25 +1558,25 @@
         },
         {
             "name": "symfony/process",
-            "version": "v4.2.8",
+            "version": "v3.4.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "8cf39fb4ccff793340c258ee7760fd40bfe745fe"
+                "reference": "a9c4dfbf653023b668c282e4e02609d131f4057a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/8cf39fb4ccff793340c258ee7760fd40bfe745fe",
-                "reference": "8cf39fb4ccff793340c258ee7760fd40bfe745fe",
+                "url": "https://api.github.com/repos/symfony/process/zipball/a9c4dfbf653023b668c282e4e02609d131f4057a",
+                "reference": "a9c4dfbf653023b668c282e4e02609d131f4057a",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1.3"
+                "php": "^5.5.9|>=7.0.8"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.2-dev"
+                    "dev-master": "3.4-dev"
                 }
             },
             "autoload": {
@@ -1603,7 +1603,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2019-04-10T16:20:36+00:00"
+            "time": "2019-04-08T16:15:54+00:00"
         },
         {
             "name": "symfony/yaml",
