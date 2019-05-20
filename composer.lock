@@ -387,7 +387,7 @@
         },
         {
             "name": "pagantis/selenium-form-utils",
-            "version": "v2.0.0",
+            "version": "v2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pagantis/selenium-form-utils.git",
