@@ -42,7 +42,8 @@ jobs:
   runTestPrestashop17:
     environment:
       PS_VERSION: shell:runTestPrestashop17
-    machine: true
+    machine:
+      image: ubuntu-1604:201903-01
     working_directory: ~/repo
     steps:
       - checkout
@@ -53,7 +54,8 @@ jobs:
   runTestPrestashop16:
     environment:
       PS_VERSION: shell:runTestPrestashop16
-    machine: true
+    machine:
+      image: ubuntu-1604:201903-01
     working_directory: ~/repo
     steps:
       - checkout
@@ -64,7 +66,8 @@ jobs:
   runTestPrestashop15:
     environment:
       PS_VERSION: shell:runTestPrestashop15
-    machine: true
+    machine:
+      image: ubuntu-1604:201903-01
     working_directory: ~/repo
     steps:
       - checkout
