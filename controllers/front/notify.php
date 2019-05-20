@@ -29,11 +29,6 @@ use Pagantis\ModuleUtils\Model\Response\JsonExceptionResponse;
 class PagantisNotifyModuleFrontController extends AbstractController
 {
     /**
-     * @var bool $processError
-     */
-    protected $processError;
-
-    /**
      * @var string $merchantOrderId
      */
     protected $merchantOrderId;
@@ -47,6 +42,11 @@ class PagantisNotifyModuleFrontController extends AbstractController
      * @var string $pagantisOrderId
      */
     protected $pagantisOrderId;
+
+    /**
+     * @var string $amountMismatchError
+     */
+    protected $amountMismatchError = '';
 
     /**
      * @var \Pagantis\OrdersApiClient\Model\Order $pagantisOrder
@@ -74,6 +74,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function postProcess()
     {
         try {
+            $this->prepareVariables();
             $this->checkConcurrency();
             $this->getMerchantOrder();
             $this->getPagantisOrderId();
@@ -120,7 +121,6 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function checkConcurrency()
     {
-        $this->prepareVariables();
         $this->unblockConcurrency();
         $this->blockConcurrency($this->merchantOrderId);
     }
@@ -132,7 +132,6 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function prepareVariables()
     {
-        $this->processError = false;
         $callbackOkUrl = $this->context->link->getPageLink(
             'order-confirmation',
             null,
@@ -270,6 +269,29 @@ class PagantisNotifyModuleFrontController extends AbstractController
             $this->processError = true;
             throw new AmountMismatchException($totalAmount, $merchantAmount);
         }
+
+
+
+        $totalAmount = (string) $this->pagantisOrder->getShoppingCart()->getTotalAmount();
+        $merchantAmount = (string) (100 * $this->merchantOrder->getOrderTotal(true));
+        $merchantAmount = explode('.', explode(',', $merchantAmount)[0])[0];
+        if ($totalAmount != $merchantAmount) {
+            try {
+                $psTotalAmount = substr_replace($merchantAmount, '.', (strlen($merchantAmount) -2), 0);
+
+                $pgTotalAmountInCents = (string) $this->pagantisOrder->getShoppingCart()->getTotalAmount();
+                $pgTotalAmount = substr_replace($pgTotalAmountInCents, '.', (strlen($pgTotalAmountInCents) -2), 0);
+
+                $this->amountMismatchError = '. Amount mismatch in PrestaShop Order #'. $this->merchantOrderId .
+                    ' compared with Pagantis Order: ' . $this->pagantisOrderId . '. The order in PrestaShop has an amount'.
+                    ' of ' . $psTotalAmount . ' and in Pagantis ' . $pgTotalAmount . ' PLEASE REVIEW THE ORDER';
+                $this->saveLog(array(
+                    'message' => $this->amountMismatchError
+                ));
+            } catch (\Exception $e) {
+                // Do nothing
+            }
+        }
     }
 
     /**
@@ -285,8 +307,9 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 Configuration::get('PS_OS_PAYMENT'),
                 $this->merchantOrder->getOrderTotal(true),
                 $this->module->displayName,
-                ' pagantisOrderId: ' . $this->pagantisOrder->getId().
-                ' pagantisOrderStatus: '. $this->pagantisOrder->getStatus(),
+                'pagantisOrderId: ' . $this->pagantisOrder->getId() . ' ' .
+                'pagantisOrderStatus: '. $this->pagantisOrder->getStatus() .
+                $this->amountMismatchError,
                 array('transaction_id' => $this->pagantisOrderId),
                 null,
                 false,
@@ -341,7 +364,18 @@ class PagantisNotifyModuleFrontController extends AbstractController
     protected function blockConcurrency($orderId)
     {
         try {
-            Db::getInstance()->insert('pagantis_cart_process', array('id' => $orderId, 'timestamp' => (time())));
+            $table = 'pagantis_cart_process';
+            if (Db::getInstance()->insert($table, array('id' => $orderId, 'timestamp' => (time()))) === false) {
+                $this->getPagantisOrderId();
+                $this->getPagantisOrder();
+                if ($this->pagantisOrder->getStatus() === PagantisModelOrder::STATUS_CONFIRMED) {
+                    $this->jsonResponse = new JsonSuccessResponse();
+                    $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
+                    $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
+                    return $this->finishProcess(false);
+                }
+                throw new ConcurrencyException();:
+            };
         } catch (\Exception $exception) {
             throw new ConcurrencyException();
         }
@@ -371,24 +405,6 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function cancelProcess($response = null)
     {
-        if ($this->merchantOrder && $this->processError === true) {
-            sleep(5);
-            $id = (!is_null($this->pagantisOrder))?$this->pagantisOrder->getId():null;
-            $status = (!is_null($this->pagantisOrder))?$this->pagantisOrder->getStatus():null;
-            $this->module->validateOrder(
-                $this->merchantOrderId,
-                Configuration::get('PS_OS_ERROR'),
-                $this->merchantOrder->getOrderTotal(true),
-                $this->module->displayName,
-                ' pagantisOrderId: ' . $id.
-                ' pagantisOrderStatus: '. $status,
-                null,
-                null,
-                false,
-                $this->config['secureKey']
-            );
-        }
-
         $debug = debug_backtrace();
         $method = $debug[1]['function'];
         $line = $debug[1]['line'];
