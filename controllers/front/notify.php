@@ -374,7 +374,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                     $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
                     return $this->finishProcess(false);
                 }
-                throw new ConcurrencyException();:
+                throw new ConcurrencyException();
             };
         } catch (\Exception $exception) {
             throw new ConcurrencyException();
