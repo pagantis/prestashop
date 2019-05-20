@@ -435,12 +435,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pagantis/selenium-form-utils.git",
-                "reference": "24a4d5a19c0fc0f965d857cb2c570dee14d9eeb9"
+                "reference": "26e92f4c7901423a27d7870332e4ac5049252fa2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pagantis/selenium-form-utils/zipball/24a4d5a19c0fc0f965d857cb2c570dee14d9eeb9",
-                "reference": "24a4d5a19c0fc0f965d857cb2c570dee14d9eeb9",
+                "url": "https://api.github.com/repos/pagantis/selenium-form-utils/zipball/26e92f4c7901423a27d7870332e4ac5049252fa2",
+                "reference": "26e92f4c7901423a27d7870332e4ac5049252fa2",
                 "shasum": ""
             },
             "require": {
