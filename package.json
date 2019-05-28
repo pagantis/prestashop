@@ -1,6 +1,6 @@
 {
   "name": "paylater",
-  "version": "7.2.8",
+  "version": "7.2.9",
   "description": "Paga+Tarde integration in prestashop",
   "main": "Gruntfile.js",
   "dependencies": {},

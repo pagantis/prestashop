@@ -62,7 +62,7 @@ class Paylater extends PaymentModule
     {
         $this->name = 'paylater';
         $this->tab = 'payments_gateways';
-        $this->version = '7.2.8';
+        $this->version = '7.2.9';
         $this->author = 'Paga+Tarde';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
