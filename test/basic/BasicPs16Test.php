@@ -58,11 +58,10 @@ class BasicPs16Test extends AbstractPs16Selenium
 
     /**
      * @param null $amount
-     * @return mixed
+     * @return string
      */
     public function getPSTotalAmount($amount = null)
     {
-        $totalAmount = (string)(100 * $amount);
-        return explode('.', explode(',', $totalAmount)[0])[0];
+        return (string) floor(100 * $amount);
     }
 }
