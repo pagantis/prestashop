@@ -153,7 +153,7 @@ class PaylaterPaymentModuleFrontController extends AbstractController
                 if ($order['valid']) {
                     $orderHistory = new \PagaMasTarde\OrdersApiClient\Model\Order\User\OrderHistory();
                     $orderHistory
-                        ->setAmount((int) (100 * $order['total_paid']))
+                        ->setAmount((string) floor(100 * $order['total_paid']))
                         ->setDate(new \DateTime($order['date_add']))
                     ;
                     $orderUser->addOrderHistory($orderHistory);
@@ -161,20 +161,19 @@ class PaylaterPaymentModuleFrontController extends AbstractController
             }
 
             $details = new \PagaMasTarde\OrdersApiClient\Model\Order\ShoppingCart\Details();
-            $details->setShippingCost((int) (100 * $cart->getTotalShippingCost()));
+            $details->setShippingCost((string) floor(100 * $cart->getTotalShippingCost()));
             $items = $cart->getProducts();
             foreach ($items as $key => $item) {
                 $product = new \PagaMasTarde\OrdersApiClient\Model\Order\ShoppingCart\Details\Product();
                 $product
-                    ->setAmount((int) (100 * $item['price_wt']))
+                    ->setAmount((string) floor(100 * $item['price_wt']))
                     ->setQuantity($item['quantity'])
                     ->setDescription($item['name']);
                 $details->addProduct($product);
             }
 
             $orderShoppingCart = new \PagaMasTarde\OrdersApiClient\Model\Order\ShoppingCart();
-            $totalAmount = (string) (100 * $cart->getOrderTotal(true));
-            $totalAmount = explode('.', explode(',', $totalAmount)[0])[0];
+            $totalAmount = (string) floor(100 * $cart->getOrderTotal(true));
             $orderShoppingCart
                 ->setDetails($details)
                 ->setOrderReference($cart->id)

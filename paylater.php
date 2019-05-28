@@ -101,12 +101,6 @@ class Paylater extends PaymentModule
             $this->_errors[] = $this->l('The PHP version bellow 5.3.0 is not supported');
             return false;
         }
-        $curl_info = curl_version();
-        $curl_version = $curl_info['version'];
-        if (!version_compare($curl_version, '7.34.0', '>=')) {
-            $this->_errors[] = $this->l('Curl Version is lower than 7.34.0 and does not support TLS 1.2');
-            return false;
-        }
 
         Configuration::updateValue('pmt_is_enabled', 1);
         Configuration::updateValue('pmt_simulator_is_enabled', 1);
