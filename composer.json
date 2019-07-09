@@ -7,7 +7,7 @@
         {
             "name": "Pagantis",
             "email": "integrations@pagantis.com"
-        }doc
+        }
     ],
     "require": {
         "pagantis/orders-api-client": "^2.0",
