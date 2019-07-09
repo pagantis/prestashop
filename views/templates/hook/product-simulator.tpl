@@ -9,7 +9,7 @@
     <script>
         function checkSimulatorContent() {
             var pgContainer = document.getElementsByClassName("PagantisSimulator");
-            if(typeof pgContainer != 'undefined' && typeof pgContainer[0] != 'undefined') {
+            if(pgContainer.length > 0) {
                 var pgElement = pgContainer[0];
                 if (pgElement.innerHTML != '')
                 {
@@ -21,6 +21,13 @@
 
         function loadSimulator()
         {
+            window.PSSimulatorAttempts = window.attempts + 1;
+            if (window.attempts > 4 )
+            {
+                clearInterval(window.PSSimulatorId);
+                return true;
+            }
+
             if (checkSimulatorContent()) {
                 clearInterval(window.PSSimulatorId);
                 return true;
@@ -94,6 +101,7 @@
             }
             return false;
         }
+        window.PSSimulatorAttempts = 0;
         if (!loadSimulator()) {
             window.PSSimulatorId = setInterval(function () {
                 loadSimulator();

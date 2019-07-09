@@ -22,7 +22,7 @@
         <script type="text/javascript">
             function checkSimulatorContent() {
                 var pgContainer = document.getElementsByClassName("PagantisSimulator");
-                if(typeof pgContainer != 'undefined' && typeof pgContainer[0] != 'undefined') {
+                if(pgContainer.length > 0) {
                     var pgElement = pgContainer[0];
                     if (pgElement.innerHTML != '')
                     {
@@ -36,6 +36,12 @@
                 if (container.length > 0) {
                     $('input[value="pagantis"]').parent().parent().find('.payment_content > p').addClass('pgSimulatorPlaceholder');
                     $(".PagantisSimulator").appendTo(".pgSimulatorPlaceholder");
+                    clearInterval(window.PSSimulatorId);
+                    return true;
+                }
+                window.PSSimulatorAttempts = window.attempts + 1;
+                if (window.attempts > 4 )
+                {
                     clearInterval(window.PSSimulatorId);
                     return true;
                 }
@@ -72,6 +78,7 @@
                 return false;
             }
 
+            window.PSSimulatorAttempts = 0;
             if (!loadSimulator()) {
                 window.PSSimulatorId = setInterval(function () {
                     loadSimulator();

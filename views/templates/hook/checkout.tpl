@@ -17,7 +17,7 @@
         <script type="text/javascript">
             function checkSimulatorContent() {
                 var pgContainer = document.getElementsByClassName("PagantisSimulator");
-                if(typeof pgContainer != 'undefined' && typeof pgContainer[0] != 'undefined') {
+                if(pgContainer.length > 0) {
                     var pgElement = pgContainer[0];
                     if (pgElement.innerHTML != '') {
                         return true;
@@ -28,6 +28,13 @@
 
             function loadSimulator()
             {
+                window.PSSimulatorAttempts = window.attempts + 1;
+                if (window.attempts > 4 )
+                {
+                    clearInterval(window.PSSimulatorId);
+                    return true;
+                }
+
                 if (checkSimulatorContent()) {
                     clearInterval(window.PSSimulatorId);
                     return true;
@@ -44,7 +51,7 @@
                     }
                     var sdk = pgSDK;
                 }
-
+;
                 if (sdk != 'undefined') {
                     sdk.simulator.init({
                         locale: '{$locale|escape:'quotes'}'.toLowerCase(),
@@ -56,6 +63,7 @@
                 }
                 return true;
             }
+            window.PSSimulatorAttempts = 0;
             if (!loadSimulator()) {
                 window.PSSimulatorId = setInterval(function () {
                     loadSimulator();
