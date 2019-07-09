@@ -106,6 +106,8 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setCountryCode('ES')
                 ->setCity($shippingAddress->city)
                 ->setAddress($shippingAddress->address1 . ' ' . $shippingAddress->address2)
+                ->setTaxId($this->getTaxId($customer, $shippingAddress, $billingAddress))
+                ->setNationalId($this->getNationalId($customer, $shippingAddress, $billingAddress))
             ;
 
             $orderShippingAddress =  new \Pagantis\OrdersApiClient\Model\Order\User\Address();
@@ -115,7 +117,8 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setCountryCode('ES')
                 ->setCity($shippingAddress->city)
                 ->setAddress($shippingAddress->address1 . ' ' . $shippingAddress->address2)
-                ->setDni($shippingAddress->dni)
+                ->setTaxId($this->getTaxId($customer, $shippingAddress, $billingAddress))
+                ->setNationalId($this->getNationalId($customer, $shippingAddress, $billingAddress))
                 ->setFixPhone($shippingAddress->phone)
                 ->setMobilePhone($shippingAddress->phone_mobile)
             ;
@@ -127,7 +130,8 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setCountryCode('ES')
                 ->setCity($billingAddress->city)
                 ->setAddress($billingAddress->address1 . ' ' . $billingAddress->address2)
-                ->setDni($billingAddress->dni)
+                ->setTaxId($this->getTaxId($customer, $billingAddress, $shippingAddress))
+                ->setNationalId($this->getNationalId($customer, $billingAddress, $shippingAddress))
                 ->setFixPhone($billingAddress->phone)
                 ->setMobilePhone($billingAddress->phone_mobile)
             ;
@@ -141,7 +145,8 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setFixPhone($shippingAddress->phone)
                 ->setMobilePhone($shippingAddress->phone_mobile)
                 ->setShippingAddress($orderShippingAddress)
-                ->setDni($shippingAddress->dni)
+                ->setTaxId($this->getTaxId($customer, $shippingAddress, $billingAddress))
+                ->setNationalId($this->getNationalId($customer, $shippingAddress, $billingAddress))
             ;
 
             if ($customer->birthday!='0000-00-00') {
@@ -154,7 +159,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 if ($order['valid']) {
                     $orderHistory = new \Pagantis\OrdersApiClient\Model\Order\User\OrderHistory();
                     $orderHistory
-                        ->setAmount((int) (100 * $order['total_paid']))
+                        ->setAmount((string) floor(100 * $order['total_paid']))
                         ->setDate(new \DateTime($order['date_add']))
                     ;
                     $orderUser->addOrderHistory($orderHistory);
@@ -162,23 +167,24 @@ class PagantisPaymentModuleFrontController extends AbstractController
             }
 
             $details = new \Pagantis\OrdersApiClient\Model\Order\ShoppingCart\Details();
-            $details->setShippingCost((int) (100 * $cart->getTotalShippingCost()));
+            $details->setShippingCost((string) floor(100 * $cart->getTotalShippingCost()));
             $items = $cart->getProducts();
             foreach ($items as $key => $item) {
                 $product = new \Pagantis\OrdersApiClient\Model\Order\ShoppingCart\Details\Product();
                 $product
-                    ->setAmount((int) (100 * $item['price_wt']))
+                    ->setAmount((string) floor(100 * $item['price_wt']))
                     ->setQuantity($item['quantity'])
                     ->setDescription($item['name']);
                 $details->addProduct($product);
             }
 
             $orderShoppingCart = new \Pagantis\OrdersApiClient\Model\Order\ShoppingCart();
+            $totalAmount = (string) floor(100 * $cart->getOrderTotal(true));
             $orderShoppingCart
                 ->setDetails($details)
                 ->setOrderReference($cart->id)
                 ->setPromotedAmount(0)
-                ->setTotalAmount((int) (100 * $cart->getOrderTotal(true)))
+                ->setTotalAmount($totalAmount)
             ;
 
             $orderConfigurationUrls = new \Pagantis\OrdersApiClient\Model\Order\Configuration\Urls();
@@ -200,6 +206,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
             $orderConfiguration
                 ->setChannel($orderChannel)
                 ->setUrls($orderConfigurationUrls)
+                // ->setPurchaseCountry(substr(Mage::app()->getLocale()->getLocaleCode(), -2, 2))
             ;
 
             $metadataOrder = new \Pagantis\OrdersApiClient\Model\Order\Metadata();
@@ -265,4 +272,43 @@ class PagantisPaymentModuleFrontController extends AbstractController
             }
         }
     }
+
+    /**
+     * @param null $addressOne
+     * @param null $addressTwo
+     * @return mixed|null
+     */
+    private function getNationalId($customer = null, $addressOne = null, $addressTwo = null)
+    {
+        if ($customer !== null && isset($customer->national_id )) {
+            return $customer->national_id;
+        } elseif ($addressOne !== null and isset($addressOne->national_id)) {
+            return $addressOne->national_id;
+        } elseif ($addressTwo !== null and isset($addressTwo->national_id)) {
+            return $addressTwo->national_id;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param null $addressOne
+     * @param null $addressTwo
+     * @return mixed|null
+     */
+    private function getTaxId($customer = null, $addressOne = null, $addressTwo = null)
+    {
+        if ($customer !== null && isset($customer->tax_id )) {
+            return $customer->tax_id;
+        } elseif ($customer !== null && isset($customer->fiscalcode)) {
+            return $customer->fiscalcode;
+        } elseif ($addressOne !== null and isset($addressOne->tax_id)) {
+            return $addressOne->tax_id;
+        } elseif ($addressTwo !== null and isset($addressTwo->tax_id)) {
+            return $addressTwo->tax_id;
+        } else {
+            return null;
+        }
+    }
+
 }

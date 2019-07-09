@@ -7,9 +7,38 @@
  *}
 {if ($pagantisIsEnabled && $pagantisSimulatorIsEnabled)}
     <script>
+        function checkSimulatorContent() {
+            var pgContainer = document.getElementsByClassName("PagantisSimulator");
+            if(typeof pgContainer != 'undefined' && typeof pgContainer[0] != 'undefined') {
+                var pgElement = pgContainer[0];
+                if (pgElement.innerHTML != '')
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         function loadSimulator()
         {
-            if (typeof pgSDK != 'undefined') {
+            if (checkSimulatorContent()) {
+                clearInterval(window.PSSimulatorId);
+                return true;
+            }
+
+            if ('{$locale|escape:'quotes'}' == 'ES') {
+                if (typeof pmtSDK == 'undefined') {
+                    return false;
+                }
+                var sdk = pmtSDK;
+            } else {
+                if (typeof pgSDK == 'undefined') {
+                    return false;
+                }
+                var sdk = pgSDK;
+            }
+
+            if (typeof sdk != 'undefined') {
                 var price = null;
                 var quantity = null;
                 var positionSelector = '{$pagantisCSSSelector|escape:'quotes'}';
@@ -34,31 +63,34 @@
                     }
                 }
 
-                pgSDK.product_simulator = {};
-                pgSDK.product_simulator.id = 'product-simulator';
-                pgSDK.product_simulator.publicKey = '{$pagantisPublicKey|escape:'quotes'}';
-                pgSDK.product_simulator.selector = positionSelector;
-                pgSDK.product_simulator.numInstalments = '{$pagantisQuotesStart|escape:'quotes'}';
-                pgSDK.product_simulator.type = {$pagantisSimulatorType|escape:'quotes'};
-                pgSDK.product_simulator.skin = {$pagantisSimulatorSkin|escape:'quotes'};
-                pgSDK.product_simulator.position = {$pagantisSimulatorPosition|escape:'quotes'};
+                sdk.product_simulator = {};
+                sdk.product_simulator.id = 'product-simulator';
+                sdk.product_simulator.locale = '{$locale|escape:'quotes'}'.toLowerCase();
+                sdk.product_simulator.publicKey = '{$pagantisPublicKey|escape:'quotes'}';
+                sdk.product_simulator.selector = positionSelector;
+                sdk.product_simulator.numInstalments = '{$pagantisQuotesStart|escape:'quotes'}';
+                sdk.product_simulator.type = {$pagantisSimulatorType|escape:'quotes'};
+                sdk.product_simulator.skin = {$pagantisSimulatorSkin|escape:'quotes'};
+                sdk.product_simulator.position = {$pagantisSimulatorPosition|escape:'quotes'};
 
                 if (priceSelector !== 'default') {
-                    pgSDK.product_simulator.itemAmountSelector = priceSelector;
+                    sdk.product_simulator.itemAmountSelector = priceSelector;
                 }
                 if (quantitySelector !== 'default' && quantitySelector !== 'none') {
-                    pgSDK.product_simulator.itemQuantitySelector = quantitySelector;
+                    sdk.product_simulator.itemQuantitySelector = quantitySelector;
                 }
                 if (price != null) {
-                    pgSDK.product_simulator.itemAmount = price;
+                    sdk.product_simulator.itemAmount = price;
                 }
                 if (quantity != null) {
-                    pgSDK.product_simulator.itemQuantity = quantity;
+                    sdk.product_simulator.itemQuantity = quantity;
                 }
 
-                pgSDK.simulator.init(pgSDK.product_simulator);
-                clearInterval(window.PSSimulatorId);
-                return true;
+                sdk.simulator.init(sdk.product_simulator);
+                if (checkSimulatorContent()) {
+                    return true;
+                }
+                return false;
             }
             return false;
         }
