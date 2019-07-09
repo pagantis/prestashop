@@ -57,6 +57,10 @@ class PagantisPaymentModuleFrontController extends AbstractController
      */
     public function postProcess()
     {
+        $lang = Language::getLanguage($this->context->language->id);
+        $langArray = explode("-", $lang['language_code']);
+        $this->language = strtoupper($langArray[1]);
+
         /** @var Cart $cart */
         $cart = $this->context->cart;
 
@@ -206,7 +210,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
             $orderConfiguration
                 ->setChannel($orderChannel)
                 ->setUrls($orderConfigurationUrls)
-                // ->setPurchaseCountry(substr(Mage::app()->getLocale()->getLocaleCode(), -2, 2))
+                ->setPurchaseCountry($this->language)
             ;
 
             $metadataOrder = new \Pagantis\OrdersApiClient\Model\Order\Metadata();
@@ -234,6 +238,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 $pagantisPrivateKey
             );
             $order = $orderClient->createOrder($order);
+
             if ($order instanceof \Pagantis\OrdersApiClient\Model\Order) {
                 $url = $order->getActionUrls()->getForm();
                 $orderId = $order->getId();
@@ -274,13 +279,14 @@ class PagantisPaymentModuleFrontController extends AbstractController
     }
 
     /**
+     * @param null $customer
      * @param null $addressOne
      * @param null $addressTwo
      * @return mixed|null
      */
     private function getNationalId($customer = null, $addressOne = null, $addressTwo = null)
     {
-        if ($customer !== null && isset($customer->national_id )) {
+        if ($customer !== null && isset($customer->national_id)) {
             return $customer->national_id;
         } elseif ($addressOne !== null and isset($addressOne->national_id)) {
             return $addressOne->national_id;
@@ -292,13 +298,14 @@ class PagantisPaymentModuleFrontController extends AbstractController
     }
 
     /**
+     * @param null $customer
      * @param null $addressOne
      * @param null $addressTwo
      * @return mixed|null
      */
     private function getTaxId($customer = null, $addressOne = null, $addressTwo = null)
     {
-        if ($customer !== null && isset($customer->tax_id )) {
+        if ($customer !== null && isset($customer->tax_id)) {
             return $customer->tax_id;
         } elseif ($customer !== null && isset($customer->fiscalcode)) {
             return $customer->fiscalcode;
