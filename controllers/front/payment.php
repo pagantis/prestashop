@@ -290,8 +290,12 @@ class PagantisPaymentModuleFrontController extends AbstractController
             return $customer->national_id;
         } elseif ($addressOne !== null and isset($addressOne->national_id)) {
             return $addressOne->national_id;
+        } elseif ($addressOne !== null and isset($addressOne->dni)) {
+            return $addressOne->dni;
         } elseif ($addressTwo !== null and isset($addressTwo->national_id)) {
             return $addressTwo->national_id;
+        } elseif ($addressTwo !== null and isset($addressTwo->dni)) {
+            return $addressTwo->dni;
         } else {
             return null;
         }
