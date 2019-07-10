@@ -5,6 +5,7 @@ namespace Test\Common;
 use Facebook\WebDriver\Remote\LocalFileDetector;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
+use Facebook\WebDriver\WebDriverSelect;
 use Pagantis\SeleniumFormUtils\SeleniumHelper;
 use Test\PagantisPrestashopTest;
 
@@ -55,6 +56,30 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
+    }
+
+    /**
+     * @param string $language
+     * @param string $languageName
+     * @throws \Facebook\WebDriver\Exception\NoSuchElementException
+     * @throws \Facebook\WebDriver\Exception\TimeOutException
+     * @throws \Facebook\WebDriver\Exception\UnexpectedTagNameException
+     */
+    public function configureLanguagePack($language = '72', $languageName = 'Español (Spanish)')
+    {
+        $elementSearch = WebDriverBy::partialLinkText('Localization');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($elementSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->findByLinkText('Localization')->click();
+
+        $this->findById('iso_localization_pack_chosen')->click();
+        $this->findByCss('.chosen-results .active-result[data-option-array-index="'. $language .'"]')->click();
+        $this->findByName('submitLocalizationPack')->click();
+
+        $languageInstallSelect = new WebDriverSelect($this->findById('PS_LANG_DEFAULT'));
+        $languageInstallSelect->selectByVisibleText($languageName);
+        $this->findByName('submitOptionsconfiguration')->click();
     }
 
     /**

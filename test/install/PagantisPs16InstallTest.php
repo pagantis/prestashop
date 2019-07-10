@@ -20,6 +20,7 @@ class PagantisPs16InstallTest extends AbstractPs16Selenium
         $this->loginToBackOffice();
         $this->uploadPagantis();
         $this->configurePagantis();
+        $this->configureLanguagePack('72', 'Español (Spanish)');
         $this->quit();
     }
 

@@ -21,6 +21,11 @@ abstract class PagantisPrestashopTest extends TestCase
     const PS16URL = 'http://prestashop16-test.docker:8016';
     const PS15URL = 'http://prestashop15-test.docker:8015';
 
+    // DEV
+    // const PS17URL = 'http://prestashop17-dev.docker:8018';
+    // const PS16URL = 'http://prestashop16-dev.docker:8019';
+    // const PS15URL = 'http://prestashop15-dev.docker:8020';
+
     const BACKOFFICE_FOLDER = '/adminTest';
 
     /**
