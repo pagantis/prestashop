@@ -64,11 +64,12 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
 
     /**
      * @param string $language
+     * @param string $languageName
      * @throws \Facebook\WebDriver\Exception\NoSuchElementException
      * @throws \Facebook\WebDriver\Exception\TimeOutException
      * @throws \Facebook\WebDriver\Exception\UnexpectedTagNameException
      */
-    public function configureLanguagePack($language = '72')
+    public function configureLanguagePack($language = '72', $languageName = 'Español (Spanish)')
     {
         $elementSearch = WebDriverBy::partialLinkText('International');
         $condition = WebDriverExpectedCondition::elementToBeClickable($elementSearch);
