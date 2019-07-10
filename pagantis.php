@@ -87,7 +87,7 @@ class Pagantis extends PaymentModule
 
         $lang = Language::getLanguage($this->context->language->id);
         $langArray = explode("-", $lang['language_code']);
-        $this->language = strtoupper($langArray[1]);
+        $this->language = Tools::strtoupper($langArray[1]);
     }
 
     /**
@@ -276,7 +276,7 @@ class Pagantis extends PaymentModule
         return (
             $cart->getOrderTotal() >= $pagantisDisplayMinAmount &&
             in_array($currency->iso_code, $availableCurrencies) &&
-            in_array(strtolower($this->language), $allowedCountries) &&
+            in_array(Tools::strtolower($this->language), $allowedCountries) &&
             $pagantisPublicKey &&
             $pagantisPrivateKey
         );

@@ -277,10 +277,10 @@ class PagantisNotifyModuleFrontController extends AbstractController
         $merchantAmount = explode('.', explode(',', $merchantAmount)[0])[0];
         if ($totalAmount != $merchantAmount) {
             try {
-                $psTotalAmount = substr_replace($merchantAmount, '.', (strlen($merchantAmount) -2), 0);
+                $psTotalAmount = substr_replace($merchantAmount, '.', (Tools::strlen($merchantAmount) -2), 0);
 
                 $pgTotalAmountInCents = (string) $this->pagantisOrder->getShoppingCart()->getTotalAmount();
-                $pgTotalAmount = substr_replace($pgTotalAmountInCents, '.', (strlen($pgTotalAmountInCents) -2), 0);
+                $pgTotalAmount = substr_replace($pgTotalAmountInCents, '.', (Tools::strlen($pgTotalAmountInCents) -2), 0);
 
                 $this->amountMismatchError = '. Amount mismatch in PrestaShop Order #'. $this->merchantOrderId .
                     ' compared with Pagantis Order: ' . $this->pagantisOrderId . '. The order in PrestaShop has an amount'.

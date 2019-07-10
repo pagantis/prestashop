@@ -59,7 +59,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
     {
         $lang = Language::getLanguage($this->context->language->id);
         $langArray = explode("-", $lang['language_code']);
-        $this->language = strtoupper($langArray[1]);
+        $this->language = Tools::strtoupper($langArray[1]);
 
         /** @var Cart $cart */
         $cart = $this->context->cart;
@@ -321,5 +321,4 @@ class PagantisPaymentModuleFrontController extends AbstractController
             return null;
         }
     }
-
 }
