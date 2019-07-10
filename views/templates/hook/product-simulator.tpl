@@ -8,7 +8,7 @@
 {if ($pagantisIsEnabled && $pagantisSimulatorIsEnabled)}
     <script>
         function checkSimulatorContent() {
-            var pgContainer = document.getElementsByClassName("PagantisSimulator");
+            var pgContainer = document.getElementsByClassName("pagantisSimulator");
             if(pgContainer.length > 0) {
                 var pgElement = pgContainer[0];
                 if (pgElement.innerHTML != '')

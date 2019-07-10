@@ -107,7 +107,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
             $userAddress
                 ->setZipCode($shippingAddress->postcode)
                 ->setFullName($shippingAddress->firstname . ' ' . $shippingAddress->lastname)
-                ->setCountryCode('ES')
+                ->setCountryCode($this->language)
                 ->setCity($shippingAddress->city)
                 ->setAddress($shippingAddress->address1 . ' ' . $shippingAddress->address2)
                 ->setTaxId($this->getTaxId($customer, $shippingAddress, $billingAddress))
@@ -118,7 +118,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
             $orderShippingAddress
                 ->setZipCode($shippingAddress->postcode)
                 ->setFullName($shippingAddress->firstname . ' ' . $shippingAddress->lastname)
-                ->setCountryCode('ES')
+                ->setCountryCode($this->language)
                 ->setCity($shippingAddress->city)
                 ->setAddress($shippingAddress->address1 . ' ' . $shippingAddress->address2)
                 ->setTaxId($this->getTaxId($customer, $shippingAddress, $billingAddress))
@@ -131,7 +131,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
             $orderBillingAddress
                 ->setZipCode($billingAddress->postcode)
                 ->setFullName($billingAddress->firstname . ' ' . $billingAddress->lastname)
-                ->setCountryCode('ES')
+                ->setCountryCode($this->language)
                 ->setCity($billingAddress->city)
                 ->setAddress($billingAddress->address1 . ' ' . $billingAddress->address2)
                 ->setTaxId($this->getTaxId($customer, $billingAddress, $shippingAddress))
