@@ -191,6 +191,8 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
             $this->findByName('address1')->clear()->sendKeys('av.diagonal 579');
             $this->findByName('postcode')->clear()->sendKeys($this->configuration['zip']);
             $this->findByName('city')->clear()->sendKeys($this->configuration['city']);
+            $stateSelect = new WebDriverSelect($this->findById('id_state'));
+            $stateSelect->selectByVisibleText($this->configuration['state']);
             $this->findByName('phone')->clear()->sendKeys($this->configuration['phone']);
             $this->findById('delivery-address')->findElement(WebDriverBy::name('confirm-addresses'))->click();
             $processAddress = WebDriverBy::name('confirmDeliveryOption');

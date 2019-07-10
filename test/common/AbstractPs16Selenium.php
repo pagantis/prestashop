@@ -174,7 +174,7 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         );
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
-        $this->findByLinkText('Cart')->click();
+        $this->findByLinkText('Carrito')->click();
         $checkoutButton = WebDriverBy::className('standard-checkout');
         $condition      = WebDriverExpectedCondition::visibilityOfElementLocated($checkoutButton);
         $this->waitUntil($condition);
@@ -192,6 +192,8 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
             $this->findById('address1')->clear()->sendKeys('av.diagonal 579');
             $this->findById('postcode')->clear()->sendKeys($this->configuration['zip']);
             $this->findById('city')->clear()->sendKeys($this->configuration['city']);
+            $stateSelect = new WebDriverSelect($this->findById('id_state'));
+            $stateSelect->selectByVisibleText($this->configuration['state']);
             $this->findById('phone')->clear()->sendKeys($this->configuration['phone']);
             $this->findById('phone_mobile')->clear()->sendKeys($this->configuration['phone']);
             $this->findById('dni')->clear()->sendKeys($this->configuration['dni']);
