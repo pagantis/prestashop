@@ -116,7 +116,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
      */
     public function loginToFrontend()
     {
-        $this->webDriver->get(self::PS17URL);
+        $this->webDriver->get(self::PS17URL.self::COUNTRY_QUERYSTRING);
         $login = WebDriverBy::className('user-info');
         $condition = WebDriverExpectedCondition::elementToBeClickable($login);
         $this->waitUntil($condition);
@@ -254,7 +254,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
         if ($verifySimulator) {
-            $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
+            $pagantisSimulator = WebDriverBy::className('PagantisSimulator');
             $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);

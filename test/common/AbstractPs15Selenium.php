@@ -240,7 +240,7 @@ abstract class AbstractPs15Selenium extends PagantisPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         if ($verifySimulator) {
-            $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
+            $pagantisSimulator = WebDriverBy::className('PagantisSimulator');
             $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
@@ -283,7 +283,7 @@ abstract class AbstractPs15Selenium extends PagantisPrestashopTest
         $product = $featuredProductCenterSearch->className('s_title_block');
         $this->webDriver->findElement($product)->click();
         if ($verifySimulator) {
-            $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
+            $pagantisSimulator = WebDriverBy::className('PagantisSimulator');
             $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
