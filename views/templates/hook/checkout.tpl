@@ -11,12 +11,12 @@
         <p class="payment_module Pagantis ps_version_{$ps_version|escape:'quotes'}">
             <a class="pagantis-checkout ps_version_{$ps_version|escape:'quotes'} locale_{$locale|escape:'quotes'}" href="{$paymentUrl|escape:'html'}" title="{$pagantisTitle|escape:'quotes'}">
                 {$pagantisTitle|escape:'quotes'}
-                <span class="PagantisSimulator ps_version_{$ps_version|escape:'quotes'}"></span>
+                <span class="pagantisSimulator ps_version_{$ps_version|escape:'quotes'}"></span>
             </a>
         </p>
         <script type="text/javascript">
             function checkSimulatorContent() {
-                var pgContainer = document.getElementsByClassName("PagantisSimulator");
+                var pgContainer = document.getElementsByClassName("pagantisSimulator");
                 if(pgContainer.length > 0) {
                     var pgElement = pgContainer[0];
                     if (pgElement.innerHTML != '') {
@@ -56,7 +56,7 @@
                     sdk.simulator.init({
                         locale: '{$locale|escape:'quotes'}'.toLowerCase(),
                         publicKey: '{$pagantisPublicKey|escape:'quotes'}',
-                        selector: '.PagantisSimulator',
+                        selector: '.pagantisSimulator',
                         totalAmount: '{$amount|escape:'quotes'}'
                     });
                     return false;
@@ -71,17 +71,17 @@
             }
         </script>
         <style>
-            .PagantisSimulator {
+            .pagantisSimulator {
                 max-width: 300px;
                 display: block;
                 margin-left: -85px;
                 padding-top: 10px;
             }
-            .PagantisSimulator.ps_version_1-5 {
+            .pagantisSimulator.ps_version_1-5 {
                 padding-top: 0px;
                 margin-top: -15px;
             }
-            .PagantisSimulator.ps_version_1-7 {
+            .pagantisSimulator.ps_version_1-7 {
                 padding-top: 0px;
                 margin-top: -35px;
                 margin-left: -48px;

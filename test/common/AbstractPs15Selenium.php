@@ -153,7 +153,7 @@ abstract class AbstractPs15Selenium extends PagantisPrestashopTest
      */
     public function createAccount()
     {
-        $this->webDriver->get(self::PS15URL);
+        $this->webDriver->get(self::PS15URL.self::COUNTRY_QUERYSTRING);
         $loginButtonSearch = WebDriverBy::className('login');
         $condition = WebDriverExpectedCondition::elementToBeClickable($loginButtonSearch);
         $this->webDriver->wait()->until($condition);
@@ -240,7 +240,7 @@ abstract class AbstractPs15Selenium extends PagantisPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         if ($verifySimulator) {
-            $pagantisSimulator = WebDriverBy::className('PagantisSimulator');
+            $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
             $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
@@ -274,7 +274,7 @@ abstract class AbstractPs15Selenium extends PagantisPrestashopTest
      */
     public function goToProduct($verifySimulator = true)
     {
-        $this->webDriver->get(self::PS15URL);
+        $this->webDriver->get(self::PS15URL.self::COUNTRY_QUERYSTRING);
         $this->findById('header_logo')->click();
         $featuredProductCenterSearch = WebDriverBy::id('featured-products_block_center');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($featuredProductCenterSearch);
@@ -283,7 +283,7 @@ abstract class AbstractPs15Selenium extends PagantisPrestashopTest
         $product = $featuredProductCenterSearch->className('s_title_block');
         $this->webDriver->findElement($product)->click();
         if ($verifySimulator) {
-            $pagantisSimulator = WebDriverBy::className('PagantisSimulator');
+            $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
             $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);

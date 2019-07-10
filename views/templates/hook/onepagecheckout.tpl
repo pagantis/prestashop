@@ -21,7 +21,7 @@
         {/if}
         <script type="text/javascript">
             function checkSimulatorContent() {
-                var pgContainer = document.getElementsByClassName("PagantisSimulator");
+                var pgContainer = document.getElementsByClassName("pagantisSimulator");
                 if(pgContainer.length > 0) {
                     var pgElement = pgContainer[0];
                     if (pgElement.innerHTML != '')
@@ -35,7 +35,7 @@
                 var container = $('input[value="pagantis"]').parent().parent().find('.payment_content > p');
                 if (container.length > 0) {
                     $('input[value="pagantis"]').parent().parent().find('.payment_content > p').addClass('pgSimulatorPlaceholder');
-                    $(".PagantisSimulator").appendTo(".pgSimulatorPlaceholder");
+                    $(".pagantisSimulator").appendTo(".pgSimulatorPlaceholder");
                     clearInterval(window.PSSimulatorId);
                     return true;
                 }
@@ -70,7 +70,7 @@
                     sdk.simulator.init({
                         locale: '{$locale|escape:'quotes'}'.toLowerCase(),
                         publicKey: '{$pagantisPublicKey|escape:'quotes'}',
-                        selector: '.PagantisSimulator',
+                        selector: '.pagantisSimulator',
                         type: sdk.simulator.types.SELECTABLE,
                         totalAmount: '{$amount|escape:'quotes'}'
                     });
@@ -90,4 +90,4 @@
                 content: url(/modules/onepagecheckoutps/views/img/payments/{$logo|escape:'quotes'});
             }
         </style>
-<span class="PagantisSimulator"></span>
+<span class="pagantisSimulator"></span>

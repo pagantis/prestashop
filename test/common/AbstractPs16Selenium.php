@@ -132,7 +132,7 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
      */
     public function createAccount()
     {
-        $this->webDriver->get(self::PS16URL);
+        $this->webDriver->get(self::PS16URL.self::COUNTRY_QUERYSTRING);
         $loginButtonSearch = WebDriverBy::className('login');
         $condition = WebDriverExpectedCondition::elementToBeClickable($loginButtonSearch);
         $this->waitUntil($condition);
@@ -167,7 +167,7 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
      */
     public function goToCheckout($addressExists = false, $verifySimulator = true)
     {
-        $this->webDriver->get(self::PS16URL);
+        $this->webDriver->get(self::PS16URL.self::COUNTRY_QUERYSTRING);
         $shoppingCart = WebDriverBy::className('shopping_cart');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated(
             $shoppingCart
@@ -222,7 +222,7 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         if ($verifySimulator) {
             //TODO UNCOMMENT THIS WHEN ORDERS HAVE CHECKOUT SIMULATOR
             /*
-            $pagantisSimulator = WebDriverBy::className('PagantisSimulator');
+            $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
             $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
@@ -251,7 +251,7 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
      */
     public function goToProduct($verifySimulator = true)
     {
-        $this->webDriver->get(self::PS16URL);
+        $this->webDriver->get(self::PS16URL.self::COUNTRY_QUERYSTRING);
         $this->findById('header_logo')->click();
         $featuredProductCenterSearch = WebDriverBy::id('center_column');
         $condition                   = WebDriverExpectedCondition::visibilityOfElementLocated(
@@ -265,7 +265,7 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
         if ($verifySimulator) {
-            $pagantisSimulator = WebDriverBy::className('PagantisSimulator');
+            $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
             $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
