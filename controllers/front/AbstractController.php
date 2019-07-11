@@ -67,7 +67,6 @@ abstract class AbstractController extends ModuleFrontController
             } elseif (!is_null($exception)) {
                 $logEntry->error($exception);
             }
-
             $response = $logEntry->toJson();
             if (is_null($response)) {
                 if (count($data) > 0) {
@@ -81,13 +80,8 @@ abstract class AbstractController extends ModuleFrontController
                 }
             }
 
-            $response = $logEntry->toJson();
-            if ($response == null) {
-                $response = json_encode($data);
-            }
-
             Db::getInstance()->insert('pagantis_log', array(
-                'log' => $response
+                'log' => str_replace("'", "\'", $response)
             ));
         } catch (\Exception $error) {
             // Do nothing

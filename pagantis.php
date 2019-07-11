@@ -37,18 +37,19 @@ class Pagantis extends PaymentModule
      */
     public $defaultConfigs = array(
         'PAGANTIS_TITLE' => 'Instant Financing',
-        'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'pgSDK.simulator.types.SIMPLE',
-        'PAGANTIS_SIMULATOR_DISPLAY_SKIN' => 'pgSDK.simulator.skins.BLUE',
+        'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'sdk.simulator.types.SIMPLE',
+        'PAGANTIS_SIMULATOR_DISPLAY_SKIN' => 'sdk.simulator.skins.BLUE',
         'PAGANTIS_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
         'PAGANTIS_SIMULATOR_START_INSTALLMENTS' => '3',
         'PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
-        'PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION' => 'pgSDK.simulator.positions.INNER',
+        'PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION' => 'sdk.simulator.positions.INNER',
         'PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
         'PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
         'PAGANTIS_FORM_DISPLAY_TYPE' => '0',
         'PAGANTIS_DISPLAY_MIN_AMOUNT' => '1',
         'PAGANTIS_URL_OK' => '',
         'PAGANTIS_URL_KO' => '',
+        'PAGANTIS_ALLOWED_COUNTRIES' => 'a:2:{i:0;s:2:"es";i:1;s:2:"it";}',
     );
 
     /**
@@ -62,7 +63,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.0.2';
+        $this->version = '8.1.0';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -83,6 +84,10 @@ class Pagantis extends PaymentModule
         $this->checkHooks();
 
         parent::__construct();
+
+        $lang = Language::getLanguage($this->context->language->id);
+        $langArray = explode("-", $lang['language_code']);
+        $this->language = Tools::strtoupper($langArray[1]);
     }
 
     /**
@@ -99,12 +104,6 @@ class Pagantis extends PaymentModule
         }
         if (!version_compare(phpversion(), '5.3.0', '>=')) {
             $this->_errors[] = $this->l('The PHP version bellow 5.3.0 is not supported');
-            return false;
-        }
-        $curl_info = curl_version();
-        $curl_version = $curl_info['version'];
-        if (!version_compare($curl_version, '7.34.0', '>=')) {
-            $this->_errors[] = $this->l('Curl Version is lower than 7.34.0 and does not support TLS 1.2');
             return false;
         }
 
@@ -273,9 +272,11 @@ class Pagantis extends PaymentModule
         $pagantisDisplayMinAmount  = Pagantis::getExtraConfig('PAGANTIS_DISPLAY_MIN_AMOUNT');
         $pagantisPublicKey         = Configuration::get('pagantis_public_key');
         $pagantisPrivateKey        = Configuration::get('pagantis_private_key');
+        $allowedCountries          = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));
         return (
             $cart->getOrderTotal() >= $pagantisDisplayMinAmount &&
             in_array($currency->iso_code, $availableCurrencies) &&
+            in_array(Tools::strtolower($this->language), $allowedCountries) &&
             $pagantisPublicKey &&
             $pagantisPrivateKey
         );
@@ -303,14 +304,18 @@ class Pagantis extends PaymentModule
      */
     public function hookHeader()
     {
+        $url = 'https://cdn.pagantis.com/js/pg-v2/sdk.js';
+        if ($this->language == 'ES' || $this->language == null) {
+            $url = 'https://cdn.pagantis.com/js/pmt-v2/sdk.js';
+        }
         if (_PS_VERSION_ >= "1.7") {
             $this->context->controller->registerJavascript(
                 sha1(mt_rand(1, 90000)),
-                'https://cdn.pagantis.com/js/pg-v2/sdk.js',
+                $url,
                 array('server' => 'remote')
             );
         } else {
-            $this->context->controller->addJS('https://cdn.pagantis.com/js/pg-v2/sdk.js');
+            $this->context->controller->addJS($url);
         }
         $this->context->controller->addJS($this->getPathUri(). 'views/js/simulator.js');
     }
@@ -343,6 +348,7 @@ class Pagantis extends PaymentModule
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
             'amount'                     => $orderTotal,
+            'locale'                     => $this->language,
             'pagantisPublicKey'          => $pagantisPublicKey,
             'pagantisCSSSelector'        => $pagantisSimulatorCSSSelector,
             'pagantisPriceSelector'      => $pagantisSimulatorPriceSelector,
@@ -357,20 +363,18 @@ class Pagantis extends PaymentModule
             'ps_version'                 => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
         ));
 
+        $logo = ($this->language == 'ES' || $this->language == null) ? 'logo_pagamastarde.png' : 'logo_pagantis.png';
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
             ->setCallToActionText($pagantisTitle)
             ->setAction($link->getModuleLink('pagantis', 'payment'))
-            ->setLogo($this->getPathUri(). 'logo.gif')
+            ->setLogo($this->getPathUri(). 'views/img/' . $logo)
             ->setModuleName(__CLASS__)
         ;
 
-
-        if (_PS_VERSION_ < 1.7) {
-            $paymentOption->setAdditionalInformation(
-                $this->fetch('module:pagantis/views/templates/hook/checkout-15.tpl')
-            );
-        }
+        $paymentOption->setAdditionalInformation(
+            $this->fetch('module:pagantis/views/templates/hook/checkout.tpl')
+        );
 
         return array($paymentOption);
     }
@@ -548,6 +552,9 @@ class Pagantis extends PaymentModule
         }
 
         $logo = $this->getPathUri(). 'views/img/logo_pagantis.png';
+        if ($this->language == 'ES' || $this->language == null) {
+            $logo = $this->getPathUri(). 'views/img/logo_pagamastarde.png';
+        }
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
@@ -591,6 +598,10 @@ class Pagantis extends PaymentModule
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
             'amount'                     => $orderTotal,
+            'locale'                     => $this->language,
+            'logo'                       => ($this->language == 'ES' || $this->language == null) ?
+                                            'pagamastarde.png' :
+                                            'pagantis.png',
             'pagantisPublicKey'          => $pagantisPublicKey,
             'pagantisCSSSelector'        => $pagantisSimulatorCSSSelector,
             'pagantisPriceSelector'      => $pagantisSimulatorPriceSelector,
@@ -614,7 +625,7 @@ class Pagantis extends PaymentModule
             $this->checkLogoExists();
             $return = $this->display(__FILE__, 'views/templates/hook/onepagecheckout.tpl');
         } elseif (_PS_VERSION_ < 1.7) {
-            $return = $this->display(__FILE__, 'views/templates/hook/checkout-15.tpl');
+            $return = $this->display(__FILE__, 'views/templates/hook/checkout.tpl');
         }
         return $return;
     }
@@ -655,6 +666,7 @@ class Pagantis extends PaymentModule
 
         $this->context->smarty->assign(array(
             'amount'                     => $amount,
+            'locale'                     => $this->language,
             'pagantisPublicKey'          => $pagantisPublicKey,
             'pagantisCSSSelector'        => $pagantisSimulatorCSSSelector,
             'pagantisPriceSelector'      => $pagantisSimulatorPriceSelector,
@@ -742,11 +754,18 @@ class Pagantis extends PaymentModule
      */
     public function checkLogoExists()
     {
-        $logo = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/'. Tools::strtolower(__CLASS__). '.png';
-        if (!file_exists($logo) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
+        $logoPmt = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/pagamastarde.png';
+        $logoPg = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/pagantis.png';
+        if (!file_exists($logoPmt) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
             copy(
-                _PS_PAGANTIS_DIR . '/views/img/logo-64x64.png',
-                $logo
+                _PS_PAGANTIS_DIR . '/views/img/logo_pagamastarde.png',
+                $logoPmt
+            );
+        }
+        if (!file_exists($logoPg) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
+            copy(
+                _PS_PAGANTIS_DIR . '/views/img/logo_pagantis.png',
+                $logoPg
             );
         }
     }

@@ -21,6 +21,13 @@ abstract class PagantisPrestashopTest extends TestCase
     const PS16URL = 'http://prestashop16-test.docker:8016';
     const PS15URL = 'http://prestashop15-test.docker:8015';
 
+    const COUNTRY_QUERYSTRING = '?id_lang=3';
+
+    // DEV
+    // const PS17URL = 'http://prestashop17-dev.docker:8018';
+    // const PS16URL = 'http://prestashop16-dev.docker:8019';
+    // const PS15URL = 'http://prestashop15-dev.docker:8020';
+
     const BACKOFFICE_FOLDER = '/adminTest';
 
     /**
@@ -43,6 +50,7 @@ abstract class PagantisPrestashopTest extends TestCase
         'company'       => 'Pagantis SA',
         'zip'           => '08023',
         'city'          => 'Barcelona',
+        'state'         => 'Barcelona',
         'phone'         => '600123123',
         'dni'           => '65592819Q',
         'extra'         => 'Free Finance',

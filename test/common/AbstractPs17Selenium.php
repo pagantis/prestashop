@@ -6,6 +6,7 @@ use Facebook\WebDriver\Remote\LocalFileDetector;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
+use Facebook\WebDriver\WebDriverSelect;
 use Pagantis\SeleniumFormUtils\SeleniumHelper;
 use Test\PagantisPrestashopTest;
 
@@ -62,6 +63,34 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
     }
 
     /**
+     * @param string $language
+     * @param string $languageName
+     * @throws \Facebook\WebDriver\Exception\NoSuchElementException
+     * @throws \Facebook\WebDriver\Exception\TimeOutException
+     * @throws \Facebook\WebDriver\Exception\UnexpectedTagNameException
+     */
+    public function configureLanguagePack($language = '72', $languageName = 'Español (Spanish)')
+    {
+        $elementSearch = WebDriverBy::partialLinkText('International');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($elementSearch);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool) $condition);
+        $this->findByLinkText('International')->click();
+
+        // $languageInstallSelect = new WebDriverSelect($this->findById('iso_localization_pack'));
+        // $languageInstallSelect->selectByVisibleText($language);
+
+        $this->findById('iso_localization_pack_chosen')->click();
+        $this->findByCss('.chosen-results .active-result[data-option-array-index="'. $language .'"]')->click();
+
+        $this->findByName('submitLocalizationPack')->click();
+
+        $languageInstallSelect = new WebDriverSelect($this->findById('PS_LANG_DEFAULT'));
+        $languageInstallSelect->selectByVisibleText($languageName);
+        $this->findByName('submitOptionsconfiguration')->click();
+    }
+
+    /**
      * @require loginToBackOffice
      *
      * @throws \Exception
@@ -87,7 +116,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
      */
     public function loginToFrontend()
     {
-        $this->webDriver->get(self::PS17URL);
+        $this->webDriver->get(self::PS17URL.self::COUNTRY_QUERYSTRING);
         $login = WebDriverBy::className('user-info');
         $condition = WebDriverExpectedCondition::elementToBeClickable($login);
         $this->waitUntil($condition);
@@ -107,7 +136,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
      */
     public function createAccount()
     {
-        $this->webDriver->get(self::PS17URL);
+        $this->webDriver->get(self::PS17URL.self::COUNTRY_QUERYSTRING);
         $this->findByClass('user-info')->click();
         $this->findByClass('no-account')->click();
         $this->findByClass('custom-radio')->click();
@@ -162,6 +191,8 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
             $this->findByName('address1')->clear()->sendKeys('av.diagonal 579');
             $this->findByName('postcode')->clear()->sendKeys($this->configuration['zip']);
             $this->findByName('city')->clear()->sendKeys($this->configuration['city']);
+            $stateSelect = new WebDriverSelect($this->findById('id_state'));
+            $stateSelect->selectByVisibleText($this->configuration['state']);
             $this->findByName('phone')->clear()->sendKeys($this->configuration['phone']);
             $this->findById('delivery-address')->findElement(WebDriverBy::name('confirm-addresses'))->click();
             $processAddress = WebDriverBy::name('confirmDeliveryOption');
@@ -211,7 +242,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
      */
     public function goToProduct($verifySimulator = true)
     {
-        $this->webDriver->get(self::PS17URL);
+        $this->webDriver->get(self::PS17URL.self::COUNTRY_QUERYSTRING);
         $this->findById('_desktop_logo')->click();
         $featuredProductCenterSearch = WebDriverBy::className('products');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($featuredProductCenterSearch);
