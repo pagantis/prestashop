@@ -90,3 +90,6 @@ Here you have a complete list of configurations you can change and it's explanat
 
 5 - If everything works fine, you could see the config  
 ![Step 5](./postman_step5.png?raw=true "Step 5") 
+
+6 - Finally you can see the change in checkout page
+![Step 6](./sql_step7.png?raw=true "Step 6")
