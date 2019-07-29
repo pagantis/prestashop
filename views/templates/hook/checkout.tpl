@@ -51,13 +51,17 @@
                     }
                     var sdk = pgSDK;
                 }
-;
+
                 if (sdk != 'undefined') {
                     sdk.simulator.init({
                         locale: '{$locale|escape:'quotes'}'.toLowerCase(),
                         publicKey: '{$pagantisPublicKey|escape:'quotes'}',
                         selector: '.pagantisSimulator',
-                        totalAmount: '{$amount|escape:'quotes'}'
+                        totalAmount: '{$amount|escape:'quotes'}'.replace('.', ','),
+                        amountParserConfig: {
+                            thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'quotes'}',
+                            decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'quotes'}',
+                        }
                     });
                     return false;
                 }

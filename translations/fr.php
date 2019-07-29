@@ -30,6 +30,7 @@ $_MODULE['<{pagantis}prestashop>pagantis_487025a662a748187a3465508a99e261'] = 'S
 $_MODULE['<{pagantis}prestashop>pagantis_7d567c2ecb00ea4dfdd784d480d106be'] = 'Mini simulateur';
 $_MODULE['<{pagantis}prestashop>pagantis_4e9e922d62e39b6bcb1496f9df08b232'] = 'Simulateur sur la page du produit';
 $_MODULE['<{pagantis}prestashop>pagantis_bc5aec8b3232075f74e1d0b4f8ed11a6'] = 'Position du simulateur sur la page du produit';
+$_MODULE['<{pagantis}prestashop>pagantis_8e10949144e33b269808290e903eade1'] = 'Pagantis: Les produits de cette catégorie bénéficient d\'un financement gratuit assumé par le commerçant. Utilisez-le pour promouvoir vos produits ou vos marques.';
 $_MODULE['<{pagantis}prestashop>pagantis_8c3ee3bd035487ff9e18a1cefb97798f'] = 'Dans la colonne de droite';
 $_MODULE['<{pagantis}prestashop>pagantis_73182d259408202a90d4f52e86e786a6'] = 'Dans la colonne de gauche';
 $_MODULE['<{pagantis}prestashop>pagantis_833d0dd40076763634bc5732b2b4cd10'] = 'Dans la colonne de droite du produit';
