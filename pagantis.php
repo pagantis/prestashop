@@ -125,9 +125,8 @@ class Pagantis extends PaymentModule
         Configuration::updateValue('pagantis_public_key', '');
         Configuration::updateValue('pagantis_private_key', '');
 
-        return (parent::install()
+        $return =  (parent::install()
             && $this->registerHook('displayShoppingCart')
-            && $this->registerHook('payment')
             && $this->registerHook('paymentOptions')
             && $this->registerHook('displayRightColumn')
             && $this->registerHook('displayLeftColumn')
@@ -137,6 +136,12 @@ class Pagantis extends PaymentModule
             && $this->registerHook('displayOrderConfirmation')
             && $this->registerHook('header')
         );
+
+        if ($return && _PS_VERSION_ < "1.7") {
+            $return = $this->registerHook('payment');
+        }
+
+        return $return;
     }
 
     /**
