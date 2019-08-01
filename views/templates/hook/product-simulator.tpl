@@ -12,6 +12,7 @@
             display: inline-block;
             width: 100%;
             text-align: center;
+            color: #828282;
         }
         .pagantis-promotion .pmt-no-interest{
             color: #00c1d5
