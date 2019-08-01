@@ -52,7 +52,7 @@ class Pagantis extends PaymentModule
         'PAGANTIS_URL_OK' => '',
         'PAGANTIS_URL_KO' => '',
         'PAGANTIS_ALLOWED_COUNTRIES' => 'a:2:{i:0;s:2:"es";i:1;s:2:"it";}',
-        'PAGANTIS_PROMOTION_EXTRA' => 'Finance this product without interest! - 0% TAE',
+        'PAGANTIS_PROMOTION_EXTRA' => 'Finance this product <span class="pmt-no-interest">without interest!</span>',
         'PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR' => '.',
         'PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR' => ',',
     );
@@ -733,6 +733,7 @@ class Pagantis extends PaymentModule
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
         ));
 
+        //var_dump("<pre>", $pagantisPromotionExtra, $this->l($pagantisPromotionExtra), md5($pagantisPromotionExtra), md5($this->l($pagantisPromotionExtra)));die;
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');
     }
 

@@ -31,7 +31,7 @@ $_MODULE['<{pagantis}prestashop>pagantis_7d567c2ecb00ea4dfdd784d480d106be'] = 'S
 $_MODULE['<{pagantis}prestashop>pagantis_4e9e922d62e39b6bcb1496f9df08b232'] = 'Simulador en página de producto';
 $_MODULE['<{pagantis}prestashop>pagantis_bc5aec8b3232075f74e1d0b4f8ed11a6'] = 'Posición del simulador en página de producto';
 $_MODULE['<{pagantis}prestashop>pagantis_8e10949144e33b269808290e903eade1'] = 'Paga+Tarde: Los productos con esta categoría tienen financiación gratis asumida por el comercio. Úsalo para promocionar tus productos o marcas.';
-$_MODULE['<{pagantis}prestashop>pagantis_637938f04d3a8535eea677df0f3e471e'] = '¡Financia este producto sin intereses! - 0% TAE';
+$_MODULE['<{pagantis}prestashop>pagantis_7585a661f36e84b81feeb49d6b18d1dc'] = '¡Financia este producto <span class="pmt-no-interest">sin intereses!</span>';
 $_MODULE['<{pagantis}prestashop>pagantis_8c3ee3bd035487ff9e18a1cefb97798f'] = 'En la columna derecha';
 $_MODULE['<{pagantis}prestashop>pagantis_73182d259408202a90d4f52e86e786a6'] = 'En la columna izquierda';
 $_MODULE['<{pagantis}prestashop>pagantis_833d0dd40076763634bc5732b2b4cd10'] = 'En la columna derecha del producto';

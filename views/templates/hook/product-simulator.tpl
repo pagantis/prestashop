@@ -8,14 +8,13 @@
 {if ($pagantisIsEnabled && $pagantisSimulatorIsEnabled)}
     <style>
         .pagantis-promotion {
-            text-align: center;
-            font-weight: bold;
-            color: black;
-            font-size: 15px;
-        }
-        .pagantis-promotion.ps_version_1-6 {
             font-size: 11px;
-            padding-left: 8px;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+        }
+        .pagantis-promotion .pmt-no-interest{
+            color: #00c1d5
         }
     </style>
     <script>
@@ -131,7 +130,7 @@
         }
     </script>
     {if $isPromotedProduct == true}
-        <span class="pagantis-promotion ps_version_{$ps_version|escape:'quotes'}" id="pagantis-promotion-extra">{$pagantisPromotionExtra|escape:'quotes'}</span>
+        <span class="pagantis-promotion ps_version_{$ps_version|escape:'quotes'}" id="pagantis-promotion-extra">{Tools::htmlentitiesDecodeUTF8($pagantisPromotionExtra)|escape:'quotes'}</span>
     {/if}
     <div class="pagantisSimulator"></div>
 {/if}
