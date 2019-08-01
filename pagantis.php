@@ -13,6 +13,7 @@ if (!defined('_PS_VERSION_')) {
 
 define('_PS_PAGANTIS_DIR', _PS_MODULE_DIR_. '/pagantis');
 define('PROMOTIONS_CATEGORY', 'pagantis-promotion-product');
+define('PROMOTIONS_CATEGORY_NAME', 'Pagantis Promoted Product');
 
 require _PS_PAGANTIS_DIR.'/vendor/autoload.php';
 
@@ -52,7 +53,6 @@ class Pagantis extends PaymentModule
         'PAGANTIS_URL_KO' => '',
         'PAGANTIS_ALLOWED_COUNTRIES' => 'a:2:{i:0;s:2:"es";i:1;s:2:"it";}',
         'PAGANTIS_PROMOTION_EXTRA' => 'Finance this product without interest! - 0% TAE',
-        //¡Financia este producto sin intereses! - 0% TAE
         'PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR' => '.',
         'PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR' => ',',
     );
@@ -346,6 +346,7 @@ class Pagantis extends PaymentModule
         /** @var Cart $cart */
         $cart                               = $this->context->cart;
         $orderTotal                         = $cart->getOrderTotal();
+        $promotedAmount                     = 0;
         $link                               = $this->context->link;
         $pagantisPublicKey                  = Configuration::get('pagantis_public_key');
         $pagantisSimulatorIsEnabled         = Configuration::get('pagantis_simulator_is_enabled');
@@ -360,6 +361,13 @@ class Pagantis extends PaymentModule
         $pagantisSimulatorThousandSeparator = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR');
         $pagantisSimulatorDecimalSeparator  = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR');
 
+        $items = $cart->getProducts(true);
+        foreach ($items as $key => $item) {
+            $itemCategories = ProductCore::getProductCategoriesFull($item['id_product']);
+            if (in_array(PROMOTIONS_CATEGORY_NAME, array_column($itemCategories, 'name')) !== false) {
+                $promotedAmount += Product::getPriceStatic($item['id_product']);
+            }
+        }
 
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
@@ -601,6 +609,7 @@ class Pagantis extends PaymentModule
 
         $cart                               = $params['cart'];
         $orderTotal                         = $cart->getOrderTotal();
+        $promotedAmount                     = 0;
         $link                               = $this->context->link;
         $pagantisPublicKey                  = Configuration::get('pagantis_public_key');
         $pagantisSimulatorIsEnabled         = Configuration::get('pagantis_simulator_is_enabled');
@@ -615,9 +624,18 @@ class Pagantis extends PaymentModule
         $pagantisSimulatorThousandSeparator = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR');
         $pagantisSimulatorDecimalSeparator  = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR');
 
+        $items = $cart->getProducts(true);
+        foreach ($items as $key => $item) {
+            $itemCategories = ProductCore::getProductCategoriesFull($item['id_product']);
+            if(in_array(PROMOTIONS_CATEGORY_NAME, array_column($itemCategories, 'name')) !== false) {
+                $promotedAmount += Product::getPriceStatic($item['id_product']);
+            }
+        }
+
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $this->context->smarty->assign(array(
             'amount'                             => $orderTotal,
+            'promotedAmount'                     => $promotedAmount,
             'locale'                             => $this->language,
             'logo' => ($this->language == 'ES' || $this->language == null) ? 'pagamastarde.png' : 'pagantis.png',
             'pagantisPublicKey'                  => $pagantisPublicKey,
@@ -665,7 +683,7 @@ class Pagantis extends PaymentModule
         $amount = $product->getPublicPrice();
 
         $itemCategoriesNames = array_column(Product::getProductCategoriesFull($product->id), 'name');
-        $isPromotedProduct = in_array(PROMOTIONS_CATEGORY, $itemCategoriesNames);
+        $isPromotedProduct = in_array(PROMOTIONS_CATEGORY_NAME, $itemCategoriesNames);
 
         $pagantisPublicKey                  = Configuration::get('pagantis_public_key');
         $pagantisSimulatorIsEnabled         = Configuration::get('pagantis_simulator_is_enabled');
@@ -704,7 +722,7 @@ class Pagantis extends PaymentModule
             'pagantisSimulatorPosition'          => $pagantisSimulatorPosition,
             'pagantisQuotesStart'                => $pagantisSimulatorQuotesStart,
             'isPromotedProduct'                  => $isPromotedProduct,
-            'pagantisPromotionExtra'             => $pagantisPromotionExtra,
+            'pagantisPromotionExtra'             => $this->l($pagantisPromotionExtra),
             'pagantisSimulatorThousandSeparator' => $pagantisSimulatorThousandSeparator,
             'pagantisSimulatorDecimalSeparator'  => $pagantisSimulatorDecimalSeparator,
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
@@ -806,10 +824,8 @@ class Pagantis extends PaymentModule
      */
     public function checkPromotionCategory()
     {
-        $categories = Category::getCategories(null, false, false);
-
-        $categories = array_column($categories, 'name');
-        if (!in_array(PROMOTIONS_CATEGORY, $categories)) {
+        $categories = array_column(Category::getCategories(null, false, false), 'name');
+        if (!in_array(PROMOTIONS_CATEGORY_NAME, $categories)) {
             /** @var CategoryCore $category */
             $category = new Category();
             $category->is_root_category = false;
@@ -817,7 +833,7 @@ class Pagantis extends PaymentModule
             $category->meta_description = array( 1=> PROMOTIONS_CATEGORY );
             $category->meta_keywords = array( 1=> PROMOTIONS_CATEGORY );
             $category->meta_title = array( 1=> PROMOTIONS_CATEGORY );
-            $category->name = array( 1=> 'Pagantis Promoted Product' );
+            $category->name = array( 1=> PROMOTIONS_CATEGORY_NAME );
             $category->id_parent = Configuration::get('PS_HOME_CATEGORY');
             $category->active=0;
             $description = 'Pagantis: Products with this category have free financing assumed by the merchant. Use it to promote your products or brands.';

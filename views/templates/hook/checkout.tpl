@@ -58,6 +58,7 @@
                         publicKey: '{$pagantisPublicKey|escape:'quotes'}',
                         selector: '.pagantisSimulator',
                         totalAmount: '{$amount|escape:'quotes'}'.replace('.', ','),
+                        totalPromotedAmount: '{$promotedAmount|escape:'quotes'}'.replace('.', ','),
                         amountParserConfig: {
                             thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'quotes'}',
                             decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'quotes'}',

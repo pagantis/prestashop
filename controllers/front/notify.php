@@ -302,6 +302,14 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function processMerchantOrder()
     {
         try {
+            $metadataOrder = $this->pagantisOrder->getMetadata();
+            $metadataInfo = '';
+            foreach ($metadataOrder as $metadataKey => $metadataValue) {
+                if ($metadataKey == 'promotedProduct') {
+                    $metadataInfo .= $metadataValue;
+                }
+            }
+
             $this->module->validateOrder(
                 $this->merchantOrderId,
                 Configuration::get('PS_OS_PAYMENT'),
@@ -309,7 +317,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $this->module->displayName,
                 'pagantisOrderId: ' . $this->pagantisOrder->getId() . ' ' .
                 'pagantisOrderStatus: '. $this->pagantisOrder->getStatus() .
-                $this->amountMismatchError,
+                $this->amountMismatchError .
+                $metadataInfo,
                 array('transaction_id' => $this->pagantisOrderId),
                 null,
                 false,

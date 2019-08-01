@@ -31,6 +31,7 @@ $_MODULE['<{pagantis}prestashop>pagantis_7d567c2ecb00ea4dfdd784d480d106be'] = 'M
 $_MODULE['<{pagantis}prestashop>pagantis_4e9e922d62e39b6bcb1496f9df08b232'] = 'Simulatore sulla pagina del prodotto';
 $_MODULE['<{pagantis}prestashop>pagantis_bc5aec8b3232075f74e1d0b4f8ed11a6'] = 'Posizione del simulatore sulla pagina del prodotto';
 $_MODULE['<{pagantis}prestashop>pagantis_8e10949144e33b269808290e903eade1'] = 'Pagantis: i prodotti con questa categoria hanno un finanziamento gratuito assunto dal commerciante. Usalo per promuovere i tuoi prodotti o marchi.';
+$_MODULE['<{pagantis}prestashop>pagantis_637938f04d3a8535eea677df0f3e471e'] = 'Finanziare prodotto senza interessi! - 0% TAE';
 $_MODULE['<{pagantis}prestashop>pagantis_8c3ee3bd035487ff9e18a1cefb97798f'] = 'Nella colonna di destra';
 $_MODULE['<{pagantis}prestashop>pagantis_73182d259408202a90d4f52e86e786a6'] = 'Nella colonna di sinistra';
 $_MODULE['<{pagantis}prestashop>pagantis_833d0dd40076763634bc5732b2b4cd10'] = 'Nella colonna di destra del prodotto';

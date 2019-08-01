@@ -106,7 +106,7 @@
                     sdk.product_simulator.itemQuantitySelector = quantitySelector;
                 }
                 if (price != null) {
-                    sdk.product_simulator.itemAmount = price.toString().replace('.', ',');;
+                    sdk.product_simulator.itemAmount = price.toString().replace('.', ',');
                     {if $isPromotedProduct == true}
                         sdk.product_simulator.itemPromotedAmount = price.toString().replace('.', ',');
                     {/if}
