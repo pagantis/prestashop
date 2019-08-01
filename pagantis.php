@@ -138,7 +138,7 @@ class Pagantis extends PaymentModule
         );
 
         if ($return && _PS_VERSION_ < "1.7") {
-            $return = $this->registerHook('payment');
+            $this->registerHook('payment');
         }
 
         return $return;
