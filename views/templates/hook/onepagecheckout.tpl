@@ -72,7 +72,11 @@
                         publicKey: '{$pagantisPublicKey|escape:'quotes'}',
                         selector: '.pagantisSimulator',
                         type: sdk.simulator.types.SELECTABLE,
-                        totalAmount: '{$amount|escape:'quotes'}'
+                        totalAmount: '{$amount|escape:'quotes'}'.replace('.', ','),
+                        amountParserConfig: {
+                            thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'quotes'}',
+                            decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'quotes'}',
+                        }
                     });
                 }
                 return false;

@@ -59,7 +59,9 @@ class PagantisPaymentModuleFrontController extends AbstractController
     {
         $lang = Language::getLanguage($this->context->language->id);
         $langArray = explode("-", $lang['language_code']);
-        $this->language = Tools::strtoupper($langArray[1]);
+        if (count($langArray) != 2 && isset($lang['locale'])) {
+            $langArray = explode("-", $lang['locale']);
+        }
 
         /** @var Cart $cart */
         $cart = $this->context->cart;
@@ -170,25 +172,42 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 }
             }
 
+            $metadataOrder = new \Pagantis\OrdersApiClient\Model\Order\Metadata();
+            foreach ($metadata as $key => $metadatum) {
+                $metadataOrder->addMetadata($key, $metadatum);
+            }
+
             $details = new \Pagantis\OrdersApiClient\Model\Order\ShoppingCart\Details();
             $details->setShippingCost((string) floor(100 * $cart->getTotalShippingCost()));
             $items = $cart->getProducts();
+            $promotedAmount = 0;
             foreach ($items as $key => $item) {
+                $promotedProduct = $this->isPromoted($item['id_product']);
                 $product = new \Pagantis\OrdersApiClient\Model\Order\ShoppingCart\Details\Product();
                 $product
                     ->setAmount((string) floor(100 * $item['price_wt']))
                     ->setQuantity($item['quantity'])
                     ->setDescription($item['name']);
+                if ($promotedProduct) {
+                    $promotedAmount+=$product->getAmount();
+                    $finalPrice = Product::getPriceStatic($item['id_product']);
+                    $promotedMessage = 'Promoted Item: ' . $product->getDescription() .
+                         ' Price: ' . $finalPrice .
+                         ' Qty: ' . $product->getQuantity() .
+                         ' Item ID: ' . $item['id_product'];
+                    $metadataOrder->addMetadata('promotedProduct', $promotedMessage);
+                }
                 $details->addProduct($product);
             }
+
 
             $orderShoppingCart = new \Pagantis\OrdersApiClient\Model\Order\ShoppingCart();
             $totalAmount = (string) floor(100 * $cart->getOrderTotal(true));
             $orderShoppingCart
                 ->setDetails($details)
                 ->setOrderReference($cart->id)
-                ->setPromotedAmount(0)
                 ->setTotalAmount($totalAmount)
+                ->setPromotedAmount($promotedAmount)
             ;
 
             $orderConfigurationUrls = new \Pagantis\OrdersApiClient\Model\Order\Configuration\Urls();
@@ -212,12 +231,6 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setUrls($orderConfigurationUrls)
                 ->setPurchaseCountry($this->language)
             ;
-
-            $metadataOrder = new \Pagantis\OrdersApiClient\Model\Order\Metadata();
-            foreach ($metadata as $key => $metadatum) {
-                $metadataOrder
-                    ->addMetadata($key, $metadatum);
-            }
 
             $order = new \Pagantis\OrdersApiClient\Model\Order();
             $order
@@ -320,5 +333,19 @@ class PagantisPaymentModuleFrontController extends AbstractController
         } else {
             return null;
         }
+    }
+
+    /**
+     * @param $item
+     *
+     * @return bool
+     */
+    private function isPromoted($itemId)
+    {
+        $itemCategories = ProductCore::getProductCategoriesFull($itemId);
+        if (in_array(PROMOTIONS_CATEGORY_NAME, array_column($itemCategories, 'name')) !== false) {
+            return true;
+        }
+        return false;
     }
 }

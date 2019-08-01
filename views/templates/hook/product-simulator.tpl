@@ -6,6 +6,18 @@
  * @license   proprietary
  *}
 {if ($pagantisIsEnabled && $pagantisSimulatorIsEnabled)}
+    <style>
+        .pagantis-promotion {
+            font-size: 11px;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            color: #828282;
+        }
+        .pagantis-promotion .pmt-no-interest{
+            color: #00c1d5
+        }
+    </style>
     <script>
         function checkSimulatorContent() {
             var pgContainer = document.getElementsByClassName("pagantisSimulator");
@@ -79,15 +91,25 @@
                 sdk.product_simulator.type = {$pagantisSimulatorType|escape:'quotes'};
                 sdk.product_simulator.skin = {$pagantisSimulatorSkin|escape:'quotes'};
                 sdk.product_simulator.position = {$pagantisSimulatorPosition|escape:'quotes'};
+                sdk.product_simulator.amountParserConfig =  {
+                    thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'quotes'}',
+                    decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'quotes'}',
+                };
 
                 if (priceSelector !== 'default') {
                     sdk.product_simulator.itemAmountSelector = priceSelector;
+                    {if $isPromotedProduct == true}
+                    sdk.product_simulator.itemPromotedAmountSelector = priceSelector;
+                    {/if}
                 }
                 if (quantitySelector !== 'default' && quantitySelector !== 'none') {
                     sdk.product_simulator.itemQuantitySelector = quantitySelector;
                 }
                 if (price != null) {
-                    sdk.product_simulator.itemAmount = price;
+                    sdk.product_simulator.itemAmount = price.toString().replace('.', ',');
+                    {if $isPromotedProduct == true}
+                        sdk.product_simulator.itemPromotedAmount = price.toString().replace('.', ',');
+                    {/if}
                 }
                 if (quantity != null) {
                     sdk.product_simulator.itemQuantity = quantity;
@@ -108,6 +130,9 @@
             }, 2000);
         }
     </script>
+    {if $isPromotedProduct == true}
+        <span class="pagantis-promotion ps_version_{$ps_version|escape:'quotes'}" id="pagantis-promotion-extra">{Tools::htmlentitiesDecodeUTF8($pagantisPromotionExtra)|escape:'quotes'}</span>
+    {/if}
     <div class="pagantisSimulator"></div>
 {/if}
 

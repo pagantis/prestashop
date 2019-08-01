@@ -280,11 +280,17 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $psTotalAmount = substr_replace($merchantAmount, '.', (Tools::strlen($merchantAmount) -2), 0);
 
                 $pgTotalAmountInCents = (string) $this->pagantisOrder->getShoppingCart()->getTotalAmount();
-                $pgTotalAmount = substr_replace($pgTotalAmountInCents, '.', (Tools::strlen($pgTotalAmountInCents) -2), 0);
+                $pgTotalAmount = substr_replace(
+                    $pgTotalAmountInCents,
+                    '.',
+                    (Tools::strlen($pgTotalAmountInCents) -2),
+                    0
+                );
 
                 $this->amountMismatchError = '. Amount mismatch in PrestaShop Order #'. $this->merchantOrderId .
-                    ' compared with Pagantis Order: ' . $this->pagantisOrderId . '. The order in PrestaShop has an amount'.
-                    ' of ' . $psTotalAmount . ' and in Pagantis ' . $pgTotalAmount . ' PLEASE REVIEW THE ORDER';
+                    ' compared with Pagantis Order: ' . $this->pagantisOrderId .
+                    '. The order in PrestaShop has an amount of ' . $psTotalAmount . ' and in Pagantis ' .
+                    $pgTotalAmount . ' PLEASE REVIEW THE ORDER';
                 $this->saveLog(array(
                     'message' => $this->amountMismatchError
                 ));
@@ -302,6 +308,14 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function processMerchantOrder()
     {
         try {
+            $metadataOrder = $this->pagantisOrder->getMetadata();
+            $metadataInfo = '';
+            foreach ($metadataOrder as $metadataKey => $metadataValue) {
+                if ($metadataKey == 'promotedProduct') {
+                    $metadataInfo .= $metadataValue;
+                }
+            }
+
             $this->module->validateOrder(
                 $this->merchantOrderId,
                 Configuration::get('PS_OS_PAYMENT'),
@@ -309,7 +323,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $this->module->displayName,
                 'pagantisOrderId: ' . $this->pagantisOrder->getId() . ' ' .
                 'pagantisOrderStatus: '. $this->pagantisOrder->getStatus() .
-                $this->amountMismatchError,
+                $this->amountMismatchError .
+                $metadataInfo,
                 array('transaction_id' => $this->pagantisOrderId),
                 null,
                 false,
