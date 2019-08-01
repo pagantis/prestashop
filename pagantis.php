@@ -627,7 +627,7 @@ class Pagantis extends PaymentModule
         $items = $cart->getProducts(true);
         foreach ($items as $key => $item) {
             $itemCategories = ProductCore::getProductCategoriesFull($item['id_product']);
-            if(in_array(PROMOTIONS_CATEGORY_NAME, array_column($itemCategories, 'name')) !== false) {
+            if (in_array(PROMOTIONS_CATEGORY_NAME, array_column($itemCategories, 'name')) !== false) {
                 $promotedAmount += Product::getPriceStatic($item['id_product']);
             }
         }
@@ -836,7 +836,8 @@ class Pagantis extends PaymentModule
             $category->name = array( 1=> PROMOTIONS_CATEGORY_NAME );
             $category->id_parent = Configuration::get('PS_HOME_CATEGORY');
             $category->active=0;
-            $description = 'Pagantis: Products with this category have free financing assumed by the merchant. Use it to promote your products or brands.';
+            $description = 'Pagantis: Products with this category have free financing assumed by the merchant. ' .
+                'Use it to promote your products or brands.';
             $category->description = $this->l($description);
             $category->save();
         }
