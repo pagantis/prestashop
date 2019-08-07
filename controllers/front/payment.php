@@ -17,6 +17,9 @@ use Pagantis\ModuleUtils\Exception\UnknownException;
  */
 class PagantisPaymentModuleFrontController extends AbstractController
 {
+    /** @var string $language */
+    protected $language;
+
     /**
      * @param $customer
      * @param $exception
@@ -57,11 +60,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
      */
     public function postProcess()
     {
-        $lang = Language::getLanguage($this->context->language->id);
-        $langArray = explode("-", $lang['language_code']);
-        if (count($langArray) != 2 && isset($lang['locale'])) {
-            $langArray = explode("-", $lang['locale']);
-        }
+        $this->getUserLanguage();
 
         /** @var Cart $cart */
         $cart = $this->context->cart;
@@ -347,5 +346,20 @@ class PagantisPaymentModuleFrontController extends AbstractController
             return true;
         }
         return false;
+    }
+
+    /**
+     * Get user language
+     */
+    private function getUserLanguage()
+    {
+        $lang = Language::getLanguage($this->context->language->id);
+        $langArray = explode("-", $lang['language_code']);
+        if (count($langArray) != 2 && isset($lang['locale'])) {
+            $langArray = explode("-", $lang['locale']);
+        }
+        $this->language = Tools::strtoupper($langArray[count($langArray)-1]);
+        // Prevent null language detection
+        $this->language = ($this->language) ? $this->language : 'ES';
     }
 }

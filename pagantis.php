@@ -32,6 +32,9 @@ class Pagantis extends PaymentModule
      */
     public $bootstrap = true;
 
+    /** @var string $language */
+    public $language;
+
     /**
      * Default module advanced configuration values
      *
@@ -68,7 +71,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.2.0';
+        $this->version = '8.2.1';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -92,15 +95,7 @@ class Pagantis extends PaymentModule
 
         parent::__construct();
 
-        $lang = Language::getLanguage($this->context->language->id);
-        $langArray = explode("-", $lang['language_code']);
-        if (count($langArray) != 2 && isset($lang['locale'])) {
-            $langArray = explode("-", $lang['locale']);
-        }
-        $this->language = Tools::strtoupper($langArray[count($langArray)-1]);
-
-        // Prevent null language detection
-        $this->language = ($this->language) ? $this->language : 'ES';
+        $this->getUserLanguage();
     }
 
     /**
@@ -733,7 +728,6 @@ class Pagantis extends PaymentModule
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
         ));
 
-        //var_dump("<pre>", $pagantisPromotionExtra, $this->l($pagantisPromotionExtra), md5($pagantisPromotionExtra), md5($this->l($pagantisPromotionExtra)));die;
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');
     }
 
@@ -864,5 +858,20 @@ class Pagantis extends PaymentModule
         }
 
         return $default;
+    }
+
+    /**
+     * Get user language
+     */
+    private function getUserLanguage()
+    {
+        $lang = Language::getLanguage($this->context->language->id);
+        $langArray = explode("-", $lang['language_code']);
+        if (count($langArray) != 2 && isset($lang['locale'])) {
+            $langArray = explode("-", $lang['locale']);
+        }
+        $this->language = Tools::strtoupper($langArray[count($langArray)-1]);
+        // Prevent null language detection
+        $this->language = ($this->language) ? $this->language : 'ES';
     }
 }
