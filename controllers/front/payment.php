@@ -60,7 +60,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
      */
     public function postProcess()
     {
-        $this->language = $this->getUserLanguage();
+        $this->getUserLanguage();
 
         /** @var Cart $cart */
         $cart = $this->context->cart;
