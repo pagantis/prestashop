@@ -828,12 +828,13 @@ class Pagantis extends PaymentModule
         if (!in_array(PROMOTIONS_CATEGORY_NAME, $categories)) {
             /** @var CategoryCore $category */
             $category = new Category();
+            $categoryArray = array((int)Configuration::get('PS_LANG_DEFAULT')=> PROMOTIONS_CATEGORY );
             $category->is_root_category = false;
-            $category->link_rewrite = array( 1=> PROMOTIONS_CATEGORY );
-            $category->meta_description = array( 1=> PROMOTIONS_CATEGORY );
-            $category->meta_keywords = array( 1=> PROMOTIONS_CATEGORY );
-            $category->meta_title = array( 1=> PROMOTIONS_CATEGORY );
-            $category->name = array( 1=> PROMOTIONS_CATEGORY_NAME );
+            $category->link_rewrite = $categoryArray;
+            $category->meta_description = $categoryArray;
+            $category->meta_keywords = $categoryArray;
+            $category->meta_title = $categoryArray;
+            $category->name = array((int)Configuration::get('PS_LANG_DEFAULT')=> PROMOTIONS_CATEGORY_NAME);
             $category->id_parent = Configuration::get('PS_HOME_CATEGORY');
             $category->active=0;
             $description = 'Pagantis: Products with this category have free financing assumed by the merchant. ' .
