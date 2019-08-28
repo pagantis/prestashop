@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
-	<name>pagantis</name>
-	<displayName><![CDATA[Pagantis]]></displayName>
-	<version><![CDATA[8.2.2]]></version>
-	<description><![CDATA[Instant, easy and effective financial tool for your customers]]></description>
-	<author><![CDATA[Pagantis]]></author>
-	<tab><![CDATA[payments_gateways]]></tab>
-	<is_configurable>1</is_configurable>
-	<need_instance>1</need_instance>
-	<limited_countries></limited_countries>
+    <name>pagantis</name>
+    <displayName><![CDATA[Pagantis]]></displayName>
+    <version><![CDATA[8.2.3]]></version>
+    <description><![CDATA[Instant, easy and effective financial tool for your customers]]></description>
+    <author><![CDATA[Pagantis]]></author>
+    <tab><![CDATA[payments_gateways]]></tab>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+	<limited_countries>es,it,fr,pt</limited_countries>
 </module>
