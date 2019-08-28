@@ -13,6 +13,7 @@
             width: 100%;
             text-align: center;
             color: #828282;
+            max-width: 370px;
         }
         .pagantis-promotion .pmt-no-interest{
             color: #00c1d5
@@ -131,7 +132,7 @@
         }
     </script>
     {if $isPromotedProduct == true}
-        <span class="pagantis-promotion ps_version_{$ps_version|escape:'quotes'}" id="pagantis-promotion-extra">{Tools::htmlentitiesDecodeUTF8($pagantisPromotionExtra)|escape:'quotes'}</span>
+        <span class="pagantis-promotion ps_version_{$ps_version|escape:'quotes'}" id="pagantis-promotion-extra">{$pagantisPromotionExtra nofilter}</span>
     {/if}
     <div class="pagantisSimulator"></div>
 {/if}

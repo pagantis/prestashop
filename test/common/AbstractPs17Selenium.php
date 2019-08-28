@@ -145,6 +145,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
         $this->findByName('email')->sendKeys($this->configuration['email']);
         $this->findByName('password')->sendKeys($this->configuration['password']);
         $this->findByName('birthday')->sendKeys($this->configuration['birthdate']);
+        $this->findByName('psgdpr')->click();
         $this->findById('customer-form')->submit();
         try {
             $logoutButtonSearch = WebDriverBy::className('logout');

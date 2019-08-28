@@ -71,7 +71,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.2.2';
+        $this->version = '8.2.3';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -386,6 +386,7 @@ class Pagantis extends PaymentModule
             'paymentUrl'                         => $link->getModuleLink('pagantis', 'payment'),
             'pagantisSimulatorThousandSeparator' => $pagantisSimulatorThousandSeparator,
             'pagantisSimulatorDecimalSeparator'  => $pagantisSimulatorDecimalSeparator,
+            'promotedAmount'                     => $promotedAmount,
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
         ));
 
@@ -722,7 +723,7 @@ class Pagantis extends PaymentModule
             'pagantisSimulatorPosition'          => $pagantisSimulatorPosition,
             'pagantisQuotesStart'                => $pagantisSimulatorQuotesStart,
             'isPromotedProduct'                  => $isPromotedProduct,
-            'pagantisPromotionExtra'             => $this->l($pagantisPromotionExtra),
+            'pagantisPromotionExtra'             => Tools::htmlentitiesDecodeUTF8($this->l($pagantisPromotionExtra)),
             'pagantisSimulatorThousandSeparator' => $pagantisSimulatorThousandSeparator,
             'pagantisSimulatorDecimalSeparator'  => $pagantisSimulatorDecimalSeparator,
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
