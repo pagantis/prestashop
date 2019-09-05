@@ -263,15 +263,6 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function validateAmount()
     {
-        $totalAmount = $this->pagantisOrder->getShoppingCart()->getTotalAmount();
-        $merchantAmount = (string) floor(100 * $this->merchantOrder->getOrderTotal(true));
-        if ($totalAmount != $merchantAmount) {
-            $this->processError = true;
-            throw new AmountMismatchException($totalAmount, $merchantAmount);
-        }
-
-
-
         $totalAmount = (string) $this->pagantisOrder->getShoppingCart()->getTotalAmount();
         $merchantAmount = (string) (100 * $this->merchantOrder->getOrderTotal(true));
         $merchantAmount = explode('.', explode(',', $merchantAmount)[0])[0];
