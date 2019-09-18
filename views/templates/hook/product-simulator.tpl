@@ -86,6 +86,7 @@
                 sdk.product_simulator = {};
                 sdk.product_simulator.id = 'product-simulator';
                 sdk.product_simulator.locale = '{$locale|escape:'quotes'}'.toLowerCase();
+                sdk.product_simulator.country = '{$locale|escape:'quotes'}'.toLowerCase();
                 sdk.product_simulator.publicKey = '{$pagantisPublicKey|escape:'quotes'}';
                 sdk.product_simulator.selector = positionSelector;
                 sdk.product_simulator.numInstalments = '{$pagantisQuotesStart|escape:'quotes'}';
