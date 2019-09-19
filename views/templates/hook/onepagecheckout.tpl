@@ -69,6 +69,7 @@
                 if (typeof sdk != 'undefined' && !checkSimulatorContent()) {
                     sdk.simulator.init({
                         locale: '{$locale|escape:'quotes'}'.toLowerCase(),
+                        country: '{$country|escape:'quotes'}'.toLowerCase(),
                         publicKey: '{$pagantisPublicKey|escape:'quotes'}',
                         selector: '.pagantisSimulator',
                         type: sdk.simulator.types.SELECTABLE,

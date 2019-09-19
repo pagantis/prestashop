@@ -71,7 +71,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.2.5';
+        $this->version = '8.2.6';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -373,6 +373,7 @@ class Pagantis extends PaymentModule
         $this->context->smarty->assign(array(
             'amount'                             => $orderTotal,
             'locale'                             => $this->language,
+            'country'                            => $this->language,
             'pagantisPublicKey'                  => $pagantisPublicKey,
             'pagantisCSSSelector'                => $pagantisSimulatorCSSSelector,
             'pagantisPriceSelector'              => $pagantisSimulatorPriceSelector,
@@ -638,6 +639,7 @@ class Pagantis extends PaymentModule
             'amount'                             => $orderTotal,
             'promotedAmount'                     => $promotedAmount,
             'locale'                             => $this->language,
+            'country'                            => $this->language,
             'logo' => ($this->language == 'ES' || $this->language == null) ? 'pagamastarde.png' : 'pagantis.png',
             'pagantisPublicKey'                  => $pagantisPublicKey,
             'pagantisCSSSelector'                => $pagantisSimulatorCSSSelector,
@@ -712,6 +714,7 @@ class Pagantis extends PaymentModule
         $this->context->smarty->assign(array(
             'amount'                             => $amount,
             'locale'                             => $this->language,
+            'country'                            => $this->language,
             'pagantisPublicKey'                  => $pagantisPublicKey,
             'pagantisCSSSelector'                => $pagantisSimulatorCSSSelector,
             'pagantisPriceSelector'              => $pagantisSimulatorPriceSelector,
