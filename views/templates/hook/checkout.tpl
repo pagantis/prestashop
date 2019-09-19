@@ -55,7 +55,7 @@
                 if (sdk != 'undefined') {
                     sdk.simulator.init({
                         locale: '{$locale|escape:'quotes'}'.toLowerCase(),
-                        country: '{$locale|escape:'quotes'}'.toLowerCase(),
+                        country: '{$country|escape:'quotes'}'.toLowerCase(),
                         publicKey: '{$pagantisPublicKey|escape:'quotes'}',
                         selector: '.pagantisSimulator',
                         totalAmount: '{$amount|escape:'quotes'}'.replace('.', ','),
