@@ -46,32 +46,17 @@ abstract class AbstractController extends ModuleFrontController
      */
     public function saveLog($data = array(), $exception = null)
     {
+        $response = "";
         try {
-            $logEntry = new LogEntry();
             if (count($data) > 0) {
-                if (isset($data['message'])) {
-                    $logEntry->setMessage($data['message']);
-                }
-                if (isset($data['line'])) {
-                    $logEntry->setLine($data['line']);
-                }
-                if (isset($data['file'])) {
-                    $logEntry->setFile($data['file']);
-                }
-                if (isset($data['code'])) {
-                    $logEntry->setCode($data['code']);
-                }
-                if (isset($data['trace'])) {
-                    $logEntry->setTrace($data['trace']);
-                }
+                $response = json_encode($data);
             } elseif (!is_null($exception)) {
+                $logEntry = new LogEntry();
                 $logEntry->error($exception);
+                $response = $logEntry->toJson();
             }
-            $response = $logEntry->toJson();
             if (is_null($response)) {
-                if (count($data) > 0) {
-                    $response = json_encode($data);
-                } elseif (!is_null($exception)) {
+                if (!is_null($exception)) {
                     $response = $exception->getMessage();
                 } else {
                     $response = 'Unable to serialize log.'.

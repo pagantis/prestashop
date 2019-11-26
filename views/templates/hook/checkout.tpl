@@ -118,6 +118,19 @@
             p.payment_module a.pagantis-checkout.ps_version_1-6 {
                 background-color: #fbfbfb;
             }
+            p.payment_module a.pagantis-checkout.ps_version_1-6:after {
+                display: block;
+                content: "\f054";
+                position: absolute;
+                right: 15px;
+                margin-top: -11px;
+                top: 50%;
+                font-family: "FontAwesome";
+                font-size: 25px;
+                height: 22px;
+                width: 14px;
+                color: #777;
+            }
             p.payment_module a.pagantis-checkout.ps_version_1-5 {
                 height: 60px;
                 padding-left: 99px;
