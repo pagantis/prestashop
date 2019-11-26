@@ -365,7 +365,8 @@ class Pagantis extends PaymentModule
         foreach ($items as $key => $item) {
             $itemCategories = ProductCore::getProductCategoriesFull($item['id_product']);
             if (in_array(PROMOTIONS_CATEGORY_NAME, array_column($itemCategories, 'name')) !== false) {
-                $promotedAmount += Product::getPriceStatic($item['id_product']);
+                $productId = $item['id_product'];
+                $promotedAmount += Product::getPriceStatic($productId);
             }
         }
 
@@ -630,7 +631,8 @@ class Pagantis extends PaymentModule
         foreach ($items as $key => $item) {
             $itemCategories = ProductCore::getProductCategoriesFull($item['id_product']);
             if (in_array(PROMOTIONS_CATEGORY_NAME, array_column($itemCategories, 'name')) !== false) {
-                $promotedAmount += Product::getPriceStatic($item['id_product']);
+                $productId = $item['id_product'];
+                $promotedAmount += Product::getPriceStatic($productId);
             }
         }
 
@@ -681,11 +683,14 @@ class Pagantis extends PaymentModule
     public function productPageSimulatorDisplay($functionName)
     {
         $productConfiguration = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_POSITION');
-        /** @var ProductCore $product */
-        $product = new Product(Tools::getValue('id_product'));
-        $amount = $product->getPublicPrice();
+        $productId = Tools::getValue('id_product');
+        if (!$productId) {
+            return false;
+        }
+        //Resolves bug of reference passtrow
+        $amount = Product::getPriceStatic($productId);
 
-        $itemCategoriesNames = array_column(Product::getProductCategoriesFull($product->id), 'name');
+        $itemCategoriesNames = array_column(Product::getProductCategoriesFull($productId), 'name');
         $isPromotedProduct = in_array(PROMOTIONS_CATEGORY_NAME, $itemCategoriesNames);
 
         $pagantisPublicKey                  = Configuration::get('pagantis_public_key');

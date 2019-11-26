@@ -189,7 +189,8 @@ class PagantisPaymentModuleFrontController extends AbstractController
                     ->setDescription($item['name']);
                 if ($promotedProduct) {
                     $promotedAmount+=$product->getAmount();
-                    $finalPrice = Product::getPriceStatic($item['id_product']);
+                    $productId = $item['id_product'];
+                    $finalPrice = Product::getPriceStatic($productId);
                     $promotedMessage = 'Promoted Item: ' . $product->getDescription() .
                          ' Price: ' . $finalPrice .
                          ' Qty: ' . $product->getQuantity() .
