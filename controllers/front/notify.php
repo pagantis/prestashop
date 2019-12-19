@@ -115,7 +115,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
         }
 
         try {
-            $this->unblockConcurrency($this->merchantOrderIdx);
+            $this->unblockConcurrency($this->merchantOrderId);
         } catch (\Exception $exception) {
             // Do nothing
         }
