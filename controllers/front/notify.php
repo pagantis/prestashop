@@ -141,7 +141,6 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function prepareVariables()
     {
-        $this->randomId = rand(1000, 9999);
         $callbackOkUrl = $this->context->link->getPageLink(
             'order-confirmation',
             null,
