@@ -31,7 +31,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     /**
      * Seconds to expire a locked request
      */
-    const CONCURRENCY_TIMEOUT = 60;
+    const CONCURRENCY_TIMEOUT = 20;
 
     /**
      * @var string $merchantOrderId
@@ -81,8 +81,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
         try {
             $this->prepareVariables();
             $this->getPagantisOrderId();
-            $this->getPagantisOrder();
             $this->checkConcurrency();
+            $this->getPagantisOrder();
             $this->getMerchantOrder();
             $this->checkOrderStatus();
             $this->checkMerchantOrderStatus();
@@ -115,7 +115,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
         }
 
         try {
-            $this->unblockConcurrency();
+            $this->unblockConcurrency($this->merchantOrderId);
         } catch (\Exception $exception) {
             // Do nothing
         }
@@ -380,16 +380,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
     protected function blockConcurrency($orderId)
     {
         try {
-            if ($this->pagantisOrder->getStatus() === PagantisModelOrder::STATUS_CONFIRMED) {
-                $this->jsonResponse = new JsonSuccessResponse();
-                $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
-                $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
-                return $this->finishProcess(false);
-            }
-
             $table = 'pagantis_cart_process';
             return Db::getInstance()->insert($table, array('id' => $orderId, 'timestamp' => (time())));
-            //if insert fails throw an exception
         } catch (\Exception $exception) {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 throw new ConcurrencyException();
@@ -411,6 +403,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 self::CONCURRENCY_TIMEOUT,
                 $restSeconds
             );
+
             $this->saveLog(array(
                 'message' => $logMessage
             ));
@@ -421,15 +414,20 @@ class PagantisNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Unlock the concurrency
+     * @param null $orderId
      *
-     * @throws Exception
+     * @throws ConcurrencyException
      */
-    protected function unblockConcurrency()
+    private function unblockConcurrency($orderId = null)
     {
         try {
-            Db::getInstance()->delete('pagantis_cart_process', 'timestamp < ' . (time() - self::CONCURRENCY_TIMEOUT));
+            if (is_null($orderId)) {
+                Db::getInstance()->delete('pagantis_cart_process', 'timestamp < ' . (time() - self::CONCURRENCY_TIMEOUT));
+                return;
+            }
+            Db::getInstance()->delete('pagantis_cart_process', 'id = \'' . $this->merchantOrderId . '\'');
         } catch (\Exception $exception) {
+            var_dump("ha petado el unblock".$exception->getMessage());die;
             throw new ConcurrencyException();
         }
     }

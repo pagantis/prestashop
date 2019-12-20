@@ -71,7 +71,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.2.9';
+        $this->version = '8.2.10';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
