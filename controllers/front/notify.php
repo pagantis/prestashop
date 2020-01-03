@@ -422,12 +422,15 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             if (is_null($orderId)) {
-                Db::getInstance()->delete('pagantis_cart_process', 'timestamp < ' . (time() - self::CONCURRENCY_TIMEOUT));
+                Db::getInstance()->delete(
+                    'pagantis_cart_process',
+                    'timestamp < ' . (time() - self::CONCURRENCY_TIMEOUT
+                    )
+                );
                 return;
             }
             Db::getInstance()->delete('pagantis_cart_process', 'id = \'' . $this->merchantOrderId . '\'');
         } catch (\Exception $exception) {
-            var_dump("ha petado el unblock".$exception->getMessage());die;
             throw new ConcurrencyException();
         }
     }
