@@ -7,7 +7,9 @@ module.exports = function(grunt) {
             },
             autoindex: {
                 command:
-                    'php vendor/pagantis/autoindex/index.php . \n'
+                    'composer global require pagantis/autoindex \n' +
+                    'php ~/.composer/vendor/pagantis/autoindex/index.php . \n'
+
             },
             composerProd: {
                 command: 'composer install --no-dev'
@@ -104,11 +106,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.registerTask('default', [
-        'shell:composerDev',
-        'shell:autoindex',
         'shell:composerProd',
+        'shell:autoindex',
         'compress',
-        'shell:composerDev',
         'shell:rename'
     ]);
 

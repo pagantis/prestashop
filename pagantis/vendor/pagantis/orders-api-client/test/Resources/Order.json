@@ -1,0 +1,127 @@
+{
+    "action_urls": {
+        "confirm": "http://docker-ext-stg.digitalorigin.com:20010//orders/5b1906b4e659900006a7c623/confirm",
+        "form": "https://ppcobranded-form-staging.pagamastarde.com/orders/5b1906b4e659900006a7c623",
+        "refund": "http://docker-ext-stg.digitalorigin.com:20010//orders/5b1906b4e659900006a7c623/refund",
+        "upsell": "http://docker-ext-stg.digitalorigin.com:20010//orders/5b1906b4e659900006a7c623/upsell"
+    },
+    "api_version": "v1",
+    "configuration": {
+        "channel": {
+            "type": "ONLINE",
+            "assisted_sale": false
+        },
+        "urls": {
+            "cancel": "https://my-store.com/order-cancelled",
+            "ko": "https://my-store.com/order-rejected",
+            "authorized_notification_callback": "https://my-store.com/orders/notify",
+            "rejected_notification_callback": "https://my-store.com/orders/notify",
+            "ok": "https://my-store.com/order-approved"
+        },
+        "purchase_country": "ES"
+    },
+    "confirmed_at": null,
+    "created_at": "2020-01-31T11:22:12",
+    "expires_at": "2022-01-31T11:22:12",
+    "unconfirmed_at": null,
+    "grace_period": "2020-01-31",
+    "grace_period_month": 0,
+    "id": "5b1906b4e659900006a7c623",
+    "metadata": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+    },
+    "refunds": [
+        {
+            "id": "string",
+            "promoted_amount": 0,
+            "created_at": "2018-07-09T09:51:03",
+            "total_amount": 5,
+            "refunded_merchant_cost": 0,
+            "payment_processor_cost": 0
+        },
+        {
+            "id": "string",
+            "promoted_amount": 0,
+            "created_at": "2018-07-09T09:51:04",
+            "total_amount": 5,
+            "refunded_merchant_cost": 0,
+            "payment_processor_cost": 0
+        }
+    ],
+    "shopping_cart": {
+        "details": {
+            "products": [
+                {
+                    "amount": 99,
+                    "description": "small",
+                    "quantity": 5
+                },
+                {
+                    "amount": 999,
+                    "description": "medium",
+                    "quantity": 10
+                },
+                {
+                    "amount": 9999,
+                    "description": "huge",
+                    "quantity": 100
+                }
+            ],
+            "shipping_cost": 555
+        },
+        "order_reference": "string",
+        "promoted_amount": 0,
+        "total_amount": 20400,
+        "deprecated_order_description": "string"
+    },
+    "status": "AUTHORIZED",
+    "user": {
+        "address": {
+            "address": "My House, in the middle of the street, 55",
+            "city": "Madrid",
+            "country_code": "ES",
+            "full_name": "Jöhn Dōė Ramirez",
+            "zip_code": "28008",
+            "tax_id": "A123456789B",
+            "national_id": "A123456789B"
+        },
+        "billing_address": {
+            "address": "My House, in the middle of the street, 55",
+            "city": "Madrid",
+            "country_code": "ES",
+            "full_name": "Jöhn Dōė Ramirez",
+            "zip_code": "28008"
+        },
+        "date_of_birth": "1987-01-31",
+        "email": "john.doe@email.com",
+        "fix_phone": "915556677",
+        "full_name": "Jöhn Dōė Ramirez",
+        "mobile_phone": "A123456789B",
+        "tax_id": "A123456789B",
+        "national_id": "BC555000G",
+        "order_history": [
+            {
+                "amount": 989,
+                "date": "2020-01-31T11:20:12"
+            },
+            {
+                "amount": 898,
+                "date": "2020-01-31T11:21:12"
+            },
+            {
+                "amount": 909,
+                "date": "2020-01-31T11:22:12"
+            }
+        ],
+        "shipping_address": {
+            "address": "My House, in the middle of the street, 55",
+            "city": "Madrid",
+            "country_code": "ES",
+            "full_name": "Jöhn Dōė Ramirez",
+            "zip_code": "28008"
+        },
+        "truncated": false
+    }
+}

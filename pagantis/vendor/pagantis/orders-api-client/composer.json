@@ -1,0 +1,32 @@
+{
+    "name": "pagantis/orders-api-client",
+    "license": "proprietary",
+    "description": "Pagantis Orders Api Client in PHP. Use the api with simple methods and using OOP.",
+    "type": "library",
+    "require": {
+        "php": ">=5.3",
+        "nategood/httpful": "^0.2",
+        "nayjest/str-case-converter": "^1.0",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8",
+        "fzaninotto/faker": "^1.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pagantis\\OrdersApiClient\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\Pagantis\\OrdersApiClient\\": "test/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Pagantis",
+            "email": "integrations@pagantis.com"
+        }
+    ]
+}
