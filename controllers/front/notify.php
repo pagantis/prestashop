@@ -376,7 +376,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $mode = ($_SERVER['REQUEST_METHOD'] == 'POST') ? 'NOTIFICATION' : 'REDIRECTION';
                 $message = 'Order CONFIRMED. The order was confirmed by a ' . $mode .
                     '. Pagantis OrderId=' . $this->pagantisOrderId .
-                    '. Prestashop OrderId=' . $this->merchantOrderId;
+                    '. Prestashop OrderId=' . $this->module->currentOrder;
                 $this->saveLog(array(
                     'message' => $message
                 ));
