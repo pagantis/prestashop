@@ -307,7 +307,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             // Double check
             $tableName = _DB_PREFIX_ . 'pagantis_order';
             $sql = ('select ps_order_id from `' . $tableName . '` where `id` = ' . $this->merchantOrderId
-                . ' and `order_id` = ' . $this->pagantisOrderId
+                . ' and `order_id` = \'' . $this->pagantisOrderId . '\''
                 . ' and `ps_order_id` is not null');
             $results = Db::getInstance()->ExecuteS($sql);
             if (is_array($results) && count($results) === 1) {
@@ -351,6 +351,15 @@ class PagantisNotifyModuleFrontController extends AbstractController
             );
         } catch (\Exception $exception) {
             throw new UnknownException($exception->getMessage());
+        }
+        try {
+            Db::getInstance()->update(
+                'pagantis_order',
+                array('ps_order_id' => $this->module->currentOrder),
+                'id = \''. $this->merchantOrderId . '\' and order_id = \'' . $this->pagantisOrderId . '\''
+            );
+        } catch (\Exception $exception) {
+            // Do nothing
         }
     }
 
