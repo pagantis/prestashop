@@ -31,7 +31,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     /**
      * Seconds to expire a locked request
      */
-    const CONCURRENCY_TIMEOUT = 20;
+    const CONCURRENCY_TIMEOUT = 10;
 
     /**
      * @var string $merchantOrderId
@@ -419,35 +419,37 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             $table = 'pagantis_cart_process';
-            return Db::getInstance()->insert($table, array('id' => $orderId, 'timestamp' => (time())));
-        } catch (\Exception $exception) {
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                throw new ConcurrencyException();
+            if (Db::getInstance()->insert($table, array('id' => $orderId, 'timestamp' => (time()))) === false) {
+                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                    throw new ConcurrencyException();
+                }
+
+                $query = sprintf(
+                    "SELECT TIMESTAMPDIFF(SECOND,NOW()-INTERVAL %s SECOND, FROM_UNIXTIME(timestamp)) as rest FROM %s WHERE %s",
+                    self::CONCURRENCY_TIMEOUT,
+                    _DB_PREFIX_.$table,
+                    "id=$orderId"
+                );
+                $resultSeconds = Db::getInstance()->getValue($query);
+                $restSeconds = isset($resultSeconds) ? ($resultSeconds) : 0;
+                $secondsToExpire = ($restSeconds>self::CONCURRENCY_TIMEOUT) ? self::CONCURRENCY_TIMEOUT : $restSeconds;
+
+                $logMessage = sprintf(
+                    "Redirect concurrency, User have to wait %s seconds, default seconds %s, bd time to expire %s seconds",
+                    $secondsToExpire,
+                    self::CONCURRENCY_TIMEOUT,
+                    $restSeconds
+                );
+
+                $this->saveLog(array(
+                    'message' => $logMessage
+                ));
+                sleep($secondsToExpire+1);
+                // After waiting...user continue the confirmation, hoping that previous call have finished.
+                return true;
             }
-
-            $query = sprintf(
-                "SELECT TIMESTAMPDIFF(SECOND,NOW()-INTERVAL %s SECOND, FROM_UNIXTIME(timestamp)) as rest FROM %s WHERE %s",
-                self::CONCURRENCY_TIMEOUT,
-                _DB_PREFIX_.$table,
-                "id=$orderId"
-            );
-            $resultSeconds = Db::getInstance()->getValue($query);
-            $restSeconds = isset($resultSeconds) ? ($resultSeconds) : 0;
-            $secondsToExpire = ($restSeconds>self::CONCURRENCY_TIMEOUT) ? self::CONCURRENCY_TIMEOUT : $restSeconds;
-
-            $logMessage = sprintf(
-                "Redirect concurrency, User have to wait %s seconds, default seconds %s, bd time to expire %s seconds",
-                $secondsToExpire,
-                self::CONCURRENCY_TIMEOUT,
-                $restSeconds
-            );
-
-            $this->saveLog(array(
-                'message' => $logMessage
-            ));
-            sleep($secondsToExpire+1);
-            // After waiting...user continue the confirmation, hoping that previous call have finished.
-            return true;
+        } catch (\Exception $exception) {
+            throw new ConcurrencyException();
         }
     }
 
@@ -462,8 +464,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             if (is_null($orderId)) {
                 Db::getInstance()->delete(
                     'pagantis_cart_process',
-                    'timestamp < ' . (time() - self::CONCURRENCY_TIMEOUT
-                    )
+                    'timestamp < ' . (time() - self::CONCURRENCY_TIMEOUT)
                 );
                 return;
             }
