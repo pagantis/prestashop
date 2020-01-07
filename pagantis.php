@@ -259,7 +259,6 @@ class Pagantis extends PaymentModule
             $sql = ("SHOW TABLES LIKE '$tableName'");
             $results = Db::getInstance()->ExecuteS($sql);
             if (is_array($results) && count($results) === 1) {
-
                 $query = "select COLUMN_TYPE FROM information_schema.COLUMNS where TABLE_NAME='$tableName' AND COLUMN_NAME='ps_order_id'";
                 $results = $results = Db::getInstance()->ExecuteS($query);
                 if (is_array($results) && count($results) === 0) {

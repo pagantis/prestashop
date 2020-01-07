@@ -255,8 +255,8 @@ class PagantisPaymentModuleFrontController extends AbstractController
             if ($order instanceof \Pagantis\OrdersApiClient\Model\Order) {
                 $url = $order->getActionUrls()->getForm();
                 $orderId = $order->getId();
-                $sql = "INSERT INTO `" . _DB_PREFIX_ . "pagantis_order` (`id`, `order_id`)
-                     VALUES ('$cart->id','$orderId') 
+                $sql = "INSERT INTO `" . _DB_PREFIX_ . "pagantis_order` (`id`, `order_id`, `ps_order_id`)
+                     VALUES ('$cart->id','$orderId', null) 
                      ON DUPLICATE KEY UPDATE `order_id` = '$orderId'";
                 $result = Db::getInstance()->execute($sql);
                 if (!$result) {
