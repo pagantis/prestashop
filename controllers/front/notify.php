@@ -381,9 +381,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $message = 'Order CONFIRMED. The order was confirmed by a ' . $mode .
                     '. Pagantis OrderId=' . $this->pagantisOrderId .
                     '. Prestashop OrderId=' . $this->module->currentOrder;
-                $this->saveLog(array(
-                    'message' => $message
-                ));
+                $this->saveLog(array('message' => $message));
             } catch (\Exception $exception) {
                 // Do nothing
             }
@@ -400,6 +398,14 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function rollbackMerchantOrder()
     {
         // Do nothing because the order is created only when the purchase was successfully
+        try {
+            $message = 'Roolback method: ' .
+                '. Pagantis OrderId=' . $this->pagantisOrderId .
+                '. Prestashop CartId=' . $this->merchantOrderId;
+            $this->saveLog(array('message' => $message));
+        } catch (\Exception $exception) {
+            // Do nothing
+        }
     }
 
     /**
