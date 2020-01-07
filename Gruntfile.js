@@ -110,7 +110,8 @@ module.exports = function(grunt) {
         'shell:composerProd',
         'shell:autoindex',
         'compress',
-        'shell:rename'
+        'shell:rename',
+        'shell:composerDev'
     ]);
 
     //manually run the selenium test: "grunt shell:testPrestashop16"
