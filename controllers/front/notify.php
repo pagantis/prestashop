@@ -301,7 +301,9 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             if ($this->merchantOrder->orderExists() !== false) {
-                throw new WrongStatusException('PS->orderExists(): already_processed');
+                throw new WrongStatusException('PS->orderExists() cart_id = '
+                    . $this->merchantOrderId . ' pagantis_id = '
+                    . $this->pagantisOrderId . '): already_processed');
             }
 
             // Double check
@@ -311,7 +313,9 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 . ' and `ps_order_id` is not null');
             $results = Db::getInstance()->ExecuteS($sql);
             if (is_array($results) && count($results) === 1) {
-                throw new WrongStatusException('PS->record found in ' . $tableName . ': already_processed');
+                throw new WrongStatusException('PS->record found in ' . $tableName
+                    . ' (cart_id = ' . $this->merchantOrderId . ' pagantis_id = '
+                    . $this->pagantisOrderId . '): already_processed');
             }
         } catch (\Exception $exception) {
             throw new UnknownException($exception->getMessage());
