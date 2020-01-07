@@ -71,7 +71,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.2.10';
+        $this->version = '8.2.11';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -254,6 +254,23 @@ class Pagantis extends PaymentModule
      */
     public function loadSQLFile($sql_file)
     {
+        try {
+            $tableName = _DB_PREFIX_.'pagantis_order';
+            $sql = ("SHOW TABLES LIKE '$tableName'");
+            $results = Db::getInstance()->ExecuteS($sql);
+            if (is_array($results) && count($results) === 1) {
+                $query = "select COLUMN_TYPE FROM information_schema.COLUMNS where TABLE_NAME='$tableName' AND COLUMN_NAME='ps_order_id'";
+                $results = $results = Db::getInstance()->ExecuteS($query);
+                if (is_array($results) && count($results) === 0) {
+                    $sql = "ALTER TABLE $tableName ADD COLUMN ps_order_id VARCHAR(60) AFTER order_id";
+                    Db::getInstance()->Execute($sql);
+                }
+                return false;
+            }
+        } catch (\Exception $exception) {
+            // do nothing
+        }
+
         $sql_content = Tools::file_get_contents($sql_file);
         $sql_content = str_replace('PREFIX_', _DB_PREFIX_, $sql_content);
         $sql_requests = preg_split("/;\s*[\r\n]+/", $sql_content);

@@ -80,14 +80,17 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             $this->prepareVariables();
-            $this->getPagantisOrderId();
             $this->checkConcurrency();
-            $this->getPagantisOrder();
             $this->getMerchantOrder();
-            $this->checkOrderStatus();
-            $this->checkMerchantOrderStatus();
+            $this->getPagantisOrderId();
+            $this->getPagantisOrder();
+            if ($this->checkOrderStatus()) {
+                return $this->finishProcess(false);
+            }
             $this->validateAmount();
-            $this->processMerchantOrder();
+            if ($this->checkMerchantOrderStatus()) {
+                $this->processMerchantOrder();
+            }
         } catch (\Exception $exception) {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $this->jsonResponse = new JsonExceptionResponse();
@@ -241,7 +244,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             $this->jsonResponse = new JsonSuccessResponse();
             $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
             $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
-            return $this->finishProcess(false);
+            return true;
         }
 
         if ($this->pagantisOrder->getStatus() !== PagantisModelOrder::STATUS_AUTHORIZED) {
@@ -251,18 +254,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             }
             throw new WrongStatusException($status);
         }
-    }
-
-    /**
-     * Check that the merchant order was not previously processes and is ready to be paid
-     *
-     * @throws Exception
-     */
-    public function checkMerchantOrderStatus()
-    {
-        if ($this->merchantOrder->orderExists() !== false) {
-            throw new WrongStatusException('already_processed');
-        }
+        return false;
     }
 
     /**
@@ -294,10 +286,41 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $this->saveLog(array(
                     'message' => $this->amountMismatchError
                 ));
-            } catch (\Exception $e) {
+            } catch (\Exception $exception) {
                 // Do nothing
             }
         }
+    }
+
+    /**
+     * Check that the merchant order was not previously processes and is ready to be paid
+     *
+     * @throws Exception
+     */
+    public function checkMerchantOrderStatus()
+    {
+        try {
+            if ($this->merchantOrder->orderExists() !== false) {
+                throw new WrongStatusException('PS->orderExists() cart_id = '
+                    . $this->merchantOrderId . ' pagantis_id = '
+                    . $this->pagantisOrderId . '): already_processed');
+            }
+
+            // Double check
+            $tableName = _DB_PREFIX_ . 'pagantis_order';
+            $sql = ('select ps_order_id from `' . $tableName . '` where `id` = ' . $this->merchantOrderId
+                . ' and `order_id` = \'' . $this->pagantisOrderId . '\''
+                . ' and `ps_order_id` is not null');
+            $results = Db::getInstance()->ExecuteS($sql);
+            if (is_array($results) && count($results) === 1) {
+                throw new WrongStatusException('PS->record found in ' . $tableName
+                    . ' (cart_id = ' . $this->merchantOrderId . ' pagantis_id = '
+                    . $this->pagantisOrderId . '): already_processed');
+            }
+        } catch (\Exception $exception) {
+            throw new UnknownException($exception->getMessage());
+        }
+        return true;
     }
 
     /**
@@ -333,6 +356,15 @@ class PagantisNotifyModuleFrontController extends AbstractController
         } catch (\Exception $exception) {
             throw new UnknownException($exception->getMessage());
         }
+        try {
+            Db::getInstance()->update(
+                'pagantis_order',
+                array('ps_order_id' => $this->module->currentOrder),
+                'id = \''. $this->merchantOrderId . '\' and order_id = \'' . $this->pagantisOrderId . '\''
+            );
+        } catch (\Exception $exception) {
+            // Do nothing
+        }
     }
 
     /**
@@ -348,11 +380,9 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $mode = ($_SERVER['REQUEST_METHOD'] == 'POST') ? 'NOTIFICATION' : 'REDIRECTION';
                 $message = 'Order CONFIRMED. The order was confirmed by a ' . $mode .
                     '. Pagantis OrderId=' . $this->pagantisOrderId .
-                    '. Prestashop OrderId=' . $this->merchantOrderId;
-                $this->saveLog(array(
-                    'message' => $message
-                ));
-            } catch (\Exception $e) {
+                    '. Prestashop OrderId=' . $this->module->currentOrder;
+                $this->saveLog(array('message' => $message));
+            } catch (\Exception $exception) {
                 // Do nothing
             }
         } catch (\Exception $exception) {
@@ -368,6 +398,14 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function rollbackMerchantOrder()
     {
         // Do nothing because the order is created only when the purchase was successfully
+        try {
+            $message = 'Roolback method: ' .
+                '. Pagantis OrderId=' . $this->pagantisOrderId .
+                '. Prestashop CartId=' . $this->merchantOrderId;
+            $this->saveLog(array('message' => $message));
+        } catch (\Exception $exception) {
+            // Do nothing
+        }
     }
 
     /**
@@ -422,12 +460,15 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             if (is_null($orderId)) {
-                Db::getInstance()->delete('pagantis_cart_process', 'timestamp < ' . (time() - self::CONCURRENCY_TIMEOUT));
+                Db::getInstance()->delete(
+                    'pagantis_cart_process',
+                    'timestamp < ' . (time() - self::CONCURRENCY_TIMEOUT
+                    )
+                );
                 return;
             }
-            Db::getInstance()->delete('pagantis_cart_process', 'id = \'' . $this->merchantOrderId . '\'');
+            Db::getInstance()->delete('pagantis_cart_process', 'id = \'' . $orderId . '\'');
         } catch (\Exception $exception) {
-            var_dump("ha petado el unblock".$exception->getMessage());die;
             throw new ConcurrencyException();
         }
     }
