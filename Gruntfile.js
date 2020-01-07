@@ -9,7 +9,7 @@ module.exports = function(grunt) {
                 command:
                     'composer global require pagantis/autoindex \n' +
                     'php ~/.composer/vendor/pagantis/autoindex/index.php || true \n' +
-                    'php /home/circleci/.config/composer/vendor/pagantis/autoindex/index.php . \n'
+                    'php /home/circleci/.config/composer/vendor/pagantis/autoindex/index.php . || true \n'
 
             },
             composerProd: {
