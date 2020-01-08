@@ -438,7 +438,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $secondsToExpire = ($restSeconds>self::CONCURRENCY_TIMEOUT) ? self::CONCURRENCY_TIMEOUT : $restSeconds;
 
                 $logMessage = sprintf(
-                    "Redirect concurrency, User have to wait %s seconds, default seconds %s, bd time to expire %s seconds",
+                    "Redirect concurrency, User have to wait %s seconds, default seconds %s, bd time to expire %s seconds. CartId=" . $orderId,
                     $secondsToExpire,
                     self::CONCURRENCY_TIMEOUT,
                     $restSeconds
