@@ -31,7 +31,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     /**
      * Seconds to expire a locked request
      */
-    const CONCURRENCY_TIMEOUT = 10;
+    const CONCURRENCY_TIMEOUT = 5;
 
     /**
      * @var string $merchantOrderId
