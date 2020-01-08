@@ -34,7 +34,13 @@ class PagantisLogModuleFrontController extends ModuleFrontController
         $sql = 'SELECT * FROM '._DB_PREFIX_.'pagantis_log ORDER BY id desc LIMIT 200';
         if ($results = Db::getInstance()->ExecuteS($sql)) {
             foreach ($results as $row) {
-                $this->message[] = (is_null(json_decode($row['log']))) ? $row['log'] : json_decode($row['log']);
+                $data = (is_null(json_decode($row['log']))) ? $row['log'] : json_decode($row['log']);
+                if (is_array($data)) {
+                    $data['timestamp'] = $row['createdAt'];
+                } else {
+                    $data = array("message" => $data, 'timestamp' => $row['createdAt']);
+                }
+                $this->message[] = $data;
             }
         }
         $this->jsonResponse();

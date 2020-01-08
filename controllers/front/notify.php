@@ -79,6 +79,9 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function postProcess()
     {
         try {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                sleep(5);
+            }
             $this->prepareVariables();
             $this->checkConcurrency();
             $this->getMerchantOrder();
