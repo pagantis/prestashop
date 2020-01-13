@@ -31,7 +31,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     /**
      * Seconds to expire a locked request
      */
-    const CONCURRENCY_TIMEOUT = 10;
+    const CONCURRENCY_TIMEOUT = 5;
 
     /**
      * @var string $merchantOrderId
@@ -79,6 +79,9 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function postProcess()
     {
         try {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                sleep(5);
+            }
             $this->prepareVariables();
             $this->checkConcurrency();
             $this->getMerchantOrder();
@@ -435,7 +438,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $secondsToExpire = ($restSeconds>self::CONCURRENCY_TIMEOUT) ? self::CONCURRENCY_TIMEOUT : $restSeconds;
 
                 $logMessage = sprintf(
-                    "Redirect concurrency, User have to wait %s seconds, default seconds %s, bd time to expire %s seconds",
+                    "Redirect concurrency, User have to wait %s seconds, default seconds %s, bd time to expire %s seconds. CartId=" . $orderId,
                     $secondsToExpire,
                     self::CONCURRENCY_TIMEOUT,
                     $restSeconds
