@@ -381,7 +381,7 @@ class Pagantis extends PaymentModule
         $items = $cart->getProducts(true);
         foreach ($items as $key => $item) {
             $itemCategories = ProductCore::getProductCategoriesFull($item['id_product']);
-            if (in_array(PROMOTIONS_CATEGORY_NAME, array_column($itemCategories, 'name')) !== false) {
+            if (in_array(PROMOTIONS_CATEGORY_NAME, $this->arrayColumn($itemCategories, 'name')) !== false) {
                 $productId = $item['id_product'];
                 $promotedAmount += Product::getPriceStatic($productId);
             }
@@ -647,7 +647,7 @@ class Pagantis extends PaymentModule
         $items = $cart->getProducts(true);
         foreach ($items as $key => $item) {
             $itemCategories = ProductCore::getProductCategoriesFull($item['id_product']);
-            if (in_array(PROMOTIONS_CATEGORY_NAME, array_column($itemCategories, 'name')) !== false) {
+            if (in_array(PROMOTIONS_CATEGORY_NAME, $this->arrayColumn($itemCategories, 'name')) !== false) {
                 $productId = $item['id_product'];
                 $promotedAmount += Product::getPriceStatic($productId);
             }
@@ -707,7 +707,7 @@ class Pagantis extends PaymentModule
         //Resolves bug of reference passtrow
         $amount = Product::getPriceStatic($productId);
 
-        $itemCategoriesNames = array_column(Product::getProductCategoriesFull($productId), 'name');
+        $itemCategoriesNames = $this->arrayColumn(Product::getProductCategoriesFull($productId), 'name');
         $isPromotedProduct = in_array(PROMOTIONS_CATEGORY_NAME, $itemCategoriesNames);
 
         $pagantisPublicKey                  = Configuration::get('pagantis_public_key');
@@ -850,7 +850,7 @@ class Pagantis extends PaymentModule
      */
     public function checkPromotionCategory()
     {
-        $categories = array_column(Category::getCategories(null, false, false), 'name');
+        $categories = $this->arrayColumn(Category::getCategories(null, false, false), 'name');
         if (!in_array(PROMOTIONS_CATEGORY_NAME, $categories)) {
             /** @var CategoryCore $category */
             $category = new Category();
@@ -900,5 +900,37 @@ class Pagantis extends PaymentModule
         $this->language = Tools::strtoupper($langArray[count($langArray)-1]);
         // Prevent null language detection
         $this->language = ($this->language) ? $this->language : 'ES';
+    }
+
+    /**
+     * @param array $input
+     * @param       $columnKey
+     * @param null  $indexKey
+     *
+     * @return array|bool
+     */
+    private function arrayColumn(array $input, $columnKey, $indexKey = null)
+    {
+        $array = array();
+        foreach ($input as $value) {
+            if (!array_key_exists($columnKey, $value)) {
+                trigger_error("Key \"$columnKey\" does not exist in array");
+                return false;
+            }
+            if (is_null($indexKey)) {
+                $array[] = $value[$columnKey];
+            } else {
+                if (!array_key_exists($indexKey, $value)) {
+                    trigger_error("Key \"$indexKey\" does not exist in array");
+                    return false;
+                }
+                if (!is_scalar($value[$indexKey])) {
+                    trigger_error("Key \"$indexKey\" does not contain scalar value");
+                    return false;
+                }
+                $array[$value[$indexKey]] = $value[$columnKey];
+            }
+        }
+        return $array;
     }
 }
