@@ -55,7 +55,7 @@ class Pagantis extends PaymentModule
         'PAGANTIS_URL_OK' => '',
         'PAGANTIS_URL_KO' => '',
         'PAGANTIS_ALLOWED_COUNTRIES' => 'a:3:{i:0;s:2:"es";i:1;s:2:"it";i:2;s:2:"fr";}',
-        'PAGANTIS_PROMOTION_EXTRA' => 'Finance this product <span class="pmt-no-interest">without interest!</span>',
+        'PAGANTIS_PROMOTION_EXTRA' => 'Finance this product <span class="pg-no-interest">without interest!</span>',
         'PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR' => '.',
         'PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR' => ',',
     );
@@ -335,9 +335,6 @@ class Pagantis extends PaymentModule
     public function hookHeader()
     {
         $url = 'https://cdn.pagantis.com/js/pg-v2/sdk.js';
-        if ($this->language == 'ES' || $this->language == null) {
-            $url = 'https://cdn.pagantis.com/js/pmt-v2/sdk.js';
-        }
         if (_PS_VERSION_ >= "1.7") {
             $this->context->controller->registerJavascript(
                 sha1(mt_rand(1, 90000)),
@@ -409,7 +406,7 @@ class Pagantis extends PaymentModule
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
         ));
 
-        $logo = ($this->language == 'ES' || $this->language == null) ? 'logo_pagamastarde.png' : 'logo_pagantis.png';
+        $logo = 'logo_pagantis.png';
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
             ->setCallToActionText($pagantisTitle)
@@ -598,9 +595,6 @@ class Pagantis extends PaymentModule
         }
 
         $logo = $this->getPathUri(). 'views/img/logo_pagantis.png';
-        if ($this->language == 'ES' || $this->language == null) {
-            $logo = $this->getPathUri(). 'views/img/logo_pagamastarde.png';
-        }
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
@@ -829,18 +823,11 @@ class Pagantis extends PaymentModule
      */
     public function checkLogoExists()
     {
-        $logoPmt = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/pagamastarde.png';
-        $logoPg = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/pagantis.png';
-        if (!file_exists($logoPmt) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
-            copy(
-                _PS_PAGANTIS_DIR . '/views/img/logo_pagamastarde.png',
-                $logoPmt
-            );
-        }
-        if (!file_exists($logoPg) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
+        $logo = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/pagantis.png';
+        if (!file_exists($logo) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
             copy(
                 _PS_PAGANTIS_DIR . '/views/img/logo_pagantis.png',
-                $logoPg
+                $logo
             );
         }
     }

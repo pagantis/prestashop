@@ -54,19 +54,12 @@
                     return true;
                 }
 
-                if ('{$locale|escape:'quotes'}' == 'ES') {
-                    if (typeof pmtSDK == 'undefined') {
-                        return false;
-                    }
-                    var sdk = pmtSDK;
-                } else {
-                    if (typeof pgSDK == 'undefined') {
-                        return false;
-                    }
-                    var sdk = pgSDK;
+                if (typeof pgSDK == 'undefined') {
+                    return false;
                 }
+                var sdk = pgSDK;
 
-                if (typeof sdk != 'undefined' && !checkSimulatorContent()) {
+                if (!checkSimulatorContent()) {
                     sdk.simulator.init({
                         locale: '{$locale|escape:'quotes'}'.toLowerCase(),
                         country: '{$country|escape:'quotes'}'.toLowerCase(),

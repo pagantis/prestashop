@@ -40,33 +40,23 @@
                     return true;
                 }
 
-                if ('{$locale|escape:'quotes'}' == 'ES') {
-                    if (typeof pmtSDK == 'undefined') {
-                        return false;
-                    }
-                    var sdk = pmtSDK;
-                } else {
-                    if (typeof pgSDK == 'undefined') {
-                        return false;
-                    }
-                    var sdk = pgSDK;
-                }
-
-                if (sdk != 'undefined') {
-                    sdk.simulator.init({
-                        locale: '{$locale|escape:'quotes'}'.toLowerCase(),
-                        country: '{$country|escape:'quotes'}'.toLowerCase(),
-                        publicKey: '{$pagantisPublicKey|escape:'quotes'}',
-                        selector: '.pagantisSimulator',
-                        totalAmount: '{$amount|escape:'quotes'}'.replace('.', ','),
-                        totalPromotedAmount: '{$promotedAmount|escape:'quotes'}'.replace('.', ','),
-                        amountParserConfig: {
-                            thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'quotes'}',
-                            decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'quotes'}',
-                        }
-                    });
+                if (typeof pgSDK == 'undefined') {
                     return false;
                 }
+                var sdk = pgSDK;
+
+                sdk.simulator.init({
+                    locale: '{$locale|escape:'quotes'}'.toLowerCase(),
+                    country: '{$country|escape:'quotes'}'.toLowerCase(),
+                    publicKey: '{$pagantisPublicKey|escape:'quotes'}',
+                    selector: '.pagantisSimulator',
+                    totalAmount: '{$amount|escape:'quotes'}'.replace('.', ','),
+                    totalPromotedAmount: '{$promotedAmount|escape:'quotes'}'.replace('.', ','),
+                    amountParserConfig: {
+                        thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'quotes'}',
+                        decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'quotes'}',
+                    }
+                });
                 return true;
             }
             window.PSSimulatorAttempts = 0;

@@ -46,82 +46,72 @@
                 return true;
             }
 
-            if ('{$locale|escape:'quotes'}' == 'ES') {
-                if (typeof pmtSDK == 'undefined') {
-                    return false;
-                }
-                var sdk = pmtSDK;
-            } else {
-                if (typeof pgSDK == 'undefined') {
-                    return false;
-                }
-                var sdk = pgSDK;
+            if (typeof pgSDK == 'undefined') {
+                return false;
+            }
+            var sdk = pgSDK;
+
+            var price = null;
+            var quantity = null;
+            var positionSelector = '{$pagantisCSSSelector|escape:'quotes'}';
+            var priceSelector = '{$pagantisPriceSelector|escape:'quotes'}';
+            var quantitySelector = '{$pagantisQuantitySelector|escape:'quotes'}';
+
+            if (positionSelector === 'default') {
+                positionSelector = '.pagantisSimulator';
             }
 
-            if (typeof sdk != 'undefined') {
-                var price = null;
-                var quantity = null;
-                var positionSelector = '{$pagantisCSSSelector|escape:'quotes'}';
-                var priceSelector = '{$pagantisPriceSelector|escape:'quotes'}';
-                var quantitySelector = '{$pagantisQuantitySelector|escape:'quotes'}';
-
-                if (positionSelector === 'default') {
-                    positionSelector = '.pagantisSimulator';
-                }
-
+            if (priceSelector === 'default') {
+                priceSelector = findPriceSelector();
                 if (priceSelector === 'default') {
-                    priceSelector = findPriceSelector();
-                    if (priceSelector === 'default') {
-                        price = '{$amount|escape:'quotes'}'
-                    }
+                    price = '{$amount|escape:'quotes'}'
                 }
+            }
 
+            if (quantitySelector === 'default') {
+                quantitySelector = findQuantitySelector();
                 if (quantitySelector === 'default') {
-                    quantitySelector = findQuantitySelector();
-                    if (quantitySelector === 'default') {
-                        quantity = '1'
-                    }
+                    quantity = '1'
                 }
+            }
 
-                sdk.product_simulator = {};
-                sdk.product_simulator.id = 'product-simulator';
-                sdk.product_simulator.locale = '{$locale|escape:'quotes'}'.toLowerCase();
-                sdk.product_simulator.country = '{$country|escape:'quotes'}'.toLowerCase();
-                sdk.product_simulator.publicKey = '{$pagantisPublicKey|escape:'quotes'}';
-                sdk.product_simulator.selector = positionSelector;
-                sdk.product_simulator.numInstalments = '{$pagantisQuotesStart|escape:'quotes'}';
-                sdk.product_simulator.type = {$pagantisSimulatorType|escape:'quotes'};
-                sdk.product_simulator.skin = {$pagantisSimulatorSkin|escape:'quotes'};
-                sdk.product_simulator.position = {$pagantisSimulatorPosition|escape:'quotes'};
-                sdk.product_simulator.amountParserConfig =  {
-                    thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'quotes'}',
-                    decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'quotes'}',
-                };
+            sdk.product_simulator = {};
+            sdk.product_simulator.id = 'product-simulator';
+            sdk.product_simulator.locale = '{$locale|escape:'quotes'}'.toLowerCase();
+            sdk.product_simulator.country = '{$country|escape:'quotes'}'.toLowerCase();
+            sdk.product_simulator.publicKey = '{$pagantisPublicKey|escape:'quotes'}';
+            sdk.product_simulator.selector = positionSelector;
+            sdk.product_simulator.numInstalments = '{$pagantisQuotesStart|escape:'quotes'}';
+            sdk.product_simulator.type = {$pagantisSimulatorType|escape:'quotes'};
+            sdk.product_simulator.skin = {$pagantisSimulatorSkin|escape:'quotes'};
+            sdk.product_simulator.position = {$pagantisSimulatorPosition|escape:'quotes'};
+            sdk.product_simulator.amountParserConfig =  {
+                thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'quotes'}',
+                decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'quotes'}',
+            };
 
-                if (priceSelector !== 'default') {
-                    sdk.product_simulator.itemAmountSelector = priceSelector;
-                    {if $isPromotedProduct == true}
-                    sdk.product_simulator.itemPromotedAmountSelector = priceSelector;
-                    {/if}
-                }
-                if (quantitySelector !== 'default' && quantitySelector !== 'none') {
-                    sdk.product_simulator.itemQuantitySelector = quantitySelector;
-                }
-                if (price != null) {
-                    sdk.product_simulator.itemAmount = price.toString().replace('.', ',');
-                    {if $isPromotedProduct == true}
-                        sdk.product_simulator.itemPromotedAmount = price.toString().replace('.', ',');
-                    {/if}
-                }
-                if (quantity != null) {
-                    sdk.product_simulator.itemQuantity = quantity;
-                }
+            if (priceSelector !== 'default') {
+                sdk.product_simulator.itemAmountSelector = priceSelector;
+                {if $isPromotedProduct == true}
+                sdk.product_simulator.itemPromotedAmountSelector = priceSelector;
+                {/if}
+            }
+            if (quantitySelector !== 'default' && quantitySelector !== 'none') {
+                sdk.product_simulator.itemQuantitySelector = quantitySelector;
+            }
+            if (price != null) {
+                sdk.product_simulator.itemAmount = price.toString().replace('.', ',');
+                {if $isPromotedProduct == true}
+                    sdk.product_simulator.itemPromotedAmount = price.toString().replace('.', ',');
+                {/if}
+            }
+            if (quantity != null) {
+                sdk.product_simulator.itemQuantity = quantity;
+            }
 
-                sdk.simulator.init(sdk.product_simulator);
-                if (checkSimulatorContent()) {
-                    return true;
-                }
-                return false;
+            sdk.simulator.init(sdk.product_simulator);
+            if (checkSimulatorContent()) {
+                return true;
             }
             return false;
         }
