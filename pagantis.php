@@ -71,7 +71,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.2.13';
+        $this->version = '8.2.15';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -406,12 +406,12 @@ class Pagantis extends PaymentModule
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
         ));
 
-        $logo = 'logo_pagantis.png';
+        $logo = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
             ->setCallToActionText($pagantisTitle)
             ->setAction($link->getModuleLink('pagantis', 'payment'))
-            ->setLogo($this->getPathUri(). 'views/img/' . $logo)
+            ->setLogo($logo)
             ->setModuleName(__CLASS__)
         ;
 
@@ -594,7 +594,7 @@ class Pagantis extends PaymentModule
             $message = $this->displayError($error);
         }
 
-        $logo = $this->getPathUri(). 'views/img/logo_pagantis.png';
+        $logo = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
@@ -676,7 +676,6 @@ class Pagantis extends PaymentModule
 
         $return = true;
         if ($supercheckout_enabled || $onepagecheckout_enabled || $onepagecheckoutps_enabled) {
-            $this->checkLogoExists();
             $return = $this->display(__FILE__, 'views/templates/hook/onepagecheckout.tpl');
         } elseif (_PS_VERSION_ < 1.7) {
             $return = $this->display(__FILE__, 'views/templates/hook/checkout.tpl');
@@ -816,20 +815,6 @@ class Pagantis extends PaymentModule
         }
 
         return null;
-    }
-
-    /**
-     * Check logo exists in OPC module
-     */
-    public function checkLogoExists()
-    {
-        $logo = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/pagantis.png';
-        if (!file_exists($logo) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
-            copy(
-                _PS_PAGANTIS_DIR . '/views/img/logo_pagantis.png',
-                $logo
-            );
-        }
     }
 
     /**

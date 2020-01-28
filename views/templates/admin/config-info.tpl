@@ -46,7 +46,7 @@
             display: inline-block;
             vertical-align: middle;
             float: none;
-            width: 100px;
+            width: 150px;
         }
     </style>
     {$message|escape:'quotes'}

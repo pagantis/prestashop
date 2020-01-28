@@ -70,8 +70,8 @@
             .pagantisSimulator {
                 max-width: 300px;
                 display: block;
-                margin-left: -85px;
-                padding-top: 10px;
+                margin-left: -2px;
+                padding-top: 5px;
             }
             .pagantisSimulator.ps_version_1-5 {
                 padding-top: 0px;
@@ -86,16 +86,11 @@
                 min-height: 150px;
             }
             p.payment_module a.pagantis-checkout {
-                background: url(/modules/pagantis/views/img/logo_pagantis.png) no-repeat;
+                background: url(https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png) no-repeat;
                 background-position: 4px;
-                background-position-y: 25px;
-                background-size: 95px;
-            }
-            p.payment_module a.pagantis-checkout.locale_ES{
-                background: url(/modules/pagantis/views/img/logo_pagamastarde.png) no-repeat;
-                background-position: 15px;
                 background-position-y: 10px;
-                background-size: 80px;
+                background-size: 90px;
+                padding-bottom: 10px;
             }
             p.payment_module a.pagantis-checkout.ps_version_1-7 {
                 background: none;

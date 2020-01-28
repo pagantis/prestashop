@@ -69,7 +69,7 @@ class PagantisPs17InstallTest extends AbstractPs17Selenium
         $this->loginToBackOffice();
         $this->getPagantisBackOffice();
         $html = $this->webDriver->getPageSource();
-        $this->assertContains('logo_pagantis.png', $html);
+        $this->assertContains('pg.png', $html);
         $this->assertContains('Login Pagantis', $html);
         $this->assertContains('https://bo.pagantis.com', $html);
         $this->quit();
