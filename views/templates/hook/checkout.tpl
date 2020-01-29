@@ -83,6 +83,9 @@
             p.payment_module.Pagantis {
                 min-height: 150px;
             }
+            p.payment_module.Pagantis.ps_version_1-5 {
+                min-height: 0px;
+            }
             p.payment_module a.pagantis-checkout {
                 background: url(https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png) 5px 5px no-repeat #fbfbfb;
                 /*background: url(https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png) no-repeat;*/
@@ -115,10 +118,9 @@
                 color: #777;
             }
             p.payment_module a.pagantis-checkout.ps_version_1-5 {
-                height: 60px;
+                height: 90px;
                 padding-left: 99px;
-                margin-top: -10px;
-                line-height: 90px;
+                padding-top: 45px;
             }
             p.payment_module a:hover {
                 background-color: #f6f6f6;

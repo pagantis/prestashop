@@ -18,6 +18,9 @@
         .pagantis-promotion .pmt-no-interest{
             color: #00c1d5
         }
+        .pagantisSimulator {
+            clear: both;
+        }
         .pagantisSimulator > div.preposition {
             display:inline-block;
             vertical-align: top;

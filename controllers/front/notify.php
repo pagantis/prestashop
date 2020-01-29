@@ -11,7 +11,6 @@ require_once('AbstractController.php');
 
 use Pagantis\OrdersApiClient\Client as PagantisClient;
 use Pagantis\OrdersApiClient\Model\Order as PagantisModelOrder;
-use Pagantis\ModuleUtils\Exception\AmountMismatchException;
 use Pagantis\ModuleUtils\Exception\ConcurrencyException;
 use Pagantis\ModuleUtils\Exception\MerchantOrderNotFoundException;
 use Pagantis\ModuleUtils\Exception\NoIdentificationException;
@@ -82,6 +81,9 @@ class PagantisNotifyModuleFrontController extends AbstractController
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // prevent colision between POST and GET requests
                 sleep(15);
+            }
+            if (Tools::getValue('origin') == 'notification' && $_SERVER['REQUEST_METHOD'] == 'GET') {
+                return $this->cancelProcess();
             }
             $this->prepareVariables();
             $this->checkConcurrency();
@@ -407,6 +409,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 '. Pagantis OrderId=' . $this->pagantisOrderId .
                 '. Prestashop CartId=' . $this->merchantOrderId;
             $this->saveLog(array('message' => $message));
+            }
         } catch (\Exception $exception) {
             // Do nothing
         }

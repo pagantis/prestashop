@@ -94,6 +94,7 @@ module.exports = function(grunt) {
                     {src: ['views/**'], dest: 'pagantis/', filter: 'isFile'},
                     {src: 'index.php', dest: 'pagantis/'},
                     {src: 'pagantis.php', dest: 'pagantis/'},
+                    {src: 'logo.png', dest: 'pagantis/'},
                     {src: 'LICENSE.md', dest: 'pagantis/'},
                     {src: 'CONTRIBUTORS.md', dest: 'pagantis/'},
                     {src: 'README.md', dest: 'pagantis/'}

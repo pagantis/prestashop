@@ -86,8 +86,12 @@ class PagantisPaymentModuleFrontController extends AbstractController
         $pagantisPublicKey = Configuration::get('pagantis_public_key');
         $pagantisPrivateKey = Configuration::get('pagantis_private_key');
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-                 .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&'
+                 .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect'
                  .http_build_query($query)
+        ;
+        $notificationOkUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
+            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=notification'
+            .http_build_query($query)
         ;
 
         $shippingAddress = new Address($cart->id_address_delivery);
@@ -212,8 +216,8 @@ class PagantisPaymentModuleFrontController extends AbstractController
             $orderConfigurationUrls
                 ->setCancel($cancelUrl)
                 ->setKo($cancelUrl)
-                ->setAuthorizedNotificationCallback($okUrl)
-                ->setRejectedNotificationCallback($okUrl)
+                ->setAuthorizedNotificationCallback($notificationOkUrl)
+                ->setRejectedNotificationCallback()
                 ->setOk($okUrl)
             ;
 

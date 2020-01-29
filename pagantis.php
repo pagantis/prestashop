@@ -698,6 +698,7 @@ class Pagantis extends PaymentModule
 
         $return = true;
         if ($supercheckout_enabled || $onepagecheckout_enabled || $onepagecheckoutps_enabled) {
+            $this->checkLogoExists();
             $return = $this->display(__FILE__, 'views/templates/hook/onepagecheckout.tpl');
         } elseif (_PS_VERSION_ < 1.7) {
             $return = $this->display(__FILE__, 'views/templates/hook/checkout.tpl');
@@ -880,6 +881,20 @@ class Pagantis extends PaymentModule
         }
 
         return $default;
+    }
+
+    /**
+     * Check logo exists in OPC module
+     */
+    public function checkLogoExists()
+    {
+        $logoPg = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/pagantis.png';
+        if (!file_exists($logoPg) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
+            copy(
+                _PS_PAGANTIS_DIR . '/logo.png',
+                $logoPg
+            );
+        }
     }
 
     /**
