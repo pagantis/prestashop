@@ -61,11 +61,11 @@
 
                 if (!checkSimulatorContent()) {
                     sdk.simulator.init({
+                        type: sdk.simulator.types.SELECTABLE_TEXT_CUSTOM,
                         locale: '{$locale|escape:'quotes'}'.toLowerCase(),
                         country: '{$country|escape:'quotes'}'.toLowerCase(),
                         publicKey: '{$pagantisPublicKey|escape:'quotes'}',
                         selector: '.pagantisSimulator',
-                        type: sdk.simulator.types.SELECTABLE,
                         totalAmount: '{$amount|escape:'quotes'}'.replace('.', ','),
                         amountParserConfig: {
                             thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'quotes'}',
@@ -83,9 +83,9 @@
                 }, 500);
             }
         </script>
-        <style>
-            img[src="/modules/onepagecheckoutps/views/img/payments/pagantis.png"] {
-                content: url(/modules/onepagecheckoutps/views/img/payments/{$logo|escape:'quotes'});
-            }
-        </style>
 <span class="pagantisSimulator"></span>
+<style>
+    .pgSimulatorPlaceholder {
+        display: inline-block;
+    }
+</style>

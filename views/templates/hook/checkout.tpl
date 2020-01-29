@@ -10,7 +10,7 @@
     <div class="col-xs-12">
         <p class="payment_module Pagantis ps_version_{$ps_version|escape:'quotes'}">
             <a class="pagantis-checkout ps_version_{$ps_version|escape:'quotes'} locale_{$locale|escape:'quotes'}" href="{$paymentUrl|escape:'html'}" title="{$pagantisTitle|escape:'quotes'}">
-                {$pagantisTitle|escape:'quotes'}
+                {$pagantisTitle|escape:'quotes'}&nbsp;
                 <span class="pagantisSimulator ps_version_{$ps_version|escape:'quotes'}"></span>
             </a>
         </p>
@@ -46,6 +46,7 @@
                 var sdk = pgSDK;
 
                 sdk.simulator.init({
+                    type: sdk.simulator.types.SELECTABLE_TEXT_CUSTOM,
                     locale: '{$locale|escape:'quotes'}'.toLowerCase(),
                     country: '{$country|escape:'quotes'}'.toLowerCase(),
                     publicKey: '{$pagantisPublicKey|escape:'quotes'}',
@@ -68,10 +69,7 @@
         </script>
         <style>
             .pagantisSimulator {
-                max-width: 300px;
-                display: block;
-                margin-left: -2px;
-                padding-top: 5px;
+                display: inline-block;
             }
             .pagantisSimulator.ps_version_1-5 {
                 padding-top: 0px;
@@ -86,11 +84,11 @@
                 min-height: 150px;
             }
             p.payment_module a.pagantis-checkout {
-                background: url(https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png) no-repeat;
-                background-position: 4px;
-                background-position-y: 10px;
+                background: url(https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png) 5px 5px no-repeat #fbfbfb;
+                /*background: url(https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png) no-repeat;*/
+                /*background-position: 4px;*/
+                /*background-position-y: 10px;*/
                 background-size: 90px;
-                padding-bottom: 10px;
             }
             p.payment_module a.pagantis-checkout.ps_version_1-7 {
                 background: none;

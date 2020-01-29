@@ -18,6 +18,18 @@
         .pagantis-promotion .pmt-no-interest{
             color: #00c1d5
         }
+        .pagantisSimulator > div.preposition {
+            display:inline-block;
+            vertical-align: top;
+            margin-right: 5px;
+            width: inherit;
+            height: 15px;
+        }
+        .pagantisSimulator > div {
+            height: 35px;
+            display:inline-block;
+            width: 90%
+        }
     </style>
     <script>
         function checkSimulatorContent() {
@@ -26,6 +38,9 @@
                 var pgElement = pgContainer[0];
                 if (pgElement.innerHTML != '')
                 {
+                    if (pgElement.innerText == "{$pagantisSimPreposition|escape:'quotes'}") {
+                        pgElement.innerHTML = '';
+                    }
                     return true;
                 }
             }
@@ -125,6 +140,12 @@
     {if $isPromotedProduct == true}
         <span class="pagantis-promotion ps_version_{$ps_version|escape:'quotes'}" id="pagantis-promotion-extra">{$pagantisPromotionExtra nofilter}</span>
     {/if}
-    <div class="pagantisSimulator"></div>
+    <div class="pagantisSimulator">{if $pagantisSimulatorType == 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM'}<div class="preposition">{$pagantisSimPreposition|escape:'quotes'}</div>{/if}</div>
+    <script>
+        if ("{$pagantisSimulatorType|escape:'quotes'}" === 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM') {
+            var div1 = document.getElementsByClassName("content_prices");
+            var div2 = document.getElementsByClassName("pagantisSimulator");
+            div1[0].appendChild(div2[0]);
+        }
+    </script>
 {/if}
-

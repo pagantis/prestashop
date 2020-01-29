@@ -36,13 +36,26 @@ class Pagantis extends PaymentModule
     public $language;
 
     /**
+     * @var null $shippingAddress
+     */
+    protected $shippingAddress = null;
+    /**
+     * @var null $billingAddress
+     */
+    protected $billingAddress = null;
+    /**
+     * @var array $allowedCountries
+     */
+    protected $allowedCountries = [];
+
+    /**
      * Default module advanced configuration values
      *
      * @var array
      */
     public $defaultConfigs = array(
         'PAGANTIS_TITLE' => 'Instant Financing',
-        'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'sdk.simulator.types.SIMPLE',
+        'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM',
         'PAGANTIS_SIMULATOR_DISPLAY_SKIN' => 'sdk.simulator.skins.BLUE',
         'PAGANTIS_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
         'PAGANTIS_SIMULATOR_START_INSTALLMENTS' => '3',
@@ -302,11 +315,12 @@ class Pagantis extends PaymentModule
         $pagantisDisplayMinAmount  = Pagantis::getExtraConfig('PAGANTIS_DISPLAY_MIN_AMOUNT');
         $pagantisPublicKey         = Configuration::get('pagantis_public_key');
         $pagantisPrivateKey        = Configuration::get('pagantis_private_key');
-        $allowedCountries          = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));
+        $this->allowedCountries    = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));
+        $this->getUserLanguage();
         return (
             $cart->getOrderTotal() >= $pagantisDisplayMinAmount &&
             in_array($currency->iso_code, $availableCurrencies) &&
-            in_array(Tools::strtolower($this->language), $allowedCountries) &&
+            in_array(Tools::strtolower($this->language), $this->allowedCountries) &&
             $pagantisPublicKey &&
             $pagantisPrivateKey
         );
@@ -353,6 +367,10 @@ class Pagantis extends PaymentModule
      */
     public function hookPaymentOptions()
     {
+        /** @var Cart $cart */
+        $cart = $this->context->cart;
+        $this->shippingAddress = new Address($cart->id_address_delivery);
+        $this->billingAddress = new Address($cart->id_address_invoice);
         if (!$this->isPaymentMethodAvailable()) {
             return array();
         }
@@ -594,7 +612,7 @@ class Pagantis extends PaymentModule
             $message = $this->displayError($error);
         }
 
-        $logo = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
+        $logo = 'https://cdn.digitalorigin.com/assets/master/logos/pg.png';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
@@ -615,6 +633,10 @@ class Pagantis extends PaymentModule
      */
     public function hookPayment($params)
     {
+        /** @var Cart $cart */
+        $cart = $this->context->cart;
+        $this->shippingAddress = new Address($cart->id_address_delivery);
+        $this->billingAddress = new Address($cart->id_address_invoice);
         if (!$this->isPaymentMethodAvailable()) {
             return false;
         }
@@ -653,7 +675,7 @@ class Pagantis extends PaymentModule
             'promotedAmount'                     => $promotedAmount,
             'locale'                             => $this->language,
             'country'                            => $this->language,
-            'logo' => ($this->language == 'ES' || $this->language == null) ? 'pagamastarde.png' : 'pagantis.png',
+            'logo'                               => 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png',
             'pagantisPublicKey'                  => $pagantisPublicKey,
             'pagantisCSSSelector'                => $pagantisSimulatorCSSSelector,
             'pagantisPriceSelector'              => $pagantisSimulatorPriceSelector,
@@ -745,6 +767,7 @@ class Pagantis extends PaymentModule
             'pagantisSimulatorThousandSeparator' => $pagantisSimulatorThousandSeparator,
             'pagantisSimulatorDecimalSeparator'  => $pagantisSimulatorDecimalSeparator,
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
+            'pagantisSimPreposition'           => $this->l('or'),
         ));
 
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');
@@ -871,7 +894,22 @@ class Pagantis extends PaymentModule
         }
         $this->language = Tools::strtoupper($langArray[count($langArray)-1]);
         // Prevent null language detection
-        $this->language = ($this->language) ? $this->language : 'ES';
+        if (in_array(Tools::strtolower($this->language), $this->allowedCountries)) {
+            return;
+        }
+        if ($this->shippingAddress) {
+            $this->language = Country::getIsoById($this->shippingAddress->id_country);
+            if (in_array(Tools::strtolower($this->language), $this->allowedCountries)) {
+                return;
+            }
+        }
+        if ($this->billingAddress) {
+            $this->language = Country::getIsoById($this->billingAddress->id_country);
+            if (in_array(Tools::strtolower($this->language), $this->allowedCountries)) {
+                return;
+            }
+        }
+        return $this->language;
     }
 
     /**

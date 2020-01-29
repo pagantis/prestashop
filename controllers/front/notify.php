@@ -31,7 +31,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     /**
      * Seconds to expire a locked request
      */
-    const CONCURRENCY_TIMEOUT = 5;
+    const CONCURRENCY_TIMEOUT = 10;
 
     /**
      * @var string $merchantOrderId
@@ -80,7 +80,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                sleep(5);
+                // prevent colision between POST and GET requests
+                sleep(15);
             }
             $this->prepareVariables();
             $this->checkConcurrency();

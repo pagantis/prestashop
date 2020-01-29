@@ -50,6 +50,7 @@ $_MODULE['<{pagantis}prestashop>pagantis_1fe40ce06393929d52e82051ee681d49'] = 'P
 $_MODULE['<{pagantis}prestashop>pagantis_8c4c63f6a01b1c5d4ef1690bb7c30a3a'] = 'Por favor, añade una Private Key correcta';
 $_MODULE['<{pagantis}prestashop>pagantis_b5400e4f4fca6833a1cc52377dd08f1c'] = 'Por favor, añade un título al método de pago';
 $_MODULE['<{pagantis}prestashop>pagantis_a7139ef55f3c52d2de726ec1bab7d5e8'] = 'Todos los cambios han sido actualizados';
+$_MODULE['<{pagantis}prestashop>pagantis_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'ó';
 $_MODULE['<{pagantis}prestashop>config-info_ee4b4c0959ebfe18c9796d977815dfaa'] = 'Configura Pagantis';
 $_MODULE['<{pagantis}prestashop>config-info_c357a188e27ece5a7ac268c5bf010778'] = 'Accede a tu backoffice';
 $_MODULE['<{pagantis}prestashop>config-info_64bf9889e02ba767c0f68ea047f78ae9'] = 'Esta es la configuración de Pagantis, por favor tómate tu tiempo para configurar el método de pago de la manera que mejor se adapte a ti.';
