@@ -35,16 +35,19 @@
         }
     </style>
     <script>
-        function checkSimulatorContent() {
+        function checkSimulatorContent(clearDiv = false) {
             var pgContainer = document.getElementsByClassName("pagantisSimulator");
             if(pgContainer.length > 0) {
                 var pgElement = pgContainer[0];
-                if (pgElement.innerHTML != '')
+                if (pgElement.innerHTML != '' && pgElement.innerText != "{$pagantisSimPreposition|escape:'quotes'}")
                 {
-                    if (pgElement.innerText == "{$pagantisSimPreposition|escape:'quotes'}") {
-                        pgElement.innerHTML = '';
-                    }
+                    console.log("1content:", pgElement.innerHTML)
                     return true;
+                }
+                if (clearDiv) {
+                    pgElement.innerHTML = '';
+                    console.log("limpio content:", pgElement.innerHTML)
+                    return true
                 }
             }
             return false;
@@ -55,16 +58,19 @@
             window.PSSimulatorAttempts = window.attempts + 1;
             if (window.attempts > 4 )
             {
+                console.log("1");
                 clearInterval(window.PSSimulatorId);
+                checkSimulatorContent(true);
                 return true;
             }
-
             if (checkSimulatorContent()) {
+                console.log("2");
                 clearInterval(window.PSSimulatorId);
+                checkSimulatorContent(true);
                 return true;
             }
-
             if (typeof pgSDK == 'undefined') {
+                console.log("3");
                 return false;
             }
             var sdk = pgSDK;
@@ -128,6 +134,7 @@
             }
 
             sdk.simulator.init(sdk.product_simulator);
+            console.log(sdk.product_simulator);
             if (checkSimulatorContent()) {
                 return true;
             }
@@ -137,7 +144,7 @@
         if (!loadSimulator()) {
             window.PSSimulatorId = setInterval(function () {
                 loadSimulator();
-            }, 2000);
+            }, 1000);
         }
     </script>
     {if $isPromotedProduct == true}
@@ -146,7 +153,11 @@
     <div class="pagantisSimulator">{if $pagantisSimulatorType == 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM'}<div class="preposition">{$pagantisSimPreposition|escape:'quotes'}</div>{/if}</div>
     <script>
         if ("{$pagantisSimulatorType|escape:'quotes'}" === 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM') {
-            var div1 = document.getElementsByClassName("content_prices");
+            var pricesContainerSelector = "content_prices";
+            if ("{$ps_version|escape:'quotes'}" === '1-7') {
+                pricesContainerSelector = "product-prices";
+            }
+            var div1 = document.getElementsByClassName(pricesContainerSelector);
             var div2 = document.getElementsByClassName("pagantisSimulator");
             div1[0].appendChild(div2[0]);
         }

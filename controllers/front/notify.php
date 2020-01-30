@@ -129,6 +129,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             // Do nothing
         }
 
+        $this->rollbackMerchantOrder();
         return $this->finishProcess(false);
     }
 
@@ -403,15 +404,20 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function rollbackMerchantOrder()
     {
-        // Do nothing because the order is created only when the purchase was successfully
         try {
             $message = 'Roolback method: ' .
                 '. Pagantis OrderId=' . $this->pagantisOrderId .
                 '. Prestashop CartId=' . $this->merchantOrderId;
-            $this->saveLog(array('message' => $message));
+            if ($this->module->currentOrder) {
+                $objOrder = new Order($this->module->currentOrder);
+                $history = new OrderHistory();
+                $history->id_order = (int)$objOrder->id;
+                $history->changeIdOrderState(8, (int)($objOrder->id));
+                $message .= ' Prestashop OrderId=' . $this->merchantOrderId;
             }
+            $this->saveLog(array('message' => $message));
         } catch (\Exception $exception) {
-            // Do nothing
+            $this->saveLog(array('message' => $exception->getMessage()));
         }
     }
 
@@ -486,8 +492,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
      * 1. Unblock concurrency
      * 2. Save log
      *
-     * @param \Exception $exception
-     *
+     * @param null $exception
+     * @return mixed
      */
     public function cancelProcess($exception = null)
     {
@@ -511,6 +517,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
      * Redirect the request to the e-commerce or show the output in json
      *
      * @param bool $error
+     * @return mixed
      */
     public function finishProcess($error = true)
     {

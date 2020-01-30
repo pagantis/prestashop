@@ -9,8 +9,8 @@
 <div class="row">
     <div class="col-xs-12">
         <p class="payment_module Pagantis ps_version_{$ps_version|escape:'quotes'}">
-            <a class="pagantis-checkout ps_version_{$ps_version|escape:'quotes'} locale_{$locale|escape:'quotes'}" href="{$paymentUrl|escape:'html'}" title="{$pagantisTitle|escape:'quotes'}">
-                {$pagantisTitle|escape:'quotes'}&nbsp;
+            <a class="pagantis-checkout ps_version_{$ps_version|escape:'quotes'} locale_{$locale|escape:'quotes'}" href="{$paymentUrl|escape:'html'}" title="aaaa{$pagantisTitle|escape:'quotes'}">
+                {if $ps_version !== '1-7'}{$pagantisTitle|escape:'quotes'}&nbsp;{/if}
                 <span class="pagantisSimulator ps_version_{$ps_version|escape:'quotes'}"></span>
             </a>
         </p>
@@ -77,8 +77,6 @@
             }
             .pagantisSimulator.ps_version_1-7 {
                 padding-top: 0px;
-                margin-top: -35px;
-                margin-left: -48px;
             }
             p.payment_module.Pagantis {
                 min-height: 150px;
@@ -86,18 +84,19 @@
             p.payment_module.Pagantis.ps_version_1-5 {
                 min-height: 0px;
             }
+            p.payment_module.Pagantis.ps_version_1-7 {
+                min-height: 0px;
+                margin-left: -5px;
+                margin-top: -15px;
+            }
             p.payment_module a.pagantis-checkout {
                 background: url(https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png) 5px 5px no-repeat #fbfbfb;
-                /*background: url(https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png) no-repeat;*/
-                /*background-position: 4px;*/
-                /*background-position-y: 10px;*/
                 background-size: 90px;
             }
             p.payment_module a.pagantis-checkout.ps_version_1-7 {
                 background: none;
-                font-size: 0px;
             }
-            .payment-option img[src*='/modules/pagantis/views/img/'] {
+            .payment-option img[src*='cdn.digitalorigin.com'] {
                 height: 20px;
                 padding-left: 5px;
             }
@@ -124,9 +123,6 @@
             }
             p.payment_module a:hover {
                 background-color: #f6f6f6;
-            }
-            p.payment_module.Pagantis.ps_version_1-7 {
-                min-height: 0px;
             }
         </style>
     </div>

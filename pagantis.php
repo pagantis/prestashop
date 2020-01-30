@@ -740,11 +740,13 @@ class Pagantis extends PaymentModule
         $pagantisPromotionExtra             = Pagantis::getExtraConfig('PAGANTIS_PROMOTION_EXTRA');
         $pagantisSimulatorThousandSeparator = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR');
         $pagantisSimulatorDecimalSeparator  = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR');
+        $allowedCountries                   = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));
 
         if ($functionName != $productConfiguration ||
             $amount <= 0 ||
             $amount < $pagantisDisplayMinAmount ||
-            !$pagantisSimulatorType
+            !$pagantisSimulatorType ||
+            !in_array(Tools::strtolower($this->language), $allowedCountries)
         ) {
             return null;
         }
