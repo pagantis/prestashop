@@ -3,7 +3,7 @@
  * This file is part of the official Pagantis module for PrestaShop.
  *
  * @author    Pagantis <integrations@pagantis.com>
- * @copyright 2015-2016 Pagantis
+ * @copyright 2019 Pagantis
  * @license   proprietary
  */
 
@@ -272,7 +272,8 @@ class Pagantis extends PaymentModule
             $sql = ("SHOW TABLES LIKE '$tableName'");
             $results = Db::getInstance()->ExecuteS($sql);
             if (is_array($results) && count($results) === 1) {
-                $query = "select COLUMN_TYPE FROM information_schema.COLUMNS where TABLE_NAME='$tableName' AND COLUMN_NAME='ps_order_id'";
+                $query = "select COLUMN_TYPE FROM information_schema.COLUMNS where 
+                          TABLE_NAME='$tableName' AND COLUMN_NAME='ps_order_id'";
                 $results = $results = Db::getInstance()->ExecuteS($query);
                 if (is_array($results) && count($results) === 0) {
                     $sql = "ALTER TABLE $tableName ADD COLUMN ps_order_id VARCHAR(60) AFTER order_id";
@@ -394,7 +395,7 @@ class Pagantis extends PaymentModule
         $pagantisSimulatorDecimalSeparator  = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR');
 
         $items = $cart->getProducts(true);
-        foreach ($items as $key => $item) {
+        foreach ($items as $item) {
             $itemCategories = ProductCore::getProductCategoriesFull($item['id_product']);
             if (in_array(PROMOTIONS_CATEGORY_NAME, $this->arrayColumn($itemCategories, 'name')) !== false) {
                 $productId = $item['id_product'];
@@ -661,7 +662,7 @@ class Pagantis extends PaymentModule
         $pagantisSimulatorDecimalSeparator  = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR');
 
         $items = $cart->getProducts(true);
-        foreach ($items as $key => $item) {
+        foreach ($items as $item) {
             $itemCategories = ProductCore::getProductCategoriesFull($item['id_product']);
             if (in_array(PROMOTIONS_CATEGORY_NAME, $this->arrayColumn($itemCategories, 'name')) !== false) {
                 $productId = $item['id_product'];

@@ -8,7 +8,7 @@ module.exports = function(grunt) {
             autoindex: {
                 command:
                     'composer global require pagantis/autoindex \n' +
-                    'php ~/.composer/vendor/pagantis/autoindex/index.php || true \n' +
+                    'php ~/.composer/vendor/pagantis/autoindex/index.php ./ || true \n' +
                     'php /home/circleci/.config/composer/vendor/pagantis/autoindex/index.php . || true \n'
 
             },
@@ -16,7 +16,7 @@ module.exports = function(grunt) {
                 command: 'composer install --no-dev'
             },
             composerDev: {
-                command: 'composer install'
+                command: 'composer install --ignore-platform-reqs'
             },
             runTestPrestashop17: {
                 command:

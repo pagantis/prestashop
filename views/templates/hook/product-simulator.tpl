@@ -2,9 +2,9 @@
  * This file is part of the official Pagantis module for PrestaShop.
  *
  * @author    Pagantis <integrations@pagantis.com>
- * @copyright 2015-2016 Pagantis
+ * @copyright 2019 Pagantis
  * @license   proprietary
- *}
+*}
 {if ($pagantisIsEnabled && $pagantisSimulatorIsEnabled)}
     <style>
         .pagantis-promotion {
