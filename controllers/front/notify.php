@@ -129,7 +129,6 @@ class PagantisNotifyModuleFrontController extends AbstractController
             // Do nothing
         }
 
-        $this->rollbackMerchantOrder();
         return $this->finishProcess(false);
     }
 
