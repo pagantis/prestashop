@@ -217,7 +217,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setCancel($cancelUrl)
                 ->setKo($cancelUrl)
                 ->setAuthorizedNotificationCallback($notificationOkUrl)
-                ->setRejectedNotificationCallback()
+                ->setRejectedNotificationCallback(null)
                 ->setOk($okUrl)
             ;
 
