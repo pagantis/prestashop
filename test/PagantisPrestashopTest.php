@@ -41,8 +41,8 @@ abstract class PagantisPrestashopTest extends TestCase
     protected $configuration = array(
         'username'      => 'demo@prestashop.com',
         'password'      => 'prestashop_demo',
-        'publicKey'     => 'tk_34f03879ad2245bfb14ceed0',
-        'secretKey'     => 'ba2fa40476d14047',
+        'publicKey'     => 'tk_4989acbf642c4dd3840ea8f9',
+        'secretKey'     => '0db86886db0b424e',
         'birthdate'     => '05/05/1989',
         'firstname'     => 'Jøhn',
         'lastname'      => 'Dōès',
@@ -52,7 +52,7 @@ abstract class PagantisPrestashopTest extends TestCase
         'city'          => 'Barcelona',
         'state'         => 'Barcelona',
         'phone'         => '600123123',
-        'dni'           => '65592819Q',
+        'dni'           => '09575045F',
         'extra'         => 'Free Finance',
         'confirmationMessage' => 'Great, you have completed your purchase',
     );
