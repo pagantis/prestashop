@@ -170,7 +170,7 @@ services:
       - MYSQL_DATABASE=db15-test
   selenium:
     container_name: prestashopSelenium
-    image: selenium/standalone-chrome:3.7.1
+    image: selenium/standalone-chrome:3.141.59
     ports:
       - "4444:4444"
     extra_hosts:
