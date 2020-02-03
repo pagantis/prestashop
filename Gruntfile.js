@@ -51,6 +51,7 @@ module.exports = function(grunt) {
                     'vendor/bin/phpunit --group prestashop16register\n' +
                     'vendor/bin/phpunit --group prestashop16buy\n' +
                     'vendor/bin/phpunit --group prestashop16advanced\n' +
+                    'vendor/bin/phpunit --group prestashop16validate\n' +
                     'vendor/bin/phpunit --group prestashop16controller\n'
             },
             runTestPrestashop15: {
