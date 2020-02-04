@@ -41,12 +41,10 @@
                 var pgElement = pgContainer[0];
                 if (pgElement.innerHTML != '' && pgElement.innerText != "{$pagantisSimPreposition|escape:'quotes'}")
                 {
-                    console.log("1content:", pgElement.innerHTML)
                     return true;
                 }
                 if (clearDiv) {
                     pgElement.innerHTML = '';
-                    console.log("limpio content:", pgElement.innerHTML)
                     return true
                 }
             }
@@ -58,19 +56,16 @@
             window.PSSimulatorAttempts = window.attempts + 1;
             if (window.attempts > 4 )
             {
-                console.log("1");
                 clearInterval(window.PSSimulatorId);
                 checkSimulatorContent(true);
                 return true;
             }
             if (checkSimulatorContent()) {
-                console.log("2");
                 clearInterval(window.PSSimulatorId);
                 checkSimulatorContent(true);
                 return true;
             }
             if (typeof pgSDK == 'undefined') {
-                console.log("3");
                 return false;
             }
             var sdk = pgSDK;
@@ -134,7 +129,6 @@
             }
 
             sdk.simulator.init(sdk.product_simulator);
-            console.log(sdk.product_simulator);
             if (checkSimulatorContent()) {
                 return true;
             }
