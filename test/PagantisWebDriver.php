@@ -20,7 +20,7 @@ class PagantisWebDriver extends RemoteWebDriver
      *
      * @return WebDriverWait
      */
-    public function wait($timeout_in_second = 30, $interval_in_millisecond = 5000)
+    public function wait($timeout_in_second = 60, $interval_in_millisecond = 5000)
     {
         return new WebDriverWait(
             $this,
