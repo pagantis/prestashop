@@ -19,7 +19,7 @@ $_MODULE['<{pagantis}prestashop>pagantis_253c609d642a8362c15b03bb808a7974'] = 'L
 $_MODULE['<{pagantis}prestashop>pagantis_fc5995f57dd6d8bb2904147557b8d44e'] = 'Le simulateur est activé';
 $_MODULE['<{pagantis}prestashop>pagantis_93cba07454f06a4a960172bbd6e2a435'] = 'Oui';
 $_MODULE['<{pagantis}prestashop>pagantis_bafd7322c6e97d25b6299b5d6fe8920b'] = 'Non';
-$_MODULE['<{pagantis}prestashop>pagantis_d6f1f714b8137c1c0ae2000c00d671f0'] = 'ex: financement instantané';
+$_MODULE['<{pagantis}prestashop>pagantis_d6f1f714b8137c1c0ae2000c00d671f0'] = 'ex: Paiement en plusieurs fois';
 $_MODULE['<{pagantis}prestashop>pagantis_eea24c66602485eafd324e751cd68a72'] = 'Titre du moyen de paiement';
 $_MODULE['<{pagantis}prestashop>pagantis_2795530a7911897340b2d346a2eb9c9c'] = 'Simulateur sur la page de paiement';
 $_MODULE['<{pagantis}prestashop>pagantis_62a5e490880a92eef74f167d9dc6dca0'] = 'Masquer';
@@ -31,7 +31,7 @@ $_MODULE['<{pagantis}prestashop>pagantis_7d567c2ecb00ea4dfdd784d480d106be'] = 'M
 $_MODULE['<{pagantis}prestashop>pagantis_4e9e922d62e39b6bcb1496f9df08b232'] = 'Simulateur sur la page du produit';
 $_MODULE['<{pagantis}prestashop>pagantis_bc5aec8b3232075f74e1d0b4f8ed11a6'] = 'Position du simulateur sur la page du produit';
 $_MODULE['<{pagantis}prestashop>pagantis_8e10949144e33b269808290e903eade1'] = 'Pagantis: Les produits de cette catégorie bénéficient d\'un financement gratuit assumé par le commerçant. Utilisez-le pour promouvoir vos produits ou vos marques.';
-$_MODULE['<{pagantis}prestashop>pagantis_7585a661f36e84b81feeb49d6b18d1dc'] = 'Financez ce produit <span class="pmt-no-interest">sans intérêt!</span>';
+$_MODULE['<{pagantis}prestashop>pagantis_f000883cc53cb7b53c9e2dc789871339'] = 'Financez ce produit <span class="pg-no-interest">sans intérêt!</span>';
 $_MODULE['<{pagantis}prestashop>pagantis_8c3ee3bd035487ff9e18a1cefb97798f'] = 'Dans la colonne de droite';
 $_MODULE['<{pagantis}prestashop>pagantis_73182d259408202a90d4f52e86e786a6'] = 'Dans la colonne de gauche';
 $_MODULE['<{pagantis}prestashop>pagantis_833d0dd40076763634bc5732b2b4cd10'] = 'Dans la colonne de droite du produit';
@@ -50,6 +50,7 @@ $_MODULE['<{pagantis}prestashop>pagantis_1fe40ce06393929d52e82051ee681d49'] = 'S
 $_MODULE['<{pagantis}prestashop>pagantis_8c4c63f6a01b1c5d4ef1690bb7c30a3a'] = 'S\'il vous plaît, ajoutez une clé privée correcte';
 $_MODULE['<{pagantis}prestashop>pagantis_b5400e4f4fca6833a1cc52377dd08f1c'] = 'S\'il vous plaît ajouter un titre à la méthode de paiement';
 $_MODULE['<{pagantis}prestashop>pagantis_a7139ef55f3c52d2de726ec1bab7d5e8'] = 'Toutes les modifications ont été mises à jour';
+$_MODULE['<{pagantis}prestashop>pagantis_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'ou';
 $_MODULE['<{pagantis}prestashop>config-info_ee4b4c0959ebfe18c9796d977815dfaa'] = 'Mise en place Pagantis';
 $_MODULE['<{pagantis}prestashop>config-info_c357a188e27ece5a7ac268c5bf010778'] = 'Accédez à votre backoffice';
 $_MODULE['<{pagantis}prestashop>config-info_64bf9889e02ba767c0f68ea047f78ae9'] = 'Il s’agit de la configuration de Pagantis. Prenez le temps de configurer le mode de paiement de la manière qui vous convient le mieux.';

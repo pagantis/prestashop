@@ -2,7 +2,7 @@
  * This file is part of the official Pagantis module for PrestaShop.
  *
  * @author    Pagantis <integrations@pagantis.com>
- * @copyright 2015-2016 Pagantis
+ * @copyright 2019 Pagantis
  * @license   proprietary
  *}
 <form id="pagantis_form" action="{$paymentUrl|escape:'html'}"></form>
@@ -54,25 +54,18 @@
                     return true;
                 }
 
-                if ('{$locale|escape:'quotes'}' == 'ES') {
-                    if (typeof pmtSDK == 'undefined') {
-                        return false;
-                    }
-                    var sdk = pmtSDK;
-                } else {
-                    if (typeof pgSDK == 'undefined') {
-                        return false;
-                    }
-                    var sdk = pgSDK;
+                if (typeof pgSDK == 'undefined') {
+                    return false;
                 }
+                var sdk = pgSDK;
 
-                if (typeof sdk != 'undefined' && !checkSimulatorContent()) {
+                if (!checkSimulatorContent()) {
                     sdk.simulator.init({
+                        type: sdk.simulator.types.SELECTABLE_TEXT_CUSTOM,
                         locale: '{$locale|escape:'quotes'}'.toLowerCase(),
                         country: '{$country|escape:'quotes'}'.toLowerCase(),
                         publicKey: '{$pagantisPublicKey|escape:'quotes'}',
                         selector: '.pagantisSimulator',
-                        type: sdk.simulator.types.SELECTABLE,
                         totalAmount: '{$amount|escape:'quotes'}'.replace('.', ','),
                         amountParserConfig: {
                             thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'quotes'}',
@@ -90,9 +83,9 @@
                 }, 500);
             }
         </script>
-        <style>
-            img[src="/modules/onepagecheckoutps/views/img/payments/pagantis.png"] {
-                content: url(/modules/onepagecheckoutps/views/img/payments/{$logo|escape:'quotes'});
-            }
-        </style>
 <span class="pagantisSimulator"></span>
+<style>
+    .pgSimulatorPlaceholder {
+        display: inline-block;
+    }
+</style>

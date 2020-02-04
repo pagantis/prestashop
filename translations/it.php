@@ -31,7 +31,7 @@ $_MODULE['<{pagantis}prestashop>pagantis_7d567c2ecb00ea4dfdd784d480d106be'] = 'M
 $_MODULE['<{pagantis}prestashop>pagantis_4e9e922d62e39b6bcb1496f9df08b232'] = 'Simulatore sulla pagina del prodotto';
 $_MODULE['<{pagantis}prestashop>pagantis_bc5aec8b3232075f74e1d0b4f8ed11a6'] = 'Posizione del simulatore sulla pagina del prodotto';
 $_MODULE['<{pagantis}prestashop>pagantis_8e10949144e33b269808290e903eade1'] = 'Pagantis: i prodotti con questa categoria hanno un finanziamento gratuito assunto dal commerciante. Usalo per promuovere i tuoi prodotti o marchi.';
-$_MODULE['<{pagantis}prestashop>pagantis_7585a661f36e84b81feeb49d6b18d1dc'] = 'Finanziare prodotto <span class="pmt-no-interest">senza interessi!</span>';
+$_MODULE['<{pagantis}prestashop>pagantis_df9ceabf91a2e2375b153480392c5370'] = 'Finanziare prodotto <span class="pg-no-interest">senza interessi!</span>';
 $_MODULE['<{pagantis}prestashop>pagantis_8c3ee3bd035487ff9e18a1cefb97798f'] = 'Nella colonna di destra';
 $_MODULE['<{pagantis}prestashop>pagantis_73182d259408202a90d4f52e86e786a6'] = 'Nella colonna di sinistra';
 $_MODULE['<{pagantis}prestashop>pagantis_833d0dd40076763634bc5732b2b4cd10'] = 'Nella colonna di destra del prodotto';
@@ -50,6 +50,7 @@ $_MODULE['<{pagantis}prestashop>pagantis_1fe40ce06393929d52e82051ee681d49'] = 'P
 $_MODULE['<{pagantis}prestashop>pagantis_8c4c63f6a01b1c5d4ef1690bb7c30a3a'] = 'Per favore, aggiungi una chiave privata corretta';
 $_MODULE['<{pagantis}prestashop>pagantis_b5400e4f4fca6833a1cc52377dd08f1c'] = 'Si prega di aggiungere un titolo al metodo di pagamento';
 $_MODULE['<{pagantis}prestashop>pagantis_a7139ef55f3c52d2de726ec1bab7d5e8'] = 'Tutte le modifiche sono state aggiornate';
+$_MODULE['<{pagantis}prestashop>pagantis_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'o';
 $_MODULE['<{pagantis}prestashop>config-info_ee4b4c0959ebfe18c9796d977815dfaa'] = 'Imposta Pagantis';
 $_MODULE['<{pagantis}prestashop>config-info_c357a188e27ece5a7ac268c5bf010778'] = 'Accedi al tuo backoffice';
 $_MODULE['<{pagantis}prestashop>config-info_64bf9889e02ba767c0f68ea047f78ae9'] = 'Questa è la configurazione di Pagantis, ti preghiamo di prendere il tuo tempo per configurare il metodo di pagamento nel modo che preferisci.';

@@ -2,7 +2,7 @@
  * This file is part of the official Pagantis module for PrestaShop.
  *
  * @author    Pagantis <integrations@pagantis.com>
- * @copyright 2015-2016 Pagantis
+ * @copyright 2019 Pagantis
  * @license   proprietary
  *}
 
@@ -46,7 +46,7 @@
             display: inline-block;
             vertical-align: middle;
             float: none;
-            width: 100px;
+            width: 150px;
         }
     </style>
     {$message|escape:'quotes'}

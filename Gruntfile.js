@@ -8,7 +8,7 @@ module.exports = function(grunt) {
             autoindex: {
                 command:
                     'composer global require pagantis/autoindex \n' +
-                    'php ~/.composer/vendor/pagantis/autoindex/index.php || true \n' +
+                    'php ~/.composer/vendor/pagantis/autoindex/index.php ./ || true \n' +
                     'php /home/circleci/.config/composer/vendor/pagantis/autoindex/index.php . || true \n'
 
             },
@@ -16,7 +16,7 @@ module.exports = function(grunt) {
                 command: 'composer install --no-dev'
             },
             composerDev: {
-                command: 'composer install'
+                command: 'composer install --ignore-platform-reqs'
             },
             runTestPrestashop17: {
                 command:
@@ -46,13 +46,13 @@ module.exports = function(grunt) {
                     'date\n' +
                     'docker-compose logs prestashop16-test\n' +
                     'set -e\n' +
-                    'vendor/bin/phpunit --group prestashop16basic\n' +
-                    'vendor/bin/phpunit --group prestashop16install\n' +
-                    'vendor/bin/phpunit --group prestashop16register\n' +
-                    'vendor/bin/phpunit --group prestashop16buy\n' +
-                    'vendor/bin/phpunit --group prestashop16advanced\n' +
-                    'vendor/bin/phpunit --group prestashop16validate\n' +
-                    'vendor/bin/phpunit --group prestashop16controller\n'
+                    'vendor/bin/phpunit --group prestashop16basic\n'
+                    // 'vendor/bin/phpunit --group prestashop16install\n' +
+                    // 'vendor/bin/phpunit --group prestashop16register\n' +
+                    // 'vendor/bin/phpunit --group prestashop16buy\n' +
+                    // 'vendor/bin/phpunit --group prestashop16advanced\n' +
+                    // 'vendor/bin/phpunit --group prestashop16validate\n' +
+                    // 'vendor/bin/phpunit --group prestashop16controller\n'
             },
             runTestPrestashop15: {
                 command:
@@ -95,7 +95,6 @@ module.exports = function(grunt) {
                     {src: 'index.php', dest: 'pagantis/'},
                     {src: 'pagantis.php', dest: 'pagantis/'},
                     {src: 'logo.png', dest: 'pagantis/'},
-                    {src: 'logo.gif', dest: 'pagantis/'},
                     {src: 'LICENSE.md', dest: 'pagantis/'},
                     {src: 'CONTRIBUTORS.md', dest: 'pagantis/'},
                     {src: 'README.md', dest: 'pagantis/'}

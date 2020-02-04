@@ -11,7 +11,6 @@ require_once('AbstractController.php');
 
 use Pagantis\OrdersApiClient\Client as PagantisClient;
 use Pagantis\OrdersApiClient\Model\Order as PagantisModelOrder;
-use Pagantis\ModuleUtils\Exception\AmountMismatchException;
 use Pagantis\ModuleUtils\Exception\ConcurrencyException;
 use Pagantis\ModuleUtils\Exception\MerchantOrderNotFoundException;
 use Pagantis\ModuleUtils\Exception\NoIdentificationException;
@@ -31,7 +30,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     /**
      * Seconds to expire a locked request
      */
-    const CONCURRENCY_TIMEOUT = 5;
+    const CONCURRENCY_TIMEOUT = 10;
 
     /**
      * @var string $merchantOrderId
@@ -80,7 +79,11 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                sleep(5);
+                // prevent colision between POST and GET requests
+                sleep(15);
+            }
+            if (Tools::getValue('origin') == 'notification' && $_SERVER['REQUEST_METHOD'] == 'GET') {
+                return $this->cancelProcess();
             }
             $this->prepareVariables();
             $this->checkConcurrency();
@@ -311,9 +314,10 @@ class PagantisNotifyModuleFrontController extends AbstractController
 
             // Double check
             $tableName = _DB_PREFIX_ . 'pagantis_order';
-            $sql = ('select ps_order_id from `' . $tableName . '` where `id` = ' . $this->merchantOrderId
+            $fieldName = 'ps_order_id';
+            $sql = ('select ' . $fieldName . ' from `' . $tableName . '` where `id` = ' . $this->merchantOrderId
                 . ' and `order_id` = \'' . $this->pagantisOrderId . '\''
-                . ' and `ps_order_id` is not null');
+                . ' and `' . $fieldName . '` is not null');
             $results = Db::getInstance()->ExecuteS($sql);
             if (is_array($results) && count($results) === 1) {
                 throw new WrongStatusException('PS->record found in ' . $tableName
@@ -400,14 +404,20 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function rollbackMerchantOrder()
     {
-        // Do nothing because the order is created only when the purchase was successfully
         try {
             $message = 'Roolback method: ' .
                 '. Pagantis OrderId=' . $this->pagantisOrderId .
                 '. Prestashop CartId=' . $this->merchantOrderId;
+            if ($this->module->currentOrder) {
+                $objOrder = new Order($this->module->currentOrder);
+                $history = new OrderHistory();
+                $history->id_order = (int)$objOrder->id;
+                $history->changeIdOrderState(8, (int)($objOrder->id));
+                $message .= ' Prestashop OrderId=' . $this->merchantOrderId;
+            }
             $this->saveLog(array('message' => $message));
         } catch (\Exception $exception) {
-            // Do nothing
+            $this->saveLog(array('message' => $exception->getMessage()));
         }
     }
 
@@ -428,7 +438,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 }
 
                 $query = sprintf(
-                    "SELECT TIMESTAMPDIFF(SECOND,NOW()-INTERVAL %s SECOND, FROM_UNIXTIME(timestamp)) as rest FROM %s WHERE %s",
+                    "SELECT TIMESTAMPDIFF(SECOND,NOW()-INTERVAL %s SECOND, FROM_UNIXTIME(timestamp)) as rest 
+                            FROM %s WHERE %s",
                     self::CONCURRENCY_TIMEOUT,
                     _DB_PREFIX_.$table,
                     "id=$orderId"
@@ -438,7 +449,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $secondsToExpire = ($restSeconds>self::CONCURRENCY_TIMEOUT) ? self::CONCURRENCY_TIMEOUT : $restSeconds;
 
                 $logMessage = sprintf(
-                    "Redirect concurrency, User have to wait %s seconds, default seconds %s, bd time to expire %s seconds. CartId=" . $orderId,
+                    "Redirect concurrency, User have to wait %s seconds, default seconds %s. CartId=" . $orderId,
                     $secondsToExpire,
                     self::CONCURRENCY_TIMEOUT,
                     $restSeconds
@@ -482,8 +493,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
      * 1. Unblock concurrency
      * 2. Save log
      *
-     * @param \Exception $exception
-     *
+     * @param null $exception
+     * @return mixed
      */
     public function cancelProcess($exception = null)
     {
@@ -507,6 +518,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
      * Redirect the request to the e-commerce or show the output in json
      *
      * @param bool $error
+     * @return mixed
      */
     public function finishProcess($error = true)
     {

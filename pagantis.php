@@ -3,7 +3,7 @@
  * This file is part of the official Pagantis module for PrestaShop.
  *
  * @author    Pagantis <integrations@pagantis.com>
- * @copyright 2015-2016 Pagantis
+ * @copyright 2019 Pagantis
  * @license   proprietary
  */
 
@@ -36,13 +36,26 @@ class Pagantis extends PaymentModule
     public $language;
 
     /**
+     * @var null $shippingAddress
+     */
+    protected $shippingAddress = null;
+    /**
+     * @var null $billingAddress
+     */
+    protected $billingAddress = null;
+    /**
+     * @var array $allowedCountries
+     */
+    protected $allowedCountries = [];
+
+    /**
      * Default module advanced configuration values
      *
      * @var array
      */
     public $defaultConfigs = array(
         'PAGANTIS_TITLE' => 'Instant Financing',
-        'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'sdk.simulator.types.SIMPLE',
+        'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM',
         'PAGANTIS_SIMULATOR_DISPLAY_SKIN' => 'sdk.simulator.skins.BLUE',
         'PAGANTIS_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
         'PAGANTIS_SIMULATOR_START_INSTALLMENTS' => '3',
@@ -55,7 +68,7 @@ class Pagantis extends PaymentModule
         'PAGANTIS_URL_OK' => '',
         'PAGANTIS_URL_KO' => '',
         'PAGANTIS_ALLOWED_COUNTRIES' => 'a:3:{i:0;s:2:"es";i:1;s:2:"it";i:2;s:2:"fr";}',
-        'PAGANTIS_PROMOTION_EXTRA' => 'Finance this product <span class="pmt-no-interest">without interest!</span>',
+        'PAGANTIS_PROMOTION_EXTRA' => 'Finance this product <span class="pg-no-interest">without interest!</span>',
         'PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR' => '.',
         'PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR' => ',',
     );
@@ -71,7 +84,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.2.13';
+        $this->version = '8.2.15';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -259,7 +272,8 @@ class Pagantis extends PaymentModule
             $sql = ("SHOW TABLES LIKE '$tableName'");
             $results = Db::getInstance()->ExecuteS($sql);
             if (is_array($results) && count($results) === 1) {
-                $query = "select COLUMN_TYPE FROM information_schema.COLUMNS where TABLE_NAME='$tableName' AND COLUMN_NAME='ps_order_id'";
+                $query = "select COLUMN_TYPE FROM information_schema.COLUMNS where 
+                          TABLE_NAME='$tableName' AND COLUMN_NAME='ps_order_id'";
                 $results = $results = Db::getInstance()->ExecuteS($query);
                 if (is_array($results) && count($results) === 0) {
                     $sql = "ALTER TABLE $tableName ADD COLUMN ps_order_id VARCHAR(60) AFTER order_id";
@@ -302,11 +316,12 @@ class Pagantis extends PaymentModule
         $pagantisDisplayMinAmount  = Pagantis::getExtraConfig('PAGANTIS_DISPLAY_MIN_AMOUNT');
         $pagantisPublicKey         = Configuration::get('pagantis_public_key');
         $pagantisPrivateKey        = Configuration::get('pagantis_private_key');
-        $allowedCountries          = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));
+        $this->allowedCountries    = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));
+        $this->getUserLanguage();
         return (
             $cart->getOrderTotal() >= $pagantisDisplayMinAmount &&
             in_array($currency->iso_code, $availableCurrencies) &&
-            in_array(Tools::strtolower($this->language), $allowedCountries) &&
+            in_array(Tools::strtolower($this->language), $this->allowedCountries) &&
             $pagantisPublicKey &&
             $pagantisPrivateKey
         );
@@ -335,9 +350,6 @@ class Pagantis extends PaymentModule
     public function hookHeader()
     {
         $url = 'https://cdn.pagantis.com/js/pg-v2/sdk.js';
-        if ($this->language == 'ES' || $this->language == null) {
-            $url = 'https://cdn.pagantis.com/js/pmt-v2/sdk.js';
-        }
         if (_PS_VERSION_ >= "1.7") {
             $this->context->controller->registerJavascript(
                 sha1(mt_rand(1, 90000)),
@@ -356,6 +368,10 @@ class Pagantis extends PaymentModule
      */
     public function hookPaymentOptions()
     {
+        /** @var Cart $cart */
+        $cart = $this->context->cart;
+        $this->shippingAddress = new Address($cart->id_address_delivery);
+        $this->billingAddress = new Address($cart->id_address_invoice);
         if (!$this->isPaymentMethodAvailable()) {
             return array();
         }
@@ -379,7 +395,7 @@ class Pagantis extends PaymentModule
         $pagantisSimulatorDecimalSeparator  = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR');
 
         $items = $cart->getProducts(true);
-        foreach ($items as $key => $item) {
+        foreach ($items as $item) {
             $itemCategories = ProductCore::getProductCategoriesFull($item['id_product']);
             if (in_array(PROMOTIONS_CATEGORY_NAME, $this->arrayColumn($itemCategories, 'name')) !== false) {
                 $productId = $item['id_product'];
@@ -409,12 +425,12 @@ class Pagantis extends PaymentModule
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
         ));
 
-        $logo = ($this->language == 'ES' || $this->language == null) ? 'logo_pagamastarde.png' : 'logo_pagantis.png';
+        $logo = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
             ->setCallToActionText($pagantisTitle)
             ->setAction($link->getModuleLink('pagantis', 'payment'))
-            ->setLogo($this->getPathUri(). 'views/img/' . $logo)
+            ->setLogo($logo)
             ->setModuleName(__CLASS__)
         ;
 
@@ -597,10 +613,7 @@ class Pagantis extends PaymentModule
             $message = $this->displayError($error);
         }
 
-        $logo = $this->getPathUri(). 'views/img/logo_pagantis.png';
-        if ($this->language == 'ES' || $this->language == null) {
-            $logo = $this->getPathUri(). 'views/img/logo_pagamastarde.png';
-        }
+        $logo = 'https://cdn.digitalorigin.com/assets/master/logos/pg.png';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
@@ -621,6 +634,10 @@ class Pagantis extends PaymentModule
      */
     public function hookPayment($params)
     {
+        /** @var Cart $cart */
+        $cart = $this->context->cart;
+        $this->shippingAddress = new Address($cart->id_address_delivery);
+        $this->billingAddress = new Address($cart->id_address_invoice);
         if (!$this->isPaymentMethodAvailable()) {
             return false;
         }
@@ -645,7 +662,7 @@ class Pagantis extends PaymentModule
         $pagantisSimulatorDecimalSeparator  = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR');
 
         $items = $cart->getProducts(true);
-        foreach ($items as $key => $item) {
+        foreach ($items as $item) {
             $itemCategories = ProductCore::getProductCategoriesFull($item['id_product']);
             if (in_array(PROMOTIONS_CATEGORY_NAME, $this->arrayColumn($itemCategories, 'name')) !== false) {
                 $productId = $item['id_product'];
@@ -659,7 +676,7 @@ class Pagantis extends PaymentModule
             'promotedAmount'                     => $promotedAmount,
             'locale'                             => $this->language,
             'country'                            => $this->language,
-            'logo' => ($this->language == 'ES' || $this->language == null) ? 'pagamastarde.png' : 'pagantis.png',
+            'logo'                               => 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png',
             'pagantisPublicKey'                  => $pagantisPublicKey,
             'pagantisCSSSelector'                => $pagantisSimulatorCSSSelector,
             'pagantisPriceSelector'              => $pagantisSimulatorPriceSelector,
@@ -724,11 +741,13 @@ class Pagantis extends PaymentModule
         $pagantisPromotionExtra             = Pagantis::getExtraConfig('PAGANTIS_PROMOTION_EXTRA');
         $pagantisSimulatorThousandSeparator = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR');
         $pagantisSimulatorDecimalSeparator  = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR');
+        $allowedCountries                   = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));
 
         if ($functionName != $productConfiguration ||
             $amount <= 0 ||
             $amount < $pagantisDisplayMinAmount ||
-            !$pagantisSimulatorType
+            !$pagantisSimulatorType ||
+            !in_array(Tools::strtolower($this->language), $allowedCountries)
         ) {
             return null;
         }
@@ -752,6 +771,7 @@ class Pagantis extends PaymentModule
             'pagantisSimulatorThousandSeparator' => $pagantisSimulatorThousandSeparator,
             'pagantisSimulatorDecimalSeparator'  => $pagantisSimulatorDecimalSeparator,
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
+            'pagantisSimPreposition'           => $this->l('or'),
         ));
 
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');
@@ -825,27 +845,6 @@ class Pagantis extends PaymentModule
     }
 
     /**
-     * Check logo exists in OPC module
-     */
-    public function checkLogoExists()
-    {
-        $logoPmt = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/pagamastarde.png';
-        $logoPg = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/pagantis.png';
-        if (!file_exists($logoPmt) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
-            copy(
-                _PS_PAGANTIS_DIR . '/views/img/logo_pagamastarde.png',
-                $logoPmt
-            );
-        }
-        if (!file_exists($logoPg) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
-            copy(
-                _PS_PAGANTIS_DIR . '/views/img/logo_pagantis.png',
-                $logoPg
-            );
-        }
-    }
-
-    /**
      * checkPromotionCategory
      */
     public function checkPromotionCategory()
@@ -888,6 +887,20 @@ class Pagantis extends PaymentModule
     }
 
     /**
+     * Check logo exists in OPC module
+     */
+    public function checkLogoExists()
+    {
+        $logoPg = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/pagantis.png';
+        if (!file_exists($logoPg) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
+            copy(
+                _PS_PAGANTIS_DIR . '/logo.png',
+                $logoPg
+            );
+        }
+    }
+
+    /**
      * Get user language
      */
     private function getUserLanguage()
@@ -899,7 +912,22 @@ class Pagantis extends PaymentModule
         }
         $this->language = Tools::strtoupper($langArray[count($langArray)-1]);
         // Prevent null language detection
-        $this->language = ($this->language) ? $this->language : 'ES';
+        if (in_array(Tools::strtolower($this->language), $this->allowedCountries)) {
+            return;
+        }
+        if ($this->shippingAddress) {
+            $this->language = Country::getIsoById($this->shippingAddress->id_country);
+            if (in_array(Tools::strtolower($this->language), $this->allowedCountries)) {
+                return;
+            }
+        }
+        if ($this->billingAddress) {
+            $this->language = Country::getIsoById($this->billingAddress->id_country);
+            if (in_array(Tools::strtolower($this->language), $this->allowedCountries)) {
+                return;
+            }
+        }
+        return $this->language;
     }
 
     /**

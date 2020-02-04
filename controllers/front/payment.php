@@ -60,8 +60,6 @@ class PagantisPaymentModuleFrontController extends AbstractController
      */
     public function postProcess()
     {
-        $this->getUserLanguage();
-
         /** @var Cart $cart */
         $cart = $this->context->cart;
 
@@ -88,8 +86,12 @@ class PagantisPaymentModuleFrontController extends AbstractController
         $pagantisPublicKey = Configuration::get('pagantis_public_key');
         $pagantisPrivateKey = Configuration::get('pagantis_private_key');
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-                 .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&'
+                 .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect&'
                  .http_build_query($query)
+        ;
+        $notificationOkUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
+            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=notification&'
+            .http_build_query($query)
         ;
 
         $shippingAddress = new Address($cart->id_address_delivery);
@@ -214,8 +216,8 @@ class PagantisPaymentModuleFrontController extends AbstractController
             $orderConfigurationUrls
                 ->setCancel($cancelUrl)
                 ->setKo($cancelUrl)
-                ->setAuthorizedNotificationCallback($okUrl)
-                ->setRejectedNotificationCallback($okUrl)
+                ->setAuthorizedNotificationCallback($notificationOkUrl)
+                ->setRejectedNotificationCallback(null)
                 ->setOk($okUrl)
             ;
 
@@ -347,21 +349,6 @@ class PagantisPaymentModuleFrontController extends AbstractController
             return true;
         }
         return false;
-    }
-
-    /**
-     * Get user language
-     */
-    private function getUserLanguage()
-    {
-        $lang = Language::getLanguage($this->context->language->id);
-        $langArray = explode("-", $lang['language_code']);
-        if (count($langArray) != 2 && isset($lang['locale'])) {
-            $langArray = explode("-", $lang['locale']);
-        }
-        $this->language = Tools::strtoupper($langArray[count($langArray)-1]);
-        // Prevent null language detection
-        $this->language = ($this->language) ? $this->language : 'ES';
     }
 
     /**
