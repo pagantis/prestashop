@@ -9,7 +9,7 @@
 <div class="row">
     <div class="col-xs-12">
         <p class="payment_module Pagantis ps_version_{$ps_version|escape:'quotes'}">
-            <a class="pagantis-checkout ps_version_{$ps_version|escape:'quotes'} locale_{$locale|escape:'quotes'}" href="{$paymentUrl|escape:'html'}" title="aaaa{$pagantisTitle|escape:'quotes'}">
+            <a class="pagantis-checkout ps_version_{$ps_version|escape:'quotes'} locale_{$locale|escape:'quotes'}" href="{$paymentUrl|escape:'html'}" title="{$pagantisTitle|escape:'quotes'}">
                 {if $ps_version !== '1-7'}{$pagantisTitle|escape:'quotes'}&nbsp;{/if}
                 <span class="pagantisSimulator ps_version_{$ps_version|escape:'quotes'}"></span>
             </a>
@@ -97,8 +97,10 @@
                 background: none;
             }
             .payment-option img[src*='cdn.digitalorigin.com'] {
-                height: 20px;
+                height: 18px;
                 padding-left: 5px;
+                content:url('https://cdn.digitalorigin.com/assets/master/logos/pg.png');
+
             }
             p.payment_module a.pagantis-checkout.ps_version_1-6 {
                 background-color: #fbfbfb;
