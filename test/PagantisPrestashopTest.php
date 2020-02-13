@@ -225,6 +225,7 @@ abstract class PagantisPrestashopTest extends TestCase
             'PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
             'PAGANTIS_FORM_DISPLAY_TYPE' => '0',
             'PAGANTIS_DISPLAY_MIN_AMOUNT' => '1',
+            'PAGANTIS_DISPLAY_MAX_AMOUNT' => '0',
             'PAGANTIS_URL_OK' => '',
             'PAGANTIS_URL_KO' => '',
         );
