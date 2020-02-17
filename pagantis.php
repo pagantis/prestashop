@@ -46,7 +46,7 @@ class Pagantis extends PaymentModule
     /**
      * @var array $allowedCountries
      */
-    protected $allowedCountries = [];
+    protected $allowedCountries = array();
 
     /**
      * Default module advanced configuration values
