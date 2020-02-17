@@ -30,8 +30,15 @@ class PagantisLogModuleFrontController extends ModuleFrontController
         if (!$this->authorize()) {
             return;
         };
-
-        $sql = 'SELECT * FROM '._DB_PREFIX_.'pagantis_log ORDER BY id desc LIMIT 200';
+        $limit = 200;
+        $where = '';
+        if (Tools::getValue('limit', false) && is_numeric(Tools::getValue('limit'))) {
+            $limit = Tools::getValue('limit');
+        }
+        if (Tools::getValue('from', false)) {
+            $where = 'WHERE createdAt >= \'' . Tools::getValue('from') . '\'';
+        }
+        $sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'pagantis_log ' . $where . ' ORDER BY id desc LIMIT ' . $limit;
         if ($results = Db::getInstance()->ExecuteS($sql)) {
             foreach ($results as $row) {
                 $data = (is_null(json_decode($row['log']))) ? $row['log'] : json_decode($row['log']);

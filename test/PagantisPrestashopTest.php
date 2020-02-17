@@ -30,10 +30,7 @@ abstract class PagantisPrestashopTest extends TestCase
 
     const BACKOFFICE_FOLDER = '/adminTest';
 
-    /**
-     * @todo: change when LS change the form title
-     */
-    const PAGANTIS_TITLE = 'Paga+Tarde';
+    const PAGANTIS_TITLE = 'Pagantis';
 
     /**
      * @var array
@@ -225,6 +222,7 @@ abstract class PagantisPrestashopTest extends TestCase
             'PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
             'PAGANTIS_FORM_DISPLAY_TYPE' => '0',
             'PAGANTIS_DISPLAY_MIN_AMOUNT' => '1',
+            'PAGANTIS_DISPLAY_MAX_AMOUNT' => '0',
             'PAGANTIS_URL_OK' => '',
             'PAGANTIS_URL_KO' => '',
         );

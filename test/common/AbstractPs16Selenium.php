@@ -186,7 +186,7 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
             }
             $addressInputSearch = WebDriverBy::id('firstname');
             $condition = WebDriverExpectedCondition::visibilityOfElementLocated($addressInputSearch);
-            $this->waitUntil($condition);
+            $this->webDriver->wait('10', 1000)->until($condition);
             $this->assertTrue((bool) $condition);
             $this->findById('company')->clear()->sendKeys($this->configuration['company']);
             $this->findById('address1')->clear()->sendKeys('av.diagonal 579');
@@ -200,12 +200,12 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
             $this->moveToElementAndClick($this->findById('submitAddress'));
             $processAddress = WebDriverBy::name('processAddress');
             $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processAddress);
-            $this->waitUntil($condition);
+            $this->webDriver->wait('10', 1000)->until($condition);
             $this->assertTrue((bool) $condition);
         } catch (\Exception $exception) {
             $processAddress = WebDriverBy::name('processAddress');
             $condition = WebDriverExpectedCondition::visibilityOfElementLocated($processAddress);
-            $this->waitUntil($condition);
+            $this->webDriver->wait('10', 1000)->until($condition);
             $this->assertTrue((bool) $condition);
         }
         $this->webDriver->findElement($processAddress)->click();
@@ -219,15 +219,12 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($hookPayment);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        if ($verifySimulator) {
-            //TODO UNCOMMENT THIS WHEN ORDERS HAVE CHECKOUT SIMULATOR
-            /*
-            $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
-            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
-            $this->waitUntil($condition);
-            $this->assertTrue((bool)$condition);
-            */
-        }
+        $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
+        $this->waitUntil($condition);
+        $this->assertTrue((bool)$condition);
+        // this sleep is to prevent simulator js render
+        sleep(5);
     }
 
     /**
@@ -288,7 +285,7 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         $this->webDriver->findElement($pagantisCheckout)->click();
 
         $condition = WebDriverExpectedCondition::titleContains(self::PAGANTIS_TITLE);
-        $this->webDriver->wait(300)->until($condition, $this->webDriver->getCurrentURL());
+        $this->webDriver->wait()->until($condition, $this->webDriver->getCurrentURL());
         $this->assertTrue((bool)$condition, "PR32");
 
         SeleniumHelper::finishForm($this->webDriver);

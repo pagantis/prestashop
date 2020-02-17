@@ -16,7 +16,7 @@ class PagantisPs16ControllerTest extends PagantisPrestashopTest
     /**
      * log route
      */
-    const LOG_FOLDER = '/index.php?fc=module&module=pagantis&controller=log';
+    const LOG_FOLDER = '/index.php?fc=module&module=pagantis&controller=log&limit=100&from=20200101';
 
     /**
      * config route
@@ -35,6 +35,7 @@ class PagantisPs16ControllerTest extends PagantisPrestashopTest
         "PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR",
         "PAGANTIS_FORM_DISPLAY_TYPE",
         "PAGANTIS_DISPLAY_MIN_AMOUNT",
+        "PAGANTIS_DISPLAY_MAX_AMOUNT",
         "PAGANTIS_URL_OK",
         "PAGANTIS_URL_KO",
     );
