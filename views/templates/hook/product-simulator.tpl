@@ -39,7 +39,7 @@
             var pgContainer = document.getElementsByClassName("pagantisSimulator");
             if(pgContainer.length > 0) {
                 var pgElement = pgContainer[0];
-                if (pgElement.innerHTML != '' && pgElement.innerText != "{$pagantisSimPreposition|escape:'quotes'}")
+                if (pgElement.innerHTML != '' && pgElement.innerText != "{$pagantisSimPreposition|escape:'javascript':'UTF-8'}")
                 {
                     return true;
                 }
@@ -72,9 +72,9 @@
 
             var price = null;
             var quantity = null;
-            var positionSelector = '{$pagantisCSSSelector|escape:'quotes'}';
-            var priceSelector = '{$pagantisPriceSelector|escape:'quotes'}';
-            var quantitySelector = '{$pagantisQuantitySelector|escape:'quotes'}';
+            var positionSelector = '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}';
+            var priceSelector = '{$pagantisPriceSelector|escape:'javascript':'UTF-8'}';
+            var quantitySelector = '{$pagantisQuantitySelector|escape:'javascript':'UTF-8'}';
 
             if (positionSelector === 'default') {
                 positionSelector = '.pagantisSimulator';
@@ -83,7 +83,7 @@
             if (priceSelector === 'default') {
                 priceSelector = findPriceSelector();
                 if (priceSelector === 'default') {
-                    price = '{$amount|escape:'quotes'}'
+                    price = '{$amount|escape:'javascript':'UTF-8'}'
                 }
             }
 
@@ -96,17 +96,17 @@
 
             sdk.product_simulator = {};
             sdk.product_simulator.id = 'product-simulator';
-            sdk.product_simulator.locale = '{$locale|escape:'quotes'}'.toLowerCase();
-            sdk.product_simulator.country = '{$country|escape:'quotes'}'.toLowerCase();
-            sdk.product_simulator.publicKey = '{$pagantisPublicKey|escape:'quotes'}';
+            sdk.product_simulator.locale = '{$locale|escape:'javascript':'UTF-8'}'.toLowerCase();
+            sdk.product_simulator.country = '{$country|escape:'javascript':'UTF-8'}'.toLowerCase();
+            sdk.product_simulator.publicKey = '{$pagantisPublicKey|escape:'javascript':'UTF-8'}';
             sdk.product_simulator.selector = positionSelector;
-            sdk.product_simulator.numInstalments = '{$pagantisQuotesStart|escape:'quotes'}';
-            sdk.product_simulator.type = {$pagantisSimulatorType|escape:'quotes'};
-            sdk.product_simulator.skin = {$pagantisSimulatorSkin|escape:'quotes'};
-            sdk.product_simulator.position = {$pagantisSimulatorPosition|escape:'quotes'};
+            sdk.product_simulator.numInstalments = '{$pagantisQuotesStart|escape:'javascript':'UTF-8'}';
+            sdk.product_simulator.type = {$pagantisSimulatorType|escape:'javascript':'UTF-8'};
+            sdk.product_simulator.skin = {$pagantisSimulatorSkin|escape:'javascript':'UTF-8'};
+            sdk.product_simulator.position = {$pagantisSimulatorPosition|escape:'javascript':'UTF-8'};
             sdk.product_simulator.amountParserConfig =  {
-                thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'quotes'}',
-                decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'quotes'}',
+                thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'javascript':'UTF-8'}',
+                decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'javascript':'UTF-8'}',
             };
 
             if (priceSelector !== 'default') {
@@ -142,13 +142,13 @@
         }
     </script>
     {if $isPromotedProduct == true}
-        <span class="pagantis-promotion ps_version_{$ps_version|escape:'quotes'}" id="pagantis-promotion-extra">{$pagantisPromotionExtra nofilter}</span>
+        <span class="pagantis-promotion ps_version_{$ps_version|escape:'htmlall':'UTF-8'}" id="pagantis-promotion-extra">{$pagantisPromotionExtra nofilter}</span>
     {/if}
-    <div class="pagantisSimulator">{if $pagantisSimulatorType == 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM'}<div class="preposition">{$pagantisSimPreposition|escape:'quotes'}</div>{/if}</div>
+    <div class="pagantisSimulator">{if $pagantisSimulatorType == 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM'}<div class="preposition">{$pagantisSimPreposition|escape:'htmlall':'UTF-8'}</div>{/if}</div>
     <script>
-        if ("{$pagantisSimulatorType|escape:'quotes'}" === 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM') {
+        if ("{$pagantisSimulatorType|escape:'javascript':'UTF-8'}" === 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM') {
             var pricesContainerSelector = "content_prices";
-            if ("{$ps_version|escape:'quotes'}" === '1-7') {
+            if ("{$ps_version|escape:'javascript':'UTF-8'}" === '1-7') {
                 pricesContainerSelector = "product-prices";
             }
             var div1 = document.getElementsByClassName(pricesContainerSelector);
