@@ -106,11 +106,12 @@ class PagantisPaymentModuleFrontController extends AbstractController
         );
 
         try {
+            $shippingCountry = Country::getIsoById($shippingAddress->id_country);
             $userAddress =  new \Pagantis\OrdersApiClient\Model\Order\User\Address();
             $userAddress
                 ->setZipCode($shippingAddress->postcode)
                 ->setFullName($shippingAddress->firstname . ' ' . $shippingAddress->lastname)
-                ->setCountryCode($this->language)
+                ->setCountryCode($shippingCountry)
                 ->setCity($shippingAddress->city)
                 ->setAddress($shippingAddress->address1 . ' ' . $shippingAddress->address2)
                 ->setTaxId($this->getTaxId($customer, $shippingAddress, $billingAddress))
@@ -121,7 +122,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
             $orderShippingAddress
                 ->setZipCode($shippingAddress->postcode)
                 ->setFullName($shippingAddress->firstname . ' ' . $shippingAddress->lastname)
-                ->setCountryCode($this->language)
+                ->setCountryCode($shippingCountry)
                 ->setCity($shippingAddress->city)
                 ->setAddress($shippingAddress->address1 . ' ' . $shippingAddress->address2)
                 ->setTaxId($this->getTaxId($customer, $shippingAddress, $billingAddress))
@@ -130,11 +131,12 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setMobilePhone($shippingAddress->phone_mobile)
             ;
 
+            $billingCountry = Country::getIsoById($billingAddress->id_country);
             $orderBillingAddress = new \Pagantis\OrdersApiClient\Model\Order\User\Address();
             $orderBillingAddress
                 ->setZipCode($billingAddress->postcode)
                 ->setFullName($billingAddress->firstname . ' ' . $billingAddress->lastname)
-                ->setCountryCode($this->language)
+                ->setCountryCode($billingCountry)
                 ->setCity($billingAddress->city)
                 ->setAddress($billingAddress->address1 . ' ' . $billingAddress->address2)
                 ->setTaxId($this->getTaxId($customer, $billingAddress, $shippingAddress))
@@ -227,11 +229,12 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setType(\Pagantis\OrdersApiClient\Model\Order\Configuration\Channel::ONLINE)
             ;
 
+            $purchaseCountry = $this->getUserLanguage($shippingAddress, $billingAddress);
             $orderConfiguration = new \Pagantis\OrdersApiClient\Model\Order\Configuration();
             $orderConfiguration
                 ->setChannel($orderChannel)
                 ->setUrls($orderConfigurationUrls)
-                ->setPurchaseCountry($this->language)
+                ->setPurchaseCountry($purchaseCountry)
             ;
 
             $order = new \Pagantis\OrdersApiClient\Model\Order();
@@ -256,6 +259,9 @@ class PagantisPaymentModuleFrontController extends AbstractController
 
             if ($order instanceof \Pagantis\OrdersApiClient\Model\Order) {
                 $url = $order->getActionUrls()->getForm();
+                /**
+                 * @var string $orderId Pagantis Order id
+                 */
                 $orderId = $order->getId();
                 $sql = "INSERT INTO `" . _DB_PREFIX_ . "pagantis_order` (`id`, `order_id`)
                      VALUES ('$cart->id','$orderId') 
@@ -381,5 +387,33 @@ class PagantisPaymentModuleFrontController extends AbstractController
             }
         }
         return $array;
+    }
+
+    private function getUserLanguage($shippingAddress = null, $billingAddress = null)
+    {
+        $allowedCountries    = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));
+        $lang = Language::getLanguage($this->context->language->id);
+        $langArray = explode("-", $lang['language_code']);
+        if (count($langArray) != 2 && isset($lang['locale'])) {
+            $langArray = explode("-", $lang['locale']);
+        }
+        $language = Tools::strtoupper($langArray[count($langArray)-1]);
+        // Prevent null language detection
+        if (in_array(Tools::strtolower($language), $allowedCountries)) {
+            return $language;
+        }
+        if ($shippingAddress) {
+            $language = Country::getIsoById($shippingAddress->id_country);
+            if (in_array(Tools::strtolower($language), $allowedCountries)) {
+                return $language;
+            }
+        }
+        if ($billingAddress) {
+            $language = Country::getIsoById($billingAddress->id_country);
+            if (in_array(Tools::strtolower($language), $allowedCountries)) {
+                return $language;
+            }
+        }
+        return 'ES';
     }
 }

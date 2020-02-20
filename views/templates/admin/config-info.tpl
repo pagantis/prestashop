@@ -61,11 +61,11 @@
                 </p>
                 <p>
                     {l s='If you need help or want to customize the module, please take a look to our documentation on' mod='pagantis'}
-                    <a href="https://github.com/Pagantis/prestashop/tree/{$version|escape:'quotes'}">GitHub </a>
+                    <a href="https://github.com/Pagantis/prestashop/tree/{$version|escape:'htmlall':'UTF-8'}">GitHub </a>
                 </p>
             </div>
             <div class="column-right">
-                <img src="{$logo|escape:'quotes'}"/>
+                <img src="{$logo|escape:'htmlall':'UTF-8'}"/>
             </div>
     </div>
     {$form|escape:'quotes'}
