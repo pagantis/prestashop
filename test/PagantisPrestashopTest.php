@@ -38,8 +38,8 @@ abstract class PagantisPrestashopTest extends TestCase
     protected $configuration = array(
         'username'      => 'demo@prestashop.com',
         'password'      => 'prestashop_demo',
-        'publicKey'     => 'tk_4989acbf642c4dd3840ea8f9',
-        'secretKey'     => '0db86886db0b424e',
+        'publicKey'     => 'tk_0ee5a3f7c7014e46b1311a9e',
+        'secretKey'     => 'af4fcbcb0c4140bf',
         'birthdate'     => '05/05/1989',
         'firstname'     => 'Jøhn',
         'lastname'      => 'Dōès',
