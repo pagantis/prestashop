@@ -229,12 +229,12 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setType(\Pagantis\OrdersApiClient\Model\Order\Configuration\Channel::ONLINE)
             ;
 
-            $language = $this->getUserLanguage($shippingAddress, $billingAddress);
+            $purchaseCountry = $this->getUserLanguage($shippingAddress, $billingAddress);
             $orderConfiguration = new \Pagantis\OrdersApiClient\Model\Order\Configuration();
             $orderConfiguration
                 ->setChannel($orderChannel)
                 ->setUrls($orderConfigurationUrls)
-                ->setPurchaseCountry($language)
+                ->setPurchaseCountry($purchaseCountry)
             ;
 
             $order = new \Pagantis\OrdersApiClient\Model\Order();
