@@ -259,6 +259,9 @@ class PagantisPaymentModuleFrontController extends AbstractController
 
             if ($order instanceof \Pagantis\OrdersApiClient\Model\Order) {
                 $url = $order->getActionUrls()->getForm();
+                /**
+                 * @var string $orderId Pagantis Order id
+                 */
                 $orderId = $order->getId();
                 $sql = "INSERT INTO `" . _DB_PREFIX_ . "pagantis_order` (`id`, `order_id`)
                      VALUES ('$cart->id','$orderId') 
