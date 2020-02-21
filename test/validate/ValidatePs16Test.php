@@ -39,7 +39,7 @@ class ValidatePs16Test extends AbstractPs16Selenium
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($pagantisCheckout);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->webDriver->findElement($pagantisCheckout)->click();
+        $this->webDriver->executeScript('document.querySelector(\'.pagantis-checkout\').click();');
         SeleniumHelper::finishForm($this->webDriver);
 
         $confirmationMessage = WebDriverBy::id('order-confirmation');
