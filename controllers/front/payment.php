@@ -86,8 +86,8 @@ class PagantisPaymentModuleFrontController extends AbstractController
         $pagantisPublicKey = Configuration::get('pagantis_public_key');
         $pagantisPrivateKey = Configuration::get('pagantis_private_key');
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-                 .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect&'
-                 .http_build_query($query)
+            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect&'
+            .http_build_query($query)
         ;
         $notificationOkUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
             .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=notification&'
@@ -196,9 +196,9 @@ class PagantisPaymentModuleFrontController extends AbstractController
                     $productId = $item['id_product'];
                     $finalPrice = Product::getPriceStatic($productId);
                     $promotedMessage = 'Promoted Item: ' . $product->getDescription() .
-                         ' Price: ' . $finalPrice .
-                         ' Qty: ' . $product->getQuantity() .
-                         ' Item ID: ' . $item['id_product'];
+                        ' Price: ' . $finalPrice .
+                        ' Qty: ' . $product->getQuantity() .
+                        ' Item ID: ' . $item['id_product'];
                     $metadataOrder->addMetadata('promotedProduct', $promotedMessage);
                 }
                 $details->addProduct($product);
@@ -259,9 +259,6 @@ class PagantisPaymentModuleFrontController extends AbstractController
 
             if ($order instanceof \Pagantis\OrdersApiClient\Model\Order) {
                 $url = $order->getActionUrls()->getForm();
-                /**
-                 * @var string $orderId Pagantis Order id
-                 */
                 $orderId = $order->getId();
                 $sql = "INSERT INTO `" . _DB_PREFIX_ . "pagantis_order` (`id`, `order_id`)
                      VALUES ('$cart->id','$orderId') 
@@ -389,6 +386,11 @@ class PagantisPaymentModuleFrontController extends AbstractController
         return $array;
     }
 
+    /**
+     * @param null $shippingAddress
+     * @param null $billingAddress
+     * @return string
+     */
     private function getUserLanguage($shippingAddress = null, $billingAddress = null)
     {
         $allowedCountries    = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));

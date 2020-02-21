@@ -12,7 +12,7 @@
         if (typeof pgSDK !== 'undefined') {
             document.addEventListener("DOMContentLoaded", function(){
                 pgSDK.modal.open(
-                    "{$url|escape:'javascript':'UTF-8'}",
+                    "{$url|escape:'quotes'}",
                     {
                         closeOnBackDropClick: false,
                         closeOnEscPress: false,
@@ -23,7 +23,7 @@
                 );
             });
             pgSDK.modal.onClose(function() {
-                window.location.href = "{$checkoutUrl|escape:'javascript':'UTF-8'}";
+                window.location.href = "{$checkoutUrl|escape:'quotes'}";
             });
         }
     </script>
