@@ -53,6 +53,7 @@ jobs:
       - host_and_docker_compose
       - install_dependencies
       - npm_grunt
+      - run_tests
   runTestPrestashop16:
     environment:
       PS_VERSION: shell:runTestPrestashop16
@@ -64,6 +65,7 @@ jobs:
       - host_and_docker_compose
       - install_dependencies
       - npm_grunt
+      - run_tests
   runTestPrestashop15:
     environment:
       PS_VERSION: shell:runTestPrestashop15
@@ -75,6 +77,7 @@ jobs:
       - host_and_docker_compose
       - install_dependencies
       - npm_grunt
+      - run_tests
   pushRelease:
     docker:
       - image: circleci/php:7.1-node-browsers
