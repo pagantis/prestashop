@@ -5,17 +5,17 @@
  * @copyright 2019 Pagantis
  * @license   proprietary
  *}
-<form id="pagantis_form" action="{$paymentUrl|escape:'html'}"></form>
+<form id="pagantis_form" action="{$paymentUrl|escape:'htmlall':'UTF-8'}"></form>
 {if version_compare($smarty.const._PS_VERSION_,'1.6.0.0','<')}
     <div class="payment_module" id="pagantis_payment_button">
-        <a href="javascript:$('#pagantis_form').submit();" title="{$pagantisTitle|escape:'quotes'}">
-            {$pagantisTitle|escape:'quotes'}
+        <a href="javascript:$('#pagantis_form').submit();" title="{$pagantisTitle|escape:'htmlall':'UTF-8'}">
+            {$pagantisTitle|escape:'javascript':'UTF-8'}
         </a>
     </div>
 {else}
     <p class="payment_module pagantis" id="pagantis_payment_button">
-        <a href="javascript:$('#pagantis_form').submit();" title="{$pagantisTitle|escape:'quotes'}">
-            {$pagantisTitle|escape:'quotes'}
+        <a href="javascript:$('#pagantis_form').submit();" title="{$pagantisTitle|escape:'htmlall':'UTF-8'}">
+            {$pagantisTitle|escape:'javascript':'UTF-8'}
         </a>
     </p>
 {/if}
@@ -62,14 +62,14 @@
         if (!checkSimulatorContent()) {
             sdk.simulator.init({
                 type: sdk.simulator.types.SELECTABLE_TEXT_CUSTOM,
-                locale: '{$locale|escape:'quotes'}'.toLowerCase(),
-                country: '{$country|escape:'quotes'}'.toLowerCase(),
-                publicKey: '{$pagantisPublicKey|escape:'quotes'}',
+                locale: '{$locale|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                country: '{$country|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                publicKey: '{$pagantisPublicKey|escape:'javascript':'UTF-8'}',
                 selector: '.pagantisSimulator',
-                totalAmount: '{$amount|escape:'quotes'}'.replace('.', ','),
+                totalAmount: '{$amount|escape:'javascript':'UTF-8'}'.replace('.', ','),
                 amountParserConfig: {
-                    thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'quotes'}',
-                    decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'quotes'}',
+                    thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'javascript':'UTF-8'}',
+                    decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'javascript':'UTF-8'}',
                 }
             });
         }

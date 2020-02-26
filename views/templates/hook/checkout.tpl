@@ -8,10 +8,10 @@
 {if $pagantisIsEnabled}
     <div class="row">
         <div class="col-xs-12">
-            <p class="payment_module Pagantis ps_version_{$ps_version|escape:'quotes'}">
-                <a class="pagantis-checkout ps_version_{$ps_version|escape:'quotes'} locale_{$locale|escape:'quotes'}" href="{$paymentUrl|escape:'html'}" title="{$pagantisTitle|escape:'quotes'}">
-                    {if $ps_version !== '1-7'}{$pagantisTitle|escape:'quotes'}&nbsp;{/if}
-                    <span class="pagantisSimulator ps_version_{$ps_version|escape:'quotes'}"></span>
+            <p class="payment_module Pagantis ps_version_{$ps_version|escape:'htmlall':'UTF-8'}">
+                <a class="pagantis-checkout ps_version_{$ps_version|escape:'htmlall':'UTF-8'} locale_{$locale|escape:'htmlall':'UTF-8'}" href="{$paymentUrl|escape:'htmlall':'UTF-8'}" title="{$pagantisTitle|escape:'htmlall':'UTF-8'}">
+                    {if $ps_version !== '1-7'}{$pagantisTitle|escape:'javascript':'UTF-8'}&nbsp;{/if}
+                    <span class="pagantisSimulator ps_version_{$ps_version|escape:'htmlall':'UTF-8'}"></span>
                 </a>
             </p>
             <script type="text/javascript">
@@ -47,15 +47,15 @@
 
                     sdk.simulator.init({
                         type: sdk.simulator.types.SELECTABLE_TEXT_CUSTOM,
-                        locale: '{$locale|escape:'quotes'}'.toLowerCase(),
-                        country: '{$country|escape:'quotes'}'.toLowerCase(),
-                        publicKey: '{$pagantisPublicKey|escape:'quotes'}',
+                        locale: '{$locale|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                        country: '{$country|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                        publicKey: '{$pagantisPublicKey|escape:'javascript':'UTF-8'}',
                         selector: '.pagantisSimulator',
-                        totalAmount: '{$amount|escape:'quotes'}'.replace('.', ','),
-                        totalPromotedAmount: '{$promotedAmount|escape:'quotes'}'.replace('.', ','),
+                        totalAmount: '{$amount|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                        totalPromotedAmount: '{$promotedAmount|escape:'javascript':'UTF-8'}'.replace('.', ','),
                         amountParserConfig: {
-                            thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'quotes'}',
-                            decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'quotes'}',
+                            thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'javascript':'UTF-8'}',
+                            decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'javascript':'UTF-8'}',
                         }
                     });
                     return true;
