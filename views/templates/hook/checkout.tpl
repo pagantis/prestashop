@@ -10,7 +10,7 @@
         <div class="col-xs-12">
             <p class="payment_module Pagantis ps_version_{$ps_version|escape:'htmlall':'UTF-8'}">
                 <a class="pagantis-checkout ps_version_{$ps_version|escape:'htmlall':'UTF-8'} locale_{$locale|escape:'htmlall':'UTF-8'}" href="{$paymentUrl|escape:'htmlall':'UTF-8'}" title="{$pagantisTitle|escape:'htmlall':'UTF-8'}">
-                    {if $ps_version !== '1-7'}{$pagantisTitle|escape:'javascript':'UTF-8'}&nbsp;{/if}
+                    {if $ps_version !== '1-7'}{$pagantisTitle|escape:'quotes'}&nbsp;{/if}
                     <span class="pagantisSimulator ps_version_{$ps_version|escape:'htmlall':'UTF-8'}"></span>
                 </a>
             </p>

@@ -49,7 +49,7 @@
             width: 150px;
         }
     </style>
-    {$message|escape:'htmlall':'UTF-8'}
+    {$message|escape:'quotes'}
     <div class="panel pagantis-content-form">
         <h3><i class="icon icon-credit-card"></i> {l s='Pagantis Configuration Panel' mod='pagantis'}</h3>
         <div class="column-left">
@@ -68,7 +68,7 @@
             <img src="{$logo|escape:'htmlall':'UTF-8'}"/>
         </div>
     </div>
-    {$form|escape:'htmlall':'UTF-8'}
+    {$form|escape:'quotes':'UTF-8'}
     {if version_compare($smarty.const._PS_VERSION_,'1.6','<')}
         <script type="text/javascript">
             var d = document.getElementById("module_form");
