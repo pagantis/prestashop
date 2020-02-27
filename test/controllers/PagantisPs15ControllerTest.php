@@ -24,20 +24,20 @@ class PagantisPs15ControllerTest extends PagantisPrestashopTest
     const CONFIG_FOLDER = '/index.php?fc=module&module=pagantis&controller=config';
 
     protected $configs = array(
-        "PAGANTIS_TITLE",
-        "PAGANTIS_SIMULATOR_DISPLAY_TYPE",
-        "PAGANTIS_SIMULATOR_DISPLAY_SKIN",
-        "PAGANTIS_SIMULATOR_DISPLAY_POSITION",
-        "PAGANTIS_SIMULATOR_START_INSTALLMENTS",
-        "PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR",
-        "PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION",
-        "PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR",
-        "PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR",
-        "PAGANTIS_FORM_DISPLAY_TYPE",
-        "PAGANTIS_DISPLAY_MIN_AMOUNT",
-        "PAGANTIS_DISPLAY_MAX_AMOUNT",
-        "PAGANTIS_URL_OK",
-        "PAGANTIS_URL_KO",
+        "ENCUOTAS_TITLE",
+        "ENCUOTAS_SIMULATOR_DISPLAY_TYPE",
+        "ENCUOTAS_SIMULATOR_DISPLAY_SKIN",
+        "ENCUOTAS_SIMULATOR_DISPLAY_POSITION",
+        "ENCUOTAS_SIMULATOR_START_INSTALLMENTS",
+        "ENCUOTAS_SIMULATOR_CSS_POSITION_SELECTOR",
+        "ENCUOTAS_SIMULATOR_DISPLAY_CSS_POSITION",
+        "ENCUOTAS_SIMULATOR_CSS_PRICE_SELECTOR",
+        "ENCUOTAS_SIMULATOR_CSS_QUANTITY_SELECTOR",
+        "ENCUOTAS_FORM_DISPLAY_TYPE",
+        "ENCUOTAS_DISPLAY_MIN_AMOUNT",
+        "ENCUOTAS_DISPLAY_MAX_AMOUNT",
+        "ENCUOTAS_URL_OK",
+        "ENCUOTAS_URL_KO",
     );
 
     /**
@@ -57,12 +57,12 @@ class PagantisPs15ControllerTest extends PagantisPrestashopTest
     public function testSetConfig()
     {
         $configUrl = self::PS15URL.self::CONFIG_FOLDER.'&secret='.$this->configuration['secretKey'];
-        $body = array('PAGANTIS_TITLE' => 'changed');
+        $body = array('ENCUOTAS_TITLE' => 'changed');
         $response = Request::post($configUrl)
             ->body($body, Mime::FORM)
             ->expectsJSON()
             ->send();
-        $this->assertEquals('changed', $response->body->PAGANTIS_TITLE);
+        $this->assertEquals('changed', $response->body->ENCUOTAS_TITLE);
         $this->quit();
     }
 

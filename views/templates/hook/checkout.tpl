@@ -90,8 +90,8 @@
                     margin-top: -15px;
                 }
                 p.payment_module a.pagantis-checkout {
-                    background: url(https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png) 5px 5px no-repeat #fbfbfb;
-                    background-size: 90px;
+                    background: url('/modules/pagantis/logo.png') 10px 28px no-repeat #fbfbfb;
+                    background-size: 80px;
                 }
                 p.payment_module a.pagantis-checkout.ps_version_1-7 {
                     background: none;
@@ -99,7 +99,7 @@
                 .payment-option img[src*='cdn.digitalorigin.com'] {
                     height: 18px;
                     padding-left: 5px;
-                    content:url('https://cdn.digitalorigin.com/assets/master/logos/pg.png');
+                    content:url('/modules/pagantis/logo.png');
 
                 }
                 p.payment_module a.pagantis-checkout.ps_version_1-6 {
