@@ -1,5 +1,5 @@
 {*
- * This file is part of the official Pagantis module for PrestaShop.
+ * This file is part of the official enCuotas module for PrestaShop.
  *
  * @author    Pagantis <integrations@pagantis.com>
  * @copyright 2019 Pagantis
@@ -9,9 +9,9 @@
 {extends file='page.tpl'}
 {block name="page_content"}
     <script type="application/javascript">
-        if (typeof pgSDK !== 'undefined') {
+        if (typeof encuotasSDK !== 'undefined') {
             document.addEventListener("DOMContentLoaded", function(){
-                pgSDK.modal.open(
+                encuotasSDK.modal.open(
                     "{$url|escape:'quotes'}",
                     {
                         closeOnBackDropClick: false,
@@ -22,7 +22,7 @@
                     }
                 );
             });
-            pgSDK.modal.onClose(function() {
+            encuotasSDK.modal.onClose(function() {
                 window.location.href = "{$checkoutUrl|escape:'quotes'}";
             });
         }

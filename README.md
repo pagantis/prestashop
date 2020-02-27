@@ -10,7 +10,7 @@ CircleCI: [![CircleCI](https://circleci.com/gh/pagantis/prestashop/tree/master.s
 Prestashop installation
 
 ## :floppy_disk: Installation
-To install the module of Pagantis in your Prestashop
+To install the module of enCuotas in your Prestashop
 
 #### Common steps
 1. Navigate to module dashboard
@@ -28,11 +28,11 @@ To install the module of Pagantis in your Prestashop
 For more information about how to install the plugin, see our [installation section](/Documentation/installation.md).
 
 ## :gear: Configuration
-Configure the plugin in Prestashop admin panel using the information found in your [Pagantis profile](https://bo.pagantis.com/shop). 
+Configure the plugin in Prestashop admin panel using the information found in your [enCuotas profile](https://bo.pagantis.com/shop). 
 
 For more information about how to config the module, see our [configuration section](/Documentation/configuration.md).
 
 ## :arrow_forward: Use
-To use in a real environment you should enable your Pagantis account.
+To use in a real environment you should enable your enCuotas account.
 
 For more information about how to use the module, see our [use section](/Documentation/use.md).

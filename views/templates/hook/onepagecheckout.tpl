@@ -1,5 +1,5 @@
 {*
- * This file is part of the official Pagantis module for PrestaShop.
+ * This file is part of the official enCuotas module for PrestaShop.
  *
  * @author    Pagantis <integrations@pagantis.com>
  * @copyright 2019 Pagantis
@@ -54,10 +54,10 @@
             return true;
         }
 
-        if (typeof pgSDK == 'undefined') {
+        if (typeof encuotasSDK == 'undefined') {
             return false;
         }
-        var sdk = pgSDK;
+        var sdk = encuotasSDK;
 
         if (!checkSimulatorContent()) {
             sdk.simulator.init({

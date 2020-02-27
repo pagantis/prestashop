@@ -1,7 +1,7 @@
 {
   "name": "pagantis",
   "version": "8.3.4",
-  "description": "Pagantis integration in prestashop",
+  "description": "enCuotas integration in prestashop",
   "main": "Gruntfile.js",
   "dependencies": {},
   "devDependencies": {

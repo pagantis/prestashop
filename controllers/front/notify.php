@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the official Pagantis module for PrestaShop.
+ * This file is part of the official enCuotas module for PrestaShop.
  *
  * @author    Pagantis <integrations@pagantis.com>
  * @copyright 2019 Pagantis
@@ -163,10 +163,10 @@ class PagantisNotifyModuleFrontController extends AbstractController
         );
         try {
             $this->config = array(
-                'urlOK' => (Pagantis::getExtraConfig('PAGANTIS_URL_OK') !== '') ?
-                    Pagantis::getExtraConfig('PAGANTIS_URL_OK') : $callbackOkUrl,
-                'urlKO' => (Pagantis::getExtraConfig('PAGANTIS_URL_KO') !== '') ?
-                    Pagantis::getExtraConfig('PAGANTIS_URL_KO') : $callbackKoUrl,
+                'urlOK' => (Pagantis::getExtraConfig('ENCUOTAS_URL_OK') !== '') ?
+                    Pagantis::getExtraConfig('ENCUOTAS_URL_OK') : $callbackOkUrl,
+                'urlKO' => (Pagantis::getExtraConfig('ENCUOTAS_URL_KO') !== '') ?
+                    Pagantis::getExtraConfig('ENCUOTAS_URL_KO') : $callbackKoUrl,
                 'publicKey' => Configuration::get('pagantis_public_key'),
                 'privateKey' => Configuration::get('pagantis_private_key'),
                 'secureKey' => Tools::getValue('key'),
@@ -181,7 +181,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
         }
 
 
-        if (!($this->config['secureKey'] && $this->merchantOrderId && Module::isEnabled(self::PAGANTIS_CODE))) {
+        if (!($this->config['secureKey'] && $this->merchantOrderId && Module::isEnabled(self::ENCUOTAS_CODE))) {
             // This exception is only for Prestashop
             throw new UnknownException('Module may not be enabled');
         }
@@ -206,7 +206,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Find PAGANTIS Order Id in AbstractController::PAGANTIS_ORDERS_TABLE
+     * Find PAGANTIS Order Id in AbstractController::ENCUOTAS_ORDERS_TABLE
      *
      * @throws Exception
      */
@@ -286,8 +286,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 );
 
                 $this->amountMismatchError = '. Amount mismatch in PrestaShop Order #'. $this->merchantOrderId .
-                    ' compared with Pagantis Order: ' . $this->pagantisOrderId .
-                    '. The order in PrestaShop has an amount of ' . $psTotalAmount . ' and in Pagantis ' .
+                    ' compared with enCuotas Order: ' . $this->pagantisOrderId .
+                    '. The order in PrestaShop has an amount of ' . $psTotalAmount . ' and in enCuotas ' .
                     $pgTotalAmount . ' PLEASE REVIEW THE ORDER';
                 $this->saveLog(array(
                     'message' => $this->amountMismatchError
@@ -386,7 +386,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             try {
                 $mode = ($_SERVER['REQUEST_METHOD'] == 'POST') ? 'NOTIFICATION' : 'REDIRECTION';
                 $message = 'Order CONFIRMED. The order was confirmed by a ' . $mode .
-                    '. Pagantis OrderId=' . $this->pagantisOrderId .
+                    '. enCuotas OrderId=' . $this->pagantisOrderId .
                     '. Prestashop OrderId=' . $this->module->currentOrder;
                 $this->saveLog(array('message' => $message));
             } catch (\Exception $exception) {
@@ -406,7 +406,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             $message = 'Roolback method: ' .
-                '. Pagantis OrderId=' . $this->pagantisOrderId .
+                '. enCuotas OrderId=' . $this->pagantisOrderId .
                 '. Prestashop CartId=' . $this->merchantOrderId;
             if ($this->module->currentOrder) {
                 $objOrder = new Order($this->module->currentOrder);

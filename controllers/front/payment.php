@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the official Pagantis module for PrestaShop.
+ * This file is part of the official enCuotas module for PrestaShop.
  *
  * @author    Pagantis <integrations@pagantis.com>
  * @copyright 2019 Pagantis
@@ -28,7 +28,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
     {
         if (_PS_VERSION_ < 1.6) {
             Logger::addLog(
-                'Pagantis Exception For user ' .
+                'enCuotas Exception For user ' .
                 $customer->email .
                 ' : ' .
                 $exception->getMessage(),
@@ -40,7 +40,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
             );
         } else {
             PrestaShopLogger::addLog(
-                'Pagantis Exception For user ' .
+                'enCuotas Exception For user ' .
                 $customer->email .
                 ' : ' .
                 $exception->getMessage(),
@@ -80,9 +80,9 @@ class PagantisPaymentModuleFrontController extends AbstractController
             null,
             array('step'=>3)
         );
-        $iframe = Pagantis::getExtraConfig('PAGANTIS_FORM_DISPLAY_TYPE');
-        $cancelUrl = (Pagantis::getExtraConfig('PAGANTIS_URL_KO') !== '') ?
-            Pagantis::getExtraConfig('PAGANTIS_URL_KO') : $koUrl;
+        $iframe = Pagantis::getExtraConfig('ENCUOTAS_FORM_DISPLAY_TYPE');
+        $cancelUrl = (Pagantis::getExtraConfig('ENCUOTAS_URL_KO') !== '') ?
+            Pagantis::getExtraConfig('ENCUOTAS_URL_KO') : $koUrl;
         $pagantisPublicKey = Configuration::get('pagantis_public_key');
         $pagantisPrivateKey = Configuration::get('pagantis_private_key');
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
@@ -393,7 +393,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
      */
     private function getUserLanguage($shippingAddress = null, $billingAddress = null)
     {
-        $allowedCountries    = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));
+        $allowedCountries    = unserialize(Pagantis::getExtraConfig('ENCUOTAS_ALLOWED_COUNTRIES'));
         $lang = Language::getLanguage($this->context->language->id);
         $langArray = explode("-", $lang['language_code']);
         if (count($langArray) != 2 && isset($lang['locale'])) {

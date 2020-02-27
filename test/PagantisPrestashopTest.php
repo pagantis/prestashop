@@ -30,7 +30,7 @@ abstract class PagantisPrestashopTest extends TestCase
 
     const BACKOFFICE_FOLDER = '/adminTest';
 
-    const PAGANTIS_TITLE = 'Pagantis';
+    const ENCUOTAS_TITLE = 'Pagantis';
 
     /**
      * @var array
@@ -211,20 +211,20 @@ abstract class PagantisPrestashopTest extends TestCase
     public function getProperties()
     {
         return array(
-            'PAGANTIS_TITLE' => '\'Instant Financing\'',
-            'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'pgSDK.simulator.types.SIMPLE',
-            'PAGANTIS_SIMULATOR_DISPLAY_SKIN' => 'pgSDK.simulator.skins.BLUE ',
-            'PAGANTIS_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
-            'PAGANTIS_SIMULATOR_START_INSTALLMENTS' => '3',
-            'PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
-            'PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION' => 'pgSDK.simulator.positions.INNER',
-            'PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
-            'PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
-            'PAGANTIS_FORM_DISPLAY_TYPE' => '0',
-            'PAGANTIS_DISPLAY_MIN_AMOUNT' => '1',
-            'PAGANTIS_DISPLAY_MAX_AMOUNT' => '0',
-            'PAGANTIS_URL_OK' => '',
-            'PAGANTIS_URL_KO' => '',
+            'ENCUOTAS_TITLE' => '\'Instant Financing\'',
+            'ENCUOTAS_SIMULATOR_DISPLAY_TYPE' => 'encuotasSDK.simulator.types.SIMPLE',
+            'ENCUOTAS_SIMULATOR_DISPLAY_SKIN' => 'encuotasSDK.simulator.skins.BLUE ',
+            'ENCUOTAS_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
+            'ENCUOTAS_SIMULATOR_START_INSTALLMENTS' => '3',
+            'ENCUOTAS_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
+            'ENCUOTAS_SIMULATOR_DISPLAY_CSS_POSITION' => 'encuotasSDK.simulator.positions.INNER',
+            'ENCUOTAS_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
+            'ENCUOTAS_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
+            'ENCUOTAS_FORM_DISPLAY_TYPE' => '0',
+            'ENCUOTAS_DISPLAY_MIN_AMOUNT' => '1',
+            'ENCUOTAS_DISPLAY_MAX_AMOUNT' => '0',
+            'ENCUOTAS_URL_OK' => '',
+            'ENCUOTAS_URL_KO' => '',
         );
     }
 }

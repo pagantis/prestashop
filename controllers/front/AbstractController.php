@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the official Pagantis module for PrestaShop.
+ * This file is part of the official enCuotas module for PrestaShop.
  *
  * @author    Pagantis <integrations@pagantis.com>
  * @copyright 2019 Pagantis
@@ -15,9 +15,9 @@ use Pagantis\ModuleUtils\Model\Log\LogEntry;
 abstract class AbstractController extends ModuleFrontController
 {
     /**
-     * PAGANTIS_CODE
+     * ENCUOTAS_CODE
      */
-    const PAGANTIS_CODE = 'pagantis';
+    const ENCUOTAS_CODE = 'pagantis';
 
     /**
      * @var array $headers

@@ -1,5 +1,5 @@
 {*
- * This file is part of the official Pagantis module for PrestaShop.
+ * This file is part of the official enCuotas module for PrestaShop.
  *
  * @author    Pagantis <integrations@pagantis.com>
  * @copyright 2019 Pagantis
@@ -53,15 +53,15 @@
     <div class="panel pagantis-content-form">
         <h3><i class="icon icon-credit-card"></i> {l s='Pagantis Configuration Panel' mod='pagantis'}</h3>
         <div class="column-left">
-            <a target="_blank" href="https://bo.pagantis.com" class="btn btn-default" title="Login Pagantis"><i class="icon-user"></i> {l s='Pagantis Backoffice Login' mod='pagantis'}</a>
+            <a target="_blank" href="https://bo.pagantis.com" class="btn btn-default" title="Login Pagantis"><i class="icon-user"></i> {l s='enCuotas Backoffice Login' mod='pagantis'}</a>
         </div>
         <div class="column-center">
             <p>
-                {l s='Pagantis configuration panel, please take your time to configure the payment method behavior' mod='pagantis'}
+                {l s='enCuotas configuration panel, please take your time to configure the payment method behavior' mod='pagantis'}
             </p>
             <p>
                 {l s='If you need help or want to customize the module, please take a look to our documentation on' mod='pagantis'}
-                <a href="https://github.com/Pagantis/prestashop/tree/{$version|escape:'quotes'}">GitHub </a>
+                <a href="https://github.com/pagantis/prestashop/tree/encuotas">GitHub </a>
             </p>
         </div>
         <div class="column-right">
