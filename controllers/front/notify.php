@@ -200,6 +200,9 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 // This exception is only for Prestashop
                 throw new UnknownException('Unable to load cart');
             }
+            if ($this->merchantOrder->secure_key != $this->config['secureKey']) {
+                throw new UnknownException('Secure Key is not valid');
+            }
         } catch (\Exception $exception) {
             throw new MerchantOrderNotFoundException();
         }
