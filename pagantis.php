@@ -36,19 +36,6 @@ class Pagantis extends PaymentModule
     public $language;
 
     /**
-     * @var null $shippingAddress
-     */
-    protected $shippingAddress = null;
-    /**
-     * @var null $billingAddress
-     */
-    protected $billingAddress = null;
-    /**
-     * @var array $allowedCountries
-     */
-    protected $allowedCountries = array();
-
-    /**
      * Default module advanced configuration values
      *
      * @var array
@@ -63,6 +50,7 @@ class Pagantis extends PaymentModule
         'PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION' => 'sdk.simulator.positions.INNER',
         'PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
         'PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
+        'PAGANTIS_SIMULATOR_DISPLAY_MAX_AMOUNT' => '0',
         'PAGANTIS_FORM_DISPLAY_TYPE' => '0',
         'PAGANTIS_DISPLAY_MIN_AMOUNT' => '1',
         'PAGANTIS_DISPLAY_MAX_AMOUNT' => '0',
@@ -73,6 +61,19 @@ class Pagantis extends PaymentModule
         'PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR' => '.',
         'PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR' => ',',
     );
+    /**
+     * @var null $shippingAddress
+     */
+    protected $shippingAddress = null;
+    /**
+     * @var null $billingAddress
+     */
+    protected $billingAddress = null;
+
+    /**
+     * @var array $allowedCountries
+     */
+    protected $allowedCountries = array();
 
     /**
      * Pagantis constructor.
@@ -741,16 +742,16 @@ class Pagantis extends PaymentModule
         $pagantisSimulatorSkin              = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_SKIN');
         $pagantisSimulatorPosition          = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION');
         $pagantisDisplayMinAmount           = Pagantis::getExtraConfig('PAGANTIS_DISPLAY_MIN_AMOUNT');
-        $pagantisDisplayMaxAmount           = Pagantis::getExtraConfig('PAGANTIS_DISPLAY_MAX_AMOUNT');
         $pagantisPromotionExtra             = Pagantis::getExtraConfig('PAGANTIS_PROMOTION_EXTRA');
         $pagantisSimulatorThousandSeparator = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR');
         $pagantisSimulatorDecimalSeparator  = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR');
+        $pagantisSimulatorMaxAmount         = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_MAX_AMOUNT');
         $allowedCountries                   = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));
 
         if ($functionName != $productConfiguration ||
             $amount <= 0 ||
             $amount <= $pagantisDisplayMinAmount ||
-            ($amount >= $pagantisDisplayMaxAmount && $pagantisDisplayMaxAmount != '0') ||
+            ($amount >= $pagantisSimulatorMaxAmount && $pagantisSimulatorMaxAmount != '0') ||
             !$pagantisSimulatorType ||
             !in_array(Tools::strtolower($this->language), $allowedCountries)
         ) {
@@ -776,7 +777,7 @@ class Pagantis extends PaymentModule
             'pagantisSimulatorThousandSeparator' => $pagantisSimulatorThousandSeparator,
             'pagantisSimulatorDecimalSeparator'  => $pagantisSimulatorDecimalSeparator,
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
-            'pagantisSimPreposition'           => $this->l('or'),
+            'pagantisSimPreposition'             => $this->l('or'),
         ));
 
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');
