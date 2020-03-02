@@ -742,7 +742,6 @@ class Pagantis extends PaymentModule
         $pagantisSimulatorSkin              = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_SKIN');
         $pagantisSimulatorPosition          = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION');
         $pagantisDisplayMinAmount           = Pagantis::getExtraConfig('PAGANTIS_DISPLAY_MIN_AMOUNT');
-        $pagantisDisplayMaxAmount           = Pagantis::getExtraConfig('PAGANTIS_DISPLAY_MAX_AMOUNT');
         $pagantisPromotionExtra             = Pagantis::getExtraConfig('PAGANTIS_PROMOTION_EXTRA');
         $pagantisSimulatorThousandSeparator = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR');
         $pagantisSimulatorDecimalSeparator  = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR');
@@ -777,7 +776,6 @@ class Pagantis extends PaymentModule
             'pagantisPromotionExtra'             => Tools::htmlentitiesDecodeUTF8($this->l($pagantisPromotionExtra)),
             'pagantisSimulatorThousandSeparator' => $pagantisSimulatorThousandSeparator,
             'pagantisSimulatorDecimalSeparator'  => $pagantisSimulatorDecimalSeparator,
-            'pagantisSimulatorMaxAmount'         => $pagantisSimulatorMaxAmount,
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
             'pagantisSimPreposition'             => $this->l('or'),
         ));
