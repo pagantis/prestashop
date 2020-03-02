@@ -36,6 +36,32 @@ class Pagantis extends PaymentModule
     public $language;
 
     /**
+     * Default module advanced configuration values
+     *
+     * @var array
+     */
+    public $defaultConfigs = array(
+        'PAGANTIS_TITLE' => 'Instant Financing',
+        'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM',
+        'PAGANTIS_SIMULATOR_DISPLAY_SKIN' => 'sdk.simulator.skins.BLUE',
+        'PAGANTIS_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
+        'PAGANTIS_SIMULATOR_START_INSTALLMENTS' => '3',
+        'PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
+        'PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION' => 'sdk.simulator.positions.INNER',
+        'PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
+        'PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
+        'PAGANTIS_SIMULATOR_DISPLAY_MAX_AMOUNT' => '0',
+        'PAGANTIS_FORM_DISPLAY_TYPE' => '0',
+        'PAGANTIS_DISPLAY_MIN_AMOUNT' => '1',
+        'PAGANTIS_DISPLAY_MAX_AMOUNT' => '0',
+        'PAGANTIS_URL_OK' => '',
+        'PAGANTIS_URL_KO' => '',
+        'PAGANTIS_ALLOWED_COUNTRIES' => 'a:3:{i:0;s:2:"es";i:1;s:2:"it";i:2;s:2:"fr";}',
+        'PAGANTIS_PROMOTION_EXTRA' => 'Finance this product <span class="pg-no-interest">without interest!</span>',
+        'PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR' => '.',
+        'PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR' => ',',
+    );
+    /**
      * @var null $shippingAddress
      */
     protected $shippingAddress = null;
@@ -43,36 +69,11 @@ class Pagantis extends PaymentModule
      * @var null $billingAddress
      */
     protected $billingAddress = null;
+
     /**
      * @var array $allowedCountries
      */
     protected $allowedCountries = array();
-
-    /**
-     * Default module advanced configuration values
-     *
-     * @var array
-     */
-    public $defaultConfigs = array(
-        'ENCUOTAS_TITLE' => 'Instant Financing',
-        'ENCUOTAS_SIMULATOR_DISPLAY_TYPE' => 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM',
-        'ENCUOTAS_SIMULATOR_DISPLAY_SKIN' => 'sdk.simulator.skins.BLUE',
-        'ENCUOTAS_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
-        'ENCUOTAS_SIMULATOR_START_INSTALLMENTS' => '3',
-        'ENCUOTAS_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
-        'ENCUOTAS_SIMULATOR_DISPLAY_CSS_POSITION' => 'sdk.simulator.positions.INNER',
-        'ENCUOTAS_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
-        'ENCUOTAS_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
-        'ENCUOTAS_FORM_DISPLAY_TYPE' => '0',
-        'ENCUOTAS_DISPLAY_MIN_AMOUNT' => '1',
-        'ENCUOTAS_DISPLAY_MAX_AMOUNT' => '0',
-        'ENCUOTAS_URL_OK' => '',
-        'ENCUOTAS_URL_KO' => '',
-        'ENCUOTAS_ALLOWED_COUNTRIES' => 'a:3:{i:0;s:2:"es";i:1;s:2:"it";i:2;s:2:"fr";}',
-        'ENCUOTAS_PROMOTION_EXTRA' => 'Finance this product <span class="pg-no-interest">without interest!</span>',
-        'ENCUOTAS_SIMULATOR_THOUSAND_SEPARATOR' => '.',
-        'ENCUOTAS_SIMULATOR_DECIMAL_SEPARATOR' => ',',
-    );
 
     /**
      * Pagantis constructor.
@@ -85,7 +86,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.3.4';
+        $this->version = '8.3.5';
         $this->author = 'enCuotas';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -733,24 +734,24 @@ class Pagantis extends PaymentModule
         $pagantisPublicKey                  = Configuration::get('pagantis_public_key');
         $pagantisSimulatorIsEnabled         = Configuration::get('pagantis_simulator_is_enabled');
         $pagantisIsEnabled                  = Configuration::get('pagantis_is_enabled');
-        $pagantisSimulatorType              = Pagantis::getExtraConfig('ENCUOTAS_SIMULATOR_DISPLAY_TYPE');
-        $pagantisSimulatorCSSSelector       = Pagantis::getExtraConfig('ENCUOTAS_SIMULATOR_CSS_POSITION_SELECTOR');
-        $pagantisSimulatorPriceSelector     = Pagantis::getExtraConfig('ENCUOTAS_SIMULATOR_CSS_PRICE_SELECTOR');
-        $pagantisSimulatorQuantitySelector  = Pagantis::getExtraConfig('ENCUOTAS_SIMULATOR_CSS_QUANTITY_SELECTOR');
-        $pagantisSimulatorQuotesStart       = Pagantis::getExtraConfig('ENCUOTAS_SIMULATOR_START_INSTALLMENTS');
-        $pagantisSimulatorSkin              = Pagantis::getExtraConfig('ENCUOTAS_SIMULATOR_DISPLAY_SKIN');
-        $pagantisSimulatorPosition          = Pagantis::getExtraConfig('ENCUOTAS_SIMULATOR_DISPLAY_CSS_POSITION');
-        $pagantisDisplayMinAmount           = Pagantis::getExtraConfig('ENCUOTAS_DISPLAY_MIN_AMOUNT');
-        $pagantisDisplayMaxAmount           = Pagantis::getExtraConfig('ENCUOTAS_DISPLAY_MAX_AMOUNT');
-        $pagantisPromotionExtra             = Pagantis::getExtraConfig('ENCUOTAS_PROMOTION_EXTRA');
-        $pagantisSimulatorThousandSeparator = Pagantis::getExtraConfig('ENCUOTAS_SIMULATOR_THOUSAND_SEPARATOR');
-        $pagantisSimulatorDecimalSeparator  = Pagantis::getExtraConfig('ENCUOTAS_SIMULATOR_DECIMAL_SEPARATOR');
-        $allowedCountries                   = unserialize(Pagantis::getExtraConfig('ENCUOTAS_ALLOWED_COUNTRIES'));
+        $pagantisSimulatorType              = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_TYPE');
+        $pagantisSimulatorCSSSelector       = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR');
+        $pagantisSimulatorPriceSelector     = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR');
+        $pagantisSimulatorQuantitySelector  = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR');
+        $pagantisSimulatorQuotesStart       = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_START_INSTALLMENTS');
+        $pagantisSimulatorSkin              = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_SKIN');
+        $pagantisSimulatorPosition          = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION');
+        $pagantisDisplayMinAmount           = Pagantis::getExtraConfig('PAGANTIS_DISPLAY_MIN_AMOUNT');
+        $pagantisPromotionExtra             = Pagantis::getExtraConfig('PAGANTIS_PROMOTION_EXTRA');
+        $pagantisSimulatorThousandSeparator = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR');
+        $pagantisSimulatorDecimalSeparator  = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR');
+        $pagantisSimulatorMaxAmount         = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_MAX_AMOUNT');
+        $allowedCountries                   = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));
 
         if ($functionName != $productConfiguration ||
             $amount <= 0 ||
             $amount <= $pagantisDisplayMinAmount ||
-            ($amount >= $pagantisDisplayMaxAmount && $pagantisDisplayMaxAmount != '0') ||
+            ($amount >= $pagantisSimulatorMaxAmount && $pagantisSimulatorMaxAmount != '0') ||
             !$pagantisSimulatorType ||
             !in_array(Tools::strtolower($this->language), $allowedCountries)
         ) {
@@ -776,7 +777,7 @@ class Pagantis extends PaymentModule
             'pagantisSimulatorThousandSeparator' => $pagantisSimulatorThousandSeparator,
             'pagantisSimulatorDecimalSeparator'  => $pagantisSimulatorDecimalSeparator,
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
-            'pagantisSimPreposition'           => $this->l('or'),
+            'pagantisSimPreposition'             => $this->l('or'),
         ));
 
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');
