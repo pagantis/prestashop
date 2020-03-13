@@ -61,14 +61,14 @@
             </p>
             <p>
                 {l s='If you need help or want to customize the module, please take a look to our documentation on' mod='pagantis'}
-                <a href="https://github.com/Pagantis/prestashop/tree/{$version|escape:'quotes'}">GitHub </a>
+                <a href="https://github.com/Pagantis/prestashop/tree/{$version|escape:'htmlall':'UTF-8'}">GitHub </a>
             </p>
         </div>
         <div class="column-right">
-            <img src="{$logo|escape:'quotes'}"/>
+            <img src="{$logo|escape:'htmlall':'UTF-8'}"/>
         </div>
     </div>
-    {$form|escape:'quotes'}
+    {$form|escape:'quotes':'UTF-8'}
     {if version_compare($smarty.const._PS_VERSION_,'1.6','<')}
         <script type="text/javascript">
             var d = document.getElementById("module_form");

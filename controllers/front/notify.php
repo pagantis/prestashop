@@ -33,7 +33,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     const CONCURRENCY_TIMEOUT = 10;
 
     /**
-     * @var string $merchantOrderId
+     * @var int $merchantOrderId
      */
     protected $merchantOrderId;
 
@@ -200,6 +200,9 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 // This exception is only for Prestashop
                 throw new UnknownException('Unable to load cart');
             }
+            if ($this->merchantOrder->secure_key != $this->config['secureKey']) {
+                throw new UnknownException('Secure Key is not valid');
+            }
         } catch (\Exception $exception) {
             throw new MerchantOrderNotFoundException();
         }
@@ -214,7 +217,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             $this->pagantisOrderId= Db::getInstance()->getValue(
-                'select order_id from '._DB_PREFIX_.'pagantis_order where id = '.$this->merchantOrderId
+                'select order_id from '._DB_PREFIX_.'pagantis_order where id = '.intval($this->merchantOrderId)
             );
 
             if (is_null($this->pagantisOrderId)) {
@@ -315,7 +318,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             // Double check
             $tableName = _DB_PREFIX_ . 'pagantis_order';
             $fieldName = 'ps_order_id';
-            $sql = ('select ' . $fieldName . ' from `' . $tableName . '` where `id` = ' . $this->merchantOrderId
+            $sql = ('select ' . $fieldName . ' from `' . $tableName . '` where `id` = ' . intval($this->merchantOrderId)
                 . ' and `order_id` = \'' . $this->pagantisOrderId . '\''
                 . ' and `' . $fieldName . '` is not null');
             $results = Db::getInstance()->ExecuteS($sql);
@@ -367,7 +370,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             Db::getInstance()->update(
                 'pagantis_order',
                 array('ps_order_id' => $this->module->currentOrder),
-                'id = \''. $this->merchantOrderId . '\' and order_id = \'' . $this->pagantisOrderId . '\''
+                'id = '. intval($this->merchantOrderId) . ' and order_id = \'' . $this->pagantisOrderId . '\''
             );
         } catch (\Exception $exception) {
             // Do nothing
@@ -432,7 +435,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             $table = 'pagantis_cart_process';
-            if (Db::getInstance()->insert($table, array('id' => $orderId, 'timestamp' => (time()))) === false) {
+            if (Db::getInstance()->insert($table, array('id' => intval($orderId), 'timestamp' => (time()))) === false) {
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     throw new ConcurrencyException();
                 }
@@ -442,7 +445,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                             FROM %s WHERE %s",
                     self::CONCURRENCY_TIMEOUT,
                     _DB_PREFIX_.$table,
-                    "id=$orderId"
+                    'id='.intval($orderId)
                 );
                 $resultSeconds = Db::getInstance()->getValue($query);
                 $restSeconds = isset($resultSeconds) ? ($resultSeconds) : 0;
@@ -482,7 +485,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 );
                 return;
             }
-            Db::getInstance()->delete('pagantis_cart_process', 'id = \'' . $orderId . '\'');
+            Db::getInstance()->delete('pagantis_cart_process', 'id = ' . intval($orderId));
         } catch (\Exception $exception) {
             throw new ConcurrencyException();
         }
