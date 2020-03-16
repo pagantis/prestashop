@@ -388,16 +388,16 @@
         },
         {
             "name": "pagantis/selenium-form-utils",
-            "version": "v3.0.1",
+            "version": "v3.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pagantis/selenium-form-utils.git",
-                "reference": "5e9622f1b8e68cf03804c082d24636411f60a4c9"
+                "reference": "d549b0a1ac18c4069c7e4aa6492b12ad68cb8a01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pagantis/selenium-form-utils/zipball/5e9622f1b8e68cf03804c082d24636411f60a4c9",
-                "reference": "5e9622f1b8e68cf03804c082d24636411f60a4c9",
+                "url": "https://api.github.com/repos/pagantis/selenium-form-utils/zipball/d549b0a1ac18c4069c7e4aa6492b12ad68cb8a01",
+                "reference": "d549b0a1ac18c4069c7e4aa6492b12ad68cb8a01",
                 "shasum": ""
             },
             "require": {
@@ -425,7 +425,7 @@
                 }
             ],
             "description": "Pagantis PHP Library. Selenium helper to end a test purchase. Helper to test the payment validation and redirection",
-            "time": "2019-10-16T13:17:29+00:00"
+            "time": "2020-03-16T12:19:59+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
