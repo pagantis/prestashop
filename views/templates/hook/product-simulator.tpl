@@ -39,7 +39,7 @@
             var pgContainer = document.getElementsByClassName("pagantisSimulator");
             if(pgContainer.length > 0) {
                 var pgElement = pgContainer[0];
-                if (pgElement.innerHTML != '' && pgElement.innerText != "{$pagantisSimPreposition|escape:'javascript':'UTF-8'}")
+                if (pgElement.innerHTML != '')
                 {
                     return true;
                 }
@@ -72,12 +72,19 @@
 
             var price = null;
             var quantity = null;
+            var type = '{$pagantisSimulatorType|escape:'javascript':'UTF-8'}';
             var positionSelector = '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}';
             var priceSelector = '{$pagantisPriceSelector|escape:'javascript':'UTF-8'}';
-            var quantitySelector = '{$pagantisQuantitySelector|escape:'javascript':'UTF-8'}';
 
+            var quantitySelector = '{$pagantisQuantitySelector|escape:'javascript':'UTF-8'}';
             if (positionSelector === 'default') {
                 positionSelector = '.pagantisSimulator';
+
+            }
+
+            if ((type ===  'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM' || type === 'sdk.simulator.types.PRODUCT_PAGE')
+            && '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' === 'default') {
+                positionSelector = '.our_price_display';
             }
 
             if (priceSelector === 'default') {
@@ -144,16 +151,5 @@
     {if $isPromotedProduct == true}
         <span class="pagantis-promotion ps_version_{$ps_version|escape:'htmlall':'UTF-8'}" id="pagantis-promotion-extra">{$pagantisPromotionExtra nofilter}</span>
     {/if}
-    <div class="pagantisSimulator">{if $pagantisSimulatorType == 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM'}<div class="preposition">{$pagantisSimPreposition|escape:'htmlall':'UTF-8'}</div>{/if}</div>
-    <script>
-        if ("{$pagantisSimulatorType|escape:'javascript':'UTF-8'}" === 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM') {
-            var pricesContainerSelector = "content_prices";
-            if ("{$ps_version|escape:'javascript':'UTF-8'}" === '1-7') {
-                pricesContainerSelector = "product-prices";
-            }
-            var div1 = document.getElementsByClassName(pricesContainerSelector);
-            var div2 = document.getElementsByClassName("pagantisSimulator");
-            div1[0].appendChild(div2[0]);
-        }
-    </script>
+    <div class="pagantisSimulator"></div>
 {/if}

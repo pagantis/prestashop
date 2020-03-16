@@ -42,7 +42,8 @@ class Pagantis extends PaymentModule
      */
     public $defaultConfigs = array(
         'PAGANTIS_TITLE' => 'Instant Financing',
-        'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM',
+        'PAGANTIS_SIMULATOR_DISPLAY_TYPE'=>'sdk.simulator.types.PRODUCT_PAGE',
+        'PAGANTIS_SIMULATOR_DISPLAY_TYPE_CHECKOUT'=>'sdk.simulator.types.CHECKOUT_PAGE',
         'PAGANTIS_SIMULATOR_DISPLAY_SKIN' => 'sdk.simulator.skins.BLUE',
         'PAGANTIS_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
         'PAGANTIS_SIMULATOR_START_INSTALLMENTS' => '3',
@@ -86,7 +87,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.3.5';
+        $this->version = '8.3.6';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -388,7 +389,7 @@ class Pagantis extends PaymentModule
         $pagantisPublicKey                  = Configuration::get('pagantis_public_key');
         $pagantisSimulatorIsEnabled         = Configuration::get('pagantis_simulator_is_enabled');
         $pagantisIsEnabled                  = Configuration::get('pagantis_is_enabled');
-        $pagantisSimulatorType              = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_TYPE');
+        $pagantisSimulatorType              = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_TYPE_CHECKOUT');
         $pagantisSimulatorCSSSelector       = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR');
         $pagantisSimulatorPriceSelector     = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR');
         $pagantisSimulatorQuotesStart       = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_START_INSTALLMENTS');
@@ -655,7 +656,7 @@ class Pagantis extends PaymentModule
         $pagantisPublicKey                  = Configuration::get('pagantis_public_key');
         $pagantisSimulatorIsEnabled         = Configuration::get('pagantis_simulator_is_enabled');
         $pagantisIsEnabled                  = Configuration::get('pagantis_is_enabled');
-        $pagantisSimulatorType              = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_TYPE');
+        $pagantisSimulatorType              = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_TYPE_CHECKOUT');
         $pagantisSimulatorCSSSelector       = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR');
         $pagantisSimulatorPriceSelector     = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR');
         $pagantisSimulatorQuotesStart       = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_START_INSTALLMENTS');
@@ -777,7 +778,6 @@ class Pagantis extends PaymentModule
             'pagantisSimulatorThousandSeparator' => $pagantisSimulatorThousandSeparator,
             'pagantisSimulatorDecimalSeparator'  => $pagantisSimulatorDecimalSeparator,
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
-            'pagantisSimPreposition'             => $this->l('or'),
         ));
 
         return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');
