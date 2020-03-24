@@ -99,10 +99,10 @@ class PagantisPaymentModuleFrontController extends AbstractController
         $curlInfo = curl_version();
         $curlVersion = $curlInfo['version'];
         $metadata = array(
-            'ps' => _PS_VERSION_,
-            'pagantis' => $this->module->version,
-            'php' => phpversion(),
-            'curl' => $curlVersion,
+            'pg_module' => 'prestashop',
+            'pg_version' => $this->module->version,
+            'ec_module' => 'prestashop',
+            'ec_version' => _PS_VERSION_
         );
 
         try {
