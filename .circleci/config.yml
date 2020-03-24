@@ -13,10 +13,10 @@ commands:
             sudo curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
   install_dependencies:
-    description: "Install php7.2 && Composer Install"
+    description: "Install php7.2 && nvm-node && Composer Install"
     steps:
       - run:
-          name: Install php7.0 && Composer Install
+          name: Install php7.2 && nvm-node && Composer Install
           command: |
             sudo apt install -y software-properties-common
             sudo add-apt-repository -y ppa:ondrej/php
@@ -24,6 +24,7 @@ commands:
             sudo apt-get install -y php7.2-fpm php7.2-gd php7.2-curl php7.2-mysql php7.2-dev php7.2-cli php7.2-common php7.2-mbstring php7.2-intl php7.2-zip php7.2-bcmath php7.2-dom npm
             curl -s https://getcomposer.org/installer | php
             curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+            export NVM_DIR="/opt/circleci/.nvm"
             nvm install node
             sudo mv composer.phar /usr/local/bin/composer
             composer install
