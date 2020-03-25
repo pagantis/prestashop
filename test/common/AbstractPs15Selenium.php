@@ -304,6 +304,7 @@ abstract class AbstractPs15Selenium extends PagantisPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($pagantisCheckout)->click();
+        $this->webDriver->executeScript('document.querySelector(\'.pagantis-checkout\').click();');
 
         $condition = WebDriverExpectedCondition::titleContains(self::PAGANTIS_TITLE);
         $this->webDriver->wait()->until($condition, $this->webDriver->getCurrentURL());
