@@ -39,8 +39,8 @@ class PagantisPs15InstallTest extends AbstractPs15Selenium
         }
 
         $this->findByCss('#pagantis_is_enabled_true + label')->click();
-        $this->findById('pagantis_public_key')->clear()->sendKeys($this->configuration['publicKey']);
-        $this->findById('pagantis_private_key')->clear()->sendKeys($this->configuration['secretKey']);
+        $this->findById('pagantis_public_key')->clear()->sendKeys('tk_2ec8af2e894739f3eccc0921');
+        $this->findById('pagantis_private_key')->clear()->sendKeys('3af9065648bf1970');
         $this->webDriver->executeScript('window.scrollBy(0,250)');
         $this->findById('module_form')->submit();
         $confirmationSearch = WebDriverBy::className('module_confirmation');
