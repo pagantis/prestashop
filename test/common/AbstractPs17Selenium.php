@@ -288,6 +288,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
 
         var_dump("out title---->".$this->webDriver->getTitle());
         SeleniumHelper::finishForm($this->webDriver);
+        sleep(10);
         var_dump("Pos title---->".$this->webDriver->getTitle());
     }
 }
