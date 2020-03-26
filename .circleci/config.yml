@@ -119,7 +119,15 @@ workflows:
   version: 2
   build:
     jobs:
+      - runTestPrestashop15:
+          filters:
+            branches:
+              only: /.*/
       - runTestPrestashop16:
+          filters:
+            branches:
+              only: /.*/
+      - runTestPrestashop17:
           filters:
             branches:
               only: /.*/

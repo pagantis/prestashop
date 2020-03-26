@@ -47,7 +47,7 @@ class PagantisPs16ControllerTest extends PagantisPrestashopTest
     {
         $logUrl = self::PS16URL.self::LOG_FOLDER.'&secret=13e3ca35bdae432d';
         $response = Request::get($logUrl)->expects('json')->send();
-        $this->assertEquals(3, count($response->body));
+        $this->assertEquals(4, count($response->body));
         $this->quit();
     }
 
