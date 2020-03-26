@@ -40,10 +40,16 @@ class ValidatePs17Test extends AbstractPs17Selenium
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->webDriver->findElement($pagantisOption)->click();
-        sleep(1);
+
+        var_dump("Pre title---->".$this->webDriver->getTitle());
+        sleep(10);
         $this->findById('conditions_to_approve[terms-and-conditions]')->click();
         $this->findById('payment-confirmation')->click();
+
+        var_dump("validate out title---->".$this->webDriver->getTitle());
         SeleniumHelper::finishForm($this->webDriver);
+        sleep(10);
+        var_dump("validate Pos title---->".$this->webDriver->getTitle());
 
         $confirmationMessage = WebDriverBy::id('order-confirmation');
         $condition = WebDriverExpectedCondition::presenceOfElementLocated(

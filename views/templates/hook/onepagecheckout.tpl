@@ -61,11 +61,12 @@
 
         if (!checkSimulatorContent()) {
             sdk.simulator.init({
-                type: sdk.simulator.types.SELECTABLE_TEXT_CUSTOM,
+                type: {$pagantisSimulatorType|escape:'javascript':'UTF-8'},
                 locale: '{$locale|escape:'javascript':'UTF-8'}'.toLowerCase(),
                 country: '{$country|escape:'javascript':'UTF-8'}'.toLowerCase(),
                 publicKey: '{$pagantisPublicKey|escape:'javascript':'UTF-8'}',
                 selector: '.pagantisSimulator',
+                numInstalments: '{$pagantisQuotesStart|escape:'javascript':'UTF-8'}',
                 totalAmount: '{$amount|escape:'javascript':'UTF-8'}'.replace('.', ','),
                 amountParserConfig: {
                     thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'javascript':'UTF-8'}',
