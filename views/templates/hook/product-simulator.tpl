@@ -33,6 +33,7 @@
             display:inline-block;
             width: 90%
         }
+        {$pagantisSimulatorStyles|escape:'javascript':'UTF-8'}
     </style>
     <script>
         function checkSimulatorContent(clearDiv = false) {

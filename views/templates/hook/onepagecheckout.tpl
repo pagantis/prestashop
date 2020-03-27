@@ -89,4 +89,5 @@
     .pgSimulatorPlaceholder {
         display: inline-block;
     }
+    {$pagantisSimulatorStyles|escape:'javascript':'UTF-8'}
 </style>

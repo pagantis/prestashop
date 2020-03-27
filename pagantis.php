@@ -51,6 +51,8 @@ class Pagantis extends PaymentModule
         'PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION' => 'sdk.simulator.positions.INNER',
         'PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
         'PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
+        'PAGANTIS_SIMULATOR_CSS_PRODUCT_PAGE_STYLES' => '',
+        'PAGANTIS_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES' => '',
         'PAGANTIS_SIMULATOR_DISPLAY_MAX_AMOUNT' => '0',
         'PAGANTIS_FORM_DISPLAY_TYPE' => '0',
         'PAGANTIS_DISPLAY_MIN_AMOUNT' => '1',
@@ -398,6 +400,7 @@ class Pagantis extends PaymentModule
         $pagantisTitle                      = $this->l(Pagantis::getExtraConfig('PAGANTIS_TITLE'));
         $pagantisSimulatorThousandSeparator = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR');
         $pagantisSimulatorDecimalSeparator  = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR');
+        $pagantisSimulatorStyles            = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES');
 
         $items = $cart->getProducts(true);
         foreach ($items as $item) {
@@ -421,6 +424,7 @@ class Pagantis extends PaymentModule
             'pagantisSimulatorType'              => $pagantisSimulatorType,
             'pagantisSimulatorSkin'              => $pagantisSimulatorSkin,
             'pagantisSimulatorPosition'          => $pagantisSimulatorPosition,
+            'pagantisSimulatorStyles'            => $pagantisSimulatorStyles,
             'pagantisIsEnabled'                  => $pagantisIsEnabled,
             'pagantisTitle'                      => $pagantisTitle,
             'paymentUrl'                         => $link->getModuleLink('pagantis', 'payment'),
@@ -665,6 +669,7 @@ class Pagantis extends PaymentModule
         $pagantisTitle                      = $this->l(Pagantis::getExtraConfig('PAGANTIS_TITLE'));
         $pagantisSimulatorThousandSeparator = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR');
         $pagantisSimulatorDecimalSeparator  = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR');
+        $pagantisSimulatorStyles            = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES');
 
         $items = $cart->getProducts(true);
         foreach ($items as $item) {
@@ -690,6 +695,7 @@ class Pagantis extends PaymentModule
             'pagantisSimulatorType'              => $pagantisSimulatorType,
             'pagantisSimulatorSkin'              => $pagantisSimulatorSkin,
             'pagantisSimulatorPosition'          => $pagantisSimulatorPosition,
+            'pagantisSimulatorStyles'            => $pagantisSimulatorStyles,
             'pagantisIsEnabled'                  => $pagantisIsEnabled,
             'pagantisTitle'                      => $pagantisTitle,
             'pagantisSimulatorThousandSeparator' => $pagantisSimulatorThousandSeparator,
@@ -742,6 +748,7 @@ class Pagantis extends PaymentModule
         $pagantisSimulatorQuotesStart       = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_START_INSTALLMENTS');
         $pagantisSimulatorSkin              = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_SKIN');
         $pagantisSimulatorPosition          = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION');
+        $pagantisSimulatorStyles            = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_CSS_PRODUCT_PAGE_STYLES');
         $pagantisDisplayMinAmount           = Pagantis::getExtraConfig('PAGANTIS_DISPLAY_MIN_AMOUNT');
         $pagantisPromotionExtra             = Pagantis::getExtraConfig('PAGANTIS_PROMOTION_EXTRA');
         $pagantisSimulatorThousandSeparator = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR');
@@ -772,6 +779,7 @@ class Pagantis extends PaymentModule
             'pagantisSimulatorType'              => $pagantisSimulatorType,
             'pagantisSimulatorSkin'              => $pagantisSimulatorSkin,
             'pagantisSimulatorPosition'          => $pagantisSimulatorPosition,
+            'pagantisSimulatorStyles'            => $pagantisSimulatorStyles,
             'pagantisQuotesStart'                => $pagantisSimulatorQuotesStart,
             'isPromotedProduct'                  => $isPromotedProduct,
             'pagantisPromotionExtra'             => Tools::htmlentitiesDecodeUTF8($this->l($pagantisPromotionExtra)),
