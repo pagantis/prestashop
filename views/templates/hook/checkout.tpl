@@ -131,6 +131,7 @@
                 p.payment_module a:hover {
                     background-color: #f6f6f6;
                 }
+                {$pagantisSimulatorStyles|escape:'javascript':'UTF-8'}
             </style>
         </div>
     </div>
