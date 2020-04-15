@@ -36,7 +36,10 @@
         {$pagantisSimulatorStyles|escape:'javascript':'UTF-8'}
     </style>
     <script>
-        function checkSimulatorContent(clearDiv = false) {
+        function checkSimulatorContent(defaultPosition = 'default') {
+            if (defaultPosition !== 'default') {
+                return true;
+            }
             var pgContainer = document.getElementsByClassName("pagantisSimulator");
             if(pgContainer.length > 0) {
                 var pgElement = pgContainer[0];
@@ -44,48 +47,41 @@
                 {
                     return true;
                 }
-                if (clearDiv) {
-                    pgElement.innerHTML = '';
-                    return true
-                }
             }
             return false;
         }
 
         function loadSimulator()
         {
-            window.PSSimulatorAttempts = window.attempts + 1;
-            if (window.attempts > 4 )
+            window.PSSimulatorAttempts = window.PSSimulatorAttempts + 1;
+            if (window.PSSimulatorAttempts > 4 )
             {
                 clearInterval(window.PSSimulatorId);
-                checkSimulatorContent(true);
                 return true;
             }
-            if (checkSimulatorContent()) {
+
+            var positionSelector = '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}';
+            if (checkSimulatorContent(positionSelector)) {
                 clearInterval(window.PSSimulatorId);
-                checkSimulatorContent(true);
                 return true;
             }
             if (typeof pgSDK == 'undefined') {
                 return false;
             }
             var sdk = pgSDK;
-
             var price = null;
             var quantity = null;
             var type = '{$pagantisSimulatorType|escape:'javascript':'UTF-8'}';
-            var positionSelector = '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}';
             var priceSelector = '{$pagantisPriceSelector|escape:'javascript':'UTF-8'}';
-
             var quantitySelector = '{$pagantisQuantitySelector|escape:'javascript':'UTF-8'}';
-            if (positionSelector === 'default') {
-                positionSelector = '.pagantisSimulator';
 
-            }
-
+            var sdkPositionSelector = '.pagantisSimulator';
             if ((type ===  'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM' || type === 'sdk.simulator.types.PRODUCT_PAGE')
             && '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' === 'default') {
-                positionSelector = '.our_price_display';
+                sdkPositionSelector = '.our_price_display';
+                if ('{$ps_version|escape:'javascript':'UTF-8'}' == '1-7') {
+                    sdkPositionSelector = '.product-prices';
+                }
             }
 
             if (priceSelector === 'default') {
@@ -107,7 +103,7 @@
             sdk.product_simulator.locale = '{$locale|escape:'javascript':'UTF-8'}'.toLowerCase();
             sdk.product_simulator.country = '{$country|escape:'javascript':'UTF-8'}'.toLowerCase();
             sdk.product_simulator.publicKey = '{$pagantisPublicKey|escape:'javascript':'UTF-8'}';
-            sdk.product_simulator.selector = positionSelector;
+            sdk.product_simulator.selector = sdkPositionSelector;
             sdk.product_simulator.numInstalments = '{$pagantisQuotesStart|escape:'javascript':'UTF-8'}';
             sdk.product_simulator.type = {$pagantisSimulatorType|escape:'javascript':'UTF-8'};
             sdk.product_simulator.skin = {$pagantisSimulatorSkin|escape:'javascript':'UTF-8'};
@@ -137,7 +133,7 @@
             }
 
             sdk.simulator.init(sdk.product_simulator);
-            if (checkSimulatorContent()) {
+            if (checkSimulatorContent(positionSelector)) {
                 return true;
             }
             return false;
