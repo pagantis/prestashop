@@ -36,8 +36,8 @@
         {$pagantisSimulatorStyles|escape:'javascript':'UTF-8'}
     </style>
     <script>
-        function checkSimulatorContent() {
-            if (('{$pagantisSimulatorType|escape:'javascript':'UTF-8'}' ===  'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM' 
+        function checkSimulatorContent(flag) {
+            if (flag && ('{$pagantisSimulatorType|escape:'javascript':'UTF-8'}' ===  'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM' 
                   || '{$pagantisSimulatorType|escape:'javascript':'UTF-8'}' === 'sdk.simulator.types.PRODUCT_PAGE')
                 && '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' === 'default') {
                 return true;
@@ -63,7 +63,7 @@
             }
 
             var positionSelector = '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}';
-            if (checkSimulatorContent()) {
+            if (checkSimulatorContent(false)) {
                 clearInterval(window.PSSimulatorId);
                 return true;
             }
@@ -135,7 +135,8 @@
             }
 
             sdk.simulator.init(sdk.product_simulator);
-            if (checkSimulatorContent()) {
+            if (checkSimulatorContent(true)) {
+                clearInterval(window.PSSimulatorId);
                 return true;
             }
             return false;
