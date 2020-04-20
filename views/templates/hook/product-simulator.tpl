@@ -36,8 +36,10 @@
         {$pagantisSimulatorStyles|escape:'javascript':'UTF-8'}
     </style>
     <script>
-        function checkSimulatorContent(defaultPosition = 'default') {
-            if (defaultPosition !== 'default') {
+        function checkSimulatorContent() {
+            if (('{$pagantisSimulatorType|escape:'javascript':'UTF-8'}' ===  'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM' 
+                  || '{$pagantisSimulatorType|escape:'javascript':'UTF-8'}' === 'sdk.simulator.types.PRODUCT_PAGE')
+                && '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' === 'default') {
                 return true;
             }
             var pgContainer = document.getElementsByClassName("pagantisSimulator");
@@ -61,7 +63,7 @@
             }
 
             var positionSelector = '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}';
-            if (checkSimulatorContent(positionSelector)) {
+            if (checkSimulatorContent()) {
                 clearInterval(window.PSSimulatorId);
                 return true;
             }
@@ -133,7 +135,7 @@
             }
 
             sdk.simulator.init(sdk.product_simulator);
-            if (checkSimulatorContent(positionSelector)) {
+            if (checkSimulatorContent()) {
                 return true;
             }
             return false;
