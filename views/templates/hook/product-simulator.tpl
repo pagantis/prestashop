@@ -37,7 +37,10 @@
     </style>
     <script>
         function checkSimulatorContent(flag) {
-            if (flag && ('{$pagantisSimulatorType|escape:'javascript':'UTF-8'}' ===  'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM' 
+            if (flag && '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' !== 'default') {
+                return true;
+            }
+            if (flag && ('{$pagantisSimulatorType|escape:'javascript':'UTF-8'}' ===  'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM'
                   || '{$pagantisSimulatorType|escape:'javascript':'UTF-8'}' === 'sdk.simulator.types.PRODUCT_PAGE')
                 && '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' === 'default') {
                 return true;
@@ -62,7 +65,6 @@
                 return true;
             }
 
-            var positionSelector = '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}';
             if (checkSimulatorContent(false)) {
                 clearInterval(window.PSSimulatorId);
                 return true;
@@ -77,7 +79,11 @@
             var priceSelector = '{$pagantisPriceSelector|escape:'javascript':'UTF-8'}';
             var quantitySelector = '{$pagantisQuantitySelector|escape:'javascript':'UTF-8'}';
 
-            var sdkPositionSelector = '.pagantisSimulator';
+            var sdkPositionSelector = '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}';
+            if ('{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' == 'default') {
+                sdkPositionSelector = '.pagantisSimulator';
+            }
+
             if ((type ===  'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM' || type === 'sdk.simulator.types.PRODUCT_PAGE')
             && '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' === 'default') {
                 sdkPositionSelector = '.our_price_display';
