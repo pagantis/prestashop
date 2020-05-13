@@ -33,6 +33,11 @@ class PagantisNotifyModuleFrontController extends AbstractController
     const CONCURRENCY_TIMEOUT = 10;
 
     /**
+     * Seconds to expire a locked request
+     */
+    const MAX_TRIES = 5;
+
+    /**
      * @var int $merchantOrderId
      */
     protected $merchantOrderId;
@@ -80,12 +85,15 @@ class PagantisNotifyModuleFrontController extends AbstractController
         try {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // prevent colision between POST and GET requests
-                sleep(15);
+                sleep(self::CONCURRENCY_TIMEOUT + 2);
             }
+            $this->prepareVariables();
             if (Tools::getValue('origin') == 'notification' && $_SERVER['REQUEST_METHOD'] == 'GET') {
                 return $this->cancelProcess();
             }
-            $this->prepareVariables();
+            if ($this->preventDOS()) {
+                return $this->cancelProcess();
+            }
             $this->checkConcurrency();
             $this->getMerchantOrder();
             $this->getPagantisOrderId();
@@ -425,6 +433,36 @@ class PagantisNotifyModuleFrontController extends AbstractController
     }
 
     /**
+     * @return bool
+     * @throws Exception
+     */
+    protected function preventDOS()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            $this->getPagantisOrderId();
+            $tableName = _DB_PREFIX_ . 'pagantis_order';
+            $tries = Db::getInstance()->getValue(
+                'SELECT tries FROM ' . $tableName . ' WHERE id = ' .
+                (int)$this->merchantOrderId . ' and order_id = \'' . $this->pagantisOrderId . '\''
+            );
+            if ($tries < self::MAX_TRIES) {
+                try {
+                    Db::getInstance()->update(
+                        'pagantis_order',
+                        array('tries' => $tries + 1),
+                        'id = ' . (int)$this->merchantOrderId . ' and order_id = \'' . $this->pagantisOrderId . '\''
+                    );
+                } catch (\Exception $exception) {
+                    // Do nothing
+                }
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Lock the concurrency to prevent duplicated inputs
      *
      * @param $orderId
@@ -526,6 +564,11 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function finishProcess($error = true)
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (!isset($this->jsonResponse)) {
+                $this->jsonResponse = new JsonExceptionResponse();
+                $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
+                $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
+            }
             $this->jsonResponse->printResponse();
         }
 

@@ -284,6 +284,13 @@ class Pagantis extends PaymentModule
                     $sql = "ALTER TABLE $tableName ADD COLUMN ps_order_id VARCHAR(60) AFTER order_id";
                     Db::getInstance()->Execute($sql);
                 }
+                $query = "select COLUMN_TYPE FROM information_schema.COLUMNS where
+                          TABLE_NAME='$tableName' AND COLUMN_NAME='tries'";
+                $results = $results = Db::getInstance()->ExecuteS($query);
+                if (is_array($results) && count($results) === 0) {
+                    $sql = "ALTER TABLE $tableName ADD COLUMN tries INT NULL DEFAULT 1 AFTER ps_order_id";
+                    Db::getInstance()->Execute($sql);
+                }
                 return false;
             }
         } catch (\Exception $exception) {
