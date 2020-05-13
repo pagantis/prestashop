@@ -43,7 +43,11 @@
             if (flag && ('{$pagantisSimulatorType|escape:'javascript':'UTF-8'}' ===  'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM'
                   || '{$pagantisSimulatorType|escape:'javascript':'UTF-8'}' === 'sdk.simulator.types.PRODUCT_PAGE')
                 && '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' === 'default') {
-                return true;
+
+                if(document.getElementById("pg-iframe-product-simulator") != null){
+                    return true;
+                }
+                return false;
             }
             var pgContainer = document.getElementsByClassName("pagantisSimulator");
             if(pgContainer.length > 0) {
@@ -59,7 +63,7 @@
         function loadSimulator()
         {
             window.PSSimulatorAttempts = window.PSSimulatorAttempts + 1;
-            if (window.PSSimulatorAttempts > 4 )
+            if (window.PSSimulatorAttempts > 20 )
             {
                 clearInterval(window.PSSimulatorId);
                 return true;
@@ -147,6 +151,7 @@
             }
             return false;
         }
+
         window.PSSimulatorAttempts = 0;
         if (!loadSimulator()) {
             window.PSSimulatorId = setInterval(function () {
