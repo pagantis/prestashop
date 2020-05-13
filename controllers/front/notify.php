@@ -565,7 +565,11 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!isset($this->jsonResponse)) {
-                $this->jsonResponse = new JsonExceptionResponse();
+                if ($error) {
+                    $this->jsonResponse = new JsonSuccessResponse();
+                } else {
+                    $this->jsonResponse = new JsonExceptionResponse();
+                }
                 $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
                 $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
             }
