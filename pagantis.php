@@ -366,7 +366,6 @@ class Pagantis extends PaymentModule
         } else {
             $this->context->controller->addJS($url);
         }
-        $this->context->controller->addJS($this->getPathUri(). 'views/js/simulator.js');
     }
 
     /**
