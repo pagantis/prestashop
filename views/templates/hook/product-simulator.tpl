@@ -36,22 +36,32 @@
         {$pagantisSimulatorStyles|escape:'javascript':'UTF-8'}
     </style>
     <script>
-        function checkSimulatorContent(flag) {
-            if (flag && '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' !== 'default') {
-                return true;
-            }
-            if (flag && ('{$pagantisSimulatorType|escape:'javascript':'UTF-8'}' ===  'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM'
-                  || '{$pagantisSimulatorType|escape:'javascript':'UTF-8'}' === 'sdk.simulator.types.PRODUCT_PAGE')
-                && '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' === 'default') {
-                return true;
-            }
-            var pgContainer = document.getElementsByClassName("pagantisSimulator");
-            if(pgContainer.length > 0) {
-                var pgElement = pgContainer[0];
-                if (pgElement.innerHTML != '')
-                {
-                    return true;
+        function findPriceSelector()
+        {
+            var priceDOM = document.getElementById("our_price_display");
+            if (priceDOM != null) {
+                return '#our_price_display';
+            } else {
+                priceDOM = document.querySelector(".current-price span[itemprop=price]")
+                if (priceDOM != null) {
+                    return ".current-price span[itemprop=price]";
                 }
+            }
+
+            return 'default';
+        }
+
+        function findQuantitySelector()
+        {
+            var quantityDOM = document.getElementById("quantity_wanted");
+            if (quantityDOM != null) {
+                return '#quantity_wanted';
+            }
+            return 'default';
+        }
+        function checkSimulatorContent() {
+            if(document.getElementById("pg-iframe-product-simulator") != null){
+                return true;
             }
             return false;
         }
@@ -65,7 +75,7 @@
                 return true;
             }
 
-            if (checkSimulatorContent(false)) {
+            if (checkSimulatorContent()) {
                 clearInterval(window.PSSimulatorId);
                 return true;
             }
@@ -141,7 +151,7 @@
             }
 
             sdk.simulator.init(sdk.product_simulator);
-            if (checkSimulatorContent(true)) {
+            if (checkSimulatorContent()) {
                 clearInterval(window.PSSimulatorId);
                 return true;
             }

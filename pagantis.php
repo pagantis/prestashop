@@ -89,7 +89,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.4.4';
+        $this->version = '8.4.5';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -366,7 +366,6 @@ class Pagantis extends PaymentModule
         } else {
             $this->context->controller->addJS($url);
         }
-        $this->context->controller->addJS($this->getPathUri(). 'views/js/simulator.js');
     }
 
     /**
