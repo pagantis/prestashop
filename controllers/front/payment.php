@@ -60,6 +60,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
      */
     public function postProcess()
     {
+        var_dump(Tools::getValue('product')); die;
         /** @var Cart $cart */
         $cart = $this->context->cart;
 

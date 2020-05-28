@@ -446,7 +446,20 @@ class Pagantis extends PaymentModule
             $this->fetch('module:pagantis/views/templates/hook/checkout.tpl')
         );
 
-        return array($paymentOption);
+        $logo = 'https://www.weswap.com/content/uploads/2019/08/Contactless-Button-1.png';
+        $paymentOption3x = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+        $paymentOption3x
+            ->setCallToActionText($pagantisTitle)
+            ->setAction($link->getModuleLink('pagantis', 'payment')."&product=3x")
+            ->setLogo($logo)
+            ->setModuleName(__CLASS__)
+        ;
+
+        $paymentOption3x->setAdditionalInformation(
+            $this->fetch('module:pagantis/views/templates/hook/checkout3x.tpl')
+        );
+
+        return array($paymentOption, $paymentOption3x);
     }
 
     /**
@@ -713,6 +726,7 @@ class Pagantis extends PaymentModule
             $return = $this->display(__FILE__, 'views/templates/hook/onepagecheckout.tpl');
         } elseif (_PS_VERSION_ < 1.7) {
             $return = $this->display(__FILE__, 'views/templates/hook/checkout.tpl');
+            $return .= $this->display(__FILE__, 'views/templates/hook/checkout3x.tpl');
         }
         return $return;
     }

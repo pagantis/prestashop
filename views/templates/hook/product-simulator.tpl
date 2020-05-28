@@ -69,7 +69,7 @@
         function loadSimulator()
         {
             window.PSSimulatorAttempts = window.PSSimulatorAttempts + 1;
-            if (window.PSSimulatorAttempts > 4 )
+            if (window.PSSimulatorAttempts > 10 )
             {
                 clearInterval(window.PSSimulatorId);
                 return true;
@@ -149,7 +149,6 @@
             if (quantity != null) {
                 sdk.product_simulator.itemQuantity = quantity;
             }
-
             sdk.simulator.init(sdk.product_simulator);
             if (checkSimulatorContent()) {
                 clearInterval(window.PSSimulatorId);
@@ -161,7 +160,7 @@
         if (!loadSimulator()) {
             window.PSSimulatorId = setInterval(function () {
                 loadSimulator();
-            }, 1000);
+            }, 2000);
         }
     </script>
     {if $isPromotedProduct == true}
