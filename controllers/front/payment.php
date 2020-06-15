@@ -253,6 +253,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setShoppingCart($orderShoppingCart)
                 ->setUser($orderUser)
             ;
+
         } catch (\Exception $exception) {
             $this->saveLog(array(), $exception);
             Tools::redirect($cancelUrl);
@@ -314,16 +315,20 @@ class PagantisPaymentModuleFrontController extends AbstractController
      */
     private function getNationalId($customer = null, $addressOne = null, $addressTwo = null)
     {
-        if ($customer !== null && isset($customer->national_id)) {
+        if ($customer !== null && !empty($customer->national_id)) {
             return $customer->national_id;
-        } elseif ($addressOne !== null and isset($addressOne->national_id)) {
+        } elseif ($addressOne !== null and !empty($addressOne->national_id)) {
             return $addressOne->national_id;
-        } elseif ($addressOne !== null and isset($addressOne->dni)) {
+        } elseif ($addressOne !== null and !empty($addressOne->dni)) {
             return $addressOne->dni;
-        } elseif ($addressTwo !== null and isset($addressTwo->national_id)) {
+        } elseif ($addressOne !== null and !empty($addressOne->vat_number)) {
+            return $addressOne->vat_number;
+        } elseif ($addressTwo !== null and !empty($addressTwo->national_id)) {
             return $addressTwo->national_id;
-        } elseif ($addressTwo !== null and isset($addressTwo->dni)) {
+        } elseif ($addressTwo !== null and !empty($addressTwo->dni)) {
             return $addressTwo->dni;
+        } elseif ($addressTwo !== null and !empty($addressTwo->vat_number)) {
+            return $addressTwo->vat_number;
         } else {
             return null;
         }
