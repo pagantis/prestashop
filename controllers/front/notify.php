@@ -33,6 +33,11 @@ class PagantisNotifyModuleFrontController extends AbstractController
     const CONCURRENCY_TIMEOUT = 10;
 
     /**
+     * @var string $productName
+     */
+    protected $productName;
+
+    /**
      * @var int $merchantOrderId
      */
     protected $merchantOrderId;
@@ -162,13 +167,22 @@ class PagantisNotifyModuleFrontController extends AbstractController
             array('step'=>3)
         );
         try {
+            $productName = Tools::getValue('product');
+            $this->productName = (!empty($productName)) ? Tools::getValue('product') : "Pagantis";
+            if ($this->productName === "PagantisLater") {
+                $pagantisPublicKey = Configuration::get('pagantis_public_key_later');
+                $pagantisPrivateKey = Configuration::get('pagantis_private_key_later');
+            } else {
+                $pagantisPublicKey = Configuration::get('pagantis_public_key');
+                $pagantisPrivateKey = Configuration::get('pagantis_private_key');
+            }
             $this->config = array(
                 'urlOK' => (Pagantis::getExtraConfig('PAGANTIS_URL_OK') !== '') ?
                     Pagantis::getExtraConfig('PAGANTIS_URL_OK') : $callbackOkUrl,
                 'urlKO' => (Pagantis::getExtraConfig('PAGANTIS_URL_KO') !== '') ?
                     Pagantis::getExtraConfig('PAGANTIS_URL_KO') : $callbackKoUrl,
-                'publicKey' => Configuration::get('pagantis_public_key'),
-                'privateKey' => Configuration::get('pagantis_private_key'),
+                'publicKey' => $pagantisPublicKey,
+                'privateKey' => $pagantisPrivateKey,
                 'secureKey' => Tools::getValue('key'),
             );
         } catch (\Exception $exception) {
@@ -353,7 +367,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $this->merchantOrderId,
                 Configuration::get('PS_OS_PAYMENT'),
                 $this->merchantOrder->getOrderTotal(true),
-                $this->module->displayName,
+                $this->productName,
                 'pagantisOrderId: ' . $this->pagantisOrder->getId() . ' ' .
                 'pagantisOrderStatus: '. $this->pagantisOrder->getStatus() .
                 $this->amountMismatchError .

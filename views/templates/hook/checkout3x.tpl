@@ -9,66 +9,11 @@
     <div class="row">
         <div class="col-xs-12">
             <p class="payment_module Pagantis3x ps_version_{$ps_version|escape:'htmlall':'UTF-8'}">
-                <a class="pagantis-checkout3x ps_version_{$ps_version|escape:'htmlall':'UTF-8'} locale_{$locale|escape:'htmlall':'UTF-8'}" href="{$paymentUrl|escape:'htmlall':'UTF-8'}&product=3x" title="{$pagantisTitle|escape:'htmlall':'UTF-8'}">
+                <a class="pagantis-checkout3x ps_version_{$ps_version|escape:'htmlall':'UTF-8'} locale_{$locale|escape:'htmlall':'UTF-8'}" href="{$paymentUrl|escape:'htmlall':'UTF-8'}&product=3x" title="Compra ahora, paga más tarde">
                     {if $ps_version !== '1-7'}3x Product&nbsp;{/if}
                     <span class="pagantisSimulator3x 3x ps_version_{$ps_version|escape:'htmlall':'UTF-8'}"></span>
                 </a>
             </p>
-            <script type="text/javascript">
-                function checkSimulatorContent3x() {
-                    var pgContainer = document.getElementsByClassName("pagantisSimulator3x");
-                    if(pgContainer.length > 0) {
-                        var pgElement = pgContainer[0];
-                        if (pgElement.innerHTML != '') {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-
-                function loadSimulator3x()
-                {
-                    window.PSSimulatorAttempts3x = window.attempts + 1;
-                    if (window.attempts > 4 )
-                    {
-                        clearInterval(window.PSSimulatorId3x);
-                        return true;
-                    }
-
-                    if (checkSimulatorContent3x()) {
-                        clearInterval(window.PSSimulatorId3x);
-                        return true;
-                    }
-
-                    if (typeof pgSDK == 'undefined') {
-                        return false;
-                    }
-                    var sdk = pgSDK;
-
-                    sdk.simulator.init({
-                        id: 'sim3x',
-                        type: {$pagantisSimulatorType|escape:'javascript':'UTF-8'},
-                        locale: '{$locale|escape:'javascript':'UTF-8'}'.toLowerCase(),
-                        country: '{$country|escape:'javascript':'UTF-8'}'.toLowerCase(),
-                        publicKey: '{$pagantisPublicKey|escape:'javascript':'UTF-8'}',
-                        selector: '.pagantisSimulator3x',
-                        numInstalments: '{$pagantisQuotesStart|escape:'javascript':'UTF-8'}',
-                        totalAmount: '{$amount|escape:'javascript':'UTF-8'}'.replace('.', ','),
-                        totalPromotedAmount: '{$promotedAmount|escape:'javascript':'UTF-8'}'.replace('.', ','),
-                        amountParserConfig: {
-                            thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'javascript':'UTF-8'}',
-                            decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'javascript':'UTF-8'}',
-                        }
-                    });
-                    return true;
-                }
-                window.PSSimulatorAttempts3x = 0;
-                if (!loadSimulator3x()) {
-                    window.PSSimulatorId3x = setInterval(function () {
-                        loadSimulator3x();
-                    }, 2000);
-                }
-            </script>
             <style>
                 .pagantisSimulator3x {
                     display: inline-block;
@@ -94,13 +39,13 @@
                     margin-bottom: 0px;
                 }
                 p.payment_module a.pagantis-checkout3x {
-                    background: url(https://www.weswap.com/content/uploads/2019/08/Contactless-Button-1.png) 5px 5px no-repeat #fbfbfb;
+                    background: url(https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png) 5px 5px no-repeat #fbfbfb;
                     background-size: 80px;
                 }
                 p.payment_module a.pagantis-checkout3x.ps_version_1-7 {
                     background: none;
                 }
-                .payment-option img[src*='weswap'] {
+                .payment-option img[src*='digitalorigin'] {
                     height: 24px;
                     padding-left: 5px;
                 }

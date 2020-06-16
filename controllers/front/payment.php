@@ -60,7 +60,6 @@ class PagantisPaymentModuleFrontController extends AbstractController
      */
     public function postProcess()
     {
-        var_dump(Tools::getValue('product')); die;
         /** @var Cart $cart */
         $cart = $this->context->cart;
 
@@ -84,14 +83,21 @@ class PagantisPaymentModuleFrontController extends AbstractController
         $iframe = Pagantis::getExtraConfig('PAGANTIS_FORM_DISPLAY_TYPE');
         $cancelUrl = (Pagantis::getExtraConfig('PAGANTIS_URL_KO') !== '') ?
             Pagantis::getExtraConfig('PAGANTIS_URL_KO') : $koUrl;
-        $pagantisPublicKey = Configuration::get('pagantis_public_key');
-        $pagantisPrivateKey = Configuration::get('pagantis_private_key');
+        $productName = "Pagantis";
+        if (Tools::getValue('product') === "3x") {
+            $pagantisPublicKey = Configuration::get('pagantis_public_key_later');
+            $pagantisPrivateKey = Configuration::get('pagantis_private_key_later');
+            $productName = "PagantisLater";
+        } else {
+            $pagantisPublicKey = Configuration::get('pagantis_public_key');
+            $pagantisPrivateKey = Configuration::get('pagantis_private_key');
+        }
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect&'
+            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect&product=' . $productName . '&'
             .http_build_query($query)
         ;
         $notificationOkUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=notification&'
+            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=notification&product=' . $productName . '&'
             .http_build_query($query)
         ;
 

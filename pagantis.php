@@ -446,10 +446,10 @@ class Pagantis extends PaymentModule
             $this->fetch('module:pagantis/views/templates/hook/checkout.tpl')
         );
 
-        $logo = 'https://www.weswap.com/content/uploads/2019/08/Contactless-Button-1.png';
+        $logo = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
         $paymentOption3x = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption3x
-            ->setCallToActionText($pagantisTitle)
+            ->setCallToActionText("Compra ahora, paga más tarde")
             ->setAction($link->getModuleLink('pagantis', 'payment')."&product=3x")
             ->setLogo($logo)
             ->setModuleName(__CLASS__)
@@ -467,7 +467,7 @@ class Pagantis extends PaymentModule
      *
      * @return array
      */
-    private function getConfigForm()
+        private function getConfigForm()
     {
         return array(
             'form' => array(
@@ -497,7 +497,7 @@ class Pagantis extends PaymentModule
                         )
                     ),
                     array(
-                        'name' => 'pagantis_public_key',
+                            'name' => 'pagantis_public_key',
                         'suffix' => $this->l('ex: pk_fd53cd467ba49022e4gf215e'),
                         'type' => 'text',
                         'size' => 60,
@@ -511,7 +511,7 @@ class Pagantis extends PaymentModule
                         'suffix' => $this->l('ex: 21e5723a97459f6a'),
                         'type' => 'text',
                         'size' => 60,
-                        'label' => $this->l('Secret Key'),
+                        'label' => $this->l('Private Key'),
                         'prefix' => '<i class="icon icon-key"></i>',
                         'col' => 6,
                         'required' => true,
@@ -536,6 +536,26 @@ class Pagantis extends PaymentModule
                             ),
                         )
                     ),
+                    array(
+                        'name' => 'pagantis_public_key_later',
+                        'suffix' => $this->l('ex: pk_fd53cd467ba49022e4gf215e'),
+                        'type' => 'text',
+                        'size' => 60,
+                        'label' => 'Public Key "compra ahora, paga más tarde"',
+                        'prefix' => '<i class="icon icon-key"></i>',
+                        'col' => 6,
+                        'required' => true,
+                    ),
+                    array(
+                        'name' => 'pagantis_private_key_later',
+                        'suffix' => $this->l('ex: 21e5723a97459f6a'),
+                        'type' => 'text',
+                        'size' => 60,
+                        'label' => $this->l('Secret Key "compra ahora, paga más tarde"'),
+                        'prefix' => '<i class="icon icon-key"></i>',
+                        'col' => 6,
+                        'required' => true,
+                    )
                 ),
                 'submit' => array(
                     'title' => $this->l('Save'),
@@ -591,6 +611,8 @@ class Pagantis extends PaymentModule
             'pagantis_is_enabled',
             'pagantis_public_key',
             'pagantis_private_key',
+            'pagantis_public_key_later',
+            'pagantis_private_key_later',
             'pagantis_simulator_is_enabled',
         );
 
