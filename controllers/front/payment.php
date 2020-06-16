@@ -87,7 +87,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
         if (Tools::getValue('product') === "3x") {
             $pagantisPublicKey = Configuration::get('pagantis_public_key_later');
             $pagantisPrivateKey = Configuration::get('pagantis_private_key_later');
-            $productName = "PagantisLater";
+            $productName = "Pagantis PMT";
         } else {
             $pagantisPublicKey = Configuration::get('pagantis_public_key');
             $pagantisPrivateKey = Configuration::get('pagantis_private_key');

@@ -169,7 +169,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
         try {
             $productName = Tools::getValue('product');
             $this->productName = (!empty($productName)) ? Tools::getValue('product') : "Pagantis";
-            if ($this->productName === "PagantisLater") {
+            if ($this->productName === "Pagantis PMT") {
                 $pagantisPublicKey = Configuration::get('pagantis_public_key_later');
                 $pagantisPrivateKey = Configuration::get('pagantis_private_key_later');
             } else {
