@@ -446,18 +446,21 @@ class Pagantis extends PaymentModule
             $this->fetch('module:pagantis/views/templates/hook/checkout.tpl')
         );
 
-        $logo = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
-        $paymentOption3x = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-        $paymentOption3x
-            ->setCallToActionText("Compra ahora, paga más tarde")
-            ->setAction($link->getModuleLink('pagantis', 'payment')."&product=3x")
-            ->setLogo($logo)
-            ->setModuleName(__CLASS__)
-        ;
+        // only show second product under 500€ baskets
+        if ($cart->getOrderTotal() < 500) {
+            $logo = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
+            $paymentOption3x = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+            $paymentOption3x
+                ->setCallToActionText("Compra ahora, paga más tarde")
+                ->setAction($link->getModuleLink('pagantis', 'payment')."&product=3x")
+                ->setLogo($logo)
+                ->setModuleName(__CLASS__)
+            ;
 
-        $paymentOption3x->setAdditionalInformation(
-            $this->fetch('module:pagantis/views/templates/hook/checkout3x.tpl')
-        );
+            $paymentOption3x->setAdditionalInformation(
+                $this->fetch('module:pagantis/views/templates/hook/checkout3x.tpl')
+            );
+        }
 
         return array($paymentOption, $paymentOption3x);
     }
@@ -735,6 +738,7 @@ class Pagantis extends PaymentModule
             'pagantisSimulatorThousandSeparator' => $pagantisSimulatorThousandSeparator,
             'pagantisSimulatorDecimalSeparator'  => $pagantisSimulatorDecimalSeparator,
             'paymentUrl'                         => $link->getModuleLink('pagantis', 'payment'),
+            'paymentUrl3x'                       => $link->getModuleLink('pagantis', 'payment').'&product=3x',
             'ps_version'                         => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3)),
         ));
 
@@ -746,9 +750,16 @@ class Pagantis extends PaymentModule
         if ($supercheckout_enabled || $onepagecheckout_enabled || $onepagecheckoutps_enabled) {
             $this->checkLogoExists();
             $return = $this->display(__FILE__, 'views/templates/hook/onepagecheckout.tpl');
+            // only show second product under 500€ baskets
+            if ($cart->getOrderTotal() < 500) {
+                $return = $this->display(__FILE__, 'views/templates/hook/onepagecheckout3x.tpl');
+            }
         } elseif (_PS_VERSION_ < 1.7) {
             $return = $this->display(__FILE__, 'views/templates/hook/checkout.tpl');
-            $return .= $this->display(__FILE__, 'views/templates/hook/checkout3x.tpl');
+            // only show second product under 500€ baskets
+            if ($cart->getOrderTotal() < 500) {
+                $return .= $this->display(__FILE__, 'views/templates/hook/checkout3x.tpl');
+            }
         }
         return $return;
     }
