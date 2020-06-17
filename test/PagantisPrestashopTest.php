@@ -21,7 +21,8 @@ abstract class PagantisPrestashopTest extends TestCase
     const PS16URL = 'http://prestashop16-test.docker:8016';
     const PS15URL = 'http://prestashop15-test.docker:8015';
 
-    const COUNTRY_QUERYSTRING = '?id_lang=2';
+    const COUNTRY_QUERYSTRING = '?id_lang=3';
+    const COUNTRY_QUERYSTRING_17 = '?id_lang=2';
 
     // DEV
     // const PS17URL = 'http://prestashop17-dev.docker:8018';
@@ -214,7 +215,6 @@ abstract class PagantisPrestashopTest extends TestCase
             'PAGANTIS_TITLE' => '\'Instant Financing\'',
             'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'pgSDK.simulator.types.SIMPLE',
             'PAGANTIS_SIMULATOR_DISPLAY_SKIN' => 'pgSDK.simulator.skins.BLUE ',
-            'PAGANTIS_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
             'PAGANTIS_SIMULATOR_START_INSTALLMENTS' => '3',
             'PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
             'PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION' => 'pgSDK.simulator.positions.INNER',

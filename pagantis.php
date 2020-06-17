@@ -721,7 +721,6 @@ class Pagantis extends PaymentModule
      */
     public function productPageSimulatorDisplay()
     {
-        $productConfiguration = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_POSITION');
         $productId = Tools::getValue('id_product');
         if (!$productId) {
             return false;
