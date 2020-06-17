@@ -21,7 +21,7 @@ abstract class PagantisPrestashopTest extends TestCase
     const PS16URL = 'http://prestashop16-test.docker:8016';
     const PS15URL = 'http://prestashop15-test.docker:8015';
 
-    const COUNTRY_QUERYSTRING = '?id_lang=3';
+    const COUNTRY_QUERYSTRING = '?id_lang=2';
 
     // DEV
     // const PS17URL = 'http://prestashop17-dev.docker:8018';
