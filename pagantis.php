@@ -231,6 +231,22 @@ class Pagantis extends PaymentModule
             150)';
                 Db::getInstance()->execute($sql_insert);
             }
+
+            $sql_content = 'select * from ' . _DB_PREFIX_. 'hook_module where 
+            id_module = \'' . Module::getModuleIdByName($this->name) . '\' and 
+            id_shop = \'' . Shop::getContextShopID() . '\' and 
+            id_hook = \'' . Hook::getIdByName('displayProductPriceBlock') . '\'';
+            $hook_exists = Db::getInstance()->ExecuteS($sql_content);
+            if (empty($hook_exists)) {
+                $sql_insert = 'insert into ' . _DB_PREFIX_.  'hook_module 
+            (id_module, id_shop, id_hook, position)
+            values
+            (\''. Module::getModuleIdByName($this->name) . '\',
+            \''. Shop::getContextShopID() . '\',
+            \''. Hook::getIdByName('displayProductPriceBlock') . '\',
+            160)';
+                Db::getInstance()->execute($sql_insert);
+            }
         } catch (\Exception $exception) {
             // continue without errors
         }
