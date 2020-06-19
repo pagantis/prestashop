@@ -116,9 +116,12 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setAddress($shippingAddress->address1 . ' ' . $shippingAddress->address2)
                 ->setTaxId($this->getTaxId($customer, $shippingAddress, $billingAddress))
                 ->setNationalId($this->getNationalId($customer, $shippingAddress, $billingAddress))
+                ->setDni($this->getNationalId($customer, $shippingAddress, $billingAddress))
             ;
 
             $orderShippingAddress =  new \Pagantis\OrdersApiClient\Model\Order\User\Address();
+            $shippingPhone = (empty($shippingAddress->phone_mobile)) ?
+                $shippingAddress->phone : $shippingAddress->phone_mobile;
             $orderShippingAddress
                 ->setZipCode($shippingAddress->postcode)
                 ->setFullName($shippingAddress->firstname . ' ' . $shippingAddress->lastname)
@@ -127,12 +130,15 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setAddress($shippingAddress->address1 . ' ' . $shippingAddress->address2)
                 ->setTaxId($this->getTaxId($customer, $shippingAddress, $billingAddress))
                 ->setNationalId($this->getNationalId($customer, $shippingAddress, $billingAddress))
+                ->setDni($this->getNationalId($customer, $shippingAddress, $billingAddress))
                 ->setFixPhone($shippingAddress->phone)
-                ->setMobilePhone($shippingAddress->phone_mobile)
+                ->setMobilePhone($shippingPhone)
             ;
 
             $billingCountry = Country::getIsoById($billingAddress->id_country);
             $orderBillingAddress = new \Pagantis\OrdersApiClient\Model\Order\User\Address();
+            $billingPhone = (empty($billingAddress->phone_mobile)) ?
+                $billingAddress->phone : $billingAddress->phone_mobile;
             $orderBillingAddress
                 ->setZipCode($billingAddress->postcode)
                 ->setFullName($billingAddress->firstname . ' ' . $billingAddress->lastname)
@@ -141,21 +147,24 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setAddress($billingAddress->address1 . ' ' . $billingAddress->address2)
                 ->setTaxId($this->getTaxId($customer, $billingAddress, $shippingAddress))
                 ->setNationalId($this->getNationalId($customer, $billingAddress, $shippingAddress))
+                ->setDni($this->getNationalId($customer, $shippingAddress, $billingAddress))
                 ->setFixPhone($billingAddress->phone)
-                ->setMobilePhone($billingAddress->phone_mobile)
+                ->setMobilePhone($billingPhone)
             ;
 
             $orderUser = new \Pagantis\OrdersApiClient\Model\Order\User();
+            $email = $this->context->cookie->logged ? $this->context->cookie->email : $customer->email;
             $orderUser
                 ->setAddress($userAddress)
                 ->setFullName($orderShippingAddress->getFullName())
                 ->setBillingAddress($orderBillingAddress)
-                ->setEmail($this->context->cookie->logged ? $this->context->cookie->email : $customer->email)
+                ->setEmail($email)
                 ->setFixPhone($shippingAddress->phone)
-                ->setMobilePhone($shippingAddress->phone_mobile)
+                ->setMobilePhone($shippingPhone)
                 ->setShippingAddress($orderShippingAddress)
                 ->setTaxId($this->getTaxId($customer, $shippingAddress, $billingAddress))
                 ->setNationalId($this->getNationalId($customer, $shippingAddress, $billingAddress))
+                ->setDni($this->getNationalId($customer, $shippingAddress, $billingAddress))
             ;
 
             if ($customer->birthday!='0000-00-00') {
@@ -244,6 +253,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setShoppingCart($orderShoppingCart)
                 ->setUser($orderUser)
             ;
+
         } catch (\Exception $exception) {
             $this->saveLog(array(), $exception);
             Tools::redirect($cancelUrl);
@@ -252,8 +262,8 @@ class PagantisPaymentModuleFrontController extends AbstractController
         $url ='';
         try {
             $orderClient = new \Pagantis\OrdersApiClient\Client(
-                $pagantisPublicKey,
-                $pagantisPrivateKey
+                trim($pagantisPublicKey),
+                trim($pagantisPrivateKey)
             );
             $order = $orderClient->createOrder($order);
 
@@ -305,16 +315,20 @@ class PagantisPaymentModuleFrontController extends AbstractController
      */
     private function getNationalId($customer = null, $addressOne = null, $addressTwo = null)
     {
-        if ($customer !== null && isset($customer->national_id)) {
+        if ($customer !== null && !empty($customer->national_id)) {
             return $customer->national_id;
-        } elseif ($addressOne !== null and isset($addressOne->national_id)) {
+        } elseif ($addressOne !== null and !empty($addressOne->national_id)) {
             return $addressOne->national_id;
-        } elseif ($addressOne !== null and isset($addressOne->dni)) {
+        } elseif ($addressOne !== null and !empty($addressOne->dni)) {
             return $addressOne->dni;
-        } elseif ($addressTwo !== null and isset($addressTwo->national_id)) {
+        } elseif ($addressOne !== null and !empty($addressOne->vat_number)) {
+            return $addressOne->vat_number;
+        } elseif ($addressTwo !== null and !empty($addressTwo->national_id)) {
             return $addressTwo->national_id;
-        } elseif ($addressTwo !== null and isset($addressTwo->dni)) {
+        } elseif ($addressTwo !== null and !empty($addressTwo->dni)) {
             return $addressTwo->dni;
+        } elseif ($addressTwo !== null and !empty($addressTwo->vat_number)) {
+            return $addressTwo->vat_number;
         } else {
             return null;
         }

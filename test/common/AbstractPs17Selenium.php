@@ -116,7 +116,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
      */
     public function loginToFrontend()
     {
-        $this->webDriver->get(self::PS17URL.self::COUNTRY_QUERYSTRING);
+        $this->webDriver->get(self::PS17URL.self::COUNTRY_QUERYSTRING_17);
         $login = WebDriverBy::className('user-info');
         $condition = WebDriverExpectedCondition::elementToBeClickable($login);
         $this->waitUntil($condition);
@@ -136,7 +136,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
      */
     public function createAccount()
     {
-        $this->webDriver->get(self::PS17URL.self::COUNTRY_QUERYSTRING);
+        $this->webDriver->get(self::PS17URL.self::COUNTRY_QUERYSTRING_17);
         $this->findByClass('user-info')->click();
         $this->findByClass('no-account')->click();
         $this->findByClass('custom-radio')->click();
@@ -243,7 +243,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
      */
     public function goToProduct($verifySimulator = true)
     {
-        $this->webDriver->get(self::PS17URL.self::COUNTRY_QUERYSTRING);
+        $this->webDriver->get(self::PS17URL.self::COUNTRY_QUERYSTRING_17);
         $this->findById('_desktop_logo')->click();
         $featuredProductCenterSearch = WebDriverBy::className('products');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($featuredProductCenterSearch);

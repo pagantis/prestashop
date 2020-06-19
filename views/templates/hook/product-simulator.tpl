@@ -60,9 +60,15 @@
             return 'default';
         }
         function checkSimulatorContent() {
+            // if simulator is into an iframe
             if(document.getElementById("pg-iframe-product-simulator") != null){
                 return true;
             }
+            // if simulator is inline
+            if(document.getElementById("pg-sim-custom-product-simulator") != null){
+                return true;
+            }
+
             return false;
         }
 
@@ -85,21 +91,12 @@
             var sdk = pgSDK;
             var price = null;
             var quantity = null;
-            var type = '{$pagantisSimulatorType|escape:'javascript':'UTF-8'}';
             var priceSelector = '{$pagantisPriceSelector|escape:'javascript':'UTF-8'}';
             var quantitySelector = '{$pagantisQuantitySelector|escape:'javascript':'UTF-8'}';
-
             var sdkPositionSelector = '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}';
-            if ('{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' == 'default') {
-                sdkPositionSelector = '.pagantisSimulator';
-            }
 
-            if ((type ===  'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM' || type === 'sdk.simulator.types.PRODUCT_PAGE')
-            && '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' === 'default') {
-                sdkPositionSelector = '.our_price_display';
-                if ('{$ps_version|escape:'javascript':'UTF-8'}' == '1-7') {
-                    sdkPositionSelector = '.product-prices';
-                }
+            if ('{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' === 'default') {
+                sdkPositionSelector = '.pagantisSimulator';
             }
 
             if (priceSelector === 'default') {
