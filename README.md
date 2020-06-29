@@ -10,13 +10,13 @@ CircleCI: [![CircleCI](https://circleci.com/gh/pagantis/prestashop/tree/master.s
 Prestashop installation
 
 ## :floppy_disk: Installation
-To install the module of Pagantis in your Prestashop
+To install the Pagantis module in your Prestashop instance.
 
 #### Common steps
-1. Navigate to module dashboard
+1. Navigate to the module dashboard
 2. Click on "Add new"
 
-#### Installation using marketplace
+#### Installation using the marketplace
 3. Search for 'Pagantis'
 4. Click 'Install'
 
@@ -25,14 +25,12 @@ To install the module of Pagantis in your Prestashop
 4. Click 'Choose file'
 5. Select the downloaded file and click 'Upload this module'.
 
-For more information about how to install the plugin, see our [installation section](/Documentation/installation.md).
+For more detailed information on how to install the plugin, see our [installation section](/Documentation/installation.md).
 
 ## :gear: Configuration
-Configure the plugin in Prestashop admin panel using the information found in your [Pagantis profile](https://bo.pagantis.com/shop). 
+Configure the plugin in Prestashop admin panel using the information found in your [Pagantis profile](https://bo.pagantis.com/shop) and our [configuration section](/Documentation/configuration.md).
 
-For more information about how to config the module, see our [configuration section](/Documentation/configuration.md).
+## :arrow_forward: Usage
+To use in a real environment your Pagantis account should be enabled accordingly.
 
-## :arrow_forward: Use
-To use in a real environment you should enable your Pagantis account.
-
-For more information about how to use the module, see our [use section](/Documentation/use.md).
+For more information, see our [usage section](/Documentation/usage.md).
