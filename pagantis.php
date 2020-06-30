@@ -45,7 +45,6 @@ class Pagantis extends PaymentModule
         'PAGANTIS_SIMULATOR_DISPLAY_TYPE'=>'sdk.simulator.types.PRODUCT_PAGE',
         'PAGANTIS_SIMULATOR_DISPLAY_TYPE_CHECKOUT'=>'sdk.simulator.types.CHECKOUT_PAGE',
         'PAGANTIS_SIMULATOR_DISPLAY_SKIN' => 'sdk.simulator.skins.BLUE',
-        'PAGANTIS_SIMULATOR_DISPLAY_POSITION' => 'hookDisplayProductButtons',
         'PAGANTIS_SIMULATOR_START_INSTALLMENTS' => '3',
         'PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
         'PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION' => 'sdk.simulator.positions.INNER',
@@ -89,7 +88,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.4.5';
+        $this->version = '8.5.0';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -141,11 +140,8 @@ class Pagantis extends PaymentModule
         $return =  (parent::install()
             && $this->registerHook('displayShoppingCart')
             && $this->registerHook('paymentOptions')
-            && $this->registerHook('displayRightColumn')
-            && $this->registerHook('displayLeftColumn')
-            && $this->registerHook('displayRightColumnProduct')
-            && $this->registerHook('displayLeftColumnProduct')
             && $this->registerHook('displayProductButtons')
+            && $this->registerHook('displayProductPriceBlock')
             && $this->registerHook('displayOrderConfirmation')
             && $this->registerHook('header')
         );
@@ -233,6 +229,22 @@ class Pagantis extends PaymentModule
             \''. Shop::getContextShopID() . '\',
             \''. Hook::getIdByName('header') . '\',
             150)';
+                Db::getInstance()->execute($sql_insert);
+            }
+
+            $sql_content = 'select * from ' . _DB_PREFIX_. 'hook_module where 
+            id_module = \'' . Module::getModuleIdByName($this->name) . '\' and 
+            id_shop = \'' . Shop::getContextShopID() . '\' and 
+            id_hook = \'' . Hook::getIdByName('displayProductPriceBlock') . '\'';
+            $hook_exists = Db::getInstance()->ExecuteS($sql_content);
+            if (empty($hook_exists)) {
+                $sql_insert = 'insert into ' . _DB_PREFIX_.  'hook_module 
+            (id_module, id_shop, id_hook, position)
+            values
+            (\''. Module::getModuleIdByName($this->name) . '\',
+            \''. Shop::getContextShopID() . '\',
+            \''. Hook::getIdByName('displayProductPriceBlock') . '\',
+            160)';
                 Db::getInstance()->execute($sql_insert);
             }
         } catch (\Exception $exception) {
@@ -766,14 +778,12 @@ class Pagantis extends PaymentModule
 
     /**
      * @param string $functionName
-     *:
      * @return string
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function productPageSimulatorDisplay($functionName)
+    public function productPageSimulatorDisplay()
     {
-        $productConfiguration = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_POSITION');
         $productId = Tools::getValue('id_product');
         if (!$productId) {
             return false;
@@ -802,8 +812,7 @@ class Pagantis extends PaymentModule
         $pagantisSimulatorMaxAmount         = Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_MAX_AMOUNT');
         $allowedCountries                   = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));
 
-        if ($functionName != $productConfiguration ||
-            $amount <= 0 ||
+        if ($amount <= 0 ||
             $amount <= $pagantisDisplayMinAmount ||
             ($amount >= $pagantisSimulatorMaxAmount && $pagantisSimulatorMaxAmount != '0') ||
             !$pagantisSimulatorType ||
@@ -842,50 +851,39 @@ class Pagantis extends PaymentModule
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function hookDisplayRightColumn()
-    {
-
-        return $this->productPageSimulatorDisplay(__FUNCTION__);
-    }
-
-    /**
-     * @return string
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    public function hookDisplayLeftColumn()
-    {
-        return $this->productPageSimulatorDisplay(__FUNCTION__);
-    }
-
-    /**
-     * @return string
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    public function hookDisplayRightColumnProduct()
-    {
-        return $this->productPageSimulatorDisplay(__FUNCTION__);
-    }
-
-    /**
-     * @return string
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    public function hookDisplayLeftColumnProduct()
-    {
-        return $this->productPageSimulatorDisplay(__FUNCTION__);
-    }
-
-    /**
-     * @return string
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
     public function hookDisplayProductButtons()
     {
-        return $this->productPageSimulatorDisplay(__FUNCTION__);
+        $availableSimulators = array(
+            'sdk.simulator.types.SIMPLE',
+            'sdk.simulator.types.SELECTABLE',
+            'sdk.simulator.types.MARKETING',
+            'sdk.simulator.types.TEXT',
+        );
+        if (in_array(Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_TYPE'), $availableSimulators)
+        || (_PS_VERSION_ < 1.6)) {
+            return $this->productPageSimulatorDisplay();
+        }
+        return '';
+    }
+
+    /**
+     * @param $params
+     * @return string
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public function hookDisplayProductPriceBlock($params)
+    {
+        // $params['type'] = weight | price | after_price
+        $availableSimulators = array(
+            'sdk.simulator.types.PRODUCT_PAGE',
+            'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM'
+        );
+        if ($params['type'] === 'price' &&
+            in_array(Pagantis::getExtraConfig('PAGANTIS_SIMULATOR_DISPLAY_TYPE'), $availableSimulators)) {
+            return $this->productPageSimulatorDisplay();
+        }
+        return '';
     }
 
     /**
