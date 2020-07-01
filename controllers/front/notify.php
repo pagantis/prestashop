@@ -422,7 +422,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 // Do nothing
             }
         } catch (\Exception $exception) {
-            throw new UnknownException($exception->getMessage());
+            throw new UnknownException(sprintf("[%s]%s", $this->getOrigin(), $exception->getMessage()));
         }
     }
 
