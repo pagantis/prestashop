@@ -28,10 +28,10 @@ use Pagantis\ModuleUtils\Model\Response\JsonExceptionResponse;
 class PagantisNotifyModuleFrontController extends AbstractController
 {
     /** Cart tablename */
-    const CART_TABLE = 'pagantis_cart_process';
+    const PAGANTIS_CART_TABLE = 'pagantis_cart_process';
 
     /** Pagantis orders tablename */
-    const PAGANTIS_ORDERS = 'pagantis_order';
+    const PAGANTIS_ORDERS_TABLE = 'pagantis_order';
 
     /**
      * Seconds to expire a locked request
@@ -87,14 +87,12 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function postProcess()
     {
         $thrownException = false;
-        $this->origin = (
-            $this->isPost() || Tools::getValue('origin')=='notification'
-        ) ? 'Notification' : 'Order';
+        $this->origin = ($this->isPost() || Tools::getValue('origin') === 'notification') ? 'Notification' : 'Order';
 
         try {
             if ($this->isGet() && $this->isNotification()) {
                 echo 'OK';
-                die; //TODO TEST LAUNCHING WITH POSTMAN
+                die;
             }
 
             if ($this->isGet() && $this->isRedirect()) {
@@ -200,6 +198,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             throw new ConfigurationNotFoundException();
         }
 
+
         $this->merchantOrderId = Tools::getValue('id_cart');
         if ($this->merchantOrderId == '') {
             throw new QuoteNotFoundException();
@@ -212,6 +211,16 @@ class PagantisNotifyModuleFrontController extends AbstractController
         }
     }
 
+    /**
+     * Retrieve the merchant order id by cart id
+     *
+     * @return int merchantOrderId
+     */
+    public function getMerchantOrderId()
+    {
+        $this->merchantOrderId = Tools::getValue('id_cart');
+        return $this->merchantOrderId;
+    }
     /**
      * Retrieve the merchant order by id
      *
@@ -234,7 +243,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Find PAGANTIS Order Id in AbstractController::PAGANTIS_ORDERS_TABLE
+     * Find PAGANTIS Order Id in AbstractController::PAGANTIS_ORDERS_TABLE_TABLE
      *
      * @throws Exception
      */
@@ -242,7 +251,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             $this->pagantisOrderId= Db::getInstance()->getValue(
-                'select order_id from '._DB_PREFIX_.self::PAGANTIS_ORDERS.' where id = '.(int)$this->merchantOrderId
+                'select order_id from '._DB_PREFIX_.self::PAGANTIS_ORDERS_TABLE.' where id = '
+                .(int)$this->merchantOrderId
             );
 
             if (is_null($this->pagantisOrderId)) {
@@ -303,7 +313,12 @@ class PagantisNotifyModuleFrontController extends AbstractController
         $merchantAmount = explode('.', explode(',', $merchantAmount)[0])[0];
         if ($totalAmount != $merchantAmount) {
             try {
-                $psTotalAmount = substr_replace($merchantAmount, '.', (Tools::strlen($merchantAmount) -2), 0);
+                $psTotalAmount = substr_replace(
+                    $merchantAmount,
+                    '.',
+                    (Tools::strlen($merchantAmount) -2),
+                    0
+                );
 
                 $pgTotalAmountInCents = (string) $this->pagantisOrder->getShoppingCart()->getTotalAmount();
                 $pgTotalAmount = substr_replace(
@@ -341,8 +356,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
             }
 
             // Double check
-            // TODO CALL TO getMerchantOrderId
-            $tableName = _DB_PREFIX_ . self::PAGANTIS_ORDERS;
+            $this->getMerchantOrderId();
+            $tableName = _DB_PREFIX_ . self::PAGANTIS_ORDERS_TABLE;
             $fieldName = 'ps_order_id';
             $sql = ('select ' . $fieldName . ' from `' . $tableName . '` where `id` = ' . (int)$this->merchantOrderId
                 . ' and `order_id` = \'' . $this->pagantisOrderId . '\''
@@ -394,7 +409,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
         }
         try {
             Db::getInstance()->update(
-                self::PAGANTIS_ORDERS,
+                self::PAGANTIS_ORDERS_TABLE,
                 array('ps_order_id' => $this->module->currentOrder),
                 'id = '. (int)$this->merchantOrderId . ' and order_id = \'' . $this->pagantisOrderId . '\''
             );
@@ -460,30 +475,32 @@ class PagantisNotifyModuleFrontController extends AbstractController
     protected function blockConcurrency($orderId)
     {
         try {
-            $table = self::CART_TABLE;
+            $table = self::PAGANTIS_CART_TABLE;
             if (Db::getInstance()->insert($table, array('id' => (int)$orderId, 'timestamp' => (time()))) === false) {
                 if ($this->isNotification()) {
                     throw new ConcurrencyException();
                 } else {
                     $query = sprintf(
-                        "SELECT TIMESTAMPDIFF(SECOND,NOW()-INTERVAL %s SECOND, FROM_UNIXTIME(timestamp)) as rest 
-                                FROM %s WHERE %s",
+                        "SELECT TIMESTAMPDIFF(SECOND,NOW()-INTERVAL %s SECOND, FROM_UNIXTIME(timestamp)) 
+                                as rest FROM %s WHERE %s",
                         self::CONCURRENCY_TIMEOUT,
                         _DB_PREFIX_.$table,
                         'id='.(int)$orderId
                     );
                     $resultSeconds = Db::getInstance()->getValue($query);
                     $restSeconds = isset($resultSeconds) ? ($resultSeconds) : 0;
-                    $secondsToExpire = ($restSeconds>self::CONCURRENCY_TIMEOUT) ? self::CONCURRENCY_TIMEOUT : $restSeconds;
+                    $secondsToExpire = ($restSeconds>self::CONCURRENCY_TIMEOUT) ?
+                        self::CONCURRENCY_TIMEOUT : $restSeconds;
                     if ($secondsToExpire > 0) {
                         sleep($secondsToExpire + 1);
                     }
 
+                    $this->getMerchantOrderId();
                     $this->getPagantisOrderId();
-                    $this->getMerchantOrderId(); //TODO
 
                     $logMessage  = sprintf(
-                        "User waiting %s seconds, default seconds %s, bd time to expire %s seconds[cartId=%s][origin=%s]",
+                        "User waiting %s seconds, default seconds %s, bd time to expire %s 
+                        seconds[cartId=%s][origin=%s]",
                         $secondsToExpire,
                         self::CONCURRENCY_TIMEOUT,
                         $restSeconds,
@@ -514,12 +531,12 @@ class PagantisNotifyModuleFrontController extends AbstractController
         try {
             if (is_null($orderId)) {
                 Db::getInstance()->delete(
-                    self::CART_TABLE,
+                    self::PAGANTIS_CART_TABLE,
                     'timestamp < ' . (time() - self::CONCURRENCY_TIMEOUT)
                 );
                 return;
             }
-            Db::getInstance()->delete(self::CART_TABLE, 'id = ' . (int)$orderId);
+            Db::getInstance()->delete(self::PAGANTIS_CART_TABLE, 'id = ' . (int)$orderId);
         } catch (\Exception $exception) {
             throw new ConcurrencyException();
         }
