@@ -27,6 +27,12 @@ use Pagantis\ModuleUtils\Model\Response\JsonExceptionResponse;
  */
 class PagantisNotifyModuleFrontController extends AbstractController
 {
+    /** Cart tablename */
+    const CART_TABLE = 'pagantis_cart_process';
+
+    /** Pagantis orders tablename */
+    const PAGANTIS_ORDERS = 'pagantis_order';
+
     /**
      * Seconds to expire a locked request
      */
@@ -72,25 +78,41 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     protected $jsonResponse;
 
+    /** @var mixed $origin */
+    protected $origin;
+
     /**
      * @throws Exception
      */
     public function postProcess()
     {
+        $thrownException = false;
+        $this->origin = (
+            $this->isPost() || Tools::getValue('origin')=='notification'
+        ) ? 'Notification' : 'Order';
+
         try {
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                // prevent colision between POST and GET requests
-                sleep(15);
+            if ($this->isGet() && $this->isNotification()) {
+                echo 'OK';
+                die; //TODO TEST LAUNCHING WITH POSTMAN
             }
-            if (Tools::getValue('origin') == 'notification' && $_SERVER['REQUEST_METHOD'] == 'GET') {
-                return $this->cancelProcess();
+
+            if ($this->isGet() && $this->isRedirect()) {
+                $redirectMessage = sprintf(
+                    "[origin=%s][cartId=%s]",
+                    $this->getOrigin(),
+                    Tools::getValue('id_cart')
+                );
+                $this->saveLog(array('message' => $redirectMessage));
             }
+
             $this->prepareVariables();
             $this->checkConcurrency();
             $this->getMerchantOrder();
             $this->getPagantisOrderId();
             $this->getPagantisOrder();
             if ($this->checkOrderStatus()) {
+                $thrownException = true;
                 return $this->finishProcess(false);
             }
             $this->validateAmount();
@@ -98,7 +120,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $this->processMerchantOrder();
             }
         } catch (\Exception $exception) {
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $thrownException = true;
+            if ($this->isPost()) {
                 $this->jsonResponse = new JsonExceptionResponse();
                 $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
                 $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
@@ -108,13 +131,15 @@ class PagantisNotifyModuleFrontController extends AbstractController
         }
 
         try {
-            $this->jsonResponse = new JsonSuccessResponse();
-            $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
-            $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
-            $this->confirmPagantisOrder();
+            if (!$thrownException) {
+                $this->jsonResponse = new JsonSuccessResponse();
+                $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
+                $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
+                $this->confirmPagantisOrder();
+            }
         } catch (\Exception $exception) {
             $this->rollbackMerchantOrder();
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($this->isNotification()) {
                 $this->jsonResponse = new JsonExceptionResponse();
                 $this->jsonResponse->setMerchantOrderId($this->merchantOrderId);
                 $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
@@ -217,7 +242,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             $this->pagantisOrderId= Db::getInstance()->getValue(
-                'select order_id from '._DB_PREFIX_.'pagantis_order where id = '.(int)$this->merchantOrderId
+                'select order_id from '._DB_PREFIX_.self::PAGANTIS_ORDERS.' where id = '.(int)$this->merchantOrderId
             );
 
             if (is_null($this->pagantisOrderId)) {
@@ -316,7 +341,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
             }
 
             // Double check
-            $tableName = _DB_PREFIX_ . 'pagantis_order';
+            // TODO CALL TO getMerchantOrderId
+            $tableName = _DB_PREFIX_ . self::PAGANTIS_ORDERS;
             $fieldName = 'ps_order_id';
             $sql = ('select ' . $fieldName . ' from `' . $tableName . '` where `id` = ' . (int)$this->merchantOrderId
                 . ' and `order_id` = \'' . $this->pagantisOrderId . '\''
@@ -368,7 +394,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
         }
         try {
             Db::getInstance()->update(
-                'pagantis_order',
+                self::PAGANTIS_ORDERS,
                 array('ps_order_id' => $this->module->currentOrder),
                 'id = '. (int)$this->merchantOrderId . ' and order_id = \'' . $this->pagantisOrderId . '\''
             );
@@ -387,7 +413,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
         try {
             $this->orderClient->confirmOrder($this->pagantisOrderId);
             try {
-                $mode = ($_SERVER['REQUEST_METHOD'] == 'POST') ? 'NOTIFICATION' : 'REDIRECTION';
+                $mode = ($this->isPost()) ? 'NOTIFICATION' : 'REDIRECTION';
                 $message = 'Order CONFIRMED. The order was confirmed by a ' . $mode .
                     '. Pagantis OrderId=' . $this->pagantisOrderId .
                     '. Prestashop OrderId=' . $this->module->currentOrder;
@@ -426,47 +452,55 @@ class PagantisNotifyModuleFrontController extends AbstractController
 
     /**
      * Lock the concurrency to prevent duplicated inputs
-     *
      * @param $orderId
-     * @return bool|void
-     * @throws ConcurrencyException
+     *
+     * @return bool
+     * @throws UnknownException
      */
     protected function blockConcurrency($orderId)
     {
         try {
-            $table = 'pagantis_cart_process';
+            $table = self::CART_TABLE;
             if (Db::getInstance()->insert($table, array('id' => (int)$orderId, 'timestamp' => (time()))) === false) {
-                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                if ($this->isNotification()) {
                     throw new ConcurrencyException();
+                } else {
+                    $query = sprintf(
+                        "SELECT TIMESTAMPDIFF(SECOND,NOW()-INTERVAL %s SECOND, FROM_UNIXTIME(timestamp)) as rest 
+                                FROM %s WHERE %s",
+                        self::CONCURRENCY_TIMEOUT,
+                        _DB_PREFIX_.$table,
+                        'id='.(int)$orderId
+                    );
+                    $resultSeconds = Db::getInstance()->getValue($query);
+                    $restSeconds = isset($resultSeconds) ? ($resultSeconds) : 0;
+                    $secondsToExpire = ($restSeconds>self::CONCURRENCY_TIMEOUT) ? self::CONCURRENCY_TIMEOUT : $restSeconds;
+                    if ($secondsToExpire > 0) {
+                        sleep($secondsToExpire + 1);
+                    }
+
+                    $this->getPagantisOrderId();
+                    $this->getMerchantOrderId(); //TODO
+
+                    $logMessage  = sprintf(
+                        "User waiting %s seconds, default seconds %s, bd time to expire %s seconds[cartId=%s][origin=%s]",
+                        $secondsToExpire,
+                        self::CONCURRENCY_TIMEOUT,
+                        $restSeconds,
+                        $this->merchantOrderId,
+                        $this->getOrigin()
+                    );
+
+                    $this->saveLog(array(
+                        'message' => $logMessage
+                    ));
+
+                    // After waiting...user continue the confirmation, hoping that previous call have finished.
+                    return true;
                 }
-
-                $query = sprintf(
-                    "SELECT TIMESTAMPDIFF(SECOND,NOW()-INTERVAL %s SECOND, FROM_UNIXTIME(timestamp)) as rest 
-                            FROM %s WHERE %s",
-                    self::CONCURRENCY_TIMEOUT,
-                    _DB_PREFIX_.$table,
-                    'id='.(int)$orderId
-                );
-                $resultSeconds = Db::getInstance()->getValue($query);
-                $restSeconds = isset($resultSeconds) ? ($resultSeconds) : 0;
-                $secondsToExpire = ($restSeconds>self::CONCURRENCY_TIMEOUT) ? self::CONCURRENCY_TIMEOUT : $restSeconds;
-
-                $logMessage = sprintf(
-                    "Redirect concurrency, User have to wait %s seconds, default seconds %s. CartId=" . $orderId,
-                    $secondsToExpire,
-                    self::CONCURRENCY_TIMEOUT,
-                    $restSeconds
-                );
-
-                $this->saveLog(array(
-                    'message' => $logMessage
-                ));
-                sleep($secondsToExpire+1);
-                // After waiting...user continue the confirmation, hoping that previous call have finished.
-                return true;
             }
         } catch (\Exception $exception) {
-            throw new ConcurrencyException();
+            throw new UnknownException($exception->getMessage());
         }
     }
 
@@ -480,12 +514,12 @@ class PagantisNotifyModuleFrontController extends AbstractController
         try {
             if (is_null($orderId)) {
                 Db::getInstance()->delete(
-                    'pagantis_cart_process',
+                    self::CART_TABLE,
                     'timestamp < ' . (time() - self::CONCURRENCY_TIMEOUT)
                 );
                 return;
             }
-            Db::getInstance()->delete('pagantis_cart_process', 'id = ' . (int)$orderId);
+            Db::getInstance()->delete(self::CART_TABLE, 'id = ' . (int)$orderId);
         } catch (\Exception $exception) {
             throw new ConcurrencyException();
         }
@@ -525,17 +559,85 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function finishProcess($error = true)
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->jsonResponse->printResponse();
-        }
+        if ($this->isPost()) {
+            $returnMessage = sprintf(
+                "[origin=%s][cartId=%s][prestashopOrderId=%s][pagantisOrderId=%s][message=%s]",
+                $this->getOrigin(),
+                $this->merchantOrderId,
+                $this->module->currentOrder,
+                $this->pagantisOrderId,
+                $this->jsonResponse->getResult()
+            );
+            $this->saveLog(array('message' => $returnMessage));
 
-        $parameters = array(
-            'id_cart' => $this->merchantOrderId,
-            'key' => $this->config['secureKey'],
-            'id_module' => $this->module->id,
-            'id_order' => ($this->pagantisOrder)?$this->pagantisOrder->getId(): null,
-        );
-        $url = ($error)? $this->config['urlKO'] : $this->config['urlOK'];
-        return $this->redirect($url, $parameters);
+            $this->jsonResponse->printResponse();
+        } else {
+            $parameters = array(
+                'id_cart' => $this->merchantOrderId,
+                'key' => $this->config['secureKey'],
+                'id_module' => $this->module->id,
+                'id_order' => ($this->pagantisOrder)?$this->pagantisOrder->getId(): null,
+            );
+            $url = ($error)? $this->config['urlKO'] : $this->config['urlOK'];
+            $returnMessage = sprintf(
+                "[origin=%s][cartId=%s][prestashopOrderId=%s][pagantisOrderId=%s][returnUrl=%s]",
+                $this->getOrigin(),
+                $this->merchantOrderId,
+                $this->module->currentOrder,
+                $this->pagantisOrderId,
+                $url
+            );
+            $this->saveLog(array('message' => $returnMessage));
+
+            return $this->redirect($url, $parameters);
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    private function isNotification()
+    {
+        return ($this->getOrigin() == 'Notification');
+    }
+
+    /**
+     * @return bool
+     */
+    private function isRedirect()
+    {
+        return ($this->getOrigin() == 'Order');
+    }
+
+    /**
+     * @return bool
+     */
+    private function isPost()
+    {
+        return $_SERVER['REQUEST_METHOD'] == 'POST';
+    }
+
+    /**
+     * @return bool
+     */
+    private function isGet()
+    {
+        return $_SERVER['REQUEST_METHOD'] == 'GET';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOrigin()
+    {
+        return $this->origin;
+    }
+
+    /**
+     * @param mixed $origin
+     */
+    public function setOrigin($origin)
+    {
+        $this->origin = $origin;
     }
 }
