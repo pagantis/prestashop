@@ -93,35 +93,20 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         $thrownException = false;
         $this->origin = ($this->isPost() || Tools::getValue('origin') === 'notification') ? 'Notification' : 'Order';
-        $this->merchantCartId = Tools::getValue('id_cart');
-
-        if ($this->merchantCartId == '') {
-            throw new QuoteNotFoundException();
-        }
 
         try {
+            //Avoiding notifications via GET
             if ($this->isGet() && $this->isNotification()) {
                 echo 'OK';
                 die;
             }
 
-            if ($this->isGet() && $this->isRedirect()) {
-                $redirectMessage = sprintf(
-                    "Request [origin=%s][cartId=%s]",
-                    $this->getOrigin(),
-                    $this->merchantCartId
-                );
-                $this->saveLog(array('message' => $redirectMessage));
-            }
-
-            if ($this->isPost() && $this->isNotification()) {
-                $notificationMessage = sprintf(
-                    "Request [origin=%s][cartId=%s]",
-                    $this->getOrigin(),
-                    $this->merchantCartId
-                );
-                $this->saveLog(array('message' => $notificationMessage));
-            }
+            $redirectMessage = sprintf(
+                "Request [origin=%s][cartId=%s]",
+                $this->getOrigin(),
+                Tools::getValue('id_cart')
+            );
+            $this->saveLog(array('message' => $redirectMessage));
 
             $this->prepareVariables();
             $this->checkConcurrency();
@@ -186,7 +171,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
      * @throws Exception
      */
     public function checkConcurrency()
-
+    {
         $this->unblockConcurrency();
         $this->blockConcurrency($this->merchantCartId);
     }
@@ -228,6 +213,12 @@ class PagantisNotifyModuleFrontController extends AbstractController
             throw new ConfigurationNotFoundException();
         }
 
+        $this->merchantCartId = Tools::getValue('id_cart');
+
+        if ($this->merchantCartId == '') {
+            throw new QuoteNotFoundException();
+        }
+
         if (!($this->config['secureKey'] && $this->merchantCartId && Module::isEnabled(self::PAGANTIS_CODE))) {
             // This exception is only for Prestashop
             throw new UnknownException('Module may not be enabled');
@@ -235,7 +226,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Find prestashop Order Id in AbstractController::PAGANTIS_ORDERS_TABLE
+     * Find prestashop Order Id
      */
     public function getMerchantOrderId()
     {
@@ -270,7 +261,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Find PAGANTIS Order Id in AbstractController::PAGANTIS_ORDERS_TABLE
+     * Find PAGANTIS Order Id
      *
      * @throws Exception
      */
@@ -379,9 +370,14 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             if ($this->merchantCart->orderExists() !== false) {
-                throw new WrongStatusException('Trying to create an existing Order, PS->orderExists()'
-                    . ' cart_id = ' . $this->merchantCartId
-                    . ' pagantis_id = ' . $this->pagantisOrderId . ')');
+                $exceptionMessage = sprintf(
+                    "Trying to create an existing Order[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s]",
+                    $this->getOrigin(),
+                    $this->merchantCartId,
+                    $this->merchantOrderId,
+                    $this->pagantisOrderId
+                );
+                throw new WrongStatusException($exceptionMessage);
             }
 
             // Double check
@@ -393,11 +389,14 @@ class PagantisNotifyModuleFrontController extends AbstractController
             $results = Db::getInstance()->ExecuteS($sql);
             if (is_array($results) && count($results) === 1) {
                 $this->getMerchantOrderId();
-                throw new WrongStatusException('The order was already created in PS ('
-                    . ' cart_id = ' . $this->merchantCartId
-                    . ' ps_order_id = ' . $this->merchantOrderId
-                    . ' pagantis_id = ' . $this->pagantisOrderId
-                    . ')');
+                $exceptionMessage = sprintf(
+                    "Order was already created[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s]",
+                    $this->getOrigin(),
+                    $this->merchantCartId,
+                    $this->merchantOrderId,
+                    $this->pagantisOrderId
+                );
+                throw new WrongStatusException($exceptionMessage);
             }
         } catch (\Exception $exception) {
             throw new UnknownException($exception->getMessage());
@@ -515,7 +514,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 } else {
                     $query = sprintf(
                         "SELECT TIMESTAMPDIFF(SECOND,NOW()-INTERVAL %s SECOND, FROM_UNIXTIME(timestamp)) 
-                                as rest FROM %s WHERE %s",
+                              as rest FROM %s WHERE %s",
                         self::CONCURRENCY_TIMEOUT,
                         _DB_PREFIX_.$table,
                         'id='.(int)$orderId
