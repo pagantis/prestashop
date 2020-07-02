@@ -94,6 +94,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
         $thrownException = false;
         $this->origin = ($this->isPost() || Tools::getValue('origin') === 'notification') ? 'Notification' : 'Order';
         $this->merchantCartId = Tools::getValue('id_cart');
+
         if ($this->merchantCartId == '') {
             throw new QuoteNotFoundException();
         }
@@ -106,11 +107,20 @@ class PagantisNotifyModuleFrontController extends AbstractController
 
             if ($this->isGet() && $this->isRedirect()) {
                 $redirectMessage = sprintf(
-                    "[origin=%s][cartId=%s]",
+                    "Request [origin=%s][cartId=%s]",
                     $this->getOrigin(),
                     $this->merchantCartId
                 );
                 $this->saveLog(array('message' => $redirectMessage));
+            }
+
+            if ($this->isPost() && $this->isNotification()) {
+                $notificationMessage = sprintf(
+                    "Request [origin=%s][cartId=%s]",
+                    $this->getOrigin(),
+                    $this->merchantCartId
+                );
+                $this->saveLog(array('message' => $notificationMessage));
             }
 
             $this->prepareVariables();
@@ -176,7 +186,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
      * @throws Exception
      */
     public function checkConcurrency()
-    {
+
         $this->unblockConcurrency();
         $this->blockConcurrency($this->merchantCartId);
     }
@@ -188,6 +198,11 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     public function prepareVariables()
     {
+        $this->getMerchantOrderId();
+        if (!is_null($this->merchantOrderId)) {
+            throw new WrongStatusException('The order ' . $this->merchantOrderId . 'already exists in '.
+                self::PAGANTIS_ORDERS_TABLE . ' table');
+        }
         $callbackOkUrl = $this->context->link->getPageLink(
             'order-confirmation',
             null,
