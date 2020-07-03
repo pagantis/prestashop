@@ -96,8 +96,6 @@ class PagantisPaymentModuleFrontController extends AbstractController
 
         $shippingAddress = new Address($cart->id_address_delivery);
         $billingAddress = new Address($cart->id_address_invoice);
-        $curlInfo = curl_version();
-        $curlVersion = $curlInfo['version'];
         $metadata = array(
             'pg_module' => 'prestashop',
             'pg_version' => $this->module->version,
@@ -253,7 +251,6 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setShoppingCart($orderShoppingCart)
                 ->setUser($orderUser)
             ;
-
         } catch (\Exception $exception) {
             $this->saveLog(array(), $exception);
             Tools::redirect($cancelUrl);
