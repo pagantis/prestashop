@@ -192,8 +192,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function prepareVariables()
     {
         $this->getMerchantOrderId();
-        if (!is_null($this->merchantOrderId)) {
-            throw new WrongStatusException('The order ' . $this->merchantOrderId . 'already exists in '.
+        if (!empty($this->merchantOrderId)) {
+            throw new WrongStatusException('The order "' . $this->merchantOrderId . '" already exists in '.
                 self::PAGANTIS_ORDERS_TABLE . ' table');
         }
         $callbackOkUrl = $this->context->link->getPageLink(
