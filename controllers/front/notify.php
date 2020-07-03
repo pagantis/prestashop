@@ -39,6 +39,11 @@ class PagantisNotifyModuleFrontController extends AbstractController
     const CONCURRENCY_TIMEOUT = 10;
 
     /**
+     * @var int $requestId
+     */
+    protected $requestId = null;
+
+    /**
      * @var int $merchantOrderId
      */
     protected $merchantOrderId = null;
@@ -93,7 +98,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         $thrownException = false;
         $this->origin = ($this->isPost() || Tools::getValue('origin') === 'notification') ? 'Notification' : 'Order';
-
+        $this->requestId = rand(1, 999999999);
         try {
             //Avoiding notifications via GET
             if ($this->isGet() && $this->isNotification()) {
@@ -106,7 +111,10 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $this->getOrigin(),
                 Tools::getValue('id_cart')
             );
-            $this->saveLog(array('message' => $redirectMessage));
+            $this->saveLog(array(
+                'requestId' => $this->requestId,
+                'message' => $redirectMessage
+            ));
 
             $this->prepareVariables();
             $this->checkConcurrency();
@@ -231,7 +239,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function getMerchantOrderId()
     {
         try {
-            $this->pagantisOrderId = Db::getInstance()->getValue(
+            $this->merchantOrderId = Db::getInstance()->getValue(
                 'select ps_order_id from '._DB_PREFIX_.self::PAGANTIS_ORDERS_TABLE.' where id = '
                 .(int)$this->merchantCartId
             );
@@ -353,6 +361,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                     '. The Cart in PrestaShop has an amount of ' . $psTotalAmount . ' and in Pagantis ' .
                     $pgTotalAmount . ' PLEASE REVIEW THE ORDER';
                 $this->saveLog(array(
+                    'requestId' => $this->requestId,
                     'message' => $this->amountMismatchError
                 ));
             } catch (\Exception $exception) {
@@ -390,7 +399,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             if (is_array($results) && count($results) === 1) {
                 $this->getMerchantOrderId();
                 $exceptionMessage = sprintf(
-                    "Order was already created[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s]",
+                    "Order was already created [origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s]",
                     $this->getOrigin(),
                     $this->merchantCartId,
                     $this->merchantOrderId,
@@ -462,7 +471,10 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $message = 'Order CONFIRMED. The order was confirmed by a ' . $mode .
                     '. Pagantis OrderId=' . $this->pagantisOrderId .
                     '. Prestashop OrderId=' . $this->module->currentOrder;
-                $this->saveLog(array('message' => $message));
+                $this->saveLog(array(
+                    'requestId' => $this->requestId,
+                    'message' => $message
+                ));
             } catch (\Exception $exception) {
                 // Do nothing
             }
@@ -491,9 +503,15 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $history->changeIdOrderState(8, (int)($objOrder->id));
                 $message .= ' Prestashop OrderId=' . $this->merchantCartId;
             }
-            $this->saveLog(array('message' => $message));
+            $this->saveLog(array(
+                'requestId' => $this->requestId,
+                'message' => $message
+            ));
         } catch (\Exception $exception) {
-            $this->saveLog(array('message' => $exception->getMessage()));
+            $this->saveLog(array(
+                'requestId' => $this->requestId,
+                'message' => $exception->getMessage()
+            ));
         }
     }
 
@@ -541,6 +559,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                     );
 
                     $this->saveLog(array(
+                        'requestId' => $this->requestId,
                         'message' => $logMessage
                     ));
 
@@ -589,6 +608,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
         $line = $debug[1]['line'];
         $this->getMerchantOrderId();
         $data = array(
+            'requestId' => $this->requestId,
             'merchantCartId' => $this->merchantCartId,
             'merchantOrderId' => $this->merchantOrderId,
             'pagantisOrderId' => $this->pagantisOrderId,
@@ -620,7 +640,10 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $this->pagantisOrderId,
                 $this->jsonResponse->getResult()
             );
-            $this->saveLog(array('message' => $returnMessage));
+            $this->saveLog(array(
+                'requestId' => $this->requestId,
+                'message' => $returnMessage
+            ));
 
             $this->jsonResponse->printResponse();
         } else {
@@ -639,7 +662,10 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $this->pagantisOrderId,
                 $url
             );
-            $this->saveLog(array('message' => $returnMessage));
+            $this->saveLog(array(
+                'requestId' => $this->requestId,
+                'message' => $returnMessage
+            ));
 
             return $this->redirect($url, $parameters);
         }
