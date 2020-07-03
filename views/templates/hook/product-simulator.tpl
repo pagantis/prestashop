@@ -75,7 +75,7 @@
         function loadSimulator()
         {
             window.PSSimulatorAttempts = window.PSSimulatorAttempts + 1;
-            if (window.PSSimulatorAttempts > 4 )
+            if (window.PSSimulatorAttempts > 10 )
             {
                 clearInterval(window.PSSimulatorId);
                 return true;
