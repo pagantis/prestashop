@@ -9,14 +9,66 @@
     <div class="row">
         <div class="col-xs-12">
             <p class="payment_module Pagantis ps_version_{$MAIN_PS_VERSION|escape:'htmlall':'UTF-8'}">
-                <a class="pagantis-checkout ps_version_{$MAIN_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$MAIN_LOCALE|escape:'htmlall':'UTF-8'}" href="{$MAIN_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="{$MAIN_TITLE|escape:'htmlall':'UTF-8'}">
+                <a class="pagantis-checkout ps_version_{$MAIN_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$MAIN_LOCALE|escape:'htmlall':'UTF-8'}" href="{$MAIN_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="{$MAIN_SIMULATOR_TITLE|escape:'htmlall':'UTF-8'}">
                     {if $MAIN_PS_VERSION !== '1-7'}{$MAIN_TITLE|escape:'quotes'}&nbsp;{/if}
-                    <span class="mainPagantisSimulator ps_version_{$MAIN_PS_VERSION|escape:'htmlall':'UTF-8'}">
-                         {$MAIN_TITLE nofilter} <img class="mainImageLogo" src="{$MAIN_SIMULATOR_DISPLAY_IMAGE|escape:'htmlall':'UTF-8'}">
-                    </span>
+                    <span class="mainPagantisSimulator ps_version_{$MAIN_PS_VERSION|escape:'htmlall':'UTF-8'}"></span>
 
                 </a>
             </p>
+            <script type="text/javascript">
+                function checkSimulatorContent() {
+                    var pgContainer = document.getElementsByClassName("mainPagantisSimulator");
+                    if(pgContainer.length > 0) {
+                        var pgElement = pgContainer[0];
+                        if (pgElement.innerHTML != '') {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                function loadSimulator()
+                {
+                    window.PSSimulatorAttempts = window.attempts + 1;
+                    if (window.attempts > 10 )
+                    {
+                        clearInterval(window.PSSimulatorId);
+                        return true;
+                    }
+
+                    if (checkSimulatorContent()) {
+                        clearInterval(window.PSSimulatorId);
+                        return true;
+                    }
+
+                    if (typeof pgSDK == 'undefined') {
+                        return false;
+                    }
+                    var sdk = pgSDK;
+
+                    sdk.simulator.init({
+                        type: {$MAIN_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
+                        locale: '{$MAIN_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                        country: '{$MAIN_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                        publicKey: '{$MAIN_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
+                        selector: '.mainPagantisSimulator',
+                        numInstalments: '{$MAIN_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}',
+                        totalAmount: '{$MAIN_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                        totalPromotedAmount: '{$MAIN_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                        amountParserConfig: {
+                            thousandSeparator: '{$MAIN_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
+                            decimalSeparator: '{$MAIN_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
+                        }
+                    });
+                    return true;
+                }
+                window.PSSimulatorAttempts = 0;
+                if (!loadSimulator()) {
+                    window.PSSimulatorId = setInterval(function () {
+                        loadSimulator();
+                    }, 2000);
+                }
+            </script>
             <style>
                 .mainPagantisSimulator {
                     display: inline-block;
@@ -32,6 +84,8 @@
                 .mainPagantisSimulator.ps_version_1-6 {
                     vertical-align: top;
                     margin-left: 20px;
+                    margin-top: -5px;
+
                 }
                 .mainPagantisSimulator.ps_version_1-7 {
                     padding-top: 0px;
@@ -46,7 +100,7 @@
                 }
                 p.payment_module a.pagantis-checkout {
                     background: url(https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png) 5px 5px no-repeat #fbfbfb;
-                    background-size: 90px;
+                    background-size: 80px;
                 }
                 p.payment_module a.pagantis-checkout.ps_version_1-7 {
                     background: none;
@@ -59,6 +113,7 @@
                 }
                 p.payment_module a.pagantis-checkout.ps_version_1-6 {
                     background-color: #fbfbfb;
+                    max-height: 90px;
                 }
                 p.payment_module a.pagantis-checkout.ps_version_1-6:after {
                     display: block;

@@ -80,18 +80,19 @@ class PagantisPaymentModuleFrontController extends AbstractController
             null,
             array('step'=>3)
         );
-        $iframe = Pagantis::getExtraConfig('FORM_DISPLAY_TYPE');
-        $cancelUrl = (Pagantis::getExtraConfig('URL_KO') !== '') ?
-            Pagantis::getExtraConfig('URL_KO') : $koUrl;
-        $productName = "Pagantis";
-        if (Tools::getValue('product') === "3x") {
-            $pagantisPublicKey = Configuration::get('public_key_later');
-            $pagantisPrivateKey = Configuration::get('private_key_later');
+        $iframe = Pagantis::getExtraConfig('FORM_DISPLAY_TYPE', null);
+        $cancelUrl = (Pagantis::getExtraConfig('URL_KO') !== '') ? Pagantis::getExtraConfig('URL_KO', null) : $koUrl;
+
+        $product = Tools::getValue('product');
+        $configs = json_decode(Pagantis::getExtraConfig($product, null), true);
+
+        $productName = "Pagantis " . $configs["CODE"];
+        if (Tools::getValue('product') === "MAIN") {
             $productName = "Pagantis PMT";
-        } else {
-            $pagantisPublicKey = Configuration::get('public_key');
-            $pagantisPrivateKey = Configuration::get('private_key');
         }
+        $pagantisPublicKey = Configuration::get($configs['CODE'] . '_public_key');
+        $pagantisPrivateKey = Configuration::get($configs['CODE'] . '_private_key');
+
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
             .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect&product=' . $productName . '&'
             .http_build_query($query)
@@ -412,7 +413,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
      */
     private function getUserLanguage($shippingAddress = null, $billingAddress = null)
     {
-        $allowedCountries    = unserialize(Pagantis::getExtraConfig('ALLOWED_COUNTRIES'));
+        $allowedCountries    = unserialize(Pagantis::getExtraConfig('ALLOWED_COUNTRIES', null));
         $lang = Language::getLanguage($this->context->language->id);
         $langArray = explode("-", $lang['language_code']);
         if (count($langArray) != 2 && isset($lang['locale'])) {

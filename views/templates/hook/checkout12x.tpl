@@ -46,7 +46,7 @@
                     var sdk = pgSDK;
 
                     sdk.simulator.init({
-                        type: {$12X_SIMULATOR_DISPLAY_TYPE|escape:'javascript':'UTF-8'},
+                        type: {$12X_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
                         locale: '{$12X_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
                         country: '{$12X_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
                         publicKey: '{$12X_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
@@ -105,6 +105,7 @@
                 }
                 p.payment_module a.pagantis-checkout12x.ps_version_1-6 {
                     background-color: #fbfbfb;
+                    max-height: 90px;
                 }
                 p.payment_module a.pagantis-checkout12x.ps_version_1-6:after {
                     display: block;

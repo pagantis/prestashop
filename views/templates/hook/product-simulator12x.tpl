@@ -146,18 +146,22 @@
             if (quantity != null) {
                 sdk.product_simulator.itemQuantity = quantity;
             }
-            window.sdkconfigs = sdk.product_simulator;
-            console.log(window.sdkconfigs);
-            sdk.simulator.init(sdk.product_simulator);
+
+            var sim = sdk.simulator.init(sdk.product_simulator);
+            console.log("renderizado el sim", sim);
             if (checkSimulatorContent()) {
                 clearInterval(window.PSSimulatorId);
+                console.log("exit4")
                 return true;
             }
             return false;
         }
         window.PSSimulatorAttempts = 0;
-        if (!loadSimulator()) {
+        console.log("---->", typeof window.PSSimulatorId);
+        if (typeof window.PSSimulatorId == "undefined") {
+            console.log("----2--->", typeof window.PSSimulatorId, 'creado');
             window.PSSimulatorId = setInterval(function () {
+                console.log('----3---> interval ', window.PSSimulatorId, " attemps ", window.PSSimulatorAttempts)
                 loadSimulator();
             }, 2000);
         }

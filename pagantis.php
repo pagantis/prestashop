@@ -47,11 +47,12 @@ class Pagantis extends PaymentModule
         'PRODUCTS' => 'MAIN,12X',
         'MAIN' => '{
             "CODE": "pagantis4x",
-            "TITLE": "Hasta 4 pagos, sin coste con",
+            "TITLE": "Pay in 4 installments, without cost",
+            "SIMULATOR_TITLE": "Pay in 4 installments, without cost with",
             "SIMULATOR_DISPLAY_TYPE": "IMAGE",
             "SIMULATOR_DISPLAY_IMAGE": "https://static.pagantis.com/assets/master/logos/pg-favicon.png",
-            "SIMULATOR_DISPLAY_TYPE_CHECKOUT": "IMAGE",
-            "SIMULATOR_DISPLAY_IMAGE_CHECKOUT": "https://static.pagantis.com/assets/master/logos/pg-favicon.png",
+            "SIMULATOR_DISPLAY_TYPE_CHECKOUT": "sdk.simulator.types.CHECKOUT_PAGE",
+            "SIMULATOR_START_INSTALLMENTS": "4",
             "SIMULATOR_CSS_PRICE_SELECTOR": "default",
             "SIMULATOR_CSS_QUANTITY_SELECTOR": "default",
             "SIMULATOR_CSS_PRODUCT_PAGE_STYLES": "",
@@ -64,7 +65,7 @@ class Pagantis extends PaymentModule
             }',
         '12X' => '{
             "CODE": "pagantis12x",
-            "TITLE": "Pagantis 12x",
+            "TITLE": "Instant Financing",
             "SIMULATOR_DISPLAY_TYPE": "sdk.simulator.types.PRODUCT_PAGE",
             "SIMULATOR_DISPLAY_TYPE_CHECKOUT": "sdk.simulator.types.CHECKOUT_PAGE",
             "SIMULATOR_DISPLAY_SKIN": "sdk.simulator.skins.BLUE",
@@ -771,7 +772,6 @@ class Pagantis extends PaymentModule
             $simulatorIsEnabled = Configuration::get($productConfigs['CODE'] . '_simulator_is_enabled');
             $isEnabled = Configuration::get($productConfigs['CODE'] . '_is_enabled');
 
-
             // If puedo mostrar el sim
             if ($isEnabled &&
                 $simulatorIsEnabled &&
@@ -780,7 +780,6 @@ class Pagantis extends PaymentModule
                 ($amount < $productConfigs['SIMULATOR_DISPLAY_MAX_AMOUNT'] || $productConfigs['SIMULATOR_DISPLAY_MAX_AMOUNT'] === '0') &&
                 in_array(Tools::strtolower($this->language), $allowedCountries)
             ) {
-
                 $templateConfigs[$product . '_TITLE'] = $this->l($productConfigs['TITLE']);
                 unset($productConfigs['TITLE']);
                 $templateConfigs[$product . '_AMOUNT'] = $amount;
@@ -821,7 +820,7 @@ class Pagantis extends PaymentModule
             'sdk.simulator.types.MARKETING',
             'sdk.simulator.types.TEXT'
         );
-        if (in_array(Pagantis::getExtraConfig('SIMULATOR_DISPLAY_TYPE', 'MAIN'), $availableSimulators)
+        if (in_array(Pagantis::getExtraConfig('SIMULATOR_DISPLAY_TYPE', '12X'), $availableSimulators)
         || (_PS_VERSION_ < 1.6)) {
             return $this->productPageSimulatorDisplay();
         }
