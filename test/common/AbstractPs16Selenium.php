@@ -98,7 +98,7 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         $this->moveToElementAndClick($pagantisAnchorGrandParent->findElement(
             WebDriverBy::partialLinkText('Configure')
         ));
-        $verify = WebDriverBy::id('pagantis_public_key');
+        $verify = WebDriverBy::id('public_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
     }
@@ -288,7 +288,7 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         // $this->webDriver->findElement($pagantisCheckout)->click();
         $this->webDriver->executeScript('document.querySelector(\'.pagantis-checkout\').click();');
 
-        $condition = WebDriverExpectedCondition::titleContains(self::PAGANTIS_TITLE);
+        $condition = WebDriverExpectedCondition::titleContains(self::TITLE);
         $this->webDriver->wait()->until($condition, $this->webDriver->getCurrentURL());
         $this->assertTrue((bool)$condition, "PR32");
 

@@ -39,20 +39,20 @@ You have to ways to edit your settings:
 
 | Field | Description<br/><br/>
 | :------------- |:-------------| 
-| PAGANTIS_TITLE                           | Payment title to show in checkout page. By default:"Instant financing".
-| PAGANTIS_SIMULATOR_DISPLAY_TYPE          | Installments simulator on the product page. Static value: 'pgSDK.simulator.types.PRODUCT_PAGE'.
-| PAGANTIS_SIMULATOR_DISPLAY_SKIN          | Skin of the product page simulator. Recommended value: 'pgSDK.simulator.skins.BLUE'.
-| PAGANTIS_SIMULATOR_START_INSTALLMENTS    | Default number of installments to use in the simulator.
-| PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION  | The position where the simulator widget will be placed. Recommended value: 'pgSDK.simulator.positions.INNER'.
-| PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR    | CSS selector of the DOM element containing the total amount value.
-| PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR | CSS Selector to place the widget. (Example: '#simulator', '.PgSimulator')
-| PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR | CSS selector of the DOM element containing the quantity selector value.
-| PAGANTIS_FORM_DISPLAY_TYPE               | Allows you to select the way the Pagantis payment form is displayed site
-| PAGANTIS_DISPLAY_MIN_AMOUNT              | Minimum amount to use the module and show the payment method in the checkout page and in product page.
-| PAGANTIS_DISPLAY_MAX_AMOUNT              | Maximum amount to use the module and show the payment method in the checkout page and in product page.
-| PAGANTIS_URL_OK                          | Location where user will be redirected after a successful payment. This string will be concatenated to the base url to build the full url
-| PAGANTIS_URL_KO                          | Location where user will be redirected after a wrong payment. This string will be concatenated to the base url to build the full url  
-| PAGANTIS_ALLOWED_COUNTRIES               | Array of country codes where Pagantis will be used as a payment method. 
+| TITLE                           | Payment title to show in checkout page. By default:"Instant financing".
+| SIMULATOR_DISPLAY_TYPE          | Installments simulator on the product page. Static value: 'pgSDK.simulator.types.PRODUCT_PAGE'.
+| SIMULATOR_DISPLAY_SKIN          | Skin of the product page simulator. Recommended value: 'pgSDK.simulator.skins.BLUE'.
+| SIMULATOR_START_INSTALLMENTS    | Default number of installments to use in the simulator.
+| SIMULATOR_DISPLAY_CSS_POSITION  | The position where the simulator widget will be placed. Recommended value: 'pgSDK.simulator.positions.INNER'.
+| SIMULATOR_CSS_PRICE_SELECTOR    | CSS selector of the DOM element containing the total amount value.
+| SIMULATOR_CSS_POSITION_SELECTOR | CSS Selector to place the widget. (Example: '#simulator', '.PgSimulator')
+| SIMULATOR_CSS_QUANTITY_SELECTOR | CSS selector of the DOM element containing the quantity selector value.
+| FORM_DISPLAY_TYPE               | Allows you to select the way the Pagantis payment form is displayed site
+| DISPLAY_MIN_AMOUNT              | Minimum amount to use the module and show the payment method in the checkout page and in product page.
+| DISPLAY_MAX_AMOUNT              | Maximum amount to use the module and show the payment method in the checkout page and in product page.
+| URL_OK                          | Location where user will be redirected after a successful payment. This string will be concatenated to the base url to build the full url
+| URL_KO                          | Location where user will be redirected after a wrong payment. This string will be concatenated to the base url to build the full url  
+| ALLOWED_COUNTRIES               | Array of country codes where Pagantis will be used as a payment method. 
 
 ##### Edit your settings using database queries
 1 - Open your database management (Commonly Cpanel->phpmyadmin depending on your hosting solution) 
@@ -67,12 +67,12 @@ You have to ways to edit your settings:
         
     ![Step 3](./sql_step3.png?raw=true "Step 1")
 
-4 - Find the setting PAGANTIS_TITLE, in this example we are going to change 'Instant Financing' to 'New Title'  
+4 - Find the setting TITLE, in this example we are going to change 'Instant Financing' to 'New Title'  
 
 5 - Launch the following query to edit the value:
   * Query: 
         ```
-        UPDATE pagantis_config set value='New title' WHERE config='PAGANTIS_TITLE';
+        UPDATE pagantis_config set value='New title' WHERE config='TITLE';
         ```
    
    ![Step 5](./sql_step5.png?raw=true "Step 5")

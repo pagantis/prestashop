@@ -80,17 +80,17 @@ class PagantisPaymentModuleFrontController extends AbstractController
             null,
             array('step'=>3)
         );
-        $iframe = Pagantis::getExtraConfig('PAGANTIS_FORM_DISPLAY_TYPE');
-        $cancelUrl = (Pagantis::getExtraConfig('PAGANTIS_URL_KO') !== '') ?
-            Pagantis::getExtraConfig('PAGANTIS_URL_KO') : $koUrl;
+        $iframe = Pagantis::getExtraConfig('FORM_DISPLAY_TYPE');
+        $cancelUrl = (Pagantis::getExtraConfig('URL_KO') !== '') ?
+            Pagantis::getExtraConfig('URL_KO') : $koUrl;
         $productName = "Pagantis";
         if (Tools::getValue('product') === "3x") {
-            $pagantisPublicKey = Configuration::get('pagantis_public_key_later');
-            $pagantisPrivateKey = Configuration::get('pagantis_private_key_later');
+            $pagantisPublicKey = Configuration::get('public_key_later');
+            $pagantisPrivateKey = Configuration::get('private_key_later');
             $productName = "Pagantis PMT";
         } else {
-            $pagantisPublicKey = Configuration::get('pagantis_public_key');
-            $pagantisPrivateKey = Configuration::get('pagantis_private_key');
+            $pagantisPublicKey = Configuration::get('public_key');
+            $pagantisPrivateKey = Configuration::get('private_key');
         }
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
             .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect&product=' . $productName . '&'
@@ -103,8 +103,6 @@ class PagantisPaymentModuleFrontController extends AbstractController
 
         $shippingAddress = new Address($cart->id_address_delivery);
         $billingAddress = new Address($cart->id_address_invoice);
-        $curlInfo = curl_version();
-        $curlVersion = $curlInfo['version'];
         $metadata = array(
             'pg_module' => 'prestashop',
             'pg_version' => $this->module->version,
@@ -260,7 +258,6 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 ->setShoppingCart($orderShoppingCart)
                 ->setUser($orderUser)
             ;
-
         } catch (\Exception $exception) {
             $this->saveLog(array(), $exception);
             Tools::redirect($cancelUrl);
@@ -415,7 +412,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
      */
     private function getUserLanguage($shippingAddress = null, $billingAddress = null)
     {
-        $allowedCountries    = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));
+        $allowedCountries    = unserialize(Pagantis::getExtraConfig('ALLOWED_COUNTRIES'));
         $lang = Language::getLanguage($this->context->language->id);
         $langArray = explode("-", $lang['language_code']);
         if (count($langArray) != 2 && isset($lang['locale'])) {

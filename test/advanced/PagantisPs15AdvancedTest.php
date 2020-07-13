@@ -26,34 +26,34 @@ class PagantisPs15InstallTest extends AbstractPs15Selenium
         $this->getPagantisBackOffice();
 
         //2 elements exist:
-        $validatorSearch = WebDriverBy::id('pagantis_public_key');
+        $validatorSearch = WebDriverBy::id('public_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $validatorSearch = WebDriverBy::id('pagantis_private_key');
+        $validatorSearch = WebDriverBy::id('private_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
 
         //save with empty public Key
-        $this->findById('pagantis_public_key')->clear();
+        $this->findById('public_key')->clear();
         $this->findById('module_form')->submit();
         $validatorSearch = WebDriverBy::className('module_error');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->assertContains('Please add a Pagantis API Public Key', $this->webDriver->getPageSource());
-        $this->findById('pagantis_public_key')->clear()->sendKeys($this->configuration['publicKey']);
+        $this->findById('public_key')->clear()->sendKeys($this->configuration['publicKey']);
 
         //save with empty private Key
-        $this->findById('pagantis_private_key')->clear();
+        $this->findById('private_key')->clear();
         $this->findById('module_form')->submit();
         $validatorSearch = WebDriverBy::className('module_error');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->assertContains('Please add a Pagantis API Private Key', $this->webDriver->getPageSource());
-        $this->findById('pagantis_private_key')->clear()->sendKeys($this->configuration['secretKey']);
+        $this->findById('private_key')->clear()->sendKeys($this->configuration['secretKey']);
 
         $this->quit();
     }

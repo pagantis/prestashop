@@ -5,7 +5,7 @@
  * @copyright 2019 Pagantis
  * @license   proprietary
 *}
-{if ($pagantisIsEnabled && $pagantisSimulatorIsEnabled)}
+{if ($MAIN_IS_ENABLED && $MAIN_SIMULATOR_IS_ENABLED)}
     <style>
         .pagantis-promotion {
             font-size: 11px;
@@ -33,7 +33,7 @@
             display:inline-block;
             width: 90%
         }
-        {$pagantisSimulatorStyles|escape:'javascript':'UTF-8'}
+        {$MAIN_SIMULATOR_CSS_PRODUCT_PAGE_STYLES|escape:'javascript':'UTF-8'}
     </style>
     <script>
         function findPriceSelector()
@@ -91,11 +91,11 @@
             var sdk = pgSDK;
             var price = null;
             var quantity = null;
-            var priceSelector = '{$pagantisPriceSelector|escape:'javascript':'UTF-8'}';
-            var quantitySelector = '{$pagantisQuantitySelector|escape:'javascript':'UTF-8'}';
-            var sdkPositionSelector = '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}';
+            var priceSelector = '{$MAIN_SIMULATOR_CSS_PRICE_SELECTOR|escape:'javascript':'UTF-8'}';
+            var quantitySelector = '{$MAIN_SIMULATOR_CSS_QUANTITY_SELECTOR|escape:'javascript':'UTF-8'}';
+            var sdkPositionSelector = '{$MAIN_SIMULATOR_CSS_POSITION_SELECTOR|escape:'javascript':'UTF-8'}';
 
-            if ('{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' === 'default') {
+            if ('{$MAIN_SIMULATOR_CSS_POSITION_SELECTOR|escape:'javascript':'UTF-8'}' === 'default') {
                 sdkPositionSelector = '.pagantisSimulator';
             }
 
@@ -115,17 +115,17 @@
 
             sdk.product_simulator = {};
             sdk.product_simulator.id = 'product-simulator';
-            sdk.product_simulator.locale = '{$locale|escape:'javascript':'UTF-8'}'.toLowerCase();
-            sdk.product_simulator.country = '{$country|escape:'javascript':'UTF-8'}'.toLowerCase();
-            sdk.product_simulator.publicKey = '{$pagantisPublicKey|escape:'javascript':'UTF-8'}';
+            sdk.product_simulator.locale = '{$MAIN_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase();
+            sdk.product_simulator.country = '{$MAIN_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase();
+            sdk.product_simulator.publicKey = '{$MAIN_PUBLICK_KEY|escape:'javascript':'UTF-8'}';
             sdk.product_simulator.selector = sdkPositionSelector;
-            sdk.product_simulator.numInstalments = '{$pagantisQuotesStart|escape:'javascript':'UTF-8'}';
-            sdk.product_simulator.type = {$pagantisSimulatorType|escape:'javascript':'UTF-8'};
-            sdk.product_simulator.skin = {$pagantisSimulatorSkin|escape:'javascript':'UTF-8'};
-            sdk.product_simulator.position = {$pagantisSimulatorPosition|escape:'javascript':'UTF-8'};
+            sdk.product_simulator.numInstalments = '{$MAIN_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}';
+            sdk.product_simulator.type = {$MAIN_SIMULATOR_DISPLAY_TYPE|escape:'javascript':'UTF-8'};
+            sdk.product_simulator.skin = {$MAIN_SIMULATOR_DISPLAY_SKIN|escape:'javascript':'UTF-8'};
+            sdk.product_simulator.position = {$MAIN_SIMULATOR_DISPLAY_CSS_POSITION|escape:'javascript':'UTF-8'};
             sdk.product_simulator.amountParserConfig =  {
-                thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'javascript':'UTF-8'}',
-                decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'javascript':'UTF-8'}',
+                thousandSeparator: '{$MAIN_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
+                decimalSeparator: '{$MAIN_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
             };
 
             if (priceSelector !== 'default') {
@@ -160,8 +160,8 @@
             }, 2000);
         }
     </script>
-    {if $isPromotedProduct == true}
-        <span class="pagantis-promotion ps_version_{$ps_version|escape:'htmlall':'UTF-8'}" id="pagantis-promotion-extra">{$pagantisPromotionExtra nofilter}</span>
+    {if $MAIN_IS_PROMOTED_PRODUCT == true}
+        <span class="pagantis-promotion ps_version_{$MAIN_PS_VERSION|escape:'htmlall':'UTF-8'}" id="pagantis-promotion-extra">{$MAIN_PROMOTION_EXTRA nofilter}</span>
     {/if}
     <div class="pagantisSimulator"></div>
 {/if}

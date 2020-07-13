@@ -29,9 +29,9 @@ class PagantisPs17InstallTest extends AbstractPs17Selenium
      */
     public function configurePagantis()
     {
-        $this->findByCss('#pagantis_is_enabled_on + label')->click();
-        $this->findById('pagantis_public_key')->clear()->sendKeys('tk_0754e2c7e470f9f5f903b1be');
-        $this->findById('pagantis_private_key')->clear()->sendKeys('7fc84d431b38fb2b');
+        $this->findByCss('#is_enabled_on + label')->click();
+        $this->findById('public_key')->clear()->sendKeys('tk_0754e2c7e470f9f5f903b1be');
+        $this->findById('private_key')->clear()->sendKeys('7fc84d431b38fb2b');
         $this->findById('module_form_submit_btn')->click();
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(

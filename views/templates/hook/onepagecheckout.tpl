@@ -7,13 +7,13 @@
  *}
 <form id="pagantis_form" action="{$paymentUrl|escape:'htmlall':'UTF-8'}"></form>
 {if version_compare($smarty.const._PS_VERSION_,'1.6.0.0','<')}
-    <div class="payment_module" id="pagantis_payment_button">
+    <div class="payment_module" id="payment_button">
         <a href="javascript:$('#pagantis_form').submit();" title="{$pagantisTitle|escape:'htmlall':'UTF-8'}">
             {$pagantisTitle|escape:'htmlall':'UTF-8'}
         </a>
     </div>
 {else}
-    <p class="payment_module pagantis" id="pagantis_payment_button">
+    <p class="payment_module pagantis" id="payment_button">
         <a href="javascript:$('#pagantis_form').submit();" title="{$pagantisTitle|escape:'htmlall':'UTF-8'}">
             {$pagantisTitle|escape:'htmlall':'UTF-8'}
         </a>

@@ -106,7 +106,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
             ->sendKeys(WebDriverKeys::ENTER)
         ;
         $this->findByClass('module_action_menu_configure')->click();
-        $verify = WebDriverBy::id('pagantis_public_key');
+        $verify = WebDriverBy::id('public_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
     }
@@ -282,7 +282,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
         $this->findById('conditions_to_approve[terms-and-conditions]')->click();
         $this->findById('payment-confirmation')->click();
 
-        $condition = WebDriverExpectedCondition::titleContains(self::PAGANTIS_TITLE);
+        $condition = WebDriverExpectedCondition::titleContains(self::TITLE);
         $this->webDriver->wait()->until($condition, $this->webDriver->getCurrentURL());
         $this->assertTrue((bool)$condition, "PR32");
 
