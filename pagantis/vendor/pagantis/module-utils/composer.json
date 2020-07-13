@@ -1,0 +1,33 @@
+{
+  "name": "pagantis/module-utils",
+  "license": "proprietary",
+  "description": "Pagantis PHP Library. Module utils",
+  "type": "library",
+  "require": {
+    "php": ">=5.3",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.8",
+    "phpunit/phpunit-selenium": "^2.0",
+    "facebook/webdriver": "^1.1",
+    "fzaninotto/faker": "^1.7",
+    "nayjest/str-case-converter": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Pagantis\\ModuleUtils\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\Pagantis\\ModuleUtils\\": "tests/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Pagantis",
+      "email": "integration@pagantis.com"
+    }
+  ]
+}

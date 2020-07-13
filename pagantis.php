@@ -47,11 +47,11 @@ class Pagantis extends PaymentModule
         'PRODUCTS' => 'MAIN,12X',
         'MAIN' => '{
             "CODE": "pagantis4x",
-            "TITLE": "Pagantis 4x",
+            "TITLE": "Hasta 4 pagos, sin coste con",
             "SIMULATOR_DISPLAY_TYPE": "IMAGE",
-            "SIMULATOR_DISPLAY_IMAGE": "logo_product.png",
+            "SIMULATOR_DISPLAY_IMAGE": "https://static.pagantis.com/assets/master/logos/pg-favicon.png",
             "SIMULATOR_DISPLAY_TYPE_CHECKOUT": "IMAGE",
-            "SIMULATOR_DISPLAY_IMAGE_CHECKOUT": "logo_checkout.png",
+            "SIMULATOR_DISPLAY_IMAGE_CHECKOUT": "https://static.pagantis.com/assets/master/logos/pg-favicon.png",
             "SIMULATOR_CSS_PRICE_SELECTOR": "default",
             "SIMULATOR_CSS_QUANTITY_SELECTOR": "default",
             "SIMULATOR_CSS_PRODUCT_PAGE_STYLES": "",
@@ -330,20 +330,20 @@ class Pagantis extends PaymentModule
      * Check valid currency
      * Check API variables are set
      *
+     * @param string $productCode
      * @return bool
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
      */
-    public function isPaymentMethodAvailable()
+    public function isPaymentMethodAvailable($product = 'MAIN')
     {
+        $configs = json_decode(Pagantis::getExtraConfig($product, null), true);
         $cart                      = $this->context->cart;
         $currency                  = new Currency($cart->id_currency);
         $availableCurrencies       = array('EUR');
-        $pagantisDisplayMinAmount  = Pagantis::getExtraConfig('DISPLAY_MIN_AMOUNT', null);
-        $pagantisDisplayMaxAmount  = Pagantis::getExtraConfig('DISPLAY_MAX_AMOUNT', null);
-        $pagantisPublicKey         = Configuration::get('public_key');
-        $pagantisPrivateKey        = Configuration::get('private_key');
-        $this->allowedCountries    = unserialize(Pagantis::getExtraConfig('ALLOWED_COUNTRIES'), null);
+        $pagantisDisplayMinAmount  = $configs['DISPLAY_MIN_AMOUNT'];
+        $pagantisDisplayMaxAmount  = $configs['DISPLAY_MAX_AMOUNT'];
+        $pagantisPublicKey         = Configuration::get($configs['CODE'] . '_public_key');
+        $pagantisPrivateKey        = Configuration::get($configs['CODE'] . '_private_key');
+        $this->allowedCountries    = unserialize(Pagantis::getExtraConfig('ALLOWED_COUNTRIES', null));
         $this->getUserLanguage();
         return (
             $cart->getOrderTotal() >= $pagantisDisplayMinAmount &&
@@ -403,13 +403,6 @@ class Pagantis extends PaymentModule
         if (!$this->isPaymentMethodAvailable()) {
             return array();
         }
-
-
-
-
-
-
-
 
         /** @var Cart $cart */
         $cart                               = $this->context->cart;
@@ -732,7 +725,7 @@ class Pagantis extends PaymentModule
             $templateConfigs[$product . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
 
             foreach ($productConfigs as $productConfigKey => $productConfigValue) {
-                $templateConfigs[$product . $productConfigKey] = $productConfigValue;
+                $templateConfigs[$product . "_" . $productConfigKey] = $productConfigValue;
             }
             $this->context->smarty->assign($templateConfigs);
         }
@@ -780,7 +773,8 @@ class Pagantis extends PaymentModule
 
 
             // If puedo mostrar el sim
-            if ($simulatorIsEnabled &&
+            if ($isEnabled &&
+                $simulatorIsEnabled &&
                 $amount > 0 &&
                 $amount > $productConfigs['DISPLAY_MIN_AMOUNT'] &&
                 ($amount < $productConfigs['SIMULATOR_DISPLAY_MAX_AMOUNT'] || $productConfigs['SIMULATOR_DISPLAY_MAX_AMOUNT'] === '0') &&
@@ -789,7 +783,8 @@ class Pagantis extends PaymentModule
 
                 $templateConfigs[$product . '_TITLE'] = $this->l($productConfigs['TITLE']);
                 unset($productConfigs['TITLE']);
-                $templateConfigs[$product . '_IS_PROMOTEED_PRODUCT'] = $isPromotedProduct;
+                $templateConfigs[$product . '_AMOUNT'] = $amount;
+                $templateConfigs[$product . '_IS_PROMOTED_PRODUCT'] = $isPromotedProduct;
                 $templateConfigs[$product . '_LOCALE'] = $this->language;
                 $templateConfigs[$product . '_COUNTRY'] = $this->language;
                 $templateConfigs[$product . '_PUBLIC_KEY'] = $publicKey;
@@ -798,13 +793,19 @@ class Pagantis extends PaymentModule
                 $templateConfigs[$product . '_LOGO'] = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
                 $templateConfigs[$product . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
                 foreach ($productConfigs as $productConfigKey => $productConfigValue) {
-                    $templateConfigs[$product . $productConfigKey] = $productConfigValue;
+                    $templateConfigs[$product . "_" . $productConfigKey] = $productConfigValue;
                 }
+
                 $this->context->smarty->assign($templateConfigs);
+                $file = 'views/templates/hook/product-simulator.tpl';
+                if ($product != 'MAIN') {
+                    $file = 'views/templates/hook/product-simulator' . strtolower($product) . '.tpl';
+                }
+                $return .= $this->display(__FILE__, $file);
             }
         }
 
-        return $this->display(__FILE__, 'views/templates/hook/product-simulator.tpl');
+        return $return;
     }
 
     /**
@@ -818,8 +819,7 @@ class Pagantis extends PaymentModule
             'sdk.simulator.types.SIMPLE',
             'sdk.simulator.types.SELECTABLE',
             'sdk.simulator.types.MARKETING',
-            'sdk.simulator.types.TEXT',
-            'IMAGE',
+            'sdk.simulator.types.TEXT'
         );
         if (in_array(Pagantis::getExtraConfig('SIMULATOR_DISPLAY_TYPE', 'MAIN'), $availableSimulators)
         || (_PS_VERSION_ < 1.6)) {
