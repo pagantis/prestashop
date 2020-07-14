@@ -9,7 +9,7 @@
     <div class="row">
         <div class="col-xs-12">
             <p class="payment_module Pagantis ps_version_{$MAIN_PS_VERSION|escape:'htmlall':'UTF-8'}">
-                <a class="pagantis-checkout ps_version_{$MAIN_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$MAIN_LOCALE|escape:'htmlall':'UTF-8'}" href="{$MAIN_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="{$MAIN_SIMULATOR_TITLE|escape:'htmlall':'UTF-8'}">
+                <a class="pagantis-checkout ps_version_{$MAIN_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$MAIN_LOCALE|escape:'htmlall':'UTF-8'}" href="{$MAIN_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="{$MAIN_TITLE|escape:'htmlall':'UTF-8'}">
                     {if $MAIN_PS_VERSION !== '1-7'}{$MAIN_TITLE|escape:'quotes'}&nbsp;{/if}
                     <span class="mainPagantisSimulator ps_version_{$MAIN_PS_VERSION|escape:'htmlall':'UTF-8'}"></span>
 

@@ -48,9 +48,10 @@ class Pagantis extends PaymentModule
         'MAIN' => '{
             "CODE": "pagantis4x",
             "TITLE": "Pay in 4 installments, without cost",
-            "SIMULATOR_TITLE": "Pay in 4 installments, without cost with",
+            "SIMULATOR_TITLE": "up to 4 payments of",
+            "SIMULATOR_SUBTITLE": "without cost with",
             "SIMULATOR_DISPLAY_TYPE": "IMAGE",
-            "SIMULATOR_DISPLAY_IMAGE": "https://static.pagantis.com/assets/master/logos/pg-favicon.png",
+            "SIMULATOR_DISPLAY_IMAGE": "https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png",
             "SIMULATOR_DISPLAY_TYPE_CHECKOUT": "sdk.simulator.types.CHECKOUT_PAGE",
             "SIMULATOR_START_INSTALLMENTS": "4",
             "SIMULATOR_CSS_PRICE_SELECTOR": "default",
@@ -66,6 +67,8 @@ class Pagantis extends PaymentModule
         '12X' => '{
             "CODE": "pagantis12x",
             "TITLE": "Instant Financing",
+            "SIMULATOR_TITLE": "Instant Financing",
+            "SIMULATOR_SUBTITLE": "",
             "SIMULATOR_DISPLAY_TYPE": "sdk.simulator.types.PRODUCT_PAGE",
             "SIMULATOR_DISPLAY_TYPE_CHECKOUT": "sdk.simulator.types.CHECKOUT_PAGE",
             "SIMULATOR_DISPLAY_SKIN": "sdk.simulator.skins.BLUE",
@@ -781,8 +784,13 @@ class Pagantis extends PaymentModule
                 in_array(Tools::strtolower($this->language), $allowedCountries)
             ) {
                 $templateConfigs[$product . '_TITLE'] = $this->l($productConfigs['TITLE']);
+                $templateConfigs[$product . '_SIMULATOR_TITLE'] = $this->l($productConfigs['SIMULATOR_TITLE']);
+                $templateConfigs[$product . '_SIMULATOR_SUBTITLE'] = $this->l($productConfigs['SIMULATOR_SUBTITLE']);
                 unset($productConfigs['TITLE']);
+                unset($productConfigs['SIMULATOR_TITLE']);
+                unset($productConfigs['SIMULATOR_SUBTITLE']);
                 $templateConfigs[$product . '_AMOUNT'] = $amount;
+                $templateConfigs[$product . '_AMOUNT4X'] = number_format(($amount / 4), 2, '.', '');;
                 $templateConfigs[$product . '_IS_PROMOTED_PRODUCT'] = $isPromotedProduct;
                 $templateConfigs[$product . '_LOCALE'] = $this->language;
                 $templateConfigs[$product . '_COUNTRY'] = $this->language;
@@ -841,7 +849,10 @@ class Pagantis extends PaymentModule
             'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM',
             'IMAGE',
         );
-        if ($params['type'] === 'price' &&
+
+        if (isset($params['type']) && $params['type'] === 'price' &&
+            isset($params['smarty']) && isset($params['smarty']->template_resource) &&
+            strpos($params['smarty']->template_resource, 'product.tpl') !== false &&
             in_array(Pagantis::getExtraConfig('SIMULATOR_DISPLAY_TYPE', 'MAIN'), $availableSimulators)) {
             return $this->productPageSimulatorDisplay();
         }
