@@ -86,19 +86,15 @@ class PagantisPaymentModuleFrontController extends AbstractController
         $product = Tools::getValue('product');
         $configs = json_decode(Pagantis::getExtraConfig($product, null), true);
 
-        $productName = "Pagantis " . $configs["CODE"];
-        if (Tools::getValue('product') === "MAIN") {
-            $productName = "Pagantis 4x";
-        }
         $pagantisPublicKey = Configuration::get($configs['CODE'] . '_public_key');
         $pagantisPrivateKey = Configuration::get($configs['CODE'] . '_private_key');
 
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect&product=' . $productName . '&'
+            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect&product=' . $configs["CODE"] . '&'
             .http_build_query($query)
         ;
         $notificationOkUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=notification&product=' . $productName . '&'
+            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=notification&product=' . $configs["CODE"] . '&'
             .http_build_query($query)
         ;
 

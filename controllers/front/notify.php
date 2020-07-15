@@ -213,15 +213,17 @@ class PagantisNotifyModuleFrontController extends AbstractController
             array('step'=>3)
         );
         try {
-            $productName = Tools::getValue('product');
-            $this->productName = (!empty($productName)) ? Tools::getValue('product') : "Pagantis";
-            if ($this->productName === "Pagantis PMT") {
-                $pagantisPublicKey = Configuration::get('public_key_later');
-                $pagantisPrivateKey = Configuration::get('private_key_later');
-            } else {
-                $pagantisPublicKey = Configuration::get('public_key');
-                $pagantisPrivateKey = Configuration::get('private_key');
+            $productCode = Tools::getValue('product');
+            $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
+            if (!in_array($productCode, $products)) {
+                throw new UnknownException(
+                    'No valid Pagantis product provided in the url: ' . Tools::getValue('product')
+                );
             }
+            $this->productName = "Pagantis " . $productCode;
+            $pagantisPublicKey = Configuration::get($productCode . '_public_key');
+            $pagantisPrivateKey = Configuration::get($productCode . '_private_key_');
+
             $this->config = array(
                 'urlOK' => (Pagantis::getExtraConfig('URL_OK') !== '') ?
                     Pagantis::getExtraConfig('URL_OK') : $callbackOkUrl,

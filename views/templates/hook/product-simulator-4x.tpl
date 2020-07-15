@@ -5,10 +5,10 @@
  * @copyright 2019 Pagantis
  * @license   proprietary
 *}
-{if ($MAIN_IS_ENABLED && $MAIN_SIMULATOR_IS_ENABLED)}
+{if ($4X_IS_ENABLED && $4X_SIMULATOR_IS_ENABLED)}
     <style>
         @import url('https://fonts.googleapis.com/css?family=Open+Sans:400');
-        .mainPagantisSimulator {
+        .PagantisSimulator4x {
             font-family: Open Sans,sans-serif!important;
             font-size: 14px!important;
             font-weight: 400;
@@ -21,11 +21,11 @@
             padding: 5px 0 10px 0;
             min-width: 250px;
         }
-        .mainPagantisSimulator .mainImageLogo{
+        .PagantisSimulator4x .image4x{
             height: 18px;
         }
     </style>
-    <div class="mainPagantisSimulator">
-        {$MAIN_SIMULATOR_TITLE nofilter} {$MAIN_AMOUNT4X nofilter}€, {$MAIN_SIMULATOR_SUBTITLE nofilter} <img class="mainImageLogo" src="{$MAIN_SIMULATOR_DISPLAY_IMAGE|escape:'htmlall':'UTF-8'}">
+    <div class="PagantisSimulator4x">
+        {$4X_SIMULATOR_TITLE nofilter} {$4X_AMOUNT4X nofilter}€, {$4X_SIMULATOR_SUBTITLE nofilter} <img class="image4x" src="{$4X_SIMULATOR_DISPLAY_IMAGE|escape:'htmlall':'UTF-8'}">
     </div>
 {/if}

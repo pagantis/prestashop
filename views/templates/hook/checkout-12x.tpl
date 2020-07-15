@@ -8,14 +8,15 @@
 {if $12X_IS_ENABLED}
     <div class="row">
         <div class="col-xs-12">
-            <p class="payment_module Pagantis12x ps_version_{$MAIN_PS_VERSION|escape:'htmlall':'UTF-8'}">
-                <a class="pagantis-checkout12x ps_version_{$MAIN_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$12X_LOCALE|escape:'htmlall':'UTF-8'}" href="{$12X_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="Compra ahora, paga más tarde">
-                    {if $MAIN_PS_VERSION !== '1-7'}{$12X_TITLE|escape:'htmlall':'UTF-8'}&nbsp;{/if}
-                    <span class="pagantisSimulator12x 12x ps_version_{$MAIN_PS_VERSION|escape:'htmlall':'UTF-8'}"></span>
+            <p class="payment_module Pagantis ps_version_{$12X_PS_VERSION|escape:'htmlall':'UTF-8'}">
+                <a class="pagantis-checkout ps_version_{$12X_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$12X_LOCALE|escape:'htmlall':'UTF-8'}" href="{$12X_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="{$12X_TITLE|escape:'htmlall':'UTF-8'}">
+                    {if $12X_PS_VERSION !== '1-7'}{$12X_TITLE|escape:'quotes'}&nbsp;{/if}
+                    <span class="pagantisSimulator12x ps_version_{$12X_PS_VERSION|escape:'htmlall':'UTF-8'}"></span>
+
                 </a>
             </p>
             <script type="text/javascript">
-                function checkSimulatorContent() {
+                function checkSimulatorContent12x() {
                     var pgContainer = document.getElementsByClassName("pagantisSimulator12x");
                     if(pgContainer.length > 0) {
                         var pgElement = pgContainer[0];
@@ -26,17 +27,17 @@
                     return false;
                 }
 
-                function loadSimulator()
+                function loadSimulator12x()
                 {
-                    window.PSSimulatorAttempts = window.attempts + 1;
-                    if (window.attempts > 10 )
+                    window.PSSimulatorAttempts12x = window.PSSimulatorAttempts12x + 1;
+                    if (window.PSSimulatorAttempts12x > 10 )
                     {
-                        clearInterval(window.PSSimulatorId);
+                        clearInterval(window.PSSimulatorId12x);
                         return true;
                     }
 
-                    if (checkSimulatorContent()) {
-                        clearInterval(window.PSSimulatorId);
+                    if (checkSimulatorContent12x()) {
+                        clearInterval(window.PSSimulatorId12x);
                         return true;
                     }
 
@@ -61,16 +62,20 @@
                     });
                     return true;
                 }
-                window.PSSimulatorAttempts = 0;
-                if (!loadSimulator()) {
-                    window.PSSimulatorId = setInterval(function () {
-                        loadSimulator();
+                window.PSSimulatorAttempts12x = 0;
+                if (!loadSimulator12x()) {
+                    window.PSSimulatorId12x = setInterval(function () {
+                        loadSimulator12x();
                     }, 2000);
                 }
             </script>
             <style>
                 .pagantisSimulator12x {
                     display: inline-block;
+                }
+                .pagantisSimulator12x .mainImageLogo{
+                    width: 20px;
+                    height: 20px;
                 }
                 .pagantisSimulator12x.ps_version_1-5 {
                     padding-top: 0px;
@@ -80,34 +85,37 @@
                     vertical-align: top;
                     margin-left: 20px;
                     margin-top: -5px;
+
                 }
                 .pagantisSimulator12x.ps_version_1-7 {
                     padding-top: 0px;
                 }
-                p.payment_module.Pagantis12x.ps_version_1-5 {
+                p.payment_module.Pagantis.ps_version_1-5 {
                     min-height: 0px;
                 }
-                p.payment_module.Pagantis12x.ps_version_1-7 {
+                p.payment_module.Pagantis.ps_version_1-7 {
                     margin-left: -5px;
                     margin-top: -15px;
                     margin-bottom: 0px;
                 }
-                p.payment_module a.pagantis-checkout12x {
+                p.payment_module a.pagantis-checkout {
                     background: url(https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png) 5px 5px no-repeat #fbfbfb;
                     background-size: 80px;
                 }
-                p.payment_module a.pagantis-checkout12x.ps_version_1-7 {
+                p.payment_module a.pagantis-checkout.ps_version_1-7 {
                     background: none;
                 }
-                .payment-option img[src*='digitalorigin'] {
-                    height: 24px;
+                .payment-option img[src*='cdn.digitalorigin.com'] {
+                    height: 18px;
                     padding-left: 5px;
+                    content:url('https://cdn.digitalorigin.com/assets/master/logos/pg.png');
+
                 }
-                p.payment_module a.pagantis-checkout12x.ps_version_1-6 {
+                p.payment_module a.pagantis-checkout.ps_version_1-6 {
                     background-color: #fbfbfb;
                     max-height: 90px;
                 }
-                p.payment_module a.pagantis-checkout12x.ps_version_1-6:after {
+                p.payment_module a.pagantis-checkout.ps_version_1-6:after {
                     display: block;
                     content: "\f054";
                     position: absolute;
@@ -120,7 +128,7 @@
                     width: 14px;
                     color: #777;
                 }
-                p.payment_module a.pagantis-checkout12x.ps_version_1-5 {
+                p.payment_module a.pagantis-checkout.ps_version_1-5 {
                     height: 90px;
                     padding-left: 99px;
                     padding-top: 45px;

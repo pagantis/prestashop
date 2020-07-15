@@ -73,9 +73,11 @@ class PagantisLogModuleFrontController extends ModuleFrontController
      */
     public function authorize()
     {
-        $privateKey = Configuration::get('pagantis_private_key');
+        $productCode = Tools::getValue('product', false);
+        $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
+        $privateKey = Configuration::get(strtolower($productCode) . '_private_key');
         $privateKeyGet = Tools::getValue('secret', false);
-        if (!empty($privateKeyGet) && $privateKeyGet === $privateKey) {
+        if (!empty($privateKeyGet) && $privateKeyGet === $privateKey && in_array(strtoupper($productCode), $products)) {
             return true;
         }
 
