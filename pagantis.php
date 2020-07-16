@@ -58,7 +58,7 @@ class Pagantis extends PaymentModule
             "SIMULATOR_CSS_QUANTITY_SELECTOR": "default",
             "SIMULATOR_CSS_PRODUCT_PAGE_STYLES": "",
             "SIMULATOR_CSS_CHECKOUT_PAGE_STYLES": "",
-            "SIMULATOR_DISPLAY_MAX_AMOUNT": "0",
+            "SIMULATOR_DISPLAY_MAX_AMOUNT": "800",
             "DISPLAY_MIN_AMOUNT": "0",
             "DISPLAY_MAX_AMOUNT": "800",
             "SIMULATOR_THOUSAND_SEPARATOR": ".",
@@ -79,7 +79,7 @@ class Pagantis extends PaymentModule
             "SIMULATOR_CSS_QUANTITY_SELECTOR": "default",
             "SIMULATOR_CSS_PRODUCT_PAGE_STYLES": "",
             "SIMULATOR_CSS_CHECKOUT_PAGE_STYLES": "",   
-            "SIMULATOR_DISPLAY_MAX_AMOUNT": "0",
+            "SIMULATOR_DISPLAY_MAX_AMOUNT": "1500",
             "DISPLAY_MIN_AMOUNT": "0",
             "DISPLAY_MAX_AMOUNT": "1500",
             "PROMOTION_EXTRA": "Finance this product <span class=pg-no-interest>without interest!</span>",
@@ -398,7 +398,6 @@ class Pagantis extends PaymentModule
      * @return array
      * @throws Exception
      */
-    // @todo migrar
     public function hookPaymentOptions()
     {
         /** @var Cart $cart */
@@ -707,7 +706,7 @@ class Pagantis extends PaymentModule
                         __FILE__, 'views/templates/hook/onepagecheckout-' . $productConfigs['CODE'] . '.tpl'
                     );
                 } elseif (_PS_VERSION_ < 1.7) {
-                    $return = $this->display(
+                    $return .= $this->display(
                         __FILE__, 'views/templates/hook/checkout-' . $productConfigs['CODE'] . '.tpl'
                     );
                 }
@@ -740,6 +739,7 @@ class Pagantis extends PaymentModule
         foreach ($products as $product) {
             $productConfigs = Pagantis::getExtraConfig($product, null);
             $productConfigs = json_decode($productConfigs, true);
+
             $publicKey = Configuration::get($productConfigs['CODE'] . '_public_key');
             $simulatorIsEnabled = Configuration::get($productConfigs['CODE'] . '_simulator_is_enabled');
             if ($productConfigs['CODE'] === '4x') {
@@ -763,9 +763,10 @@ class Pagantis extends PaymentModule
                 $simulatorIsEnabled &&
                 $amount > 0 &&
                 $amount > $productConfigs['DISPLAY_MIN_AMOUNT'] &&
+                ($amount < $productConfigs['DISPLAY_MAX_AMOUNT'] || $productConfigs['DISPLAY_MAX_AMOUNT'] === '0') &&
                 ($amount < $productConfigs['SIMULATOR_DISPLAY_MAX_AMOUNT'] || $productConfigs['SIMULATOR_DISPLAY_MAX_AMOUNT'] === '0') &&
                 in_array(Tools::strtolower($this->language), $allowedCountries) &&
-                in_array($productConfigs['SIMULATOR_DISPLAY_TYPE'], $availableSimulators[$hookName])
+                (in_array($productConfigs['SIMULATOR_DISPLAY_TYPE'], $availableSimulators[$hookName]) || _PS_VERSION_ < 1.6)
             ) {
                 $templateConfigs[strtoupper($productConfigs['CODE']) . '_TITLE'] = $this->l($productConfigs['TITLE']);
                 $templateConfigs[strtoupper($productConfigs['CODE']) . '_SIMULATOR_TITLE'] = $this->l($productConfigs['SIMULATOR_TITLE']);

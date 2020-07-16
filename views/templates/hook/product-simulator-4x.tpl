@@ -21,11 +21,14 @@
             padding: 5px 0 10px 0;
             min-width: 250px;
         }
+        .PagantisSimulator4x.ps-version-1-5 {
+            display: inline-block;
+        }
         .PagantisSimulator4x .image4x{
             height: 18px;
         }
     </style>
-    <div class="PagantisSimulator4x">
+    <div class="PagantisSimulator4x ps-version-{$4X_PS_VERSION|escape:'htmlall':'UTF-8'}">
         {$4X_SIMULATOR_TITLE nofilter} {$4X_AMOUNT4X nofilter}€, {$4X_SIMULATOR_SUBTITLE nofilter} <img class="image4x" src="{$4X_SIMULATOR_DISPLAY_IMAGE|escape:'htmlall':'UTF-8'}">
     </div>
 {/if}

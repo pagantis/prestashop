@@ -78,8 +78,9 @@
                     height: 20px;
                 }
                 .pagantisSimulator12x.ps_version_1-5 {
-                    padding-top: 0px;
-                    margin-top: -15px;
+                    vertical-align: middle;
+                    padding-top: 20px;
+                    margin-left: 10px;
                 }
                 .pagantisSimulator12x.ps_version_1-6 {
                     vertical-align: top;
@@ -131,10 +132,13 @@
                 p.payment_module a.pagantis-checkout.ps_version_1-5 {
                     height: 90px;
                     padding-left: 99px;
-                    padding-top: 45px;
                 }
                 p.payment_module a:hover {
                     background-color: #f6f6f6;
+                }
+                p.payment_module.Pagantis.ps_version_1-5 {
+                    min-height: 0px;
+                    display: inline;
                 }
                 {$12X_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
             </style>

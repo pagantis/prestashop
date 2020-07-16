@@ -28,10 +28,10 @@ use Pagantis\ModuleUtils\Model\Response\JsonExceptionResponse;
 class PagantisNotifyModuleFrontController extends AbstractController
 {
     /** Cart tablename */
-    const CART_TABLE = 'cart_process';
+    const CART_TABLE = 'pagantis_cart_process';
 
     /** Pagantis orders tablename */
-    const ORDERS_TABLE = 'order';
+    const ORDERS_TABLE = 'pagantis_order';
 
     /**
      * Seconds to expire a locked request
@@ -52,6 +52,11 @@ class PagantisNotifyModuleFrontController extends AbstractController
      * @var int $merchantOrderId
      */
     protected $merchantOrderId = null;
+
+    /**
+     * @var \Order $merchantOrder
+     */
+    protected $merchantOrder;
 
     /**
      * @var int $merchantCartId
@@ -212,30 +217,28 @@ class PagantisNotifyModuleFrontController extends AbstractController
             null,
             array('step'=>3)
         );
-        try {
-            $productCode = Tools::getValue('product');
-            $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
-            if (!in_array($productCode, $products)) {
-                throw new UnknownException(
-                    'No valid Pagantis product provided in the url: ' . Tools::getValue('product')
-                );
-            }
-            $this->productName = "Pagantis " . $productCode;
-            $pagantisPublicKey = Configuration::get($productCode . '_public_key');
-            $pagantisPrivateKey = Configuration::get($productCode . '_private_key_');
 
-            $this->config = array(
-                'urlOK' => (Pagantis::getExtraConfig('URL_OK') !== '') ?
-                    Pagantis::getExtraConfig('URL_OK') : $callbackOkUrl,
-                'urlKO' => (Pagantis::getExtraConfig('URL_KO') !== '') ?
-                    Pagantis::getExtraConfig('URL_KO') : $callbackKoUrl,
-                'publicKey' => $pagantisPublicKey,
-                'privateKey' => $pagantisPrivateKey,
-                'secureKey' => Tools::getValue('key'),
+        $this->config = array(
+            'urlOK' => (Pagantis::getExtraConfig('URL_OK') !== '') ?
+                Pagantis::getExtraConfig('URL_OK') : $callbackOkUrl,
+            'urlKO' => (Pagantis::getExtraConfig('URL_KO') !== '') ?
+                Pagantis::getExtraConfig('URL_KO') : $callbackKoUrl,
+            'secureKey' => Tools::getValue('key'),
+        );
+        $productCode = Tools::getValue('product');
+        $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
+        if (!in_array(strtoupper($productCode), $products)) {
+            throw new UnknownException(
+                'No valid Pagantis product provided in the url: ' . Tools::getValue('product')
             );
-        } catch (\Exception $exception) {
-            throw new ConfigurationNotFoundException();
         }
+        $this->productName = "Pagantis " . $productCode;
+
+        $pagantisPublicKey = Configuration::get(strtolower($productCode) . '_public_key');
+        $pagantisPrivateKey = Configuration::get(strtolower($productCode) . '_private_key');
+
+        $this->config['publicKey'] = $pagantisPublicKey;
+        $this->config['privateKey'] = $pagantisPrivateKey;
 
         $this->merchantCartId = Tools::getValue('id_cart');
 
@@ -448,7 +451,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             $this->module->validateOrder(
                 $this->merchantCartId,
                 Configuration::get('PS_OS_PAYMENT'),
-                $this->merchantOrder->getOrderTotal(true),
+                $this->merchantCart->getOrderTotal(true),
                 $this->productName,
                 'pagantisOrderId: ' . $this->pagantisOrder->getId() . ' ' .
                 'pagantisOrderStatus: '. $this->pagantisOrder->getStatus() .
