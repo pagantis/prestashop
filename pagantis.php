@@ -159,12 +159,14 @@ class Pagantis extends PaymentModule
         $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
         foreach ($products as $product) {
             $code = Pagantis::getExtraConfig('CODE', $product);
-            Configuration::updateValue($code . '_is_enabled', 1);
+            if ($code !== '4x') {
+                Configuration::updateValue($code . '_is_enabled', 1);
+                Configuration::updateValue($code . '_simulator_is_enabled', 1);
+            } else {
+                Configuration::updateValue($code . '_is_enabled', 0);
+            }
             Configuration::updateValue($code . '_public_key', '');
             Configuration::updateValue($code . '_private_key', '');
-            if($code !== '4x') {
-                Configuration::updateValue($code . '_simulator_is_enabled', 1);
-            }
         }
 
         $return =  (parent::install()
@@ -201,23 +203,15 @@ class Pagantis extends PaymentModule
      */
     public function migrate()
     {
-        if (Configuration::get('PAGANTIS_DISPLAY_MIN_AMOUNT')) {
-            Db::getInstance()->update(
-                'pagantis_config',
-                array('value' => Configuration::get('MIN_AMOUNT')),
-                'config = \'DISPLAY_MIN_AMOUNT\''
-            );
+        // migrating pk/secret from previous version
+        if (Configuration::get('pagantis_public_key') !== false) {
+            Configuration::updateValue('12x_public_key', Configuration::get('pagantis_public_key'));
+            Configuration::updateValue('pagantis_public_key', false);
+        }
 
-            // migrating pk/secret from previous version
-            if (Configuration::get('pagantis_public_key') !== false) {
-                Configuration::updateValue('public_key', Configuration::get('pagantis_public_key'));
-                Configuration::updateValue('pagantis_public_key', false);
-            }
-
-            if (Configuration::get('pagantis_private_key') !== false) {
-                Configuration::updateValue('private_key', Configuration::get('pagantis_private_key'));
-                Configuration::updateValue('pagantis_private_key', false);
-            }
+        if (Configuration::get('pagantis_private_key') !== false) {
+            Configuration::updateValue('12x_private_key', Configuration::get('pagantis_private_key'));
+            Configuration::updateValue('pagantis_private_key', false);
         }
     }
 
