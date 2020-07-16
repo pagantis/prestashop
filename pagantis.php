@@ -479,7 +479,7 @@ class Pagantis extends PaymentModule
             $inputs[] = array(
                 'name' => $code .'_is_enabled',
                 'type' =>  (version_compare(_PS_VERSION_, '1.6')<0) ?'radio' :'switch',
-                'label' => $this->l('Module is enabled ' . $code),
+                'label' => $this->l('Module is enabled') . ' '. $code,
                 'prefix' => '<i class="icon icon-key"></i>',
                 'class' => 't',
                 'required' => true,
@@ -501,7 +501,7 @@ class Pagantis extends PaymentModule
                 'suffix' => $this->l('ex: pk_fd53cd467ba49022e4gf215e'),
                 'type' => 'text',
                 'size' => 60,
-                'label' => $this->l('Public Key ' . $code),
+                'label' => $this->l('Public Key') . ' ' . $code,
                 'prefix' => '<i class="icon icon-key"></i>',
                 'col' => 6,
                 'required' => true,
@@ -520,7 +520,7 @@ class Pagantis extends PaymentModule
                 $inputs[] = array(
                     'name' => $code . '_simulator_is_enabled',
                     'type' => (version_compare(_PS_VERSION_, '1.6')<0) ?'radio' :'switch',
-                    'label' => $this->l('Simulator is enabled' . $code),
+                    'label' => $this->l('Simulator is enabled') . ' ' . $code,
                     'prefix' => '<i class="icon icon-key"></i>',
                     'class' => 't',
                     'required' => true,
