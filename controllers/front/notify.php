@@ -16,7 +16,6 @@ use Pagantis\ModuleUtils\Exception\MerchantOrderNotFoundException;
 use Pagantis\ModuleUtils\Exception\NoIdentificationException;
 use Pagantis\ModuleUtils\Exception\OrderNotFoundException;
 use Pagantis\ModuleUtils\Exception\QuoteNotFoundException;
-use Pagantis\ModuleUtils\Exception\ConfigurationNotFoundException;
 use Pagantis\ModuleUtils\Exception\UnknownException;
 use Pagantis\ModuleUtils\Exception\WrongStatusException;
 use Pagantis\ModuleUtils\Model\Response\JsonSuccessResponse;
@@ -246,7 +245,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             throw new QuoteNotFoundException();
         }
 
-        if (!($this->config['secureKey'] && $this->merchantCartId && Module::isEnabled(self::CODE))) {
+        if (!($this->config['secureKey'] && Module::isEnabled(self::CODE))) {
             // This exception is only for Prestashop
             throw new UnknownException('Module may not be enabled');
         }
