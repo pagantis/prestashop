@@ -5,6 +5,7 @@ namespace Test\Buy;
 use Test\Common\AbstractPs16Selenium;
 use Httpful\Request;
 use Pagantis\ModuleUtils\Exception\QuoteNotFoundException;
+use Pagantis\ModuleUtils\Exception\MerchantOrderNotFoundException;
 
 /**
  * @requires prestashop16install
@@ -73,7 +74,7 @@ class PagantisPs16BuyTest extends AbstractPs16Selenium
         );
 
         $this->assertContains(
-            QuoteNotFoundException::ERROR_MESSAGE,
+            MerchantOrderNotFoundException::ERROR_MESSAGE,
             $response->body->result,
             "PR=>".$response->body->result
         );
