@@ -255,8 +255,8 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
         if ($verifySimulator) {
-            $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
-            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
+            $pagantisSimulator12x = WebDriverBy::className('pagantisSimulator12x');
+            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator12x);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
             // this sleep is to prevent simulator js render
