@@ -17,7 +17,7 @@ class PagantisPs15BuyTest extends AbstractPs15Selenium
     /**
      * config route
      */
-    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=pagantis&controller=notify';
+    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=pagantis&controller=notify&product=p12x';
 
     /**
      * @throws  \Exception
@@ -40,7 +40,7 @@ class PagantisPs15BuyTest extends AbstractPs15Selenium
      */
     protected function checkConcurrency()
     {
-        $notifyUrl = self::PS15URL.self::NOTIFICATION_FOLDER.'&cart_id=';
+        $notifyUrl = self::PS15URL.self::NOTIFICATION_FOLDER.'&id_cart=';
         $this->assertNotEmpty($notifyUrl, $notifyUrl);
         $response = Request::post($notifyUrl)->expects('json')->send();
         $this->assertNotEmpty($response->body->result, $response);
@@ -60,7 +60,7 @@ class PagantisPs15BuyTest extends AbstractPs15Selenium
     protected function checkPagantisOrderId()
     {
         $orderId=0;
-        $notifyUrl = self::PS15URL.self::NOTIFICATION_FOLDER.'&cart_id='.$orderId;
+        $notifyUrl = self::PS15URL.self::NOTIFICATION_FOLDER.'&id_cart='.$orderId;
         $this->assertNotEmpty($notifyUrl, $notifyUrl);
         $response = Request::post($notifyUrl)->expects('json')->send();
         $this->assertNotEmpty($response->body->result, $response);
@@ -85,7 +85,7 @@ class PagantisPs15BuyTest extends AbstractPs15Selenium
      */
     protected function checkAlreadyProcessed()
     {
-        $notifyUrl = self::PS15URL.self::NOTIFICATION_FOLDER.'&cart_id=6';
+        $notifyUrl = self::PS15URL.self::NOTIFICATION_FOLDER.'&id_cart=6';
         $response = Request::post($notifyUrl)->expects('json')->send();
         $this->assertNotEmpty($response->body->result, $response);
         $this->assertNotEmpty($response->body->status_code, $response);
