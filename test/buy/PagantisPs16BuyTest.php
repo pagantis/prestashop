@@ -17,7 +17,7 @@ class PagantisPs16BuyTest extends AbstractPs16Selenium
     /**
      * config route
      */
-    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=pagantis&controller=notify&product=p12x';
+    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=pagantis&controller=notify&product=p12x&key=xxxxxx';
 
     /**
      * @throws  \Exception
