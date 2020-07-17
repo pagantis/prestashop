@@ -5,13 +5,13 @@
  * @copyright 2019 Pagantis
  * @license   proprietary
  *}
-{if $4X_IS_ENABLED}
+{if $P4X_IS_ENABLED}
     <div class="row">
         <div class="col-xs-12">
-            <p class="payment_module Pagantis ps_version_{$4X_PS_VERSION|escape:'htmlall':'UTF-8'}">
-                <a class="pagantis-checkout ps_version_{$4X_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$4X_LOCALE|escape:'htmlall':'UTF-8'}" href="{$4X_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="{$4X_TITLE|escape:'htmlall':'UTF-8'}">
-                    {if $4X_PS_VERSION !== '1-7'}{$4X_TITLE|escape:'quotes'}&nbsp;{/if}
-                    <span class="pagantisSimulator4x ps_version_{$4X_PS_VERSION|escape:'htmlall':'UTF-8'}"></span>
+            <p class="payment_module Pagantis ps_version_{$P4X_PS_VERSION|escape:'htmlall':'UTF-8'}">
+                <a class="pagantis-checkout ps_version_{$P4X_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$P4X_LOCALE|escape:'htmlall':'UTF-8'}" href="{$P4X_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="{$P4X_TITLE|escape:'htmlall':'UTF-8'}">
+                    {if $P4X_PS_VERSION !== '1-7'}{$P4X_TITLE|escape:'quotes'}&nbsp;{/if}
+                    <span class="pagantisSimulator4x ps_version_{$P4X_PS_VERSION|escape:'htmlall':'UTF-8'}"></span>
                 </a>
             </p>
             <script type="text/javascript">
@@ -46,17 +46,17 @@
                     var sdk = pgSDK;
 
                     sdk.simulator.init({
-                        type: {$4X_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
-                        locale: '{$4X_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
-                        country: '{$4X_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
-                        publicKey: '{$4X_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
+                        type: {$P4X_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
+                        locale: '{$P4X_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                        country: '{$P4X_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                        publicKey: '{$P4X_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
                         selector: '.pagantisSimulator4x',
-                        numInstalments: '{$4X_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}',
-                        totalAmount: '{$4X_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
-                        totalPromotedAmount: '{$4X_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                        numInstalments: '{$P4X_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}',
+                        totalAmount: '{$P4X_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                        totalPromotedAmount: '{$P4X_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
                         amountParserConfig: {
-                            thousandSeparator: '{$4X_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
-                            decimalSeparator: '{$4X_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
+                            thousandSeparator: '{$P4X_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
+                            decimalSeparator: '{$P4X_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
                         }
                     });
                     return true;
@@ -136,7 +136,7 @@
                 p.payment_module a:hover {
                     background-color: #f6f6f6;
                 }
-                {$4X_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
+                {$P4X_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
             </style>
         </div>
     </div>

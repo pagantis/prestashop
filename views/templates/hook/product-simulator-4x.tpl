@@ -5,7 +5,7 @@
  * @copyright 2019 Pagantis
  * @license   proprietary
 *}
-{if ($4X_IS_ENABLED && $4X_SIMULATOR_IS_ENABLED)}
+{if ($P4X_IS_ENABLED && $P4X_SIMULATOR_IS_ENABLED)}
     <style>
         @import url('https://fonts.googleapis.com/css?family=Open+Sans:400');
         .PagantisSimulator4x {
@@ -28,7 +28,7 @@
             height: 18px;
         }
     </style>
-    <div class="PagantisSimulator4x ps-version-{$4X_PS_VERSION|escape:'htmlall':'UTF-8'}">
-        {$4X_SIMULATOR_TITLE nofilter} {$4X_AMOUNT4X nofilter}€, {$4X_SIMULATOR_SUBTITLE nofilter} <img class="image4x" src="{$4X_SIMULATOR_DISPLAY_IMAGE|escape:'htmlall':'UTF-8'}">
+    <div class="PagantisSimulator4x ps-version-{$P4X_PS_VERSION|escape:'htmlall':'UTF-8'}">
+        {$P4X_SIMULATOR_TITLE nofilter} {$P4X_AMOUNT4X nofilter}€, {$P4X_SIMULATOR_SUBTITLE nofilter} <img class="image4x" src="{$P4X_SIMULATOR_DISPLAY_IMAGE|escape:'htmlall':'UTF-8'}">
     </div>
 {/if}

@@ -5,13 +5,13 @@
  * @copyright 2019 Pagantis
  * @license   proprietary
  *}
-{if $12X_IS_ENABLED}
+{if $P12X_IS_ENABLED}
     <div class="row">
         <div class="col-xs-12">
-            <p class="payment_module Pagantis ps_version_{$12X_PS_VERSION|escape:'htmlall':'UTF-8'}">
-                <a class="pagantis-checkout ps_version_{$12X_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$12X_LOCALE|escape:'htmlall':'UTF-8'}" href="{$12X_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="{$12X_TITLE|escape:'htmlall':'UTF-8'}">
-                    {if $12X_PS_VERSION !== '1-7'}{$12X_TITLE|escape:'quotes'}&nbsp;{/if}
-                    <span class="pagantisSimulator12x ps_version_{$12X_PS_VERSION|escape:'htmlall':'UTF-8'}"></span>
+            <p class="payment_module Pagantis ps_version_{$P12X_PS_VERSION|escape:'htmlall':'UTF-8'}">
+                <a class="pagantis-checkout ps_version_{$P12X_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$P12X_LOCALE|escape:'htmlall':'UTF-8'}" href="{$P12X_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="{$P12X_TITLE|escape:'htmlall':'UTF-8'}">
+                    {if $P12X_PS_VERSION !== '1-7'}{$P12X_TITLE|escape:'quotes'}&nbsp;{/if}
+                    <span class="pagantisSimulator12x ps_version_{$P12X_PS_VERSION|escape:'htmlall':'UTF-8'}"></span>
 
                 </a>
             </p>
@@ -47,17 +47,17 @@
                     var sdk = pgSDK;
 
                     sdk.simulator.init({
-                        type: {$12X_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
-                        locale: '{$12X_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
-                        country: '{$12X_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
-                        publicKey: '{$12X_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
+                        type: {$P12X_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
+                        locale: '{$P12X_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                        country: '{$P12X_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                        publicKey: '{$P12X_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
                         selector: '.pagantisSimulator12x',
-                        numInstalments: '{$12X_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}',
-                        totalAmount: '{$12X_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
-                        totalPromotedAmount: '{$12X_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                        numInstalments: '{$P12X_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}',
+                        totalAmount: '{$P12X_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                        totalPromotedAmount: '{$P12X_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
                         amountParserConfig: {
-                            thousandSeparator: '{$12X_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
-                            decimalSeparator: '{$12X_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
+                            thousandSeparator: '{$P12X_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
+                            decimalSeparator: '{$P12X_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
                         }
                     });
                     return true;
@@ -140,7 +140,7 @@
                     min-height: 0px;
                     display: inline;
                 }
-                {$12X_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
+                {$P12X_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
             </style>
         </div>
     </div>

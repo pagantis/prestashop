@@ -5,23 +5,23 @@
  * @copyright 2019 Pagantis
  * @license   proprietary
  *}
-<form id="pagantis_form_{$12X_CODE|escape:'htmlall':'UTF-8'}" action="{$12X_PAYMENT_URL|escape:'htmlall':'UTF-8'}"></form>
-{if version_compare($smarty.const._PS_VERSION_,'1.6.0.0','<') && $12X_PAYMENT_URL}
-    <div class="payment_module pagantis{$12X_CODE|escape:'htmlall':'UTF-8'}" id="pagantis_payment_button">
-        <a href="javascript:$('#pagantis_form').submit();" title="{$12X_TITLE|escape:'htmlall':'UTF-8'}">
-            {$12X_TITLE|escape:'htmlall':'UTF-8'}
+<form id="pagantis_form_{$P12X_CODE|escape:'htmlall':'UTF-8'}" action="{$P12X_PAYMENT_URL|escape:'htmlall':'UTF-8'}"></form>
+{if version_compare($smarty.const._PS_VERSION_,'1.6.0.0','<') && $P12X_PAYMENT_URL}
+    <div class="payment_module pagantis{$P12X_CODE|escape:'htmlall':'UTF-8'}" id="pagantis_payment_button">
+        <a href="javascript:$('#pagantis_form').submit();" title="{$P12X_TITLE|escape:'htmlall':'UTF-8'}">
+            {$P12X_TITLE|escape:'htmlall':'UTF-8'}
         </a>
     </div>
 {else}
-    <p class="payment_module pagantis pagantis{$12X_CODE|escape:'htmlall':'UTF-8'}" id="pagantis_payment_button">
-        <a href="javascript:$('#pagantis_form').submit();" title="{$12X_TITLE|escape:'htmlall':'UTF-8'}">
-            {$12X_TITLE|escape:'htmlall':'UTF-8'}
+    <p class="payment_module pagantis pagantis{$P12X_CODE|escape:'htmlall':'UTF-8'}" id="pagantis_payment_button">
+        <a href="javascript:$('#pagantis_form').submit();" title="{$P12X_TITLE|escape:'htmlall':'UTF-8'}">
+            {$P12X_TITLE|escape:'htmlall':'UTF-8'}
         </a>
     </p>
 {/if}
 <script type="text/javascript">
     function checkSimulatorContent() {
-        var pgContainer = document.getElementsByClassName("pagantisSimulator{$12X_CODE|escape:'htmlall':'UTF-8'}");
+        var pgContainer = document.getElementsByClassName("pagantisSimulator{$P12X_CODE|escape:'htmlall':'UTF-8'}");
         if(pgContainer.length > 0) {
             var pgElement = pgContainer[0];
             if (pgElement.innerHTML != '')
@@ -61,17 +61,17 @@
 
         if (!checkSimulatorContent()) {
             sdk.simulator.init({
-                type: {$12X_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
-                locale: '{$12X_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
-                country: '{$12X_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
-                publicKey: '{$12X_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
+                type: {$P12X_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
+                locale: '{$P12X_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                country: '{$P12X_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                publicKey: '{$P12X_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
                 selector: '.pagantisSimulator12x',
-                numInstalments: '{$12X_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}',
-                totalAmount: '{$12X_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
-                totalPromotedAmount: '{$12X_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                numInstalments: '{$P12X_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}',
+                totalAmount: '{$P12X_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                totalPromotedAmount: '{$P12X_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
                 amountParserConfig: {
-                    thousandSeparator: '{$12X_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
-                    decimalSeparator: '{$12X_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
+                    thousandSeparator: '{$P12X_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
+                    decimalSeparator: '{$P12X_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
                 }
             });
         }
@@ -85,10 +85,10 @@
         }, 500);
     }
 </script>
-<span class="pagantisSimulator{$12X_CODE|escape:'htmlall':'UTF-8'}></span>
+<span class="pagantisSimulator{$P12X_CODE|escape:'htmlall':'UTF-8'}></span>
 <style>
     .pgSimulatorPlaceholder {
         display: inline-block;
     }
-    {$12X_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
+    {$P12X_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
 </style>

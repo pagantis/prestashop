@@ -44,13 +44,13 @@ class Pagantis extends PaymentModule
         'URL_OK' => '',
         'URL_KO' => '',
         'ALLOWED_COUNTRIES' => 'a:3:{i:0;s:2:"es";i:1;s:2:"it";i:2;s:2:"fr";}',
-        'PRODUCTS' => '4X,12X',
-        '4X' => '{
-            "CODE": "4x",
+        'PRODUCTS' => 'P4X,P12X',
+        'P4X' => '{
+            "CODE": "p4x",
             "TITLE": "Pay in 4 installments, without cost",
             "SIMULATOR_TITLE": "up to 4 payments of",
             "SIMULATOR_SUBTITLE": "without cost with",
-            "SIMULATOR_DISPLAY_TYPE": "4x",
+            "SIMULATOR_DISPLAY_TYPE": "p4x",
             "SIMULATOR_DISPLAY_IMAGE": "https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png",
             "SIMULATOR_DISPLAY_TYPE_CHECKOUT": "sdk.simulator.types.CHECKOUT_PAGE",
             "SIMULATOR_START_INSTALLMENTS": "4",
@@ -64,8 +64,8 @@ class Pagantis extends PaymentModule
             "SIMULATOR_THOUSAND_SEPARATOR": ".",
             "SIMULATOR_DECIMAL_SEPARATOR": ","
             }',
-        '12X' => '{
-            "CODE": "12x",
+        'P12X' => '{
+            "CODE": "p12x",
             "TITLE": "Instant Financing",
             "SIMULATOR_TITLE": "Instant Financing",
             "SIMULATOR_SUBTITLE": "",
@@ -159,7 +159,7 @@ class Pagantis extends PaymentModule
         $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
         foreach ($products as $product) {
             $code = Pagantis::getExtraConfig('CODE', $product);
-            if ($code === '4x') {
+            if ($code === 'p4x') {
                 Configuration::updateValue($code . '_simulator_is_enabled', 1);
             }
             Configuration::updateValue($code . '_is_enabled', 0);
@@ -201,7 +201,7 @@ class Pagantis extends PaymentModule
      */
     public function migrate()
     {
-¡       // migrating configs values from previous version
+        // migrating configs values from previous version
         if (Configuration::get('pagantis_public_key') !== false &&  Configuration::get('12x_public_key') === '') {
             Configuration::updateValue('12x_public_key', Configuration::get('pagantis_public_key'));
             Configuration::updateValue('pagantis_public_key', false);
@@ -351,7 +351,7 @@ class Pagantis extends PaymentModule
      * @param string $product
      * @return bool
      */
-    public function isPaymentMethodAvailable($product = '4x')
+    public function isPaymentMethodAvailable($product = 'p4x')
     {
         $configs = json_decode(Pagantis::getExtraConfig($product, null), true);
         $cart                      = $this->context->cart;
@@ -530,7 +530,7 @@ class Pagantis extends PaymentModule
                 'col' => 6,
                 'required' => true,
             );
-            if ($code !== "4x") {
+            if ($code !== "p4x") {
                 $inputs[] = array(
                     'name' => $code . '_simulator_is_enabled',
                     'type' => (version_compare(_PS_VERSION_, '1.6')<0) ?'radio' :'switch',
@@ -616,13 +616,13 @@ class Pagantis extends PaymentModule
             $settings[$code . '_public_key'] = Configuration::get($code . '_public_key');
             $settings[$code . '_private_key'] = Configuration::get($code . '_private_key');
             $settings[$code . '_is_enabled'] = Configuration::get($code . '_is_enabled');
-            if ($code !== '4x') {
+            if ($code !== 'p4x') {
                 $settings[$code . '_simulator_is_enabled'] = Configuration::get($code . '_simulator_is_enabled');
             }
             $settingsKeys[] = $code . '_is_enabled';
             $settingsKeys[] = $code . '_public_key';
             $settingsKeys[] = $code . '_private_key';
-            if ($code !== '4x') {
+            if ($code !== 'p4x') {
                 $settingsKeys[] = $code . '_simulator_is_enabled';
             }
         }
@@ -756,7 +756,7 @@ class Pagantis extends PaymentModule
 
             $publicKey = Configuration::get($productConfigs['CODE'] . '_public_key');
             $simulatorIsEnabled = Configuration::get($productConfigs['CODE'] . '_simulator_is_enabled');
-            if ($productConfigs['CODE'] === '4x') {
+            if ($productConfigs['CODE'] === 'p4x') {
                 $simulatorIsEnabled = true;
             }
             $isEnabled = Configuration::get($productConfigs['CODE'] . '_is_enabled');
@@ -770,7 +770,7 @@ class Pagantis extends PaymentModule
                 'hookDisplayProductPriceBlock' => array(
                     'sdk.simulator.types.PRODUCT_PAGE',
                     'sdk.simulator.types.SELECTABLE_TEXT_CUSTOM',
-                    '4x',
+                    'p4x',
                 )
             );
             if ($isEnabled &&
@@ -888,7 +888,7 @@ class Pagantis extends PaymentModule
      * @param string $default
      * @return string
      */
-    public static function getExtraConfig($config = null, $product = "4x", $default = '')
+    public static function getExtraConfig($config = null, $product = "P4X", $default = '')
     {
         if (is_null($config)) {
             return '';
