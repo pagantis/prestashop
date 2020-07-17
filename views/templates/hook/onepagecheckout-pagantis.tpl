@@ -65,7 +65,7 @@
                 locale: '{$P4X_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
                 country: '{$P4X_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
                 publicKey: '{$P4X_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
-                selector: '.pagantisSimulator12x',
+                selector: '.pagantisSimulatorPagantis',
                 numInstalments: '{$P4X_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}',
                 totalAmount: '{$P4X_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
                 totalPromotedAmount: '{$P4X_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),

@@ -219,8 +219,8 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($hookPayment);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $pagantisSimulator12x = WebDriverBy::className('pagantisSimulator12x');
-        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator12x);
+        $pagantisSimulatorPagantis = WebDriverBy::className('pagantisSimulatorPagantis');
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulatorPagantis);
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
         // this sleep is to prevent simulator js render
@@ -262,8 +262,8 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
         if ($verifySimulator) {
-            $pagantisSimulator12x = WebDriverBy::className('pagantisSimulator12x');
-            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator12x);
+            $pagantisSimulatorPagantis = WebDriverBy::className('pagantisSimulatorPagantis');
+            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulatorPagantis);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
             // this sleep is to prevent simulator js render

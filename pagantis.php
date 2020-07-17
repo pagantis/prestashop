@@ -44,7 +44,7 @@ class Pagantis extends PaymentModule
         'URL_OK' => '',
         'URL_KO' => '',
         'ALLOWED_COUNTRIES' => 'a:3:{i:0;s:2:"es";i:1;s:2:"it";i:2;s:2:"fr";}',
-        'PRODUCTS' => 'P4X,P12X',
+        'PRODUCTS' => 'P4X,PAGANTIS',
         'P4X' => '{
             "CODE": "p4x",
             "TITLE": "Pay in 4 installments, without cost",
@@ -64,8 +64,8 @@ class Pagantis extends PaymentModule
             "SIMULATOR_THOUSAND_SEPARATOR": ".",
             "SIMULATOR_DECIMAL_SEPARATOR": ","
             }',
-        'P12X' => '{
-            "CODE": "p12x",
+        'PAGANTIS' => '{
+            "CODE": "Pagantis",
             "TITLE": "Instant Financing",
             "SIMULATOR_TITLE": "Instant Financing",
             "SIMULATOR_SUBTITLE": "",
@@ -158,7 +158,7 @@ class Pagantis extends PaymentModule
 
         $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
         foreach ($products as $product) {
-            $code = Pagantis::getExtraConfig('CODE', $product);
+            $code = strtolower(Pagantis::getExtraConfig('CODE', $product));
             if ($code === 'p4x') {
                 Configuration::updateValue($code . '_simulator_is_enabled', 1);
             }
@@ -201,27 +201,7 @@ class Pagantis extends PaymentModule
      */
     public function migrate()
     {
-        // migrating configs values from previous version
-        if (Configuration::get('pagantis_public_key') !== false &&  Configuration::get('12x_public_key') === '') {
-            Configuration::updateValue('12x_public_key', Configuration::get('pagantis_public_key'));
-            Configuration::updateValue('pagantis_public_key', false);
-        }
-
-        if (Configuration::get('pagantis_private_key') !== false && Configuration::get('12x_private_key') === '') {
-            Configuration::updateValue('12x_private_key', Configuration::get('pagantis_private_key'));
-            Configuration::updateValue('pagantis_private_key', false);
-        }
-
-        if (Configuration::get('pagantis_is_enabled') !== false && Configuration::get('12x_is_enabled') === '0') {
-            Configuration::updateValue('12x_is_enabled', Configuration::get('pagantis_is_enabled'));
-            Configuration::updateValue('pagantis_is_enabled', false);
-        }
-
-        if (Configuration::get('pagantis_simulator_is_enabled') !== false && Configuration::get('12x_simulator_is_enabled') === '0') {
-            Configuration::updateValue('12x_simulator_is_enabled', Configuration::get('pagantis_simulator_is_enabled'));
-            Configuration::updateValue('pagantis_simulator_is_enabled', false);
-        }
-
+        //@todo migar extra configs
     }
 
     /**
@@ -359,8 +339,8 @@ class Pagantis extends PaymentModule
         $availableCurrencies       = array('EUR');
         $pagantisDisplayMinAmount  = $configs['DISPLAY_MIN_AMOUNT'];
         $pagantisDisplayMaxAmount  = $configs['DISPLAY_MAX_AMOUNT'];
-        $pagantisPublicKey         = Configuration::get($configs['CODE'] . '_public_key');
-        $pagantisPrivateKey        = Configuration::get($configs['CODE'] . '_private_key');
+        $pagantisPublicKey         = Configuration::get(strtolower(strtolower($configs['CODE'])) . '_public_key');
+        $pagantisPrivateKey        = Configuration::get(strtolower(strtolower($configs['CODE'])) . '_private_key');
         $this->allowedCountries    = unserialize(Pagantis::getExtraConfig('ALLOWED_COUNTRIES', null));
         $this->getUserLanguage();
         return (
@@ -438,36 +418,36 @@ class Pagantis extends PaymentModule
             if ($this->isPaymentMethodAvailable($product)) {
                 $productConfigs = Pagantis::getExtraConfig($product, null);
                 $productConfigs = json_decode($productConfigs, true);
-                $publicKey = Configuration::get($productConfigs['CODE'] . '_public_key');
-                $simulatorIsEnabled = Configuration::get($productConfigs['CODE'] . '_simulator_is_enabled');
-                $isEnabled = Configuration::get($productConfigs['CODE'] . '_is_enabled');
+                $publicKey = Configuration::get(strtolower($productConfigs['CODE']) . '_public_key');
+                $simulatorIsEnabled = Configuration::get(strtolower($productConfigs['CODE']) . '_simulator_is_enabled');
+                $isEnabled = Configuration::get(strtolower($productConfigs['CODE']) . '_is_enabled');
 
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_TITLE'] = $this->l($productConfigs['TITLE']);
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_TITLE'] = $this->l($productConfigs['TITLE']);
                 unset($productConfigs['TITLE']);
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_AMOUNT'] = $orderTotal;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_PROMOTED_AMOUNT'] = $promotedAmount;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_LOCALE'] = $this->language;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_COUNTRY'] = $this->language;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_PUBLIC_KEY'] = $publicKey;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_IS_ENABLED'] = $isEnabled;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_LOGO'] = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_PAYMENT_URL'] = $link->getModuleLink('pagantis', 'payment') . '&product=' . $productConfigs['CODE'];
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_AMOUNT'] = $orderTotal;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_PROMOTED_AMOUNT'] = $promotedAmount;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_LOCALE'] = $this->language;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_COUNTRY'] = $this->language;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_PUBLIC_KEY'] = $publicKey;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_IS_ENABLED'] = $isEnabled;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_LOGO'] = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_PAYMENT_URL'] = $link->getModuleLink('pagantis', 'payment') . '&product=' . strtolower($productConfigs['CODE']);
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
 
                 foreach ($productConfigs as $productConfigKey => $productConfigValue) {
-                    $templateConfigs[strtoupper($productConfigs['CODE']) . "_" . $productConfigKey] = $productConfigValue;
+                    $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . "_" . $productConfigKey] = $productConfigValue;
                 }
                 $this->context->smarty->assign($templateConfigs);
 
                 $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $paymentOption
-                    ->setCallToActionText($templateConfigs[strtoupper($productConfigs['CODE']) . '_TITLE'])
-                    ->setAction($link->getModuleLink('pagantis', 'payment') . '&product=' . $productConfigs['CODE'])
-                    ->setLogo($templateConfigs[strtoupper($productConfigs['CODE']) . '_LOGO'])
+                    ->setCallToActionText($templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_TITLE'])
+                    ->setAction($link->getModuleLink('pagantis', 'payment') . '&product=' . strtolower($productConfigs['CODE']))
+                    ->setLogo($templateConfigs[strtolower($productConfigs['CODE']) . '_LOGO'])
                     ->setModuleName(__CLASS__)
                     ->setAdditionalInformation(
-                        $this->fetch('module:pagantis/views/templates/hook/checkout-' . $productConfigs['CODE'] . '.tpl')
+                        $this->fetch('module:pagantis/views/templates/hook/checkout-' . strtolower($productConfigs['CODE']) . '.tpl')
                     )
                 ;
                 $return[] = $paymentOption;
@@ -489,7 +469,7 @@ class Pagantis extends PaymentModule
         $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
         $inputs = array();
         foreach ($products as $product) {
-            $code = Pagantis::getExtraConfig('CODE', $product);
+            $code = strtolower(Pagantis::getExtraConfig('CODE', $product));
             $inputs[] = array(
                 'name' => $code .'_is_enabled',
                 'type' =>  (version_compare(_PS_VERSION_, '1.6')<0) ?'radio' :'switch',
@@ -612,7 +592,7 @@ class Pagantis extends PaymentModule
         $settingsKeys = array();
         $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
         foreach ($products as $product) {
-            $code = Pagantis::getExtraConfig('CODE', $product);
+            $code = strtolower(Pagantis::getExtraConfig('CODE', $product));
             $settings[$code . '_public_key'] = Configuration::get($code . '_public_key');
             $settings[$code . '_private_key'] = Configuration::get($code . '_private_key');
             $settings[$code . '_is_enabled'] = Configuration::get($code . '_is_enabled');
@@ -693,35 +673,35 @@ class Pagantis extends PaymentModule
             if ($this->isPaymentMethodAvailable($product)) {
                 $productConfigs = Pagantis::getExtraConfig($product, null);
                 $productConfigs = json_decode($productConfigs, true);
-                $publicKey = Configuration::get($productConfigs['CODE'] . '_public_key');
-                $simulatorIsEnabled = Configuration::get($productConfigs['CODE'] . '_simulator_is_enabled');
-                $isEnabled = Configuration::get($productConfigs['CODE'] . '_is_enabled');
+                $publicKey = Configuration::get(strtolower($productConfigs['CODE']) . '_public_key');
+                $simulatorIsEnabled = Configuration::get(strtolower($productConfigs['CODE']) . '_simulator_is_enabled');
+                $isEnabled = Configuration::get(strtolower($productConfigs['CODE']) . '_is_enabled');
 
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_TITLE'] = $this->l($productConfigs['TITLE']);
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_TITLE'] = $this->l($productConfigs['TITLE']);
                 unset($productConfigs['TITLE']);
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_AMOUNT'] = $orderTotal;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_PROMOTED_AMOUNT'] = $promotedAmount;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_LOCALE'] = $this->language;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_COUNTRY'] = $this->language;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_PUBLIC_KEY'] = $publicKey;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_IS_ENABLED'] = $isEnabled;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_LOGO'] = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_PAYMENT_URL'] = $link->getModuleLink('pagantis', 'payment') . '&product=' . $productConfigs['CODE'];
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_AMOUNT'] = $orderTotal;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_PROMOTED_AMOUNT'] = $promotedAmount;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_LOCALE'] = $this->language;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_COUNTRY'] = $this->language;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_PUBLIC_KEY'] = $publicKey;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_IS_ENABLED'] = $isEnabled;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_LOGO'] = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_PAYMENT_URL'] = $link->getModuleLink('pagantis', 'payment') . '&product=' . strtolower($productConfigs['CODE']);
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
 
                 foreach ($productConfigs as $productConfigKey => $productConfigValue) {
-                    $templateConfigs[strtoupper($productConfigs['CODE']) . "_" . $productConfigKey] = $productConfigValue;
+                    $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . "_" . $productConfigKey] = $productConfigValue;
                 }
                 $this->context->smarty->assign($templateConfigs);
                 if ($supercheckout_enabled || $onepagecheckout_enabled || $onepagecheckoutps_enabled) {
                     $this->checkLogoExists();
                     $return .= $this->display(
-                        __FILE__, 'views/templates/hook/onepagecheckout-' . $productConfigs['CODE'] . '.tpl'
+                        __FILE__, 'views/templates/hook/onepagecheckout-' . strtolower($productConfigs['CODE']) . '.tpl'
                     );
                 } elseif (_PS_VERSION_ < 1.7) {
                     $return .= $this->display(
-                        __FILE__, 'views/templates/hook/checkout-' . $productConfigs['CODE'] . '.tpl'
+                        __FILE__, 'views/templates/hook/checkout-' . strtolower($productConfigs['CODE']) . '.tpl'
                     );
                 }
             }
@@ -754,12 +734,12 @@ class Pagantis extends PaymentModule
             $productConfigs = Pagantis::getExtraConfig($product, null);
             $productConfigs = json_decode($productConfigs, true);
 
-            $publicKey = Configuration::get($productConfigs['CODE'] . '_public_key');
-            $simulatorIsEnabled = Configuration::get($productConfigs['CODE'] . '_simulator_is_enabled');
-            if ($productConfigs['CODE'] === 'p4x') {
+            $publicKey = Configuration::get(strtolower($productConfigs['CODE']) . '_public_key');
+            $simulatorIsEnabled = Configuration::get(strtolower($productConfigs['CODE']) . '_simulator_is_enabled');
+            if (strtolower($productConfigs['CODE']) === 'p4x') {
                 $simulatorIsEnabled = true;
             }
-            $isEnabled = Configuration::get($productConfigs['CODE'] . '_is_enabled');
+            $isEnabled = Configuration::get(strtolower($productConfigs['CODE']) . '_is_enabled');
             $availableSimulators = array(
                 'hookDisplayProductButtons' => array(
                     'sdk.simulator.types.SIMPLE',
@@ -782,29 +762,29 @@ class Pagantis extends PaymentModule
                 in_array(Tools::strtolower($this->language), $allowedCountries) &&
                 (in_array($productConfigs['SIMULATOR_DISPLAY_TYPE'], $availableSimulators[$hookName]) || _PS_VERSION_ < 1.6)
             ) {
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_TITLE'] = $this->l($productConfigs['TITLE']);
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_SIMULATOR_TITLE'] = $this->l($productConfigs['SIMULATOR_TITLE']);
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_SIMULATOR_SUBTITLE'] = $this->l($productConfigs['SIMULATOR_SUBTITLE']);
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_TITLE'] = $this->l($productConfigs['TITLE']);
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_SIMULATOR_TITLE'] = $this->l($productConfigs['SIMULATOR_TITLE']);
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_SIMULATOR_SUBTITLE'] = $this->l($productConfigs['SIMULATOR_SUBTITLE']);
                 unset($productConfigs['TITLE']);
                 unset($productConfigs['SIMULATOR_TITLE']);
                 unset($productConfigs['SIMULATOR_SUBTITLE']);
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_AMOUNT'] = $amount;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_AMOUNT4X'] = number_format(($amount / 4), 2, '.', '');;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_IS_PROMOTED_PRODUCT'] = $isPromotedProduct;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_LOCALE'] = $this->language;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_COUNTRY'] = $this->language;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_PUBLIC_KEY'] = $publicKey;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_IS_ENABLED'] = $isEnabled;
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_LOGO'] = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
-                $templateConfigs[strtoupper($productConfigs['CODE']) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_AMOUNT'] = $amount;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_AMOUNT4X'] = number_format(($amount / 4), 2, '.', '');;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_IS_PROMOTED_PRODUCT'] = $isPromotedProduct;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_LOCALE'] = $this->language;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_COUNTRY'] = $this->language;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_PUBLIC_KEY'] = $publicKey;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_IS_ENABLED'] = $isEnabled;
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_LOGO'] = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
+                $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
                 foreach ($productConfigs as $productConfigKey => $productConfigValue) {
-                    $templateConfigs[strtoupper($productConfigs['CODE']) . "_" . $productConfigKey] = $productConfigValue;
+                    $templateConfigs[strtoupper(strtolower($productConfigs['CODE'])) . "_" . $productConfigKey] = $productConfigValue;
                 }
 
                 $this->context->smarty->assign($templateConfigs);
                 $return .= $this->display(
-                    __FILE__, 'views/templates/hook/product-simulator-' . $productConfigs['CODE'] . '.tpl'
+                    __FILE__, 'views/templates/hook/product-simulator-' . strtolower($productConfigs['CODE']) . '.tpl'
                 );
             }
         }

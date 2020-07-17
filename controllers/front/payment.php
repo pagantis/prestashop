@@ -86,15 +86,15 @@ class PagantisPaymentModuleFrontController extends AbstractController
         $product = Tools::getValue('product');
         $configs = json_decode(Pagantis::getExtraConfig($product, null), true);
 
-        $pagantisPublicKey = Configuration::get($configs['CODE'] . '_public_key');
-        $pagantisPrivateKey = Configuration::get($configs['CODE'] . '_private_key');
+        $pagantisPublicKey = Configuration::get(strtolower($configs['CODE']) . '_public_key');
+        $pagantisPrivateKey = Configuration::get(strtolower($configs['CODE']) . '_private_key');
 
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect&product=' . $configs["CODE"] . '&'
+            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect&product=' . strtolower($configs['CODE']) . '&'
             .http_build_query($query)
         ;
         $notificationOkUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=notification&product=' . $configs["CODE"] . '&'
+            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=notification&product=' . strtolower($configs['CODE']) . '&'
             .http_build_query($query)
         ;
 

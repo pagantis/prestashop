@@ -5,7 +5,7 @@
  * @copyright 2019 Pagantis
  * @license   proprietary
 *}
-{if ($P12X_IS_ENABLED && $P12X_SIMULATOR_IS_ENABLED)}
+{if ($PAGANTIS_IS_ENABLED && $PAGANTIS_SIMULATOR_IS_ENABLED)}
     <style>
         .pagantis-promotion {
             font-size: 11px;
@@ -18,22 +18,22 @@
         .pagantis-promotion .pmt-no-interest{
             color: #00c1d5
         }
-        .pagantisSimulator12x {
+        .pagantisSimulatorPagantis {
             clear: both;
         }
-        .pagantisSimulator12x > div.preposition {
+        .pagantisSimulatorPagantis > div.preposition {
             display:inline-block;
             vertical-align: top;
             margin-right: 5px;
             width: inherit;
             height: 15px;
         }
-        .pagantisSimulator12x > div {
+        .pagantisSimulatorPagantis > div {
             height: 35px;
             display:inline-block;
             width: 90%
         }
-        {$P12X_SIMULATOR_CSS_PRODUCT_PAGE_STYLES|escape:'javascript':'UTF-8'}
+        {$PAGANTIS_SIMULATOR_CSS_PRODUCT_PAGE_STYLES|escape:'javascript':'UTF-8'}
     </style>
     <script>
         function findPriceSelector()
@@ -91,18 +91,18 @@
             var sdk = pgSDK;
             var price = null;
             var quantity = null;
-            var priceSelector = '{$P12X_SIMULATOR_CSS_PRICE_SELECTOR|escape:'javascript':'UTF-8'}';
-            var quantitySelector = '{$P12X_SIMULATOR_CSS_QUANTITY_SELECTOR|escape:'javascript':'UTF-8'}';
-            var sdkPositionSelector = '{$P12X_SIMULATOR_CSS_POSITION_SELECTOR|escape:'javascript':'UTF-8'}';
+            var priceSelector = '{$PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR|escape:'javascript':'UTF-8'}';
+            var quantitySelector = '{$PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR|escape:'javascript':'UTF-8'}';
+            var sdkPositionSelector = '{$PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR|escape:'javascript':'UTF-8'}';
 
-            if ('{$P12X_SIMULATOR_CSS_POSITION_SELECTOR|escape:'javascript':'UTF-8'}' === 'default') {
-                sdkPositionSelector = '.pagantisSimulator12x';
+            if ('{$PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR|escape:'javascript':'UTF-8'}' === 'default') {
+                sdkPositionSelector = '.pagantisSimulatorPagantis';
             }
 
             if (priceSelector === 'default') {
                 priceSelector = findPriceSelector();
                 if (priceSelector === 'default') {
-                    price = '{$P12X_AMOUNT|escape:'javascript':'UTF-8'}'
+                    price = '{$PAGANTIS_AMOUNT|escape:'javascript':'UTF-8'}'
                 }
             }
 
@@ -115,22 +115,22 @@
 
             sdk.product_simulator = {};
             sdk.product_simulator.id = 'product-simulator';
-            sdk.product_simulator.locale = '{$P12X_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase();
-            sdk.product_simulator.country = '{$P12X_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase();
-            sdk.product_simulator.publicKey = '{$P12X_PUBLIC_KEY|escape:'javascript':'UTF-8'}';
+            sdk.product_simulator.locale = '{$PAGANTIS_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase();
+            sdk.product_simulator.country = '{$PAGANTIS_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase();
+            sdk.product_simulator.publicKey = '{$PAGANTIS_PUBLIC_KEY|escape:'javascript':'UTF-8'}';
             sdk.product_simulator.selector = sdkPositionSelector;
-            sdk.product_simulator.numInstalments = '{$P12X_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}';
-            sdk.product_simulator.type = {$P12X_SIMULATOR_DISPLAY_TYPE|escape:'javascript':'UTF-8'};
-            sdk.product_simulator.skin = {$P12X_SIMULATOR_DISPLAY_SKIN|escape:'javascript':'UTF-8'};
-            sdk.product_simulator.position = {$P12X_SIMULATOR_DISPLAY_CSS_POSITION|escape:'javascript':'UTF-8'};
+            sdk.product_simulator.numInstalments = '{$PAGANTIS_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}';
+            sdk.product_simulator.type = {$PAGANTIS_SIMULATOR_DISPLAY_TYPE|escape:'javascript':'UTF-8'};
+            sdk.product_simulator.skin = {$PAGANTIS_SIMULATOR_DISPLAY_SKIN|escape:'javascript':'UTF-8'};
+            sdk.product_simulator.position = {$PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION|escape:'javascript':'UTF-8'};
             sdk.product_simulator.amountParserConfig =  {
-                thousandSeparator: '{$P12X_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
-                decimalSeparator: '{$P12X_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
+                thousandSeparator: '{$PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
+                decimalSeparator: '{$PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
             };
 
             if (priceSelector !== 'default') {
                 sdk.product_simulator.itemAmountSelector = priceSelector;
-                {if $P12X_IS_PROMOTED_PRODUCT == true}
+                {if $PAGANTIS_IS_PROMOTED_PRODUCT == true}
                 sdk.product_simulator.itemPromotedAmountSelector = priceSelector;
                 {/if}
             }
@@ -139,7 +139,7 @@
             }
             if (price != null) {
                 sdk.product_simulator.itemAmount = price.toString().replace('.', ',');
-                {if $P12X_IS_PROMOTED_PRODUCT == true}
+                {if $PAGANTIS_IS_PROMOTED_PRODUCT == true}
                 sdk.product_simulator.itemPromotedAmount = price.toString().replace('.', ',');
                 {/if}
             }
@@ -166,8 +166,8 @@
             }, 2000);
         }
     </script>
-    {if $P12X_IS_PROMOTED_PRODUCT == true}
-            <span class="pagantis-promotion ps_version_{$P12X_PS_VERSION|escape:'htmlall':'UTF-8'}" id="pagantis-promotion-extra">{$P12X_PROMOTION_EXTRA nofilter}</span>
+    {if $PAGANTIS_IS_PROMOTED_PRODUCT == true}
+            <span class="pagantis-promotion ps_version_{$PAGANTIS_PS_VERSION|escape:'htmlall':'UTF-8'}" id="pagantis-promotion-extra">{$PAGANTIS_PROMOTION_EXTRA nofilter}</span>
     {/if}
-    <div class="pagantisSimulator12x"></div>
+    <div class="pagantisSimulatorPagantis"></div>
 {/if}
