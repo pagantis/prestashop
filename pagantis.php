@@ -293,17 +293,28 @@ class Pagantis extends PaymentModule
     {
         try {
             $tableName = _DB_PREFIX_.'pagantis_order';
-            $sql = ("SHOW TABLES LIKE '$tableName'");
-            $results = Db::getInstance()->ExecuteS($sql);
-            if (is_array($results) && count($results) === 1) {
-                $query = "select COLUMN_TYPE FROM information_schema.COLUMNS where 
-                          TABLE_NAME='$tableName' AND COLUMN_NAME='ps_order_id'";
-                $results = $results = Db::getInstance()->ExecuteS($query);
-                if (is_array($results) && count($results) === 0) {
+            $sql = "show tables like '"   . $tableName . "'";
+            $data = Db::getInstance()->ExecuteS($sql);
+            if (count($data) > 0) {
+                $sql = "desc "   . $tableName;
+                $data = Db::getInstance()->ExecuteS($sql);
+                if (count($data) == 2){
                     $sql = "ALTER TABLE $tableName ADD COLUMN ps_order_id VARCHAR(60) AFTER order_id";
                     Db::getInstance()->Execute($sql);
                 }
-                return false;
+            }
+            $tableName = _DB_PREFIX_.'pagantis_config';
+            $sql = "show tables like '"   . $tableName . "'";
+            $data = Db::getInstance()->ExecuteS($sql);
+            if (count($data) > 0) {
+                $sql = "desc "   . $tableName;
+                $data = Db::getInstance()->ExecuteS($sql);
+                if (count($data) === 3 && $data[2]['Type'] !== 'varchar(5000)') {
+                    $sql = "ALTER TABLE $tableName MODIFY `value` VARCHAR(5000)";
+                    Db::getInstance()->Execute($sql);
+                }
+                // return because pagantis tables exisit so load the sqlfile is not needed
+                return true;
             }
         } catch (\Exception $exception) {
             // do nothing
