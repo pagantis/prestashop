@@ -159,12 +159,10 @@ class Pagantis extends PaymentModule
         $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
         foreach ($products as $product) {
             $code = Pagantis::getExtraConfig('CODE', $product);
-            if ($code !== '4x') {
-                Configuration::updateValue($code . '_is_enabled', 1);
+            if ($code === '4x') {
                 Configuration::updateValue($code . '_simulator_is_enabled', 1);
-            } else {
-                Configuration::updateValue($code . '_is_enabled', 0);
             }
+            Configuration::updateValue($code . '_is_enabled', 0);
             Configuration::updateValue($code . '_public_key', '');
             Configuration::updateValue($code . '_private_key', '');
         }
@@ -203,16 +201,27 @@ class Pagantis extends PaymentModule
      */
     public function migrate()
     {
-        // migrating pk/secret from previous version
-        if (Configuration::get('pagantis_public_key') !== false) {
+¡       // migrating configs values from previous version
+        if (Configuration::get('pagantis_public_key') !== false &&  Configuration::get('12x_public_key') === '') {
             Configuration::updateValue('12x_public_key', Configuration::get('pagantis_public_key'));
             Configuration::updateValue('pagantis_public_key', false);
         }
 
-        if (Configuration::get('pagantis_private_key') !== false) {
+        if (Configuration::get('pagantis_private_key') !== false && Configuration::get('12x_private_key') === '') {
             Configuration::updateValue('12x_private_key', Configuration::get('pagantis_private_key'));
             Configuration::updateValue('pagantis_private_key', false);
         }
+
+        if (Configuration::get('pagantis_is_enabled') !== false && Configuration::get('12x_is_enabled') === '0') {
+            Configuration::updateValue('12x_is_enabled', Configuration::get('pagantis_is_enabled'));
+            Configuration::updateValue('pagantis_is_enabled', false);
+        }
+
+        if (Configuration::get('pagantis_simulator_is_enabled') !== false && Configuration::get('12x_simulator_is_enabled') === '0') {
+            Configuration::updateValue('12x_simulator_is_enabled', Configuration::get('pagantis_simulator_is_enabled'));
+            Configuration::updateValue('pagantis_simulator_is_enabled', false);
+        }
+
     }
 
     /**
