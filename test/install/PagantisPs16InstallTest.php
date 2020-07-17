@@ -41,10 +41,10 @@ class PagantisPs16InstallTest extends AbstractPs16Selenium
             // do nothing, no prompt
         };
 
-        $this->findByCss('#Pagantis_is_enabled_on + label')->click();
-        $this->findById('Pagantis_public_key')->clear()->sendKeys('tk_8517351ec6ae44b29f5dca6e');
-        $this->findById('Pagantis_private_key')->clear()->sendKeys('13e3ca35bdae432d');
-        $this->findByCss('#Pagantis_simulator_is_enabled_on + label')->click();
+        $this->findByCss('#pagantis_is_enabled_on + label')->click();
+        $this->findById('pagantis_public_key')->clear()->sendKeys('tk_8517351ec6ae44b29f5dca6e');
+        $this->findById('pagantis_private_key')->clear()->sendKeys('13e3ca35bdae432d');
+        $this->findByCss('#pagantis_simulator_is_enabled_on + label')->click();
         $this->findById('module_form_submit_btn')->click();
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(
