@@ -80,11 +80,11 @@ class PagantisPaymentModuleFrontController extends AbstractController
             null,
             array('step'=>3)
         );
-        $iframe = Pagantis::getExtraConfig('FORM_DISPLAY_TYPE', null);
         $cancelUrl = (Pagantis::getExtraConfig('URL_KO') !== '') ? Pagantis::getExtraConfig('URL_KO', null) : $koUrl;
 
         $product = Tools::getValue('product');
         $configs = json_decode(Pagantis::getExtraConfig($product, null), true);
+        $iframe = Pagantis::getExtraConfig('FORM_DISPLAY_TYPE', $product);
 
         $pagantisPublicKey = Configuration::get(strtolower($configs['CODE']) . '_public_key');
         $pagantisPrivateKey = Configuration::get(strtolower($configs['CODE']) . '_private_key');
