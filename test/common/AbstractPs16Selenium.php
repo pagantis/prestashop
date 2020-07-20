@@ -98,7 +98,7 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         $this->moveToElementAndClick($pagantisAnchorGrandParent->findElement(
             WebDriverBy::partialLinkText('Configure')
         ));
-        $verify = WebDriverBy::id('public_key');
+        $verify = WebDriverBy::id('pagantis_public_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
     }

@@ -26,7 +26,7 @@ class PagantisPs15InstallTest extends AbstractPs15Selenium
         $this->getPagantisBackOffice();
 
         //2 elements exist:
-        $validatorSearch = WebDriverBy::id('public_key');
+        $validatorSearch = WebDriverBy::id('pagantis_public_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);

@@ -110,7 +110,7 @@ abstract class AbstractPs15Selenium extends PagantisPrestashopTest
             ->sendKeys(WebDriverKeys::ENTER)
         ;
         $this->findByLinkText('Configure')->click();
-        $verify = WebDriverBy::id('public_key');
+        $verify = WebDriverBy::id('pagantis_public_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
     }

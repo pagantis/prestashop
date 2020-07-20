@@ -106,7 +106,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
             ->sendKeys(WebDriverKeys::ENTER)
         ;
         $this->findByClass('module_action_menu_configure')->click();
-        $verify = WebDriverBy::id('public_key');
+        $verify = WebDriverBy::id('pagantis_public_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
     }
