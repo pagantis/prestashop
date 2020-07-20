@@ -44,7 +44,8 @@ class PagantisPs15ControllerTest extends PagantisPrestashopTest
      */
     public function testLogDownload()
     {
-        $logUrl = self::PS15URL.self::LOG_FOLDER.'&secret=3af9065648bf1970';
+        $logUrl = self::PS15URL.self::LOG_FOLDER.'&secret=c580df9e0b7b40c3';
+        var_dump($logUrl);
         $response = Request::get($logUrl)->expects('json')->send();
         $this->assertGreaterThan(0, count($response->body));
         $this->quit();
@@ -55,7 +56,7 @@ class PagantisPs15ControllerTest extends PagantisPrestashopTest
      */
     public function testSetConfig()
     {
-        $configUrl = self::PS15URL.self::CONFIG_FOLDER.'&secret=3af9065648bf1970';
+        $configUrl = self::PS15URL.self::CONFIG_FOLDER.'&secret=c580df9e0b7b40c3';
         $body = array('TITLE' => 'changed');
         $response = Request::post($configUrl)
             ->body($body, Mime::FORM)
@@ -70,7 +71,7 @@ class PagantisPs15ControllerTest extends PagantisPrestashopTest
      */
     public function testGetConfigs()
     {
-        $configUrl = self::PS15URL.self::CONFIG_FOLDER.'&secret=3af9065648bf1970';
+        $configUrl = self::PS15URL.self::CONFIG_FOLDER.'&secret=c580df9e0b7b40c3';
         $response = Request::get($configUrl)->expects('json')->send();
 
         foreach ($this->configs as $config) {
