@@ -59,6 +59,9 @@ class PagantisLogModuleFrontController extends ModuleFrontController
     public function jsonResponse()
     {
         $result = json_encode($this->message);
+        if ($result === 'null') {
+            $result = array();
+        }
 
         header('HTTP/1.1 200 Ok', true, 200);
         header('Content-Type: application/json', true);
