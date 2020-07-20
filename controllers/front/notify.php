@@ -231,7 +231,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 'No valid Pagantis product provided in the url: ' . Tools::getValue('product')
             );
         }
-        $this->productName = "Pagantis " . $productCode;
+        $this->productName = "Pagantis " . strtolower($productCode);
 
         $pagantisPublicKey = Configuration::get(strtolower($productCode) . '_public_key');
         $pagantisPrivateKey = Configuration::get(strtolower($productCode) . '_private_key');

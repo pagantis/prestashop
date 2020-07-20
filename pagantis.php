@@ -46,7 +46,7 @@ class Pagantis extends PaymentModule
         'ALLOWED_COUNTRIES' => 'a:3:{i:0;s:2:"es";i:1;s:2:"it";i:2;s:2:"fr";}',
         'PRODUCTS' => 'P4X,PAGANTIS',
         'P4X' => '{
-            "CODE": "p4x",
+            "CODE": "P4X",
             "TITLE": "Pay in 4 installments, without cost",
             "SIMULATOR_TITLE": "up to 4 payments of",
             "SIMULATOR_SUBTITLE": "without cost with",
@@ -65,7 +65,7 @@ class Pagantis extends PaymentModule
             "SIMULATOR_DECIMAL_SEPARATOR": ","
             }',
         'PAGANTIS' => '{
-            "CODE": "Pagantis",
+            "CODE": "PAGATNIS",
             "TITLE": "Instant Financing",
             "SIMULATOR_TITLE": "Instant Financing",
             "SIMULATOR_SUBTITLE": "",
@@ -190,7 +190,11 @@ class Pagantis extends PaymentModule
      */
     public function uninstall()
     {
-        Configuration::deleteByName('public_key');
+        Configuration::deleteByName('4x_public_key');
+        Configuration::deleteByName('12x_public_key');
+        Configuration::deleteByName('4x_public_key');
+        Configuration::deleteByName('4x_public_key');
+        Configuration::deleteByName('4x_public_key');
         Configuration::deleteByName('private_key');
 
         return parent::uninstall();
@@ -201,7 +205,8 @@ class Pagantis extends PaymentModule
      */
     public function migrate()
     {
-        //@todo migar extra configs
+        //@todo migrar extra configs
+
     }
 
     /**
