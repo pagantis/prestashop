@@ -92,7 +92,7 @@ class PagantisPs17BuyTest extends AbstractPs17Selenium
         $this->assertNotEmpty($response->body->status_code, $response);
         $this->assertNotEmpty($response->body->timestamp, $response);
         $this->assertContains(
-            QuoteNotFoundException::ERROR_MESSAGE,
+            MerchantOrderNotFoundException::ERROR_MESSAGE,
             $response->body->result,
             "PR51=>".$response->body->result
         );
