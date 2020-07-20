@@ -40,7 +40,7 @@ class PagantisPs15InstallTest extends AbstractPs15Selenium
 
         $this->findByCss('#pagantis_is_enabled_true + label')->click();
         $this->findById('pagantis_public_key')->clear()->sendKeys('tk_8517351ec6ae44b29f5dca6e');
-        $this->findById('pagantis_private_key')->clear()->sendKeys('13e3ca35bdae432d');
+        $this->findById('pagantis_private_key')->clear()->sendKeys('c580df9e0b7b40c3');
         $this->findByCss('#pagantis_simulator_is_enabled_on + label')->click();
         $this->webDriver->executeScript('window.scrollBy(0,250)');
         $this->findById('module_form')->submit();
