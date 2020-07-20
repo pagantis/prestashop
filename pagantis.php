@@ -65,7 +65,7 @@ class Pagantis extends PaymentModule
             "SIMULATOR_DECIMAL_SEPARATOR": ","
             }',
         'PAGANTIS' => '{
-            "CODE": "PAGATNIS",
+            "CODE": "PAGANTIS",
             "TITLE": "Instant Financing",
             "SIMULATOR_TITLE": "Instant Financing",
             "SIMULATOR_SUBTITLE": "",
