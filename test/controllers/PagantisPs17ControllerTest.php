@@ -16,12 +16,12 @@ class PagantisPs17ControllerTest extends PagantisPrestashopTest
     /**
      * log route
      */
-    const LOG_FOLDER = '/index.php?fc=module&module=pagantis&controller=log&product=Pagantis';
+    const LOG_FOLDER = '/index.php?fc=module&module=pagantis&controller=log&product=PAGANTIS';
 
     /**
      * config route
      */
-    const CONFIG_FOLDER = '/index.php?fc=module&module=pagantis&controller=config&product=Pagantis';
+    const CONFIG_FOLDER = '/index.php?fc=module&module=pagantis&controller=config&product=PAGANTIS';
 
     protected $configs = array(
         "TITLE",
