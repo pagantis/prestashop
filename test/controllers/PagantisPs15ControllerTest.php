@@ -45,7 +45,6 @@ class PagantisPs15ControllerTest extends PagantisPrestashopTest
     public function testLogDownload()
     {
         $logUrl = self::PS15URL.self::LOG_FOLDER.'&secret=c580df9e0b7b40c3';
-        var_dump($logUrl);
         $response = Request::get($logUrl)->expects('json')->send();
         $this->assertGreaterThan(0, count($response->body));
         $this->quit();
