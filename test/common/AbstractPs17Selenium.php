@@ -255,8 +255,8 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
         if ($verifySimulator) {
-            $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
-            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
+            $pagantisSimulatorPagantis = WebDriverBy::className('pagantisSimulatorPagantis');
+            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulatorPagantis);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
             // this sleep is to prevent simulator js render
@@ -282,7 +282,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
         $this->findById('conditions_to_approve[terms-and-conditions]')->click();
         $this->findById('payment-confirmation')->click();
 
-        $condition = WebDriverExpectedCondition::titleContains(self::PAGANTIS_TITLE);
+        $condition = WebDriverExpectedCondition::titleContains(self::TITLE);
         $this->webDriver->wait()->until($condition, $this->webDriver->getCurrentURL());
         $this->assertTrue((bool)$condition, "PR32");
 

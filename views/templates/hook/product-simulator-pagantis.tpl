@@ -5,7 +5,7 @@
  * @copyright 2019 Pagantis
  * @license   proprietary
 *}
-{if ($pagantisIsEnabled && $pagantisSimulatorIsEnabled)}
+{if ($PAGANTIS_IS_ENABLED && $PAGANTIS_SIMULATOR_IS_ENABLED)}
     <style>
         .pagantis-promotion {
             font-size: 11px;
@@ -18,22 +18,22 @@
         .pagantis-promotion .pmt-no-interest{
             color: #00c1d5
         }
-        .pagantisSimulator {
+        .pagantisSimulatorPagantis {
             clear: both;
         }
-        .pagantisSimulator > div.preposition {
+        .pagantisSimulatorPagantis > div.preposition {
             display:inline-block;
             vertical-align: top;
             margin-right: 5px;
             width: inherit;
             height: 15px;
         }
-        .pagantisSimulator > div {
+        .pagantisSimulatorPagantis > div {
             height: 35px;
             display:inline-block;
             width: 90%
         }
-        {$pagantisSimulatorStyles|escape:'javascript':'UTF-8'}
+        {$PAGANTIS_SIMULATOR_CSS_PRODUCT_PAGE_STYLES|escape:'javascript':'UTF-8'}
     </style>
     <script>
         function findPriceSelector()
@@ -75,7 +75,7 @@
         function loadSimulator()
         {
             window.PSSimulatorAttempts = window.PSSimulatorAttempts + 1;
-            if (window.PSSimulatorAttempts > 10 )
+            if (window.PSSimulatorAttempts > 20 )
             {
                 clearInterval(window.PSSimulatorId);
                 return true;
@@ -91,18 +91,18 @@
             var sdk = pgSDK;
             var price = null;
             var quantity = null;
-            var priceSelector = '{$pagantisPriceSelector|escape:'javascript':'UTF-8'}';
-            var quantitySelector = '{$pagantisQuantitySelector|escape:'javascript':'UTF-8'}';
-            var sdkPositionSelector = '{$pagantisCSSSelector|escape:'javascript':'UTF-8'}';
+            var priceSelector = '{$PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR|escape:'javascript':'UTF-8'}';
+            var quantitySelector = '{$PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR|escape:'javascript':'UTF-8'}';
+            var sdkPositionSelector = '{$PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR|escape:'javascript':'UTF-8'}';
 
-            if ('{$pagantisCSSSelector|escape:'javascript':'UTF-8'}' === 'default') {
-                sdkPositionSelector = '.pagantisSimulator';
+            if ('{$PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR|escape:'javascript':'UTF-8'}' === 'default') {
+                sdkPositionSelector = '.pagantisSimulatorPagantis';
             }
 
             if (priceSelector === 'default') {
                 priceSelector = findPriceSelector();
                 if (priceSelector === 'default') {
-                    price = '{$amount|escape:'javascript':'UTF-8'}'
+                    price = '{$PAGANTIS_AMOUNT|escape:'javascript':'UTF-8'}'
                 }
             }
 
@@ -115,22 +115,22 @@
 
             sdk.product_simulator = {};
             sdk.product_simulator.id = 'product-simulator';
-            sdk.product_simulator.locale = '{$locale|escape:'javascript':'UTF-8'}'.toLowerCase();
-            sdk.product_simulator.country = '{$country|escape:'javascript':'UTF-8'}'.toLowerCase();
-            sdk.product_simulator.publicKey = '{$pagantisPublicKey|escape:'javascript':'UTF-8'}';
+            sdk.product_simulator.locale = '{$PAGANTIS_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase();
+            sdk.product_simulator.country = '{$PAGANTIS_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase();
+            sdk.product_simulator.publicKey = '{$PAGANTIS_PUBLIC_KEY|escape:'javascript':'UTF-8'}';
             sdk.product_simulator.selector = sdkPositionSelector;
-            sdk.product_simulator.numInstalments = '{$pagantisQuotesStart|escape:'javascript':'UTF-8'}';
-            sdk.product_simulator.type = {$pagantisSimulatorType|escape:'javascript':'UTF-8'};
-            sdk.product_simulator.skin = {$pagantisSimulatorSkin|escape:'javascript':'UTF-8'};
-            sdk.product_simulator.position = {$pagantisSimulatorPosition|escape:'javascript':'UTF-8'};
+            sdk.product_simulator.numInstalments = '{$PAGANTIS_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}';
+            sdk.product_simulator.type = {$PAGANTIS_SIMULATOR_DISPLAY_TYPE|escape:'javascript':'UTF-8'};
+            sdk.product_simulator.skin = {$PAGANTIS_SIMULATOR_DISPLAY_SKIN|escape:'javascript':'UTF-8'};
+            sdk.product_simulator.position = {$PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION|escape:'javascript':'UTF-8'};
             sdk.product_simulator.amountParserConfig =  {
-                thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'javascript':'UTF-8'}',
-                decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'javascript':'UTF-8'}',
+                thousandSeparator: '{$PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
+                decimalSeparator: '{$PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
             };
 
             if (priceSelector !== 'default') {
                 sdk.product_simulator.itemAmountSelector = priceSelector;
-                {if $isPromotedProduct == true}
+                {if $PAGANTIS_IS_PROMOTED_PRODUCT == true}
                 sdk.product_simulator.itemPromotedAmountSelector = priceSelector;
                 {/if}
             }
@@ -139,7 +139,7 @@
             }
             if (price != null) {
                 sdk.product_simulator.itemAmount = price.toString().replace('.', ',');
-                {if $isPromotedProduct == true}
+                {if $PAGANTIS_IS_PROMOTED_PRODUCT == true}
                 sdk.product_simulator.itemPromotedAmount = price.toString().replace('.', ',');
                 {/if}
             }
@@ -147,7 +147,7 @@
                 sdk.product_simulator.itemQuantity = quantity;
             }
 
-            sdk.simulator.init(sdk.product_simulator);
+            var sim = sdk.simulator.init(sdk.product_simulator);
             if (checkSimulatorContent()) {
                 clearInterval(window.PSSimulatorId);
                 return true;
@@ -155,14 +155,14 @@
             return false;
         }
         window.PSSimulatorAttempts = 0;
-        if (!loadSimulator()) {
+        if (typeof window.PSSimulatorId == "undefined") {
             window.PSSimulatorId = setInterval(function () {
                 loadSimulator();
-            }, 1000);
+            }, 2000);
         }
     </script>
-    {if $isPromotedProduct == true}
-        <span class="pagantis-promotion ps_version_{$ps_version|escape:'htmlall':'UTF-8'}" id="pagantis-promotion-extra">{$pagantisPromotionExtra nofilter}</span>
+    {if $PAGANTIS_IS_PROMOTED_PRODUCT == true}
+            <span class="pagantis-promotion ps_version_{$PAGANTIS_PS_VERSION|escape:'htmlall':'UTF-8'}" id="pagantis-promotion-extra">{$PAGANTIS_PROMOTION_EXTRA nofilter}</span>
     {/if}
-    <div class="pagantisSimulator"></div>
+    <div class="pagantisSimulatorPagantis"></div>
 {/if}

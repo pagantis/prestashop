@@ -16,7 +16,6 @@ use Pagantis\ModuleUtils\Exception\MerchantOrderNotFoundException;
 use Pagantis\ModuleUtils\Exception\NoIdentificationException;
 use Pagantis\ModuleUtils\Exception\OrderNotFoundException;
 use Pagantis\ModuleUtils\Exception\QuoteNotFoundException;
-use Pagantis\ModuleUtils\Exception\ConfigurationNotFoundException;
 use Pagantis\ModuleUtils\Exception\UnknownException;
 use Pagantis\ModuleUtils\Exception\WrongStatusException;
 use Pagantis\ModuleUtils\Model\Response\JsonSuccessResponse;
@@ -28,15 +27,20 @@ use Pagantis\ModuleUtils\Model\Response\JsonExceptionResponse;
 class PagantisNotifyModuleFrontController extends AbstractController
 {
     /** Cart tablename */
-    const PAGANTIS_CART_TABLE = 'pagantis_cart_process';
+    const CART_TABLE = 'pagantis_cart_process';
 
     /** Pagantis orders tablename */
-    const PAGANTIS_ORDERS_TABLE = 'pagantis_order';
+    const ORDERS_TABLE = 'pagantis_order';
 
     /**
      * Seconds to expire a locked request
      */
     const CONCURRENCY_TIMEOUT = 10;
+
+    /**
+     * @var string $productName
+     */
+    protected $productName;
 
     /**
      * @var int $requestId
@@ -47,6 +51,11 @@ class PagantisNotifyModuleFrontController extends AbstractController
      * @var int $merchantOrderId
      */
     protected $merchantOrderId = null;
+
+    /**
+     * @var \Order $merchantOrder
+     */
+    protected $merchantOrder;
 
     /**
      * @var int $merchantCartId
@@ -194,7 +203,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
         $this->getMerchantOrderId();
         if (!empty($this->merchantOrderId)) {
             throw new WrongStatusException('The order "' . $this->merchantOrderId . '" already exists in '.
-                self::PAGANTIS_ORDERS_TABLE . ' table');
+                self::ORDERS_TABLE . ' table');
         }
         $callbackOkUrl = $this->context->link->getPageLink(
             'order-confirmation',
@@ -207,19 +216,28 @@ class PagantisNotifyModuleFrontController extends AbstractController
             null,
             array('step'=>3)
         );
-        try {
-            $this->config = array(
-                'urlOK' => (Pagantis::getExtraConfig('PAGANTIS_URL_OK') !== '') ?
-                    Pagantis::getExtraConfig('PAGANTIS_URL_OK') : $callbackOkUrl,
-                'urlKO' => (Pagantis::getExtraConfig('PAGANTIS_URL_KO') !== '') ?
-                    Pagantis::getExtraConfig('PAGANTIS_URL_KO') : $callbackKoUrl,
-                'publicKey' => Configuration::get('pagantis_public_key'),
-                'privateKey' => Configuration::get('pagantis_private_key'),
-                'secureKey' => Tools::getValue('key'),
+
+        $this->config = array(
+            'urlOK' => (Pagantis::getExtraConfig('URL_OK') !== '') ?
+                Pagantis::getExtraConfig('URL_OK') : $callbackOkUrl,
+            'urlKO' => (Pagantis::getExtraConfig('URL_KO') !== '') ?
+                Pagantis::getExtraConfig('URL_KO') : $callbackKoUrl,
+            'secureKey' => Tools::getValue('key'),
+        );
+        $productCode = Tools::getValue('product');
+        $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
+        if (!in_array(Tools::strtoupper($productCode), $products)) {
+            throw new UnknownException(
+                'No valid Pagantis product provided in the url: ' . Tools::getValue('product')
             );
-        } catch (\Exception $exception) {
-            throw new ConfigurationNotFoundException();
         }
+        $this->productName = "Pagantis " . Tools::strtolower($productCode);
+
+        $pagantisPublicKey = Configuration::get(Tools::strtolower($productCode) . '_public_key');
+        $pagantisPrivateKey = Configuration::get(Tools::strtolower($productCode) . '_private_key');
+
+        $this->config['publicKey'] = $pagantisPublicKey;
+        $this->config['privateKey'] = $pagantisPrivateKey;
 
         $this->merchantCartId = Tools::getValue('id_cart');
 
@@ -227,7 +245,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             throw new QuoteNotFoundException();
         }
 
-        if (!($this->config['secureKey'] && $this->merchantCartId && Module::isEnabled(self::PAGANTIS_CODE))) {
+        if (!($this->config['secureKey'] && Module::isEnabled(self::CODE))) {
             // This exception is only for Prestashop
             throw new UnknownException('Module may not be enabled');
         }
@@ -239,10 +257,10 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function getMerchantOrderId()
     {
         try {
-            $this->merchantOrderId = Db::getInstance()->getValue(
-                'select ps_order_id from '._DB_PREFIX_.self::PAGANTIS_ORDERS_TABLE.' where id = '
-                .(int)$this->merchantCartId
-            );
+            $table = _DB_PREFIX_ .self::ORDERS_TABLE;
+            $sql = 'select ps_order_id from ' . $table .
+                ' where id = ' .(int)$this->merchantCartId;
+            $this->merchantOrderId = Db::getInstance()->getValue($sql);
         } catch (\Exception $exception) {
             // do nothing
         }
@@ -277,7 +295,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             $this->pagantisOrderId= Db::getInstance()->getValue(
-                'select order_id from '._DB_PREFIX_.self::PAGANTIS_ORDERS_TABLE.' where id = '
+                'select order_id from '._DB_PREFIX_.self::ORDERS_TABLE.' where id = '
                 .(int)$this->merchantCartId
             );
 
@@ -390,7 +408,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             }
 
             // Double check
-            $tableName = _DB_PREFIX_ . self::PAGANTIS_ORDERS_TABLE;
+            $tableName = _DB_PREFIX_ . self::ORDERS_TABLE;
             $fieldName = 'ps_order_id';
             $sql = ('select ' . $fieldName . ' from `' . $tableName . '` where `id` = ' . (int)$this->merchantCartId
                 . ' and `order_id` = \'' . $this->pagantisOrderId . '\''
@@ -433,7 +451,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $this->merchantCartId,
                 Configuration::get('PS_OS_PAYMENT'),
                 $this->merchantCart->getOrderTotal(true),
-                $this->module->displayName,
+                $this->productName,
                 'pagantisOrderId: ' . $this->pagantisOrder->getId() . ' ' .
                 'pagantisOrderStatus: '. $this->pagantisOrder->getStatus() .
                 $this->amountMismatchError .
@@ -448,7 +466,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
         }
         try {
             Db::getInstance()->update(
-                self::PAGANTIS_ORDERS_TABLE,
+                self::ORDERS_TABLE,
                 array('ps_order_id' => $this->module->currentOrder),
                 'id = '. (int)$this->merchantCartId . ' and order_id = \'' . $this->pagantisOrderId . '\''
             );
@@ -525,7 +543,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     protected function blockConcurrency($orderId)
     {
         try {
-            $table = self::PAGANTIS_CART_TABLE;
+            $table = self::CART_TABLE;
             if (Db::getInstance()->insert($table, array('id' => (int)$orderId, 'timestamp' => (time()))) === false) {
                 if ($this->isNotification()) {
                     throw new ConcurrencyException();
@@ -582,12 +600,12 @@ class PagantisNotifyModuleFrontController extends AbstractController
         try {
             if (is_null($orderId)) {
                 Db::getInstance()->delete(
-                    self::PAGANTIS_CART_TABLE,
+                    self::CART_TABLE,
                     'timestamp < ' . (time() - self::CONCURRENCY_TIMEOUT)
                 );
                 return;
             }
-            Db::getInstance()->delete(self::PAGANTIS_CART_TABLE, 'id = ' . (int)$orderId);
+            Db::getInstance()->delete(self::CART_TABLE, 'id = ' . (int)$orderId);
         } catch (\Exception $exception) {
             throw new ConcurrencyException();
         }

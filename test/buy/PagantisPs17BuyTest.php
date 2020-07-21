@@ -5,6 +5,7 @@ namespace Test\Buy;
 use Test\Common\AbstractPs17Selenium;
 use Httpful\Request;
 use Pagantis\ModuleUtils\Exception\QuoteNotFoundException;
+use Pagantis\ModuleUtils\Exception\MerchantOrderNotFoundException;
 
 /**
  * @requires prestashop17install
@@ -17,7 +18,7 @@ class PagantisPs17BuyTest extends AbstractPs17Selenium
     /**
      * config route
      */
-    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=pagantis&controller=notify';
+    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=pagantis&controller=notify&product=PAGANTIS&key=xxxxxx';
 
     /**
      * @throws  \Exception
@@ -40,7 +41,7 @@ class PagantisPs17BuyTest extends AbstractPs17Selenium
      */
     protected function checkConcurrency()
     {
-        $notifyUrl = self::PS17URL.self::NOTIFICATION_FOLDER.'&cart_id=';
+        $notifyUrl = self::PS17URL.self::NOTIFICATION_FOLDER.'&id_cart=';
         $this->assertNotEmpty($notifyUrl, $notifyUrl);
         $response = Request::post($notifyUrl)->expects('json')->send();
         $this->assertNotEmpty($response->body->result, $response);
@@ -60,7 +61,7 @@ class PagantisPs17BuyTest extends AbstractPs17Selenium
     protected function checkPagantisOrderId()
     {
         $orderId=0;
-        $notifyUrl = self::PS17URL.self::NOTIFICATION_FOLDER.'&cart_id='.$orderId;
+        $notifyUrl = self::PS17URL.self::NOTIFICATION_FOLDER.'&id_cart='.$orderId;
         $this->assertNotEmpty($notifyUrl, $notifyUrl);
         $response = Request::post($notifyUrl)->expects('json')->send();
         $this->assertNotEmpty($response->body->result, $response);
@@ -73,7 +74,7 @@ class PagantisPs17BuyTest extends AbstractPs17Selenium
         );
 
         $this->assertContains(
-            QuoteNotFoundException::ERROR_MESSAGE,
+            MerchantOrderNotFoundException::ERROR_MESSAGE,
             $response->body->result,
             "PR=>".$response->body->result
         );
@@ -85,13 +86,13 @@ class PagantisPs17BuyTest extends AbstractPs17Selenium
      */
     protected function checkAlreadyProcessed()
     {
-        $notifyUrl = self::PS17URL.self::NOTIFICATION_FOLDER.'&cart_id=6';
+        $notifyUrl = self::PS17URL.self::NOTIFICATION_FOLDER.'&id_cart=6';
         $response = Request::post($notifyUrl)->expects('json')->send();
         $this->assertNotEmpty($response->body->result, $response);
         $this->assertNotEmpty($response->body->status_code, $response);
         $this->assertNotEmpty($response->body->timestamp, $response);
         $this->assertContains(
-            QuoteNotFoundException::ERROR_MESSAGE,
+            MerchantOrderNotFoundException::ERROR_MESSAGE,
             $response->body->result,
             "PR51=>".$response->body->result
         );

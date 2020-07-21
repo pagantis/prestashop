@@ -35,6 +35,7 @@ class PagantisPs17InstallTest extends AbstractPs17Selenium
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
 
+        /* no longer checked in multiproduct
         //save with empty public Key
         $this->findById('pagantis_public_key')->clear();
         $this->findById('module_form_submit_btn')->click();
@@ -54,7 +55,7 @@ class PagantisPs17InstallTest extends AbstractPs17Selenium
         $this->assertTrue((bool) $condition);
         $this->assertContains('Please add a Pagantis API Private Key', $this->webDriver->getPageSource());
         $this->findById('pagantis_private_key')->clear()->sendKeys($this->configuration['secretKey']);
-
+        */
         $this->quit();
     }
 

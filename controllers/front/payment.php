@@ -80,17 +80,21 @@ class PagantisPaymentModuleFrontController extends AbstractController
             null,
             array('step'=>3)
         );
-        $iframe = Pagantis::getExtraConfig('PAGANTIS_FORM_DISPLAY_TYPE');
-        $cancelUrl = (Pagantis::getExtraConfig('PAGANTIS_URL_KO') !== '') ?
-            Pagantis::getExtraConfig('PAGANTIS_URL_KO') : $koUrl;
-        $pagantisPublicKey = Configuration::get('pagantis_public_key');
-        $pagantisPrivateKey = Configuration::get('pagantis_private_key');
+        $cancelUrl = (Pagantis::getExtraConfig('URL_KO') !== '') ? Pagantis::getExtraConfig('URL_KO', null) : $koUrl;
+
+        $product = Tools::getValue('product');
+        $configs = json_decode(Pagantis::getExtraConfig($product, null), true);
+        $iframe = Pagantis::getExtraConfig('FORM_DISPLAY_TYPE', $product);
+
+        $pagantisPublicKey = Configuration::get(Tools::strtolower($configs['CODE']) . '_public_key');
+        $pagantisPrivateKey = Configuration::get(Tools::strtolower($configs['CODE']) . '_private_key');
+
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect&'
+            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect&product=' . Tools::strtolower($configs['CODE']) . '&'
             .http_build_query($query)
         ;
         $notificationOkUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=notification&'
+            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=notification&product=' . Tools::strtolower($configs['CODE']) . '&'
             .http_build_query($query)
         ;
 
@@ -405,7 +409,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
      */
     private function getUserLanguage($shippingAddress = null, $billingAddress = null)
     {
-        $allowedCountries    = unserialize(Pagantis::getExtraConfig('PAGANTIS_ALLOWED_COUNTRIES'));
+        $allowedCountries    = unserialize(Pagantis::getExtraConfig('ALLOWED_COUNTRIES', null));
         $lang = Language::getLanguage($this->context->language->id);
         $langArray = explode("-", $lang['language_code']);
         if (count($langArray) != 2 && isset($lang['locale'])) {

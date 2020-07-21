@@ -59,6 +59,9 @@ class PagantisLogModuleFrontController extends ModuleFrontController
     public function jsonResponse()
     {
         $result = json_encode($this->message);
+        if ($result === 'null') {
+            $result = array();
+        }
 
         header('HTTP/1.1 200 Ok', true, 200);
         header('Content-Type: application/json', true);
@@ -73,9 +76,11 @@ class PagantisLogModuleFrontController extends ModuleFrontController
      */
     public function authorize()
     {
-        $privateKey = Configuration::get('pagantis_private_key');
+        $productCode = Tools::getValue('product', false);
+        $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
+        $privateKey = Configuration::get(Tools::strtolower($productCode) . '_private_key');
         $privateKeyGet = Tools::getValue('secret', false);
-        if (!empty($privateKeyGet) && $privateKeyGet === $privateKey) {
+        if (!empty($privateKeyGet) && $privateKeyGet === $privateKey && in_array(Tools::strtoupper($productCode), $products)) {
             return true;
         }
 

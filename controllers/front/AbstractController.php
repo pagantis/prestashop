@@ -15,9 +15,9 @@ use Pagantis\ModuleUtils\Model\Log\LogEntry;
 abstract class AbstractController extends ModuleFrontController
 {
     /**
-     * PAGANTIS_CODE
+     * CODE
      */
-    const PAGANTIS_CODE = 'pagantis';
+    const CODE = 'pagantis';
 
     /**
      * @var array $headers

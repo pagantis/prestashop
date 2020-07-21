@@ -31,7 +31,7 @@ abstract class PagantisPrestashopTest extends TestCase
 
     const BACKOFFICE_FOLDER = '/adminTest';
 
-    const PAGANTIS_TITLE = 'Pagantis';
+    const TITLE = 'Pagantis';
 
     /**
      * @var array
@@ -212,19 +212,19 @@ abstract class PagantisPrestashopTest extends TestCase
     public function getProperties()
     {
         return array(
-            'PAGANTIS_TITLE' => '\'Instant Financing\'',
-            'PAGANTIS_SIMULATOR_DISPLAY_TYPE' => 'pgSDK.simulator.types.SIMPLE',
-            'PAGANTIS_SIMULATOR_DISPLAY_SKIN' => 'pgSDK.simulator.skins.BLUE ',
-            'PAGANTIS_SIMULATOR_START_INSTALLMENTS' => '3',
-            'PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
-            'PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION' => 'pgSDK.simulator.positions.INNER',
-            'PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
-            'PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
-            'PAGANTIS_FORM_DISPLAY_TYPE' => '0',
-            'PAGANTIS_DISPLAY_MIN_AMOUNT' => '1',
-            'PAGANTIS_DISPLAY_MAX_AMOUNT' => '0',
-            'PAGANTIS_URL_OK' => '',
-            'PAGANTIS_URL_KO' => '',
+            'TITLE' => '\'Instant Financing\'',
+            'SIMULATOR_DISPLAY_TYPE' => 'pgSDK.simulator.types.SIMPLE',
+            'SIMULATOR_DISPLAY_SKIN' => 'pgSDK.simulator.skins.BLUE ',
+            'SIMULATOR_START_INSTALLMENTS' => '3',
+            'SIMULATOR_CSS_POSITION_SELECTOR' => 'default',
+            'SIMULATOR_DISPLAY_CSS_POSITION' => 'pgSDK.simulator.positions.INNER',
+            'SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
+            'SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
+            'FORM_DISPLAY_TYPE' => '0',
+            'DISPLAY_MIN_AMOUNT' => '1',
+            'DISPLAY_MAX_AMOUNT' => '0',
+            'URL_OK' => '',
+            'URL_KO' => '',
         );
     }
 }

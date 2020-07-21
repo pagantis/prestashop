@@ -219,8 +219,8 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($hookPayment);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
-        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
+        $pagantisSimulatorPagantis = WebDriverBy::className('pagantisSimulatorPagantis');
+        $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulatorPagantis);
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
         // this sleep is to prevent simulator js render
@@ -262,8 +262,8 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
         if ($verifySimulator) {
-            $pagantisSimulator = WebDriverBy::className('pagantisSimulator');
-            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulator);
+            $pagantisSimulatorPagantis = WebDriverBy::className('pagantisSimulatorPagantis');
+            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulatorPagantis);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
             // this sleep is to prevent simulator js render
@@ -288,7 +288,7 @@ abstract class AbstractPs16Selenium extends PagantisPrestashopTest
         // $this->webDriver->findElement($pagantisCheckout)->click();
         $this->webDriver->executeScript('document.querySelector(\'.pagantis-checkout\').click();');
 
-        $condition = WebDriverExpectedCondition::titleContains(self::PAGANTIS_TITLE);
+        $condition = WebDriverExpectedCondition::titleContains(self::TITLE);
         $this->webDriver->wait()->until($condition, $this->webDriver->getCurrentURL());
         $this->assertTrue((bool)$condition, "PR32");
 

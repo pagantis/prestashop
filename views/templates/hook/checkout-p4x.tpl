@@ -5,18 +5,18 @@
  * @copyright 2019 Pagantis
  * @license   proprietary
  *}
-{if $pagantisIsEnabled}
+{if $P4X_IS_ENABLED}
     <div class="row">
         <div class="col-xs-12">
-            <p class="payment_module Pagantis ps_version_{$ps_version|escape:'htmlall':'UTF-8'}">
-                <a class="pagantis-checkout ps_version_{$ps_version|escape:'htmlall':'UTF-8'} locale_{$locale|escape:'htmlall':'UTF-8'}" href="{$paymentUrl|escape:'htmlall':'UTF-8'}" title="{$pagantisTitle|escape:'htmlall':'UTF-8'}">
-                    {if $ps_version !== '1-7'}{$pagantisTitle|escape:'quotes'}&nbsp;{/if}
-                    <span class="pagantisSimulator ps_version_{$ps_version|escape:'htmlall':'UTF-8'}"></span>
+            <p class="payment_module Pagantis ps_version_{$P4X_PS_VERSION|escape:'htmlall':'UTF-8'}">
+                <a class="pagantis-checkout pagantis-checkout-p4x ps_version_{$P4X_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$P4X_LOCALE|escape:'htmlall':'UTF-8'}" href="{$P4X_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="{$P4X_TITLE|escape:'htmlall':'UTF-8'}">
+                    {if $P4X_PS_VERSION !== '1-7'}{$P4X_TITLE|escape:'quotes'}&nbsp;{/if}
+                    <span class="pagantisSimulator4x ps_version_{$P4X_PS_VERSION|escape:'htmlall':'UTF-8'}"></span>
                 </a>
             </p>
             <script type="text/javascript">
-                function checkSimulatorContent() {
-                    var pgContainer = document.getElementsByClassName("pagantisSimulator");
+                function checkSimulatorContent4x() {
+                    var pgContainer = document.getElementsByClassName("pagantisSimulator4x");
                     if(pgContainer.length > 0) {
                         var pgElement = pgContainer[0];
                         if (pgElement.innerHTML != '') {
@@ -26,17 +26,17 @@
                     return false;
                 }
 
-                function loadSimulator()
+                function loadSimulator4x()
                 {
-                    window.PSSimulatorAttempts = window.attempts + 1;
-                    if (window.attempts > 4 )
+                    window.PSSimulatorAttempts4x = window.PSSimulatorAttempts4x + 1;
+                    if (window.PSSimulatorAttempts4x > 10 )
                     {
-                        clearInterval(window.PSSimulatorId);
+                        clearInterval(window.PSSimulatorId4x);
                         return true;
                     }
 
-                    if (checkSimulatorContent()) {
-                        clearInterval(window.PSSimulatorId);
+                    if (checkSimulatorContent4x()) {
+                        clearInterval(window.PSSimulatorId4x);
                         return true;
                     }
 
@@ -46,57 +46,62 @@
                     var sdk = pgSDK;
 
                     sdk.simulator.init({
-                        type: {$pagantisSimulatorType|escape:'javascript':'UTF-8'},
-                        locale: '{$locale|escape:'javascript':'UTF-8'}'.toLowerCase(),
-                        country: '{$country|escape:'javascript':'UTF-8'}'.toLowerCase(),
-                        publicKey: '{$pagantisPublicKey|escape:'javascript':'UTF-8'}',
-                        selector: '.pagantisSimulator',
-                        numInstalments: '{$pagantisQuotesStart|escape:'javascript':'UTF-8'}',
-                        totalAmount: '{$amount|escape:'javascript':'UTF-8'}'.replace('.', ','),
-                        totalPromotedAmount: '{$promotedAmount|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                        type: {$P4X_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
+                        locale: '{$P4X_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                        country: '{$P4X_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                        publicKey: '{$P4X_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
+                        selector: '.pagantisSimulator4x',
+                        numInstalments: '{$P4X_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}',
+                        totalAmount: '{$P4X_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                        totalPromotedAmount: '{$P4X_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
                         amountParserConfig: {
-                            thousandSeparator: '{$pagantisSimulatorThousandSeparator|escape:'javascript':'UTF-8'}',
-                            decimalSeparator: '{$pagantisSimulatorDecimalSeparator|escape:'javascript':'UTF-8'}',
+                            thousandSeparator: '{$P4X_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
+                            decimalSeparator: '{$P4X_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
                         }
                     });
                     return true;
                 }
-                window.PSSimulatorAttempts = 0;
-                if (!loadSimulator()) {
-                    window.PSSimulatorId = setInterval(function () {
-                        loadSimulator();
+                window.PSSimulatorAttempts4x = 0;
+                if (!loadSimulator4x()) {
+                    window.PSSimulatorId4x = setInterval(function () {
+                        loadSimulator4x();
                     }, 2000);
                 }
             </script>
             <style>
-                .pagantisSimulator {
+                .pagantisSimulator4x {
                     display: inline-block;
                 }
-                .pagantisSimulator.ps_version_1-5 {
-                    padding-top: 0px;
-                    margin-top: -15px;
+                .pagantisSimulator4x .mainImageLogo{
+                    width: 20px;
+                    height: 20px;
                 }
-                .pagantisSimulator.ps_version_1-6 {
+                .pagantisSimulator4x.ps_version_1-5 {
+                    vertical-align: middle;
+                    padding-top: 20px;
+                    margin-left: 10px;
+                }
+                .pagantisSimulator4x.ps_version_1-6 {
                     vertical-align: top;
                     margin-left: 20px;
+                    margin-top: -5px;
+
                 }
-                .pagantisSimulator.ps_version_1-7 {
+                .pagantisSimulator4x.ps_version_1-7 {
                     padding-top: 0px;
-                }
-                p.payment_module.Pagantis {
-                    min-height: 150px;
                 }
                 p.payment_module.Pagantis.ps_version_1-5 {
                     min-height: 0px;
+                    display: inline;
                 }
                 p.payment_module.Pagantis.ps_version_1-7 {
-                    min-height: 0px;
                     margin-left: -5px;
                     margin-top: -15px;
+                    margin-bottom: 0px;
                 }
                 p.payment_module a.pagantis-checkout {
                     background: url(https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png) 5px 5px no-repeat #fbfbfb;
-                    background-size: 90px;
+                    background-size: 80px;
                 }
                 p.payment_module a.pagantis-checkout.ps_version_1-7 {
                     background: none;
@@ -109,6 +114,7 @@
                 }
                 p.payment_module a.pagantis-checkout.ps_version_1-6 {
                     background-color: #fbfbfb;
+                    max-height: 90px;
                 }
                 p.payment_module a.pagantis-checkout.ps_version_1-6:after {
                     display: block;
@@ -126,12 +132,11 @@
                 p.payment_module a.pagantis-checkout.ps_version_1-5 {
                     height: 90px;
                     padding-left: 99px;
-                    padding-top: 45px;
                 }
                 p.payment_module a:hover {
                     background-color: #f6f6f6;
                 }
-                {$pagantisSimulatorStyles|escape:'javascript':'UTF-8'}
+                {$P4X_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
             </style>
         </div>
     </div>

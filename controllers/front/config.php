@@ -19,10 +19,11 @@ class PagantisConfigModuleFrontController extends ModuleFrontController
     {
         $this->authorize();
         $method = Tools::strtolower($_SERVER['REQUEST_METHOD']) . "Method";
+        $params = (_PS_VERSION_ < 1.6) ? $_POST + $_GET : Tools::getAllValues();
         if (method_exists($this, $method)) {
             header('HTTP/1.1 200 Ok', true, 200);
             header('Content-Type: application/json', true);
-            $result = json_encode($this->{$method}());
+            $result = json_encode($this->{$method}($params['product']));
             header('Content-Length: ' . Tools::strlen($result));
             echo $result;
             exit();
@@ -34,18 +35,34 @@ class PagantisConfigModuleFrontController extends ModuleFrontController
     }
 
     /**
+     * @param null $product
      * @return array
      */
-    public function getExtraConfigs()
+    public function getExtraConfigs($product = null)
     {
-        $sql_content = 'select * from ' . _DB_PREFIX_. 'pagantis_config';
+        $availableProductsSQL = 'select * from ' . _DB_PREFIX_. 'pagantis_config where config = \'PRODUCTS\'';
+        $dbProducts = Db::getInstance()->executeS($availableProductsSQL);
+        $availableProductsArray = explode(',', $dbProducts[0]['value']);
+        $unrequestedProducts = array_diff($availableProductsArray, array($product));
+        $unrequestedProductSQL = '';
+        foreach ($unrequestedProducts as $unrequestedProduct) {
+            $unrequestedProductSQL .= "'". $unrequestedProduct . "',";
+        }
+        $unrequestedProductSQL = rtrim($unrequestedProductSQL, ",");
+        $sql_content = 'select * from ' . _DB_PREFIX_.
+            'pagantis_config where config not in (' . $unrequestedProductSQL . ')';
+
         $dbConfigs = Db::getInstance()->executeS($sql_content);
 
         $simpleDbConfigs = array();
         foreach ($dbConfigs as $config) {
+            $productConfigs = json_decode($config['value'], true);
+            if ($productConfigs) {
+                $simpleDbConfigs = array_merge($simpleDbConfigs, $productConfigs);
+            }
             $simpleDbConfigs[$config['config']] = $config['value'];
         }
-
+        unset($simpleDbConfigs[$product]);
         return $simpleDbConfigs;
     }
 
@@ -54,30 +71,46 @@ class PagantisConfigModuleFrontController extends ModuleFrontController
      */
     public function postMethod()
     {
+
         $errors = array();
-        $post = (_PS_VERSION_ < 1.6) ? $_POST + $_GET : Tools::getAllValues();
-        unset($post['fc']);
-        unset($post['module']);
-        unset($post['controller']);
-        unset($post['secret']);
-        if (count($post)) {
-            foreach ($post as $config => $value) {
-                $defaultConfigs = $this->getExtraConfigs();
-                if (isset($defaultConfigs[$config])) {
-                    Db::getInstance()->update(
-                        'pagantis_config',
-                        array('value' => pSQL($value)),
-                        'config = \''. pSQL($config) .'\''
-                    );
+        $params = (_PS_VERSION_ < 1.6) ? $_POST + $_GET : Tools::getAllValues();
+        unset($params['fc']);
+        unset($params['module']);
+        unset($params['controller']);
+        unset($params['secret']);
+        $productConfigsSQL = 'select * from ' . _DB_PREFIX_.
+            'pagantis_config where config = \''. pSQL($params['product']) . '\'';
+        $productConfigs = Db::getInstance()->executeS($productConfigsSQL);
+        $availableProductsArray = json_decode($productConfigs[0]['value'], true);
+        if (count($params) > 0) {
+            foreach ($params as $config => $value) {
+                if (array_key_exists($config, $availableProductsArray)) {
+                    $availableProductsArray[$config] = $value;
                 } else {
-                    $errors[$config] = $value;
+                    $defaultConfigs = $this->getExtraConfigs($params['product']);
+                    if (isset($defaultConfigs[$config])) {
+                        if ($config !== 'product') {
+                            Db::getInstance()->update(
+                                'pagantis_config',
+                                array('value' => pSQL($value)),
+                                'config = \''. pSQL($config) .'\''
+                            );
+                        }
+                    } else {
+                        $errors[$config] = $value;
+                    }
                 }
+                Db::getInstance()->update(
+                    'pagantis_config',
+                    array('value' => json_encode($availableProductsArray)),
+                    'config = \''. pSQL($params['product']) .'\''
+                );
             }
         } else {
             $errors['NO_POST_DATA'] = 'No post data provided';
         }
 
-        $dbConfigs = $this->getMethod();
+        $dbConfigs = $this->getMethod($params['product']);
         if (count($errors) > 0) {
             $dbConfigs['__ERRORS__'] = $errors;
         }
@@ -85,20 +118,14 @@ class PagantisConfigModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * Read PTM configs
+     * PTM configs
      *
-     * @throws PrestaShopDatabaseException
+     * @param null $product
+     * @return array
      */
-    public function getMethod()
+    public function getMethod($product = null)
     {
-        $sql_content = 'select * from ' . _DB_PREFIX_. 'pagantis_config';
-        $dbConfigs = Db::getInstance()->executeS($sql_content);
-
-        $simpleDbConfigs = array();
-        foreach ($dbConfigs as $config) {
-            $simpleDbConfigs[$config['config']] = $config['value'];
-        }
-        return $simpleDbConfigs;
+        return $this->getExtraConfigs($product);
     }
 
     /**
@@ -106,9 +133,11 @@ class PagantisConfigModuleFrontController extends ModuleFrontController
      */
     public function authorize()
     {
-        $privateKey = Configuration::get('pagantis_private_key');
+        $productCode = Tools::getValue('product', false);
+        $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
+        $privateKey = Configuration::get(Tools::strtolower($productCode) . '_private_key');
         $privateKeyGet = Tools::getValue('secret', false);
-        if (!empty($privateKeyGet) && $privateKeyGet === $privateKey) {
+        if (!empty($privateKeyGet) && $privateKeyGet === $privateKey && in_array(Tools::strtoupper($productCode), $products)) {
             return true;
         }
 
