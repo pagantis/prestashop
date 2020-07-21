@@ -3,6 +3,14 @@
 global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{pagantis}prestashop>pagantis_13e1ff5db6f35c83ed13a03f4db7e0fa'] = 'Pagantis';
+$_MODULE['<{pagantis}prestashop>pagantis_bb3e7a18a52e89a56ace66e01d6245e3'] = 'Le module est activé 4x';
+$_MODULE['<{pagantis}prestashop>pagantis_05c698d2d546a7c265e83df6b86272f4'] = 'Clé publiqu 4x';
+$_MODULE['<{pagantis}prestashop>pagantis_798379a5ad6a9eb9fe21e2085f9a9c8c'] = 'Clé privée 4x';
+$_MODULE['<{pagantis}prestashop>pagantis_02bb423c3494ead1f8f7e0af2e519dbc'] = 'Le simulateur est activé per 4x';
+$_MODULE['<{pagantis}prestashop>pagantis_d00e8d71f4ec60dccce0b30d32ec9cf6'] = 'Le module est activé 12x';
+$_MODULE['<{pagantis}prestashop>pagantis_583d96851410dd1ce386c5e92142dbbc'] = 'Clé publiqu 12x';
+$_MODULE['<{pagantis}prestashop>pagantis_eef9966eae42f686d3ebe548f86b5afe'] = 'Clé privée 12x';
+$_MODULE['<{pagantis}prestashop>pagantis_0699ca572197cce3644a4b4548483612'] = 'Le simulateur est activé per 12x';
 $_MODULE['<{pagantis}prestashop>pagantis_92d4773a9f32fc3333cb8238471cf763'] = 'Il manque l\'extension php: curl';
 $_MODULE['<{pagantis}prestashop>pagantis_5984afe5af3bc7d4a01ba1d722c00a38'] = 'La version PHP ci-dessous 5.3.0 n\'est pas supportée';
 $_MODULE['<{pagantis}prestashop>pagantis_da34b2e0a9be1c3ef75eeeafd0e3d1ba'] = 'La version Curl est inférieure à 7.34.0 et ne prend pas en charge TLS 1.2.';

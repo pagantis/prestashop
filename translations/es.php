@@ -3,6 +3,14 @@
 global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{pagantis}prestashop>pagantis_13e1ff5db6f35c83ed13a03f4db7e0fa'] = 'Pagantis';
+$_MODULE['<{pagantis}prestashop>pagantis_bb3e7a18a52e89a56ace66e01d6245e3'] = 'Habilitar el módulo 4x';
+$_MODULE['<{pagantis}prestashop>pagantis_05c698d2d546a7c265e83df6b86272f4'] = 'Clave pública para 4x';
+$_MODULE['<{pagantis}prestashop>pagantis_798379a5ad6a9eb9fe21e2085f9a9c8c'] = 'Clave privada para 4x';
+$_MODULE['<{pagantis}prestashop>pagantis_02bb423c3494ead1f8f7e0af2e519dbc'] = 'Habilitar el simulador para 4x';
+$_MODULE['<{pagantis}prestashop>pagantis_d00e8d71f4ec60dccce0b30d32ec9cf6'] = 'Habilitar el módulo 12x';
+$_MODULE['<{pagantis}prestashop>pagantis_583d96851410dd1ce386c5e92142dbbc'] = 'Clave pública para 12x';
+$_MODULE['<{pagantis}prestashop>pagantis_eef9966eae42f686d3ebe548f86b5afe'] = 'Clave privada para 12x';
+$_MODULE['<{pagantis}prestashop>pagantis_0699ca572197cce3644a4b4548483612'] = 'Habilitar el simulador para 12x';
 $_MODULE['<{pagantis}prestashop>pagantis_92d4773a9f32fc3333cb8238471cf763'] = 'Falta la extension de php: curl';
 $_MODULE['<{pagantis}prestashop>pagantis_c662e7ac7d4e33550480c02c1e85affc'] = 'Paga en 4 pagos, sin costes';
 $_MODULE['<{pagantis}prestashop>pagantis_0c0a0c6f632ce7778f5dd006bc6fed4d'] = 'Hasta 4 pagos de';

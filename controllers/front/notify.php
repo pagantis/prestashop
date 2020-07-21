@@ -226,15 +226,15 @@ class PagantisNotifyModuleFrontController extends AbstractController
         );
         $productCode = Tools::getValue('product');
         $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
-        if (!in_array(strtoupper($productCode), $products)) {
+        if (!in_array(Tools::strtoupper($productCode), $products)) {
             throw new UnknownException(
                 'No valid Pagantis product provided in the url: ' . Tools::getValue('product')
             );
         }
-        $this->productName = "Pagantis " . strtolower($productCode);
+        $this->productName = "Pagantis " . Tools::strtolower($productCode);
 
-        $pagantisPublicKey = Configuration::get(strtolower($productCode) . '_public_key');
-        $pagantisPrivateKey = Configuration::get(strtolower($productCode) . '_private_key');
+        $pagantisPublicKey = Configuration::get(Tools::strtolower($productCode) . '_public_key');
+        $pagantisPrivateKey = Configuration::get(Tools::strtolower($productCode) . '_private_key');
 
         $this->config['publicKey'] = $pagantisPublicKey;
         $this->config['privateKey'] = $pagantisPrivateKey;
@@ -257,10 +257,10 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function getMerchantOrderId()
     {
         try {
-            $this->merchantOrderId = Db::getInstance()->getValue(
-                'select ps_order_id from '._DB_PREFIX_.self::ORDERS_TABLE.' where id = '
-                .(int)$this->merchantCartId
-            );
+            $table = _DB_PREFIX_ .self::ORDERS_TABLE;
+            $sql = 'select ps_order_id from ' . $table .
+                ' where id = ' .(int)$this->merchantCartId;
+            $this->merchantOrderId = Db::getInstance()->getValue($sql);
         } catch (\Exception $exception) {
             // do nothing
         }

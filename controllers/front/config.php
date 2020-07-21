@@ -135,9 +135,9 @@ class PagantisConfigModuleFrontController extends ModuleFrontController
     {
         $productCode = Tools::getValue('product', false);
         $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
-        $privateKey = Configuration::get(strtolower($productCode) . '_private_key');
+        $privateKey = Configuration::get(Tools::strtolower($productCode) . '_private_key');
         $privateKeyGet = Tools::getValue('secret', false);
-        if (!empty($privateKeyGet) && $privateKeyGet === $privateKey && in_array(strtoupper($productCode), $products)) {
+        if (!empty($privateKeyGet) && $privateKeyGet === $privateKey && in_array(Tools::strtoupper($productCode), $products)) {
             return true;
         }
 
