@@ -450,9 +450,9 @@ class Pagantis extends PaymentModule
                 $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $link = $link->getModuleLink('pagantis', 'payment');
                 if (strpos($link, '?') !== false) {
-                    $link .= '&product=' . Tools::strtolower($productConfigs['CODE']));
+                    $link .= '&product=' . Tools::strtolower($productConfigs['CODE']);
                 } else {
-                    $link .= '?product=' . Tools::strtolower($productConfigs['CODE']))
+                    $link .= '?product=' . Tools::strtolower($productConfigs['CODE']);
                 }
                 $paymentOption
                     ->setCallToActionText($templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_TITLE'])
