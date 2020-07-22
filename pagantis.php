@@ -448,9 +448,15 @@ class Pagantis extends PaymentModule
                 $this->context->smarty->assign($templateConfigs);
 
                 $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+                $link = $link->getModuleLink('pagantis', 'payment');
+                if (strpos($link, '?') !== false) {
+                    $link .= '&product=' . Tools::strtolower($productConfigs['CODE']));
+                } else {
+                    $link .= '?product=' . Tools::strtolower($productConfigs['CODE']))
+                }
                 $paymentOption
                     ->setCallToActionText($templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_TITLE'])
-                    ->setAction($link->getModuleLink('pagantis', 'payment') . '&product=' . Tools::strtolower($productConfigs['CODE']))
+                    ->setAction($link)
                     ->setLogo($templateConfigs[Tools::strtolower($productConfigs['CODE']) . '_LOGO'])
                     ->setModuleName(__CLASS__)
                     ->setAdditionalInformation(
