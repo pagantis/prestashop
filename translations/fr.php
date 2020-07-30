@@ -11,6 +11,7 @@ $_MODULE['<{pagantis}prestashop>pagantis_d00e8d71f4ec60dccce0b30d32ec9cf6'] = 'L
 $_MODULE['<{pagantis}prestashop>pagantis_583d96851410dd1ce386c5e92142dbbc'] = 'Clé publiqu 12x';
 $_MODULE['<{pagantis}prestashop>pagantis_eef9966eae42f686d3ebe548f86b5afe'] = 'Clé privée 12x';
 $_MODULE['<{pagantis}prestashop>pagantis_0699ca572197cce3644a4b4548483612'] = 'Le simulateur est activé per 12x';
+$_MODULE['<{pagantis}prestashop>pagantis_c662e7ac7d4e33550480c02c1e85affc'] = 'Payez en 4 fois, sans frais';
 $_MODULE['<{pagantis}prestashop>pagantis_92d4773a9f32fc3333cb8238471cf763'] = 'Il manque l\'extension php: curl';
 $_MODULE['<{pagantis}prestashop>pagantis_5984afe5af3bc7d4a01ba1d722c00a38'] = 'La version PHP ci-dessous 5.3.0 n\'est pas supportée';
 $_MODULE['<{pagantis}prestashop>pagantis_da34b2e0a9be1c3ef75eeeafd0e3d1ba'] = 'La version Curl est inférieure à 7.34.0 et ne prend pas en charge TLS 1.2.';

@@ -33,6 +33,9 @@
             display:inline-block;
             width: 90%
         }
+        iframe#pg-iframe-product-simulator {
+            display: block;
+        }
         {$PAGANTIS_SIMULATOR_CSS_PRODUCT_PAGE_STYLES|escape:'javascript':'UTF-8'}
     </style>
     <script>
