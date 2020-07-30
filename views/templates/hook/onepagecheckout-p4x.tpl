@@ -5,6 +5,7 @@
  * @copyright 2019 Pagantis
  * @license   proprietary
  *}
+
 <form id="pagantis_form_{$PAGANTIS_CODE|escape:'htmlall':'UTF-8'}" action="{$PAGANTIS_PAYMENT_URL|escape:'htmlall':'UTF-8'}"></form>
 {if version_compare($smarty.const._PS_VERSION_,'1.6.0.0','<') && $PAGANTIS_PAYMENT_URL}
     <div class="payment_module pagantis{$PAGANTIS_CODE|escape:'htmlall':'UTF-8'}" id="pagantis_payment_button">
@@ -61,7 +62,7 @@
 
         if (!checkSimulatorContent()) {
             sdk.simulator.init({
-                type: {$PAGANTIS_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
+                type: '{$PAGANTIS_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'}',
                 locale: '{$PAGANTIS_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
                 country: '{$PAGANTIS_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
                 publicKey: '{$PAGANTIS_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
@@ -85,10 +86,10 @@
         }, 500);
     }
 </script>
-<span class="pagantisSimulator{$PAGANTIS_CODE|escape:'htmlall':'UTF-8'}></span>
+<span class="pagantisSimulator{$PAGANTIS_CODE|escape:'htmlall':'UTF-8'}"></span>
 <style>
     .pgSimulatorPlaceholder {
         display: inline-block;
     }
-    {$PAGANTIS_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
+    '{$PAGANTIS_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}'
 </style>
