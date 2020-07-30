@@ -17,7 +17,6 @@ $_MODULE['<{pagantis}prestashop>pagantis_0c0a0c6f632ce7778f5dd006bc6fed4d'] = 'F
 $_MODULE['<{pagantis}prestashop>pagantis_f847ba98e30c678ad9c13537f20bfa51'] = 'senza costi';
 $_MODULE['<{pagantis}prestashop>pagantis_5984afe5af3bc7d4a01ba1d722c00a38'] = 'La versione di PHP qui sotto 5.3.0 non è supportata';
 $_MODULE['<{pagantis}prestashop>pagantis_da34b2e0a9be1c3ef75eeeafd0e3d1ba'] = 'La versione di Curl è inferiore a 7.34.0 e non supporta TLS 1.2';
-$_MODULE['<{pagantis}prestashop>pagantis_c662e7ac7d4e33550480c02c1e85affc'] = 'Fino a 4 rate, senza costi';
 $_MODULE['<{pagantis}prestashop>pagantis_0c0a0c6f632ce7778f5dd006bc6fed4d'] = 'Fino a 4 rate da';
 $_MODULE['<{pagantis}prestashop>pagantis_f847ba98e30c678ad9c13537f20bfa51'] = 'senza costi';
 $_MODULE['<{pagantis}prestashop>pagantis_5f6b4e92693477bbe133f206f62eef8f'] = 'Finanziamento immediato, fino a 12 mesi';
