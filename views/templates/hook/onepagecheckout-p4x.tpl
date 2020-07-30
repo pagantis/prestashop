@@ -62,7 +62,7 @@
 
         if (!checkSimulatorContent()) {
             sdk.simulator.init({
-                type: '{$PAGANTIS_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'}',
+                type: {$PAGANTIS_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
                 locale: '{$PAGANTIS_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
                 country: '{$PAGANTIS_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
                 publicKey: '{$PAGANTIS_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
@@ -91,5 +91,5 @@
     .pgSimulatorPlaceholder {
         display: inline-block;
     }
-    '{$PAGANTIS_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}'
+    {$PAGANTIS_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
 </style>

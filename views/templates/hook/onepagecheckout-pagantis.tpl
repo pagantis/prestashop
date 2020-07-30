@@ -61,7 +61,7 @@
 
         if (!checkSimulatorContent()) {
             sdk.simulator.init({
-                type: '{$P4X_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'}',
+                type: {$P4X_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
                 locale: '{$P4X_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
                 country: '{$P4X_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
                 publicKey: '{$P4X_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
@@ -90,5 +90,5 @@
     .pgSimulatorPlaceholder {
         display: inline-block;
     }
-    '{$P4X_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}'
+    {$P4X_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
 </style>
