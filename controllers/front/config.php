@@ -50,7 +50,8 @@ class PagantisConfigModuleFrontController extends ModuleFrontController
         }
         $unrequestedProductSQL = rtrim($unrequestedProductSQL, ",");
         $sql_content = 'select * from ' . _DB_PREFIX_.
-            'pagantis_config where config not in (' . $unrequestedProductSQL . ')';
+            'pagantis_config where config not in (' . $unrequestedProductSQL . ') 
+             and config not like (\'PAGANTIS_%\')  and config not like (\'PMT_%\') ';
 
         $dbConfigs = Db::getInstance()->executeS($sql_content);
 
@@ -78,8 +79,10 @@ class PagantisConfigModuleFrontController extends ModuleFrontController
         unset($params['module']);
         unset($params['controller']);
         unset($params['secret']);
+        $product = $params['product'];
+        unset($params['product']);
         $productConfigsSQL = 'select * from ' . _DB_PREFIX_.
-            'pagantis_config where config = \''. pSQL($params['product']) . '\'';
+            'pagantis_config where config = \''. pSQL($product) . '\'';
         $productConfigs = Db::getInstance()->executeS($productConfigsSQL);
         $availableProductsArray = json_decode($productConfigs[0]['value'], true);
         if (count($params) > 0) {
@@ -87,7 +90,7 @@ class PagantisConfigModuleFrontController extends ModuleFrontController
                 if (array_key_exists($config, $availableProductsArray)) {
                     $availableProductsArray[$config] = $value;
                 } else {
-                    $defaultConfigs = $this->getExtraConfigs($params['product']);
+                    $defaultConfigs = $this->getExtraConfigs($product);
                     if (isset($defaultConfigs[$config])) {
                         if ($config !== 'product') {
                             Db::getInstance()->update(
@@ -103,14 +106,14 @@ class PagantisConfigModuleFrontController extends ModuleFrontController
                 Db::getInstance()->update(
                     'pagantis_config',
                     array('value' => json_encode($availableProductsArray)),
-                    'config = \''. pSQL($params['product']) .'\''
+                    'config = \''. pSQL($product) .'\''
                 );
             }
         } else {
             $errors['NO_POST_DATA'] = 'No post data provided';
         }
 
-        $dbConfigs = $this->getMethod($params['product']);
+        $dbConfigs = $this->getMethod($product);
         if (count($errors) > 0) {
             $dbConfigs['__ERRORS__'] = $errors;
         }

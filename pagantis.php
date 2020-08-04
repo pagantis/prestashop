@@ -114,7 +114,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.6.2';
+        $this->version = '8.6.3';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -195,9 +195,7 @@ class Pagantis extends PaymentModule
         Configuration::deleteByName('4x_public_key');
         Configuration::deleteByName('12x_public_key');
         Configuration::deleteByName('4x_public_key');
-        Configuration::deleteByName('4x_public_key');
-        Configuration::deleteByName('4x_public_key');
-        Configuration::deleteByName('private_key');
+        Configuration::deleteByName('12x_public_key');
 
         return parent::uninstall();
     }
@@ -207,7 +205,6 @@ class Pagantis extends PaymentModule
      */
     public function migrate()
     {
-        //@todo migrar extra configs
     }
 
     /**
