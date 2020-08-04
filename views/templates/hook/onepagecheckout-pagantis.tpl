@@ -62,6 +62,7 @@
 
         if (!checkSimulatorContent()) {
             sdk.simulator.init({
+                id: 'checkout-simulator',
                 type: "{$PAGANTIS_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'}",
                 locale: '{$PAGANTIS_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
                 country: '{$PAGANTIS_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),

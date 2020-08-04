@@ -61,6 +61,7 @@
 
         if (!checkSimulatorContent()) {
             sdk.simulator.init({
+                id: 'checkout-simulator',
                 type: {$P4X_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
                 locale: '{$P4X_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
                 country: '{$P4X_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
