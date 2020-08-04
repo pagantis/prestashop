@@ -445,16 +445,16 @@ class Pagantis extends PaymentModule
                 $this->context->smarty->assign($templateConfigs);
 
                 $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-                $link = $link->getModuleLink('pagantis', 'payment');
-                if (strpos($link, '?') !== false) {
-                    $link .= '&product=' . Tools::strtolower($productConfigs['CODE']);
+                $uri = $link->getModuleLink('pagantis', 'payment');
+                if (strpos($uri, '?') !== false) {
+                    $uri .= '&product=' . Tools::strtolower($productConfigs['CODE']);
                 } else {
-                    $link .= '?product=' . Tools::strtolower($productConfigs['CODE']);
+                    $uri .= '?product=' . Tools::strtolower($productConfigs['CODE']);
                 }
                 $paymentOption
                     ->setCallToActionText($templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_TITLE'])
-                    ->setAction($link)
-                    ->setLogo($templateConfigs[Tools::strtolower($productConfigs['CODE']) . '_LOGO'])
+                    ->setAction($uri)
+                    ->setLogo($templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_LOGO'])
                     ->setModuleName(__CLASS__)
                     ->setAdditionalInformation(
                         $this->fetch('module:pagantis/views/templates/hook/checkout-' . Tools::strtolower($productConfigs['CODE']) . '.tpl')
