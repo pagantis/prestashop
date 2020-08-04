@@ -28,6 +28,7 @@
         .PagantisSimulator4x .image4x{
             height: 18px;
         }
+        {$P4X_SIMULATOR_CSS_PRODUCT_PAGE_STYLES|escape:'javascript':'UTF-8'}
     </style>
     <div class="PagantisSimulator4x ps-version-{$P4X_PS_VERSION|escape:'htmlall':'UTF-8'}">
         {$P4X_SIMULATOR_TITLE nofilter} {$P4X_AMOUNT4X nofilter}€, {$P4X_SIMULATOR_SUBTITLE nofilter} <img class="image4x" src="{$P4X_SIMULATOR_DISPLAY_IMAGE|escape:'htmlall':'UTF-8'}">
