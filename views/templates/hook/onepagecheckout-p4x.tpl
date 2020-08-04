@@ -5,16 +5,18 @@
  * @copyright 2019 Pagantis
  * @license   proprietary
  *}
-<form id="pagantis_form_{$P4X_CODE|escape:'htmlall':'UTF-8'}" action="{$P4X_PAYMENT_URL|escape:'htmlall':'UTF-8'}"></form>
+<form id="pagantis_form_{$P4X_CODE|escape:'htmlall':'UTF-8'}" action="{$P4X_PAYMENT_URL|escape:'htmlall':'UTF-8'}">
+    <input type="hidden" name="product" id="product" value="{$P4X_CODE|escape:'htmlall':'UTF-8'}">
+</form>
 {if version_compare($smarty.const._PS_VERSION_,'1.6.0.0','<') && $P4X_PAYMENT_URL}
     <div class="payment_module pagantis{$P4X_CODE|escape:'htmlall':'UTF-8'}" id="pagantis_payment_button">
-        <a href="javascript:$('#pagantis_form').submit();" title="{$P4X_TITLE|escape:'htmlall':'UTF-8'}">
+        <a href="javascript:$('#pagantis_form_P4X').submit();" title="{$P4X_TITLE|escape:'htmlall':'UTF-8'}">
             {$P4X_TITLE|escape:'htmlall':'UTF-8'}
         </a>
     </div>
 {else}
     <p class="payment_module pagantis pagantis{$P4X_CODE|escape:'htmlall':'UTF-8'}" id="pagantis_payment_button">
-        <a href="javascript:$('#pagantis_form').submit();" title="{$P4X_TITLE|escape:'htmlall':'UTF-8'}">
+        <a href="javascript:$('#pagantis_form_P4X').submit();" title="{$P4X_TITLE|escape:'htmlall':'UTF-8'}">
             {$P4X_TITLE|escape:'htmlall':'UTF-8'}
         </a>
     </p>

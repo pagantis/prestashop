@@ -6,16 +6,18 @@
  * @license   proprietary
  *}
 
-<form id="pagantis_form_{$PAGANTIS_CODE|escape:'htmlall':'UTF-8'}" action="{$PAGANTIS_PAYMENT_URL|escape:'htmlall':'UTF-8'}"></form>
+<form id="pagantis_form_{$PAGANTIS_CODE|escape:'htmlall':'UTF-8'}" action="{$PAGANTIS_PAYMENT_URL|escape:'htmlall':'UTF-8'}">
+    <input type="hidden" name="product" id="product" value="{$Pagantis_CODE|escape:'htmlall':'UTF-8'}">
+</form>
 {if version_compare($smarty.const._PS_VERSION_,'1.6.0.0','<') && $PAGANTIS_PAYMENT_URL}
     <div class="payment_module pagantis{$PAGANTIS_CODE|escape:'htmlall':'UTF-8'}" id="pagantis_payment_button">
-        <a href="javascript:$('#pagantis_form').submit();" title="{$PAGANTIS_TITLE|escape:'htmlall':'UTF-8'}">
+        <a href="javascript:$('#pagantis_form_PAGANTIS').submit();" title="{$PAGANTIS_TITLE|escape:'htmlall':'UTF-8'}">
             {$PAGANTIS_TITLE|escape:'htmlall':'UTF-8'}
         </a>
     </div>
 {else}
     <p class="payment_module pagantis pagantis{$PAGANTIS_CODE|escape:'htmlall':'UTF-8'}" id="pagantis_payment_button">
-        <a href="javascript:$('#pagantis_form').submit();" title="{$PAGANTIS_TITLE|escape:'htmlall':'UTF-8'}">
+        <a href="javascript:$('#pagantis_form_PAGANTIS').submit();" title="{$PAGANTIS_TITLE|escape:'htmlall':'UTF-8'}">
             {$PAGANTIS_TITLE|escape:'htmlall':'UTF-8'}
         </a>
     </p>
