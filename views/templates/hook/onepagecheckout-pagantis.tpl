@@ -75,9 +75,9 @@
                 }
             });
         }
+
         return false;
     }
-
     window.PSSimulatorAttempts = 0;
     if (!loadSimulator()) {
         window.PSSimulatorId = setInterval(function () {
@@ -85,7 +85,7 @@
         }, 500);
     }
 </script>
-<span class="pagantisSimulator{$P4X_CODE|escape:'htmlall':'UTF-8'}></span>
+<span class="pagantisSimulator{$P4X_CODE|escape:'htmlall':'UTF-8'}"></span>
 <style>
     .pgSimulatorPlaceholder {
         display: inline-block;

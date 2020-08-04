@@ -114,7 +114,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.6.2';
+        $this->version = '8.6.3';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -195,9 +195,7 @@ class Pagantis extends PaymentModule
         Configuration::deleteByName('4x_public_key');
         Configuration::deleteByName('12x_public_key');
         Configuration::deleteByName('4x_public_key');
-        Configuration::deleteByName('4x_public_key');
-        Configuration::deleteByName('4x_public_key');
-        Configuration::deleteByName('private_key');
+        Configuration::deleteByName('12x_public_key');
 
         return parent::uninstall();
     }
@@ -207,7 +205,6 @@ class Pagantis extends PaymentModule
      */
     public function migrate()
     {
-        //@todo migrar extra configs
     }
 
     /**
@@ -448,16 +445,16 @@ class Pagantis extends PaymentModule
                 $this->context->smarty->assign($templateConfigs);
 
                 $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-                $link = $link->getModuleLink('pagantis', 'payment');
-                if (strpos($link, '?') !== false) {
-                    $link .= '&product=' . Tools::strtolower($productConfigs['CODE']);
+                $uri = $link->getModuleLink('pagantis', 'payment');
+                if (strpos($uri, '?') !== false) {
+                    $uri .= '&product=' . Tools::strtolower($productConfigs['CODE']);
                 } else {
-                    $link .= '?product=' . Tools::strtolower($productConfigs['CODE']);
+                    $uri .= '?product=' . Tools::strtolower($productConfigs['CODE']);
                 }
                 $paymentOption
                     ->setCallToActionText($templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_TITLE'])
-                    ->setAction($link)
-                    ->setLogo($templateConfigs[Tools::strtolower($productConfigs['CODE']) . '_LOGO'])
+                    ->setAction($uri)
+                    ->setLogo($templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_LOGO'])
                     ->setModuleName(__CLASS__)
                     ->setAdditionalInformation(
                         $this->fetch('module:pagantis/views/templates/hook/checkout-' . Tools::strtolower($productConfigs['CODE']) . '.tpl')
