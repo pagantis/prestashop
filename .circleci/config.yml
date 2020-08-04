@@ -12,6 +12,21 @@ commands:
             echo 127.0.0.1 prestashop17-test.docker | sudo tee -a /etc/hosts
             sudo curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
+  install_node:
+    description: "Install node@12.18.3"
+    steps:
+      - run:
+          name: Install php7.2 && Composer Install
+          command: |
+            set +e
+            npm install
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+            export NVM_DIR=/opt/circleci/.nvm
+            [ -s "${NVM_DIR}/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install v12.18.3
+            nvm alias default v12.18.3
+            echo 'export NVM_DIR=/opt/circleci/.nvm' >> $BASH_ENV
+            echo "[ -s \"${NVM_DIR}/nvm.sh\" ] && . \"${NVM_DIR}/nvm.sh\"" >> $BASH_ENV
   install_dependencies:
     description: "Install php7.2 && Composer Install"
     steps:
@@ -26,15 +41,13 @@ commands:
             sudo mv composer.phar /usr/local/bin/composer
             composer install
   npm_grunt:
-    description: "Npm Install && nvm-node && Grunt"
+    description: "Npm Install && run Grunt"
     steps:
       - run:
           name: Npm Install && nvm-node && Grunt
           command: |
             npm install
-            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
-            export NVM_DIR="/opt/circleci/.nvm" && \. "$NVM_DIR/nvm.sh" && \. "$NVM_DIR/bash_completion"
-            nvm install node
+            pwd
             node_modules/.bin/grunt
   run_tests:
     description: "Run Tests"
@@ -43,44 +56,45 @@ commands:
           name: Run Tests
           command: |
             export DOCKERHOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
-            export NVM_DIR="/opt/circleci/.nvm" && \. "$NVM_DIR/nvm.sh" && \. "$NVM_DIR/bash_completion"
-            nvm install node
             node_modules/.bin/grunt $PS_VERSION
 jobs:
   runTestPrestashop17:
     environment:
       PS_VERSION: shell:runTestPrestashop17
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-1604:202007-01
     working_directory: ~/repo
     steps:
       - checkout
       - host_and_docker_compose
       - install_dependencies
+      - install_node
       - npm_grunt
       - run_tests
   runTestPrestashop16:
     environment:
       PS_VERSION: shell:runTestPrestashop16
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-1604:202007-01
     working_directory: ~/repo
     steps:
       - checkout
       - host_and_docker_compose
       - install_dependencies
+      - install_node
       - npm_grunt
       - run_tests
   runTestPrestashop15:
     environment:
       PS_VERSION: shell:runTestPrestashop15
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-1604:202007-01
     working_directory: ~/repo
     steps:
       - checkout
       - host_and_docker_compose
       - install_dependencies
+      - install_node
       - npm_grunt
       - run_tests
   pushRelease:
@@ -124,13 +138,26 @@ workflows:
             branches:
               only: /.*/
       - runTestPrestashop16:
+          requires:
+            - test-hold-for-ps15
           filters:
             branches:
               only: /.*/
       - runTestPrestashop17:
+          requires:
+            - test-hold-for-ps15
           filters:
             branches:
               only: /.*/
+      - test-hold-for-ps15:
+          type: approval
+          requires:
+            - runTestPrestashop15
+      - test-hold-for-ps16:
+          type: approval
+          requires:
+            - runTestPrestashop16
+
   release:
     jobs:
       - pushRelease:
