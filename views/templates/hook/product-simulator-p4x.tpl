@@ -20,6 +20,7 @@
             user-select: none;
             padding: 5px 0 10px 0;
             min-width: 250px;
+            display: block;
         }
         .PagantisSimulator4x.ps-version-1-5 {
             display: inline-block;
