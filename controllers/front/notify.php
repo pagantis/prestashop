@@ -120,10 +120,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $this->getOrigin(),
                 Tools::getValue('id_cart')
             );
-            $this->saveLog(array(
-                'requestId' => $this->requestId,
-                'message' => $redirectMessage
-            ));
+            $this->saveLog(array('requestId' => $this->requestId, 'message' => $redirectMessage));
 
             $this->prepareVariables();
             $this->checkConcurrency();
@@ -176,7 +173,15 @@ class PagantisNotifyModuleFrontController extends AbstractController
         try {
             $this->unblockConcurrency($this->merchantCartId);
         } catch (\Exception $exception) {
-            // Do nothing
+            $exceptionMessage = sprintf(
+                "unblocking exception[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s][%s]",
+                $this->getOrigin(),
+                $this->merchantCartId,
+                $this->merchantOrderId,
+                $this->pagantisOrderId,
+                $exception->getMessage()
+            );
+            $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage));
         }
 
         return $this->finishProcess(false);
@@ -202,20 +207,15 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         $this->getMerchantOrderId();
         if (!empty($this->merchantOrderId)) {
-            throw new WrongStatusException('The order "' . $this->merchantOrderId . '" already exists in '.
-                self::ORDERS_TABLE . ' table');
+            $exceptionMessage = sprintf(
+                "The order %s already exists in %s table",
+                $this->merchantOrderId,
+                self::ORDERS_TABLE
+            );
+            throw new UnknownException($exceptionMessage);
         }
-        $callbackOkUrl = $this->context->link->getPageLink(
-            'order-confirmation',
-            null,
-            null
-        );
-        $callbackKoUrl = $this->context->link->getPageLink(
-            'order',
-            null,
-            null,
-            array('step'=>3)
-        );
+        $callbackOkUrl = $this->context->link->getPageLink('order-confirmation', null, null);
+        $callbackKoUrl = $this->context->link->getPageLink('order', null, null, array('step'=>3));
 
         $this->config = array(
             'urlOK' => (Pagantis::getExtraConfig('URL_OK') !== '') ?
@@ -258,13 +258,21 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             $table = _DB_PREFIX_ .self::ORDERS_TABLE;
-            $sql = 'select ps_order_id from ' . $table .
-                ' where id = ' .(int)$this->merchantCartId;
+            $sql = 'select ps_order_id from ' . $table .' where id = ' .(int)$this->merchantCartId;
             $this->merchantOrderId = Db::getInstance()->getValue($sql);
         } catch (\Exception $exception) {
-            // do nothing
+            $exceptionMessage = sprintf(
+                "getMerchantOrderId exception[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s][%s]",
+                $this->getOrigin(),
+                $this->merchantCartId,
+                $this->merchantOrderId,
+                $this->pagantisOrderId,
+                $exception->getMessage()
+            );
+            $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage));
         }
     }
+
     /**
      * Retrieve the merchant order by id
      *
@@ -295,8 +303,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             $this->pagantisOrderId= Db::getInstance()->getValue(
-                'select order_id from '._DB_PREFIX_.self::ORDERS_TABLE.' where id = '
-                .(int)$this->merchantCartId
+                'select order_id from '._DB_PREFIX_.self::ORDERS_TABLE.' where id = '.(int)$this->merchantCartId
             );
 
             if (is_null($this->pagantisOrderId)) {
@@ -378,12 +385,21 @@ class PagantisNotifyModuleFrontController extends AbstractController
                     ' compared with Pagantis Order: ' . $this->pagantisOrderId .
                     '. The Cart in PrestaShop has an amount of ' . $psTotalAmount . ' and in Pagantis ' .
                     $pgTotalAmount . ' PLEASE REVIEW THE ORDER';
+
                 $this->saveLog(array(
                     'requestId' => $this->requestId,
                     'message' => $this->amountMismatchError
                 ));
             } catch (\Exception $exception) {
-                // Do nothing
+                $exceptionMessage = sprintf(
+                    "validateAmount exception[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s][%s]",
+                    $this->getOrigin(),
+                    $this->merchantCartId,
+                    $this->merchantOrderId,
+                    $this->pagantisOrderId,
+                    $exception->getMessage()
+                );
+                $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage));
             }
         }
     }
@@ -398,13 +414,13 @@ class PagantisNotifyModuleFrontController extends AbstractController
         try {
             if ($this->merchantCart->orderExists() !== false) {
                 $exceptionMessage = sprintf(
-                    "Trying to create an existing Order[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s]",
+                    "Existing Order[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s]",
                     $this->getOrigin(),
                     $this->merchantCartId,
                     $this->merchantOrderId,
                     $this->pagantisOrderId
                 );
-                throw new WrongStatusException($exceptionMessage);
+                throw new UnknownException($exceptionMessage);
             }
 
             // Double check
@@ -423,7 +439,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                     $this->merchantOrderId,
                     $this->pagantisOrderId
                 );
-                throw new WrongStatusException($exceptionMessage);
+                throw new UnknownException($exceptionMessage);
             }
         } catch (\Exception $exception) {
             throw new UnknownException($exception->getMessage());
@@ -470,8 +486,19 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 array('ps_order_id' => $this->module->currentOrder),
                 'id = '. (int)$this->merchantCartId . ' and order_id = \'' . $this->pagantisOrderId . '\''
             );
+//TODO TO REMOVE
+            $this->saveLog(array('requestId' => $this->requestId,
+                                 'message' => "Updating ps_order_id=".$this->module->currentOrder." where id=".(int)$this->merchantCartId." and order_id=".$this->pagantisOrderId));
         } catch (\Exception $exception) {
-            // Do nothing
+            $exceptionMessage = sprintf(
+                "processMerchantOrder exception[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s][%s]",
+                $this->getOrigin(),
+                $this->merchantCartId,
+                $this->merchantOrderId,
+                $this->pagantisOrderId,
+                $exception->getMessage()
+            );
+            $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage));
         }
     }
 
@@ -489,12 +516,17 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $message = 'Order CONFIRMED. The order was confirmed by a ' . $mode .
                     '. Pagantis OrderId=' . $this->pagantisOrderId .
                     '. Prestashop OrderId=' . $this->module->currentOrder;
-                $this->saveLog(array(
-                    'requestId' => $this->requestId,
-                    'message' => $message
-                ));
+                $this->saveLog(array('requestId' => $this->requestId, 'message' => $message));
             } catch (\Exception $exception) {
-                // Do nothing
+                $exceptionMessage = sprintf(
+                    "confirmPagantisOrder exception[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s][%s]",
+                    $this->getOrigin(),
+                    $this->merchantCartId,
+                    $this->merchantOrderId,
+                    $this->pagantisOrderId,
+                    $exception->getMessage()
+                );
+                $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage));
             }
         } catch (\Exception $exception) {
             throw new UnknownException(sprintf("[%s]%s", $this->getOrigin(), $exception->getMessage()));
@@ -544,7 +576,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             $table = self::CART_TABLE;
-            if (Db::getInstance()->insert($table, array('id' => (int)$orderId, 'timestamp' => (time()))) === false) {
+            $insertBlock = Db::getInstance()->insert($table, array('id' =>(int)$orderId, 'timestamp' =>(time())));
+            if ($insertBlock === false) {
                 if ($this->isNotification()) {
                     throw new ConcurrencyException();
                 } else {
@@ -567,8 +600,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                     $this->getPagantisOrderId();
 
                     $logMessage  = sprintf(
-                        "User waiting %s seconds, default seconds %s, bd time to expire %s 
-                        seconds[cartId=%s][origin=%s]",
+                        "User has waited %s seconds, default %s, bd time to expire %s [cartId=%s][origin=%s]",
                         $secondsToExpire,
                         self::CONCURRENCY_TIMEOUT,
                         $restSeconds,
@@ -576,10 +608,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                         $this->getOrigin()
                     );
 
-                    $this->saveLog(array(
-                        'requestId' => $this->requestId,
-                        'message' => $logMessage
-                    ));
+                    $this->saveLog(array('requestId' => $this->requestId, 'message' => $logMessage));
 
                     // After waiting...user continue the confirmation, hoping that previous call have finished.
                     return true;
@@ -599,10 +628,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
     {
         try {
             if (is_null($orderId)) {
-                Db::getInstance()->delete(
-                    self::CART_TABLE,
-                    'timestamp < ' . (time() - self::CONCURRENCY_TIMEOUT)
-                );
+                Db::getInstance()->delete(self::CART_TABLE, 'timestamp < ' . (time() - self::CONCURRENCY_TIMEOUT));
                 return;
             }
             Db::getInstance()->delete(self::CART_TABLE, 'id = ' . (int)$orderId);
@@ -658,11 +684,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $this->pagantisOrderId,
                 $this->jsonResponse->getResult()
             );
-            $this->saveLog(array(
-                'requestId' => $this->requestId,
-                'message' => $returnMessage
-            ));
-
+            $this->saveLog(array('requestId' => $this->requestId, 'message' => $returnMessage));
             $this->jsonResponse->printResponse();
         } else {
             $parameters = array(
@@ -680,10 +702,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 $this->pagantisOrderId,
                 $url
             );
-            $this->saveLog(array(
-                'requestId' => $this->requestId,
-                'message' => $returnMessage
-            ));
+            $this->saveLog(array('requestId' => $this->requestId, 'message' => $returnMessage));
 
             return $this->redirect($url, $parameters);
         }
