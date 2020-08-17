@@ -483,9 +483,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 array('ps_order_id' => $this->module->currentOrder),
                 'id = '. (int)$this->merchantCartId . ' and order_id = \'' . $this->pagantisOrderId . '\''
             );
-//TODO TO REMOVE
-            $this->saveLog(array('requestId' => $this->requestId,
-                                 'message' => "Updating ps_order_id=".$this->module->currentOrder." where id=".(int)$this->merchantCartId." and order_id=".$this->pagantisOrderId));
+
         } catch (\Exception $exception) {
             $exceptionMessage = sprintf(
                 "processMerchantOrder exception[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s][%s]",
