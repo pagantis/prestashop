@@ -233,11 +233,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
         }
         $this->productName = "Pagantis " . Tools::strtolower($productCode);
 
-        $pagantisPublicKey = Configuration::get(Tools::strtolower($productCode) . '_public_key');
-        $pagantisPrivateKey = Configuration::get(Tools::strtolower($productCode) . '_private_key');
-
-        $this->config['publicKey'] = trim($pagantisPublicKey);
-        $this->config['privateKey'] = trim($pagantisPrivateKey);
+        $this->config['publicKey'] = trim(Configuration::get(Tools::strtolower($productCode) . '_public_key'));
+        $this->config['privateKey'] = trim(Configuration::get(Tools::strtolower($productCode) . '_private_key'));
 
         $this->merchantCartId = Tools::getValue('id_cart');
 
@@ -321,7 +318,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
      */
     private function getPagantisOrder()
     {
-        $this->orderClient = new PagantisClient(trim($this->config['publicKey']), trim($this->config['privateKey']));
+        $this->orderClient = new PagantisClient($this->config['publicKey'], $this->config['privateKey']);
         $this->pagantisOrder = $this->orderClient->getOrder($this->pagantisOrderId);
         if (!($this->pagantisOrder instanceof PagantisModelOrder)) {
             throw new OrderNotFoundException();
