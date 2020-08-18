@@ -1,6 +1,6 @@
 {
   "name": "pagantis",
-  "version": "8.6.4",
+  "version": "8.6.5",
   "description": "Pagantis integration in prestashop",
   "main": "Gruntfile.js",
   "dependencies": {},
