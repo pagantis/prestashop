@@ -436,7 +436,7 @@ class Pagantis extends PaymentModule
                 $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
                 $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_IS_ENABLED'] = $isEnabled;
                 $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_LOGO'] = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PAYMENT_URL'] = $link->getModuleLink('pagantis', 'payment') . '&product=' . Tools::strtolower($productConfigs['CODE']);
+                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PAYMENT_URL'] = $link->getModuleLink('pagantis', 'payment') . '&product=' . $productConfigs['CODE'];
                 $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
 
                 foreach ($productConfigs as $productConfigKey => $productConfigValue) {
@@ -447,9 +447,9 @@ class Pagantis extends PaymentModule
                 $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $uri = $link->getModuleLink('pagantis', 'payment');
                 if (strpos($uri, '?') !== false) {
-                    $uri .= '&product=' . Tools::strtolower($productConfigs['CODE']);
+                    $uri .= '&product=' . $productConfigs['CODE'];
                 } else {
-                    $uri .= '?product=' . Tools::strtolower($productConfigs['CODE']);
+                    $uri .= '?product=' . $productConfigs['CODE'];
                 }
                 $paymentOption
                     ->setCallToActionText($templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_TITLE'])
@@ -700,9 +700,9 @@ class Pagantis extends PaymentModule
                 $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_LOGO'] = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
                 $uri = $link->getModuleLink('pagantis', 'payment');
                 if (strpos($uri, '?') !== false) {
-                    $uri .= '&product=' . Tools::strtolower($productConfigs['CODE']);
+                    $uri .= '&product=' . $productConfigs['CODE'];
                 } else {
-                    $uri .= '?product=' . Tools::strtolower($productConfigs['CODE']);
+                    $uri .= '?product=' . $productConfigs['CODE'];
                 }
                 $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PAYMENT_URL'] = $uri;
                 $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
