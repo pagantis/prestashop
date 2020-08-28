@@ -7,7 +7,7 @@
  *}
 
 <form id="pagantis_form_{$PAGANTIS_CODE|escape:'htmlall':'UTF-8'}" action="{$PAGANTIS_PAYMENT_URL|escape:'htmlall':'UTF-8'}">
-    <input type="hidden" name="product" id="product" value="{$Pagantis_CODE|escape:'htmlall':'UTF-8'}">
+    <input type="hidden" name="product" id="product" value="{$PAGANTIS_CODE|escape:'htmlall':'UTF-8'}">
 </form>
 {if version_compare($smarty.const._PS_VERSION_,'1.6.0.0','<') && $PAGANTIS_PAYMENT_URL}
     <div class="payment_module pagantis{$PAGANTIS_CODE|escape:'htmlall':'UTF-8'}" id="pagantis_payment_button">
@@ -71,12 +71,8 @@
                 publicKey: '{$PAGANTIS_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
                 selector: '.pagantisSimulatorPAGANTIS',
                 numInstalments: '{$PAGANTIS_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}',
-                totalAmount: '{$PAGANTIS_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
-                totalPromotedAmount: '{$PAGANTIS_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
-                amountParserConfig: {
-                    thousandSeparator: '{$PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
-                    decimalSeparator: '{$PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
-                }
+                totalAmount: '{$PAGANTIS_AMOUNT|escape:'javascript':'UTF-8'}',
+                totalPromotedAmount: '{$PAGANTIS_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}',
             });
         }
         return false;
