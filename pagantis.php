@@ -896,7 +896,7 @@ class Pagantis extends PaymentModule
 
         if (is_null($product)) {
             $sql = 'SELECT value FROM '._DB_PREFIX_.'pagantis_config where config = \'' . pSQL($config) . '\' limit 1';
-            if ($results = Db::getInstance()->ExecuteS($sql)) {
+            if ($results = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql)) {
                 if (is_array($results) && count($results) === 1 && isset($results[0]['value'])) {
                     return $results[0]['value'];
                 }
@@ -904,7 +904,7 @@ class Pagantis extends PaymentModule
         }
 
         $sql = 'SELECT value FROM '._DB_PREFIX_.'pagantis_config where config = \'' . pSQL($product) . '\' limit 1';
-        if ($results = Db::getInstance()->ExecuteS($sql)) {
+        if ($results = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql)) {
             if (is_array($results) && count($results) === 1 && isset($results[0]['value'])) {
                 $configs = json_decode($results[0]['value'], true);
                 $value = '';
