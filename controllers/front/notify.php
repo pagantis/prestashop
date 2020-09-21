@@ -108,6 +108,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
         $thrownException = false;
         $this->origin = ($this->isPost() || Tools::getValue('origin') === 'notification') ? 'Notification' : 'Order';
         $this->requestId = rand(1, 999999999);
+
+        // Validations
         try {
             //Avoiding notifications via GET
             if ($this->isGet() && $this->isNotification()) {
@@ -132,9 +134,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 return $this->finishProcess(false);
             }
             $this->validateAmount();
-            if ($this->checkMerchantOrderStatus()) {
-                $this->processMerchantOrder();
-            }
+            $this->checkMerchantOrderStatus();
         } catch (\Exception $exception) {
             $thrownException = true;
             $this->getMerchantOrderId();
@@ -148,6 +148,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             return $this->cancelProcess($exception);
         }
 
+        // Proccess Pagantis Order
         try {
             if (!$thrownException) {
                 $this->jsonResponse = new JsonSuccessResponse();
@@ -162,6 +163,24 @@ class PagantisNotifyModuleFrontController extends AbstractController
             if ($this->isNotification()) {
                 $this->getMerchantOrderId();
                 $theId = ($this->merchantOrderId)? $this->merchantOrderId : $this->merchantCartId;
+                $this->jsonResponse = new JsonExceptionResponse();
+                $this->jsonResponse->setMerchantOrderId($theId);
+                $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
+                $this->jsonResponse->setException($exception);
+            }
+            return $this->cancelProcess($exception);
+        }
+
+        // Process Merchant Order
+        try {
+            if (!$thrownException) {
+                $this->processMerchantOrder();
+            }
+        } catch (\Exception $exception) {
+            $thrownException = true;
+            $this->getMerchantOrderId();
+            $theId = ($this->merchantOrderId)? $this->merchantOrderId : $this->merchantCartId;
+            if ($this->isPost()) {
                 $this->jsonResponse = new JsonExceptionResponse();
                 $this->jsonResponse->setMerchantOrderId($theId);
                 $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
