@@ -163,6 +163,16 @@
                 loadSimulator();
             }, 2000);
         }
+        window.PSSimulatorReloadAttempts = 0;
+        setInterval(function () {
+            if (!checkSimulatorContent()
+                && typeof pgSDK.product_simulator != "undefined"
+                && window.PSSimulatorReloadAttempts <= 5
+            ) {
+                pgSDK.simulator.init(pgSDK.product_simulator);
+                window.PSSimulatorReloadAttempts = window.PSSimulatorReloadAttempts + 1;
+            }
+        }, 2000);
     </script>
     {if $PAGANTIS_IS_PROMOTED_PRODUCT == true}
             <span class="pagantis-promotion ps_version_{$PAGANTIS_PS_VERSION|escape:'htmlall':'UTF-8'}" id="pagantis-promotion-extra">{$PAGANTIS_PROMOTION_EXTRA nofilter}</span>
