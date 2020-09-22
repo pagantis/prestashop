@@ -114,7 +114,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.6.7';
+        $this->version = '8.6.8';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -125,16 +125,15 @@ class Pagantis extends PaymentModule
             'Instant, easy and effective financial tool for your customers'
         );
 
-        $sql_file = dirname(__FILE__).'/sql/install.sql';
-        $this->loadSQLFile($sql_file);
-
-        $this->checkEnvVariables();
-
-        $this->migrate();
-
-        $this->checkHooks();
-
-        $this->checkPromotionCategory();
+        $current_context = Context::getContext();
+        if (!is_null($current_context->controller) && $current_context->controller->controller_type != 'front') {
+            $sql_file = dirname(__FILE__).'/sql/install.sql';
+            $this->loadSQLFile($sql_file);
+            $this->checkEnvVariables();
+            $this->migrate();
+            $this->checkHooks();
+            $this->checkPromotionCategory();
+        }
 
         parent::__construct();
 
@@ -896,7 +895,7 @@ class Pagantis extends PaymentModule
 
         if (is_null($product)) {
             $sql = 'SELECT value FROM '._DB_PREFIX_.'pagantis_config where config = \'' . pSQL($config) . '\' limit 1';
-            if ($results = Db::getInstance()->ExecuteS($sql)) {
+            if ($results = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql)) {
                 if (is_array($results) && count($results) === 1 && isset($results[0]['value'])) {
                     return $results[0]['value'];
                 }
@@ -904,7 +903,7 @@ class Pagantis extends PaymentModule
         }
 
         $sql = 'SELECT value FROM '._DB_PREFIX_.'pagantis_config where config = \'' . pSQL($product) . '\' limit 1';
-        if ($results = Db::getInstance()->ExecuteS($sql)) {
+        if ($results = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql)) {
             if (is_array($results) && count($results) === 1 && isset($results[0]['value'])) {
                 $configs = json_decode($results[0]['value'], true);
                 $value = '';
