@@ -114,7 +114,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.6.7';
+        $this->version = '8.6.8';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -125,16 +125,15 @@ class Pagantis extends PaymentModule
             'Instant, easy and effective financial tool for your customers'
         );
 
-        $sql_file = dirname(__FILE__).'/sql/install.sql';
-        $this->loadSQLFile($sql_file);
-
-        $this->checkEnvVariables();
-
-        $this->migrate();
-
-        $this->checkHooks();
-
-        $this->checkPromotionCategory();
+        $current_context = Context::getContext();
+        if (!is_null($current_context->controller) && $current_context->controller->controller_type != 'front') {
+            $sql_file = dirname(__FILE__).'/sql/install.sql';
+            $this->loadSQLFile($sql_file);
+            $this->checkEnvVariables();
+            $this->migrate();
+            $this->checkHooks();
+            $this->checkPromotionCategory();
+        }
 
         parent::__construct();
 
