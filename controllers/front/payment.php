@@ -67,6 +67,8 @@ class PagantisPaymentModuleFrontController extends AbstractController
             Tools::redirect('index.php?controller=order');
         }
 
+        $urlToken = strtoupper(md5(uniqid(rand(), true)));
+
         /** @var Customer $customer */
         $customer = $this->context->customer;
         $query = array(
@@ -90,11 +92,11 @@ class PagantisPaymentModuleFrontController extends AbstractController
         $pagantisPrivateKey = Configuration::get(Tools::strtolower($configs['CODE']) . '_private_key');
 
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=redirect&product=' . Tools::strtolower($configs['CODE']) . '&'
+            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&token='.$urlToken.'&origin=redirect&product=' . Tools::strtolower($configs['CODE']) . '&'
             .http_build_query($query)
         ;
         $notificationOkUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&origin=notification&product=' . Tools::strtolower($configs['CODE']) . '&'
+            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&token='.$urlToken.'&origin=notification&product=' . Tools::strtolower($configs['CODE']) . '&'
             .http_build_query($query)
         ;
 
@@ -272,9 +274,8 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 $url = $order->getActionUrls()->getForm();
                 /** @var string $orderId MD5 value */
                 $orderId = $order->getId();
-                $sql = "INSERT INTO `" . _DB_PREFIX_ . "pagantis_order` (`id`, `order_id`)
-                     VALUES ('$cart->id','$orderId') 
-                     ON DUPLICATE KEY UPDATE `order_id` = '$orderId'";
+                $sql = "INSERT INTO `" . _DB_PREFIX_ . "pagantis_order` (`id`, `order_id`, `token`)
+                     VALUES ('$cart->id','$orderId', '$urlToken')";
                 $result = Db::getInstance()->execute($sql);
                 if (!$result) {
                     throw new UnknownException('Unable to save pagantis-order-id in database: '. $sql);
