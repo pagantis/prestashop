@@ -38,6 +38,11 @@ class PagantisNotifyModuleFrontController extends AbstractController
     const CONCURRENCY_TIMEOUT = 10;
 
     /**
+     * @var string $token
+     */
+    protected $token;
+
+    /**
      * @var string $productName
      */
     protected $productName;
@@ -244,6 +249,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             'secureKey' => Tools::getValue('key'),
         );
         $productCode = Tools::getValue('product');
+        $this->token = Tools::getValue('token');
         $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
         if (!in_array(Tools::strtoupper($productCode), $products)) {
             throw new UnknownException(
@@ -273,8 +279,8 @@ class PagantisNotifyModuleFrontController extends AbstractController
     public function getMerchantOrderId()
     {
         try {
-            $table = _DB_PREFIX_ .self::ORDERS_TABLE;
-            $sql = 'select ps_order_id from ' . $table .' where id = ' .(int)$this->merchantCartId;
+            $sql = 'select ps_order_id from ' . _DB_PREFIX_ .self::ORDERS_TABLE .' where id = '
+                .(int)$this->merchantCartId . ' and token = \'' . $this->token . '\'';
             $this->merchantOrderId = Db::getInstance()->getValue($sql);
         } catch (\Exception $exception) {
             $exceptionMessage = sprintf(
@@ -318,9 +324,9 @@ class PagantisNotifyModuleFrontController extends AbstractController
     private function getPagantisOrderId()
     {
         try {
-            $this->pagantisOrderId= Db::getInstance()->getValue(
-                'select order_id from '._DB_PREFIX_.self::ORDERS_TABLE.' where id = '.(int)$this->merchantCartId
-            );
+            $sql = 'select order_id from ' . _DB_PREFIX_.self::ORDERS_TABLE .' where id = '
+                .(int)$this->merchantCartId . ' and token = \'' . $this->token . '\'';
+            $this->pagantisOrderId= Db::getInstance()->getValue($sql);
 
             if (is_null($this->pagantisOrderId)) {
                 throw new NoIdentificationException();
@@ -444,6 +450,7 @@ class PagantisNotifyModuleFrontController extends AbstractController
             $fieldName = 'ps_order_id';
             $sql = ('select ' . $fieldName . ' from `' . $tableName . '` where `id` = ' . (int)$this->merchantCartId
                 . ' and `order_id` = \'' . $this->pagantisOrderId . '\''
+                . ' and `token` = \'' . $this->token . '\''
                 . ' and `' . $fieldName . '` is not null');
             $results = Db::getInstance()->ExecuteS($sql);
             if (is_array($results) && count($results) === 1) {
@@ -500,7 +507,9 @@ class PagantisNotifyModuleFrontController extends AbstractController
             Db::getInstance()->update(
                 self::ORDERS_TABLE,
                 array('ps_order_id' => $this->module->currentOrder),
-                'id = '. (int)$this->merchantCartId . ' and order_id = \'' . $this->pagantisOrderId . '\''
+                'id = '. (int)$this->merchantCartId
+                    . ' and order_id = \'' . $this->pagantisOrderId . '\''
+                    . ' and token = \'' . $this->token . '\''
             );
 
         } catch (\Exception $exception) {

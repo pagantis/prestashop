@@ -4,11 +4,12 @@ CREATE TABLE IF NOT EXISTS `PREFIX_pagantis_cart_process` (
   PRIMARY KEY (`id`)
   ) ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `PREFIX_pagantis_order` (
+CREATE TABLE IF NOT EXISTS `ps_pagantis_order` (
   `id` INT NOT NULL ,
   `order_id` VARCHAR(60) NOT NULL,
+  `token` varchar(32) NOT NULL,
   `ps_order_id` varchar(60) NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`, `order_id`)
   ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS  `PREFIX_pagantis_log` (
