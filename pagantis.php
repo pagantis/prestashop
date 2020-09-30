@@ -129,6 +129,7 @@ class Pagantis extends PaymentModule
         if (!is_null($current_context->controller) && $current_context->controller->controller_type != 'front') {
             $sql_file = dirname(__FILE__).'/sql/install.sql';
             $this->loadSQLFile($sql_file);
+            $this->checkDatabaseTables();
             $this->checkEnvVariables();
             $this->migrate();
             $this->checkHooks();
@@ -195,6 +196,10 @@ class Pagantis extends PaymentModule
         Configuration::deleteByName('12x_public_key');
         Configuration::deleteByName('4x_public_key');
         Configuration::deleteByName('12x_public_key');
+        Configuration::deleteByName('12x_simulator_is_enabled');
+        $sql_file = dirname(__FILE__).'/sql/uninstall.sql';
+        $this->loadSQLFile($sql_file);
+
 
         return parent::uninstall();
     }
@@ -282,6 +287,25 @@ class Pagantis extends PaymentModule
      */
     public function loadSQLFile($sql_file)
     {
+        $sql_content = Tools::file_get_contents($sql_file);
+        $sql_content = str_replace('PREFIX_', _DB_PREFIX_, $sql_content);
+        $sql_requests = preg_split("/;\s*[\r\n]+/", $sql_content);
+
+        $result = true;
+        foreach ($sql_requests as $request) {
+            if (!empty($request)) {
+                $result &= Db::getInstance()->execute(trim($request));
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * checkDatabaseTables INTEGRITY
+     */
+    public function checkDatabaseTables()
+    {
         try {
             $tableName = _DB_PREFIX_.'pagantis_order';
             $sql = "show tables like '"   . $tableName . "'";
@@ -311,24 +335,10 @@ class Pagantis extends PaymentModule
                     Db::getInstance()->Execute($sql);
                 }
                 // return because pagantis tables exisit so load the sqlfile is not needed
-                return true;
             }
         } catch (\Exception $exception) {
             // do nothing
         }
-
-        $sql_content = Tools::file_get_contents($sql_file);
-        $sql_content = str_replace('PREFIX_', _DB_PREFIX_, $sql_content);
-        $sql_requests = preg_split("/;\s*[\r\n]+/", $sql_content);
-
-        $result = true;
-        foreach ($sql_requests as $request) {
-            if (!empty($request)) {
-                $result &= Db::getInstance()->execute(trim($request));
-            }
-        }
-
-        return $result;
     }
 
     /**
