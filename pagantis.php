@@ -318,11 +318,14 @@ class Pagantis extends PaymentModule
                     Db::getInstance()->Execute($sql);
                 }
                 if (count($data) == 3) {
-                    $sql = "ALTER TABLE " . $tableName . " ADD COLUMN  token VARCHAR(32) NOT NULL AFTER order_id";
+                    $sql = "DROP TABLE $tableName";
                     Db::getInstance()->Execute($sql);
-                    $sql = "ALTER TABLE ps_pagantis_order DROP PRIMARY KEY, ADD PRIMARY KEY(id, order_id);";
-                    Db::getInstance()->Execute($sql);
+                    $sql_file = dirname(__FILE__).'/sql/install.sql';
+                    $this->loadSQLFile($sql_file);
                 }
+            } else {
+                $sql_file = dirname(__FILE__).'/sql/install.sql';
+                $this->loadSQLFile($sql_file);
             }
             $tableName = _DB_PREFIX_.'pagantis_config';
             $sql = "show tables like '"   . $tableName . "'";
