@@ -2,7 +2,7 @@
 <module>
 	<name>pagantis</name>
 	<displayName><![CDATA[Pagantis]]></displayName>
-	<version><![CDATA[8.6.10]]></version>
+	<version><![CDATA[8.6.11]]></version>
 	<description><![CDATA[Instant, easy and effective financial tool for your customers]]></description>
 	<author><![CDATA[Pagantis]]></author>
 	<tab><![CDATA[payments_gateways]]></tab>
