@@ -114,7 +114,7 @@ class Pagantis extends PaymentModule
     {
         $this->name = 'pagantis';
         $this->tab = 'payments_gateways';
-        $this->version = '8.6.10';
+        $this->version = '8.6.11';
         $this->author = 'Pagantis';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -129,6 +129,7 @@ class Pagantis extends PaymentModule
         if (!is_null($current_context->controller) && $current_context->controller->controller_type != 'front') {
             $sql_file = dirname(__FILE__).'/sql/install.sql';
             $this->loadSQLFile($sql_file);
+            $this->checkDatabaseTables();
             $this->checkEnvVariables();
             $this->migrate();
             $this->checkHooks();
@@ -195,6 +196,10 @@ class Pagantis extends PaymentModule
         Configuration::deleteByName('12x_public_key');
         Configuration::deleteByName('4x_public_key');
         Configuration::deleteByName('12x_public_key');
+        Configuration::deleteByName('12x_simulator_is_enabled');
+        $sql_file = dirname(__FILE__).'/sql/uninstall.sql';
+        $this->loadSQLFile($sql_file);
+
 
         return parent::uninstall();
     }
@@ -282,41 +287,6 @@ class Pagantis extends PaymentModule
      */
     public function loadSQLFile($sql_file)
     {
-        try {
-            $tableName = _DB_PREFIX_.'pagantis_order';
-            $sql = "show tables like '"   . $tableName . "'";
-            $data = Db::getInstance()->ExecuteS($sql);
-            if (count($data) > 0) {
-                $sql = "desc " . $tableName;
-                $data = Db::getInstance()->ExecuteS($sql);
-                if (count($data) == 2) {
-                    $sql = "ALTER TABLE $tableName ADD COLUMN ps_order_id VARCHAR(60) AFTER order_id";
-                    Db::getInstance()->Execute($sql);
-                }
-                if (count($data) == 3) {
-                    $sql = "ALTER TABLE " . $tableName . " ADD COLUMN  token VARCHAR(32) NOT NULL AFTER order_id";
-                    Db::getInstance()->Execute($sql);
-                    $sql = "ALTER TABLE ps_pagantis_order DROP PRIMARY KEY, ADD PRIMARY KEY(id, order_id);";
-                    Db::getInstance()->Execute($sql);
-                }
-            }
-            $tableName = _DB_PREFIX_.'pagantis_config';
-            $sql = "show tables like '"   . $tableName . "'";
-            $data = Db::getInstance()->ExecuteS($sql);
-            if (count($data) > 0) {
-                $sql = "desc "   . $tableName;
-                $data = Db::getInstance()->ExecuteS($sql);
-                if (count($data) === 3 && $data[2]['Type'] !== 'varchar(5000)') {
-                    $sql = "ALTER TABLE $tableName MODIFY `value` VARCHAR(5000)";
-                    Db::getInstance()->Execute($sql);
-                }
-                // return because pagantis tables exisit so load the sqlfile is not needed
-                return true;
-            }
-        } catch (\Exception $exception) {
-            // do nothing
-        }
-
         $sql_content = Tools::file_get_contents($sql_file);
         $sql_content = str_replace('PREFIX_', _DB_PREFIX_, $sql_content);
         $sql_requests = preg_split("/;\s*[\r\n]+/", $sql_content);
@@ -329,6 +299,49 @@ class Pagantis extends PaymentModule
         }
 
         return $result;
+    }
+
+    /**
+     * checkDatabaseTables INTEGRITY
+     */
+    public function checkDatabaseTables()
+    {
+        try {
+            $tableName = _DB_PREFIX_.'pagantis_order';
+            $sql = "show tables like '"   . $tableName . "'";
+            $data = Db::getInstance()->ExecuteS($sql);
+            if (count($data) > 0) {
+                $sql = "desc " . $tableName;
+                $data = Db::getInstance()->ExecuteS($sql);
+                if (count($data) == 2) {
+                    $sql = "ALTER TABLE $tableName ADD COLUMN ps_order_id VARCHAR(60) AFTER order_id";
+                    Db::getInstance()->Execute($sql);
+                }
+                if (count($data) == 3) {
+                    $sql = "DROP TABLE $tableName";
+                    Db::getInstance()->Execute($sql);
+                    $sql_file = dirname(__FILE__).'/sql/install.sql';
+                    $this->loadSQLFile($sql_file);
+                }
+            } else {
+                $sql_file = dirname(__FILE__).'/sql/install.sql';
+                $this->loadSQLFile($sql_file);
+            }
+            $tableName = _DB_PREFIX_.'pagantis_config';
+            $sql = "show tables like '"   . $tableName . "'";
+            $data = Db::getInstance()->ExecuteS($sql);
+            if (count($data) > 0) {
+                $sql = "desc "   . $tableName;
+                $data = Db::getInstance()->ExecuteS($sql);
+                if (count($data) === 3 && $data[2]['Type'] !== 'varchar(5000)') {
+                    $sql = "ALTER TABLE $tableName MODIFY `value` VARCHAR(5000)";
+                    Db::getInstance()->Execute($sql);
+                }
+                // return because pagantis tables exisit so load the sqlfile is not needed
+            }
+        } catch (\Exception $exception) {
+            // do nothing
+        }
     }
 
     /**
