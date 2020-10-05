@@ -1,13 +1,13 @@
 {*
- * This file is part of the official Pagantis module for PrestaShop.
+ * This file is part of the official Clearpay module for PrestaShop.
  *
- * @author    Pagantis <integrations@pagantis.com>
- * @copyright 2019 Pagantis
+ * @author    Clearpay <integrations@clearpay.com>
+ * @copyright 2019 Clearpay
  * @license   proprietary
 *}
 {if ($PAGANTIS_IS_ENABLED && $PAGANTIS_SIMULATOR_IS_ENABLED)}
     <style>
-        .pagantis-promotion {
+        .clearpay-promotion {
             font-size: 11px;
             display: inline-block;
             width: 100%;
@@ -15,20 +15,20 @@
             color: #828282;
             max-width: 370px;
         }
-        .pagantis-promotion .pmt-no-interest{
+        .clearpay-promotion .pmt-no-interest{
             color: #00c1d5
         }
-        .pagantisSimulatorPagantis {
+        .clearpaySimulatorClearpay {
             clear: both;
         }
-        .pagantisSimulatorPagantis > div.preposition {
+        .clearpaySimulatorClearpay > div.preposition {
             display:inline-block;
             vertical-align: top;
             margin-right: 5px;
             width: inherit;
             height: 15px;
         }
-        .pagantisSimulatorPagantis > div {
+        .clearpaySimulatorClearpay > div {
             height: 35px;
             display:inline-block;
             width: 90%
@@ -99,7 +99,7 @@
             var sdkPositionSelector = '{$PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR|escape:'javascript':'UTF-8'}';
 
             if ('{$PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR|escape:'javascript':'UTF-8'}' === 'default') {
-                sdkPositionSelector = '.pagantisSimulatorPagantis';
+                sdkPositionSelector = '.clearpaySimulatorClearpay';
             }
 
             if (priceSelector === 'default') {
@@ -175,7 +175,7 @@
         }, 2000);
     </script>
     {if $PAGANTIS_IS_PROMOTED_PRODUCT == true}
-            <span class="pagantis-promotion ps_version_{$PAGANTIS_PS_VERSION|escape:'htmlall':'UTF-8'}" id="pagantis-promotion-extra">{$PAGANTIS_PROMOTION_EXTRA nofilter}</span>
+            <span class="clearpay-promotion ps_version_{$PAGANTIS_PS_VERSION|escape:'htmlall':'UTF-8'}" id="clearpay-promotion-extra">{$PAGANTIS_PROMOTION_EXTRA nofilter}</span>
     {/if}
-    <div class="pagantisSimulatorPagantis"></div>
+    <div class="clearpaySimulatorClearpay"></div>
 {/if}

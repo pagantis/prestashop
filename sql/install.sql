@@ -1,10 +1,10 @@
-CREATE TABLE IF NOT EXISTS `PREFIX_pagantis_cart_process` (
+CREATE TABLE IF NOT EXISTS `PREFIX_clearpay_cart_process` (
   `id` INT NOT NULL ,
   `timestamp` INT NOT NULL ,
   PRIMARY KEY (`id`)
   ) ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `PREFIX_pagantis_order` (
+CREATE TABLE IF NOT EXISTS `PREFIX_clearpay_order` (
   `id` INT NOT NULL ,
   `order_id` VARCHAR(60) NOT NULL,
   `token` varchar(32) NOT NULL,
@@ -12,14 +12,14 @@ CREATE TABLE IF NOT EXISTS `PREFIX_pagantis_order` (
   PRIMARY KEY (`id`, `order_id`)
   ) ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS  `PREFIX_pagantis_log` (
+CREATE TABLE IF NOT EXISTS  `PREFIX_clearpay_log` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `log` TEXT,
   `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
   ) ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS  `PREFIX_pagantis_config` (
+CREATE TABLE IF NOT EXISTS  `PREFIX_clearpay_config` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `config` VARCHAR(60) NOT NULL,
   `value` VARCHAR(5000) NOT NULL,

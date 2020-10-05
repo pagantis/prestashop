@@ -1,16 +1,16 @@
 <?php
 /**
- * This file is part of the official Pagantis module for PrestaShop.
+ * This file is part of the official Clearpay module for PrestaShop.
  *
- * @author    Pagantis <integrations@pagantis.com>
- * @copyright 2019 Pagantis
+ * @author    Clearpay <integrations@clearpay.com>
+ * @copyright 2019 Clearpay
  * @license   proprietary
  */
 
 /**
- * Class PagantisApiModuleFrontController
+ * Class ClearpayApiModuleFrontController
  */
-class PagantisApiModuleFrontController extends ModuleFrontController
+class ClearpayApiModuleFrontController extends ModuleFrontController
 {
     /**
      * @var string $message
@@ -82,7 +82,7 @@ class PagantisApiModuleFrontController extends ModuleFrontController
     public function authorize()
     {
         $productCode = Tools::getValue('product', false);
-        $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
+        $products = explode(',', Clearpay::getExtraConfig('PRODUCTS', null));
         $privateKey = Configuration::get(Tools::strtolower($productCode) . '_private_key');
         $privateKeyGet = Tools::getValue('secret', false);
         if (!empty($privateKeyGet) && $privateKeyGet === $privateKey && in_array(Tools::strtoupper($productCode), $products)) {

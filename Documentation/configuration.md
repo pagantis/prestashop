@@ -2,15 +2,15 @@
 
 ## :house: Access
 
-To access to Pagantis admin panel, we need to open the prestashop admin panel and follow the next steps:
+To access to Clearpay admin panel, we need to open the prestashop admin panel and follow the next steps:
 
 1. Click on : Modules and Services => Modules and Services
 ![Step 1](./prestashop_installation_1.png?raw=true "Step 1")
 
-2. Type Pagantis in the search field then click on  Configure
+2. Type Clearpay in the search field then click on  Configure
 ![Step 2](./prestashop_configuration_2.png?raw=true "Step 2")
 
-3. Pagantis
+3. Clearpay
 ![Step 3](./prestashop_configuration_3.png?raw=true "Step 3")
 
 ## :clipboard: Options

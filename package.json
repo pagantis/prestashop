@@ -1,7 +1,7 @@
 {
-  "name": "pagantis",
+  "name": "clearpay",
   "version": "8.6.11",
-  "description": "Pagantis integration in prestashop",
+  "description": "Clearpay integration in prestashop",
   "main": "Gruntfile.js",
   "dependencies": {},
   "devDependencies": {
@@ -15,12 +15,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pagantis/prestashop.git"
+    "url": "git+https://github.com/clearpay/prestashop.git"
   },
-  "author": "Pagantis",
+  "author": "Clearpay",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/pagantis/prestashop/issues"
+    "url": "https://github.com/clearpay/prestashop/issues"
   },
-  "homepage": "https://github.com/pagantis/prestashop"
+  "homepage": "https://github.com/clearpay/prestashop"
 }

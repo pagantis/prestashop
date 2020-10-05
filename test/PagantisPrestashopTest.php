@@ -12,10 +12,10 @@ use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class PagantisPrestashopTest
+ * Class ClearpayPrestashopTest
  * @package Test\Selenium
  */
-abstract class PagantisPrestashopTest extends TestCase
+abstract class ClearpayPrestashopTest extends TestCase
 {
     const PS17URL = 'http://prestashop17-test.docker:8017';
     const PS16URL = 'http://prestashop16-test.docker:8016';
@@ -31,7 +31,7 @@ abstract class PagantisPrestashopTest extends TestCase
 
     const BACKOFFICE_FOLDER = '/adminTest';
 
-    const TITLE = 'Pagantis';
+    const TITLE = 'Clearpay';
 
     /**
      * @var array
@@ -44,8 +44,8 @@ abstract class PagantisPrestashopTest extends TestCase
         'birthdate'     => '05/05/1989',
         'firstname'     => 'Jøhn',
         'lastname'      => 'Dōès',
-        'email'         => 'john_doe_testing@pagantis.com',
-        'company'       => 'Pagantis SA',
+        'email'         => 'john_doe_testing@clearpay.com',
+        'company'       => 'Clearpay SA',
         'zip'           => '08023',
         'city'          => 'Barcelona',
         'state'         => 'Barcelona',
@@ -76,7 +76,7 @@ abstract class PagantisPrestashopTest extends TestCase
         $this->configuration['zip'] = '28'.$faker->randomNumber(3, true);
         $this->configuration['street'] = $faker->streetAddress;
         $this->configuration['phone'] = '6' . $faker->randomNumber(8);
-        $this->configuration['email'] = date('ymd') . '@pagantis.com';
+        $this->configuration['email'] = date('ymd') . '@clearpay.com';
         parent::__construct($name, $data, $dataName);
     }
 
@@ -104,7 +104,7 @@ abstract class PagantisPrestashopTest extends TestCase
      */
     protected function setUp()
     {
-        $this->webDriver = PagantisWebDriver::create(
+        $this->webDriver = ClearpayWebDriver::create(
             'http://localhost:4444/wd/hub',
             DesiredCapabilities::chrome(),
             120000,

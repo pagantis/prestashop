@@ -11,17 +11,17 @@ use Httpful\Mime;
  *
  * @group prestashop17controller
  */
-class PagantisPs17ControllerTest extends PagantisPrestashopTest
+class ClearpayPs17ControllerTest extends ClearpayPrestashopTest
 {
     /**
      * log route
      */
-    const LOG_FOLDER = '/index.php?fc=module&module=pagantis&controller=log&product=PAGANTIS';
+    const LOG_FOLDER = '/index.php?fc=module&module=clearpay&controller=log&product=PAGANTIS';
 
     /**
      * config route
      */
-    const CONFIG_FOLDER = '/index.php?fc=module&module=pagantis&controller=config&product=PAGANTIS';
+    const CONFIG_FOLDER = '/index.php?fc=module&module=clearpay&controller=config&product=PAGANTIS';
 
     protected $configs = array(
         "TITLE",

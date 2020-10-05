@@ -2,7 +2,7 @@
 
 ## :wrench: Admin panel
 
-To install the plugin of Pagantis in your prestashop, we need to open the Prestashop admin panel and follow the next steps:
+To install the plugin of Clearpay in your prestashop, we need to open the Prestashop admin panel and follow the next steps:
 
 #### Installation using zip file
 1. Plugins => Add new

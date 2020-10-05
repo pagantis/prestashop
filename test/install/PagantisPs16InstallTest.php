@@ -10,16 +10,16 @@ use Test\Common\AbstractPs16Selenium;
  * @requires prestashop16basic
  * @group prestashop16install
  */
-class PagantisPs16InstallTest extends AbstractPs16Selenium
+class ClearpayPs16InstallTest extends AbstractPs16Selenium
 {
     /**
      * @throws \Exception
      */
-    public function testInstallAndConfigurePagantisInPrestashop16()
+    public function testInstallAndConfigureClearpayInPrestashop16()
     {
         $this->loginToBackOffice();
-        $this->uploadPagantis();
-        $this->configurePagantis();
+        $this->uploadClearpay();
+        $this->configureClearpay();
         $this->configureLanguagePack('72', 'Español (Spanish)');
         $this->quit();
     }
@@ -27,10 +27,10 @@ class PagantisPs16InstallTest extends AbstractPs16Selenium
     /**
      * @throws \Exception
      */
-    public function configurePagantis()
+    public function configureClearpay()
     {
         $this->findByLinkText('Modules and Services')->click();
-        $this->findById('moduleQuicksearch')->clear()->sendKeys('Pagantis');
+        $this->findById('moduleQuicksearch')->clear()->sendKeys('Clearpay');
         $this->installOrConfigureModule();
 
         // new prompt in module installation no thusted
@@ -41,10 +41,10 @@ class PagantisPs16InstallTest extends AbstractPs16Selenium
             // do nothing, no prompt
         };
 
-        $this->findByCss('#pagantis_is_enabled_on + label')->click();
-        $this->findById('pagantis_public_key')->clear()->sendKeys('tk_8517351ec6ae44b29f5dca6e');
-        $this->findById('pagantis_private_key')->clear()->sendKeys('c580df9e0b7b40c3');
-        $this->findByCss('#pagantis_simulator_is_enabled_on + label')->click();
+        $this->findByCss('#clearpay_is_enabled_on + label')->click();
+        $this->findById('clearpay_public_key')->clear()->sendKeys('tk_8517351ec6ae44b29f5dca6e');
+        $this->findById('clearpay_private_key')->clear()->sendKeys('c580df9e0b7b40c3');
+        $this->findByCss('#clearpay_simulator_is_enabled_on + label')->click();
         $this->findById('module_form_submit_btn')->click();
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(
@@ -58,17 +58,17 @@ class PagantisPs16InstallTest extends AbstractPs16Selenium
     public function installOrConfigureModule()
     {
         try {
-            $pagantisAnchor = $this->findById('anchorPagantis');
-            $pagantisAnchorParent = $this->getParent($pagantisAnchor);
-            $pagantisAnchorGrandParent = $this->getParent($pagantisAnchorParent);
-            $this->moveToElementAndClick($pagantisAnchorGrandParent->findElement(
+            $clearpayAnchor = $this->findById('anchorClearpay');
+            $clearpayAnchorParent = $this->getParent($clearpayAnchor);
+            $clearpayAnchorGrandParent = $this->getParent($clearpayAnchorParent);
+            $this->moveToElementAndClick($clearpayAnchorGrandParent->findElement(
                 WebDriverBy::partialLinkText('Install')
             ));
         } catch (\Exception $exception) {
-            $pagantisAnchor = $this->findById('anchorPagantis');
-            $pagantisAnchorParent = $this->getParent($pagantisAnchor);
-            $pagantisAnchorGrandParent = $this->getParent($pagantisAnchorParent);
-            $this->moveToElementAndClick($pagantisAnchorGrandParent->findElement(
+            $clearpayAnchor = $this->findById('anchorClearpay');
+            $clearpayAnchorParent = $this->getParent($clearpayAnchor);
+            $clearpayAnchorGrandParent = $this->getParent($clearpayAnchorParent);
+            $this->moveToElementAndClick($clearpayAnchorGrandParent->findElement(
                 WebDriverBy::partialLinkText('Configure')
             ));
         }

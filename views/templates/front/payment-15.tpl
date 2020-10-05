@@ -1,8 +1,8 @@
 {*
- * This file is part of the official Pagantis module for PrestaShop.
+ * This file is part of the official Clearpay module for PrestaShop.
  *
- * @author    Pagantis <integrations@pagantis.com>
- * @copyright 2019 Pagantis
+ * @author    Clearpay <integrations@clearpay.com>
+ * @copyright 2019 Clearpay
  * @license   proprietary
  *}
 <script type="application/javascript">
@@ -15,7 +15,7 @@
                     closeOnEscPress: false,
                     backDropDark: false,
                     largeSize: true,
-                    closeConfirmationMessage: "{l s='Sure you want to leave?' mod='pagantis'}"
+                    closeConfirmationMessage: "{l s='Sure you want to leave?' mod='clearpay'}"
                 }
             );
         });

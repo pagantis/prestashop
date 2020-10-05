@@ -12,7 +12,7 @@ use Test\Common\AbstractPs15Selenium;
  *
  * @group prestashop15advanced
  */
-class PagantisPs15InstallTest extends AbstractPs15Selenium
+class ClearpayPs15InstallTest extends AbstractPs15Selenium
 {
     /**
      * @REQ5 BackOffice should have 2 inputs for setting the public and private API key
@@ -23,10 +23,10 @@ class PagantisPs15InstallTest extends AbstractPs15Selenium
     public function testPublicAndPrivateKeysInputs()
     {
         $this->loginToBackOffice();
-        $this->getPagantisBackOffice();
+        $this->getClearpayBackOffice();
 
         //2 elements exist:
-        $validatorSearch = WebDriverBy::id('pagantis_public_key');
+        $validatorSearch = WebDriverBy::id('clearpay_public_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
@@ -43,7 +43,7 @@ class PagantisPs15InstallTest extends AbstractPs15Selenium
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->assertContains('Please add a Pagantis API Public Key', $this->webDriver->getPageSource());
+        $this->assertContains('Please add a Clearpay API Public Key', $this->webDriver->getPageSource());
         $this->findById('public_key')->clear()->sendKeys($this->configuration['publicKey']);
 
         //save with empty private Key
@@ -53,7 +53,7 @@ class PagantisPs15InstallTest extends AbstractPs15Selenium
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->assertContains('Please add a Pagantis API Private Key', $this->webDriver->getPageSource());
+        $this->assertContains('Please add a Clearpay API Private Key', $this->webDriver->getPageSource());
         $this->findById('private_key')->clear()->sendKeys($this->configuration['secretKey']);
         */
 
@@ -65,15 +65,15 @@ class PagantisPs15InstallTest extends AbstractPs15Selenium
      *
      * @throws \Exception
      */
-    public function testBackOfficeHasLogoAndLinkToPagantis()
+    public function testBackOfficeHasLogoAndLinkToClearpay()
     {
         //Change Title
         $this->loginToBackOffice();
-        $this->getPagantisBackOffice();
+        $this->getClearpayBackOffice();
         $html = $this->webDriver->getPageSource();
         $this->assertContains('pg.png', $html);
-        $this->assertContains('Login Pagantis', $html);
-        $this->assertContains('https://bo.pagantis.com', $html);
+        $this->assertContains('Login Clearpay', $html);
+        $this->assertContains('https://bo.clearpay.com', $html);
         $this->quit();
     }
 }

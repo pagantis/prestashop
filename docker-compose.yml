@@ -81,7 +81,7 @@ services:
       - DB_PREFIX=ps_
       - DB_PASSWD=password
     volumes:
-      - ./:/var/www/html/modules/pagantis
+      - ./:/var/www/html/modules/clearpay
     ports:
       - "8018:80"
     extra_hosts:
@@ -104,7 +104,7 @@ services:
       - DB_PREFIX=ps_
       - DB_PASSWD=password
     volumes:
-      - ./:/var/www/html/modules/pagantis
+      - ./:/var/www/html/modules/clearpay
     ports:
       - "8019:80"
     extra_hosts:
@@ -127,7 +127,7 @@ services:
       - DB_PREFIX=ps_
       - DB_PASSWD=password
     volumes:
-      - ./:/var/www/html/modules/pagantis
+      - ./:/var/www/html/modules/clearpay
     ports:
       - "8020:80"
     extra_hosts:

@@ -1,8 +1,8 @@
 {*
- * This file is part of the official Pagantis module for PrestaShop.
+ * This file is part of the official Clearpay module for PrestaShop.
  *
- * @author    Pagantis <integrations@pagantis.com>
- * @copyright 2019 Pagantis
+ * @author    Clearpay <integrations@clearpay.com>
+ * @copyright 2019 Clearpay
  * @license   proprietary
  *}
 
@@ -25,23 +25,23 @@
             display: inline-block;
             width: 33%;
         }
-        .pagantis-content-form {
+        .clearpay-content-form {
             overflow-x: hidden;
             overflow-y: hidden;
             text-align: center;
             width: 97%;
         }
 
-        .pagantis-content-form input{
+        .clearpay-content-form input{
             margin-left: 15px;
             margin-right: 5px;
         }
 
-        .pagantis-content-form label{
+        .clearpay-content-form label{
             margin-left: 15px;
         }
 
-        .pagantis-content-form img{
+        .clearpay-content-form img{
             margin-top: 20px;
             display: inline-block;
             vertical-align: middle;
@@ -50,18 +50,18 @@
         }
     </style>
     {$message|escape:'quotes'}
-    <div class="panel pagantis-content-form">
-        <h3><i class="icon icon-credit-card"></i> {l s='Pagantis Configuration Panel' mod='pagantis'}</h3>
+    <div class="panel clearpay-content-form">
+        <h3><i class="icon icon-credit-card"></i> {l s='Clearpay Configuration Panel' mod='clearpay'}</h3>
         <div class="column-left">
-            <a target="_blank" href="https://bo.pagantis.com" class="btn btn-default" title="Login Pagantis"><i class="icon-user"></i> {l s='Pagantis Backoffice Login' mod='pagantis'}</a>
+            <a target="_blank" href="https://bo.clearpay.com" class="btn btn-default" title="Login Clearpay"><i class="icon-user"></i> {l s='Clearpay Backoffice Login' mod='clearpay'}</a>
         </div>
         <div class="column-center">
             <p>
-                {l s='Pagantis configuration panel, please take your time to configure the payment method behavior' mod='pagantis'}
+                {l s='Clearpay configuration panel, please take your time to configure the payment method behavior' mod='clearpay'}
             </p>
             <p>
-                {l s='If you need help or want to customize the module, please take a look to our documentation on' mod='pagantis'}
-                <a href="https://github.com/Pagantis/prestashop/tree/{$version|escape:'htmlall':'UTF-8'}">GitHub </a>
+                {l s='If you need help or want to customize the module, please take a look to our documentation on' mod='clearpay'}
+                <a href="https://github.com/clearpay/prestashop/tree/{$version|escape:'htmlall':'UTF-8'}">GitHub </a>
             </p>
         </div>
         <div class="column-right">

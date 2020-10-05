@@ -96,7 +96,7 @@ jobs:
           name: Package Generation
           command: |
             ./node_modules/.bin/grunt
-            mv pagantis.zip pagantis-$CIRCLE_TAG.zip
+            mv clearpay.zip clearpay-$CIRCLE_TAG.zip
             ls *.zip
       - run:
           name: Install GitHub CLI
@@ -104,7 +104,7 @@ jobs:
             curl -LO https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2
             tar xfv linux-amd64-github-release.tar.bz2
             rm linux-amd64-github-release.tar.bz2
-            sudo mv bin/linux/amd64/github-release /usr/local/bin/github-release
+            sudo mv bin/linux/amd64/github-release /usr/local/bin/github-releaseº
             sudo chmod +x /usr/local/bin/github-release
       - run:
           name: Push ZIP to GitHub

@@ -21,7 +21,7 @@ class ValidatePs16Test extends AbstractPs16Selenium
     public function testConfirmationPage()
     {
         $this->loginToBackOffice();
-        $this->getPagantisBackOffice();
+        $this->getClearpayBackOffice();
         $this->findById('module_form_submit_btn')->click();
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(
@@ -35,14 +35,14 @@ class ValidatePs16Test extends AbstractPs16Selenium
         $this->goToProduct();
         $this->addProduct();
         $this->goToCheckout(true);
-        $pagantisCheckout = WebDriverBy::className('pagantis-checkout');
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($pagantisCheckout);
+        $clearpayCheckout = WebDriverBy::className('clearpay-checkout');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($clearpayCheckout);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
 
         var_dump("Pre title---->".$this->webDriver->getTitle());
         sleep(10);
-        $this->webDriver->executeScript('document.querySelector(\'.pagantis-checkout\').click();');
+        $this->webDriver->executeScript('document.querySelector(\'.clearpay-checkout\').click();');
 
         var_dump("validate out title---->".$this->webDriver->getTitle());
         SeleniumHelper::finishForm($this->webDriver);

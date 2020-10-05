@@ -425,7 +425,7 @@
                     "email": "integrations@pagantis.com"
                 }
             ],
-            "description": "Pagantis PHP Library. Selenium helper to end a test purchase. Helper to test the payment validation and redirection",
+            "description": "Clearpay PHP Library. Selenium helper to end a test purchase. Helper to test the payment validation and redirection",
             "time": "2020-03-16T12:19:59+00:00"
         },
         {

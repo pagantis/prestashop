@@ -3,7 +3,7 @@ module.exports = function(grunt) {
         shell: {
             rename: {
                 command:
-                    'cp pagantis.zip pagantis-$(git rev-parse --abbrev-ref HEAD).zip \n'
+                    'cp clearpay.zip clearpay-$(git rev-parse --abbrev-ref HEAD).zip \n'
             },
             autoindex: {
                 command:
@@ -75,29 +75,29 @@ module.exports = function(grunt) {
         compress: {
             main: {
                 options: {
-                    archive: 'pagantis.zip'
+                    archive: 'clearpay.zip'
                 },
                 files: [
-                    {src: ['controllers/**'], dest: 'pagantis/', filter: 'isFile'},
-                    {src: ['classes/**'], dest: 'pagantis/', filter: 'isFile'},
-                    {src: ['docs/**'], dest: 'pagantis/', filter: 'isFile'},
-                    {src: ['override/**'], dest: 'pagantis/', filter: 'isFile'},
-                    {src: ['logs/**'], dest: 'pagantis/', filter: 'isFile'},
-                    {src: ['vendor/**'], dest: 'pagantis/', filter: 'isFile'},
-                    {src: ['translations/**'], dest: 'pagantis/', filter: 'isFile'},
-                    {src: ['upgrade/**'], dest: 'pagantis/', filter: 'isFile'},
-                    {src: ['optionaloverride/**'], dest: 'pagantis/', filter: 'isFile'},
-                    {src: ['oldoverride/**'], dest: 'pagantis/', filter: 'isFile'},
-                    {src: ['sql/**'], dest: 'pagantis/', filter: 'isFile'},
-                    {src: ['lib/**'], dest: 'pagantis/', filter: 'isFile'},
-                    {src: ['defaultoverride/**'], dest: 'pagantis/', filter: 'isFile'},
-                    {src: ['views/**'], dest: 'pagantis/', filter: 'isFile'},
-                    {src: 'index.php', dest: 'pagantis/'},
-                    {src: 'pagantis.php', dest: 'pagantis/'},
-                    {src: 'logo.png', dest: 'pagantis/'},
-                    {src: 'LICENSE.md', dest: 'pagantis/'},
-                    {src: 'CONTRIBUTORS.md', dest: 'pagantis/'},
-                    {src: 'README.md', dest: 'pagantis/'}
+                    {src: ['controllers/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: ['classes/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: ['docs/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: ['override/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: ['logs/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: ['vendor/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: ['translations/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: ['upgrade/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: ['optionaloverride/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: ['oldoverride/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: ['sql/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: ['lib/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: ['defaultoverride/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: ['views/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: 'index.php', dest: 'clearpay/'},
+                    {src: 'clearpay.php', dest: 'clearpay/'},
+                    {src: 'logo.png', dest: 'clearpay/'},
+                    {src: 'LICENSE.md', dest: 'clearpay/'},
+                    {src: 'CONTRIBUTORS.md', dest: 'clearpay/'},
+                    {src: 'README.md', dest: 'clearpay/'}
                 ]
             }
         }

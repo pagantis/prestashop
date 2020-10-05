@@ -1,9 +1,9 @@
 <?php
 /**
- * This file is part of the official Pagantis module for PrestaShop.
+ * This file is part of the official Clearpay module for PrestaShop.
  *
- * @author    Pagantis <integrations@pagantis.com>
- * @copyright 2019 Pagantis
+ * @author    Clearpay <integrations@clearpay.com>
+ * @copyright 2019 Clearpay
  * @license   proprietary
  */
 
@@ -13,9 +13,9 @@ use Pagantis\ModuleUtils\Exception\OrderNotFoundException;
 use Pagantis\ModuleUtils\Exception\UnknownException;
 
 /**
- * Class PagantisRedirectModuleFrontController
+ * Class ClearpayRedirectModuleFrontController
  */
-class PagantisPaymentModuleFrontController extends AbstractController
+class ClearpayPaymentModuleFrontController extends AbstractController
 {
     /** @var string $language */
     protected $language;
@@ -28,7 +28,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
     {
         if (_PS_VERSION_ < 1.6) {
             Logger::addLog(
-                'Pagantis Exception For user ' .
+                'Clearpay Exception For user ' .
                 $customer->email .
                 ' : ' .
                 $exception->getMessage(),
@@ -40,7 +40,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
             );
         } else {
             PrestaShopLogger::addLog(
-                'Pagantis Exception For user ' .
+                'Clearpay Exception For user ' .
                 $customer->email .
                 ' : ' .
                 $exception->getMessage(),
@@ -82,21 +82,21 @@ class PagantisPaymentModuleFrontController extends AbstractController
             null,
             array('step'=>3)
         );
-        $cancelUrl = (Pagantis::getExtraConfig('URL_KO') !== '') ? Pagantis::getExtraConfig('URL_KO', null) : $koUrl;
+        $cancelUrl = (Clearpay::getExtraConfig('URL_KO') !== '') ? Clearpay::getExtraConfig('URL_KO', null) : $koUrl;
 
         $product = Tools::getValue('product');
-        $configs = json_decode(Pagantis::getExtraConfig($product, null), true);
-        $iframe = Pagantis::getExtraConfig('FORM_DISPLAY_TYPE', $product);
+        $configs = json_decode(Clearpay::getExtraConfig($product, null), true);
+        $iframe = Clearpay::getExtraConfig('FORM_DISPLAY_TYPE', $product);
 
-        $pagantisPublicKey = Configuration::get(Tools::strtolower($configs['CODE']) . '_public_key');
-        $pagantisPrivateKey = Configuration::get(Tools::strtolower($configs['CODE']) . '_private_key');
+        $clearpayPublicKey = Configuration::get(Tools::strtolower($configs['CODE']) . '_public_key');
+        $clearpayPrivateKey = Configuration::get(Tools::strtolower($configs['CODE']) . '_private_key');
 
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&token='.$urlToken.'&origin=redirect&product=' . Tools::strtolower($configs['CODE']) . '&'
+            .'index.php?canonical=true&fc=module&module=clearpay&controller=notify&token='.$urlToken.'&origin=redirect&product=' . Tools::strtolower($configs['CODE']) . '&'
             .http_build_query($query)
         ;
         $notificationOkUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
-            .'index.php?canonical=true&fc=module&module=pagantis&controller=notify&token='.$urlToken.'&origin=notification&product=' . Tools::strtolower($configs['CODE']) . '&'
+            .'index.php?canonical=true&fc=module&module=clearpay&controller=notify&token='.$urlToken.'&origin=notification&product=' . Tools::strtolower($configs['CODE']) . '&'
             .http_build_query($query)
         ;
 
@@ -265,8 +265,8 @@ class PagantisPaymentModuleFrontController extends AbstractController
         $url ='';
         try {
             $orderClient = new \Pagantis\OrdersApiClient\Client(
-                trim($pagantisPublicKey),
-                trim($pagantisPrivateKey)
+                trim($clearpayPublicKey),
+                trim($clearpayPrivateKey)
             );
             $order = $orderClient->createOrder($order);
 
@@ -274,11 +274,11 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 $url = $order->getActionUrls()->getForm();
                 /** @var string $orderId MD5 value */
                 $orderId = $order->getId();
-                $sql = "INSERT INTO `" . _DB_PREFIX_ . "pagantis_order` (`id`, `order_id`, `token`)
+                $sql = "INSERT INTO `" . _DB_PREFIX_ . "clearpay_order` (`id`, `order_id`, `token`)
                      VALUES ('$cart->id','$orderId', '$urlToken')";
                 $result = Db::getInstance()->execute($sql);
                 if (!$result) {
-                    throw new UnknownException('Unable to save pagantis-order-id in database: '. $sql);
+                    throw new UnknownException('Unable to save clearpay-order-id in database: '. $sql);
                 }
             } else {
                 throw new OrderNotFoundException();
@@ -300,7 +300,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
                 if (_PS_VERSION_ < 1.7) {
                     $this->setTemplate('payment-15.tpl');
                 } else {
-                    $this->setTemplate('module:pagantis/views/templates/front/payment-17.tpl');
+                    $this->setTemplate('module:clearpay/views/templates/front/payment-17.tpl');
                 }
             } catch (\Exception $exception) {
                 $this->saveLog(array(), $exception);
@@ -410,7 +410,7 @@ class PagantisPaymentModuleFrontController extends AbstractController
      */
     private function getUserLanguage($shippingAddress = null, $billingAddress = null)
     {
-        $allowedCountries    = unserialize(Pagantis::getExtraConfig('ALLOWED_COUNTRIES', null));
+        $allowedCountries    = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
         $lang = Language::getLanguage($this->context->language->id);
         $langArray = explode("-", $lang['language_code']);
         if (count($langArray) != 2 && isset($lang['locale'])) {

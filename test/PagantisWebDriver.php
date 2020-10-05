@@ -6,11 +6,11 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverWait;
 
 /**
- * Class PagantisWebDriver
+ * Class ClearpayWebDriver
  *
  * @package Test
  */
-class PagantisWebDriver extends RemoteWebDriver
+class ClearpayWebDriver extends RemoteWebDriver
 {
     /**
      * Override method to increase the default timeouts

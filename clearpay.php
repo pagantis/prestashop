@@ -1,9 +1,9 @@
 <?php
 /**
- * This file is part of the official Pagantis module for PrestaShop.
+ * This file is part of the official Clearpay module for PrestaShop.
  *
- * @author    Pagantis <integrations@pagantis.com>
- * @copyright 2019 Pagantis
+ * @author    Clearpay <integrations@clearpay.com>
+ * @copyright 2019 Clearpay
  * @license   proprietary
  */
 
@@ -11,21 +11,21 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-define('_PS_PAGANTIS_DIR', _PS_MODULE_DIR_. '/pagantis');
-define('PROMOTIONS_CATEGORY', 'pagantis-promotion-product');
-define('PROMOTIONS_CATEGORY_NAME', 'Pagantis Promoted Product');
+define('_PS_PAGANTIS_DIR', _PS_MODULE_DIR_. '/clearpay');
+define('PROMOTIONS_CATEGORY', 'clearpay-promotion-product');
+define('PROMOTIONS_CATEGORY_NAME', 'Clearpay Promoted Product');
 
 require _PS_PAGANTIS_DIR.'/vendor/autoload.php';
 
 /**
- * Class Pagantis
+ * Class Clearpay
  */
-class Pagantis extends PaymentModule
+class Clearpay extends PaymentModule
 {
     /**
      * @var string
      */
-    public $url = 'https://pagantis.com';
+    public $url = 'https://clearpay.com';
 
     /**
      * @var bool
@@ -104,7 +104,7 @@ class Pagantis extends PaymentModule
     protected $allowedCountries = array();
 
     /**
-     * Pagantis constructor.
+     * Clearpay constructor.
      *
      * Define the module main properties so that prestashop understands what are the module requirements
      * and how to manage the module.
@@ -112,15 +112,15 @@ class Pagantis extends PaymentModule
      */
     public function __construct()
     {
-        $this->name = 'pagantis';
+        $this->name = 'clearpay';
         $this->tab = 'payments_gateways';
-        $this->version = '8.6.11';
-        $this->author = 'Pagantis';
+        $this->version = '1.0.0';
+        $this->author = 'Clearpay';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
         $this->module_key = '2b9bc901b4d834bb7069e7ea6510438f';
         $this->ps_versions_compliancy = array('min' => '1.5', 'max' => _PS_VERSION_);
-        $this->displayName = $this->l('Pagantis');
+        $this->displayName = $this->l('Clearpay');
         $this->description = $this->l(
             'Instant, easy and effective financial tool for your customers'
         );
@@ -142,7 +142,7 @@ class Pagantis extends PaymentModule
     }
 
     /**
-     * Configure the variables for Pagantis payment method.
+     * Configure the variables for Clearpay payment method.
      *
      * @return bool
      */
@@ -158,9 +158,9 @@ class Pagantis extends PaymentModule
             return false;
         }
 
-        $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
+        $products = explode(',', Clearpay::getExtraConfig('PRODUCTS', null));
         foreach ($products as $product) {
-            $code = Tools::strtolower(Pagantis::getExtraConfig('CODE', $product));
+            $code = Tools::strtolower(Clearpay::getExtraConfig('CODE', $product));
             if ($code === 'p4x') {
                 Configuration::updateValue($code . '_simulator_is_enabled', 1);
             }
@@ -260,7 +260,7 @@ class Pagantis extends PaymentModule
      */
     public function checkEnvVariables()
     {
-        $sql_content = 'select * from ' . _DB_PREFIX_. 'pagantis_config';
+        $sql_content = 'select * from ' . _DB_PREFIX_. 'clearpay_config';
         $dbConfigs = Db::getInstance()->executeS($sql_content);
 
         // Convert a multimple dimension array for SQL insert statements into a simple key/value
@@ -277,7 +277,7 @@ class Pagantis extends PaymentModule
                     'value' => $value,
                 );
             }
-            Db::getInstance()->insert('pagantis_config', $data);
+            Db::getInstance()->insert('clearpay_config', $data);
         }
     }
 
@@ -307,7 +307,7 @@ class Pagantis extends PaymentModule
     public function checkDatabaseTables()
     {
         try {
-            $tableName = _DB_PREFIX_.'pagantis_order';
+            $tableName = _DB_PREFIX_.'clearpay_order';
             $sql = "show tables like '"   . $tableName . "'";
             $data = Db::getInstance()->ExecuteS($sql);
             if (count($data) > 0) {
@@ -327,7 +327,7 @@ class Pagantis extends PaymentModule
                 $sql_file = dirname(__FILE__).'/sql/install.sql';
                 $this->loadSQLFile($sql_file);
             }
-            $tableName = _DB_PREFIX_.'pagantis_config';
+            $tableName = _DB_PREFIX_.'clearpay_config';
             $sql = "show tables like '"   . $tableName . "'";
             $data = Db::getInstance()->ExecuteS($sql);
             if (count($data) > 0) {
@@ -337,7 +337,7 @@ class Pagantis extends PaymentModule
                     $sql = "ALTER TABLE $tableName MODIFY `value` VARCHAR(5000)";
                     Db::getInstance()->Execute($sql);
                 }
-                // return because pagantis tables exisit so load the sqlfile is not needed
+                // return because clearpay tables exisit so load the sqlfile is not needed
             }
         } catch (\Exception $exception) {
             // do nothing
@@ -354,23 +354,23 @@ class Pagantis extends PaymentModule
      */
     public function isPaymentMethodAvailable($product = 'p4x')
     {
-        $configs = json_decode(Pagantis::getExtraConfig($product, null), true);
+        $configs = json_decode(Clearpay::getExtraConfig($product, null), true);
         $cart                      = $this->context->cart;
         $currency                  = new Currency($cart->id_currency);
         $availableCurrencies       = array('EUR');
-        $pagantisDisplayMinAmount  = $configs['DISPLAY_MIN_AMOUNT'];
-        $pagantisDisplayMaxAmount  = $configs['DISPLAY_MAX_AMOUNT'];
-        $pagantisPublicKey         = Configuration::get(Tools::strtolower($configs['CODE']) . '_public_key');
-        $pagantisPrivateKey        = Configuration::get(Tools::strtolower($configs['CODE']) . '_private_key');
-        $this->allowedCountries    = unserialize(Pagantis::getExtraConfig('ALLOWED_COUNTRIES', null));
+        $clearpayDisplayMinAmount  = $configs['DISPLAY_MIN_AMOUNT'];
+        $clearpayDisplayMaxAmount  = $configs['DISPLAY_MAX_AMOUNT'];
+        $clearpayPublicKey         = Configuration::get(Tools::strtolower($configs['CODE']) . '_public_key');
+        $clearpayPrivateKey        = Configuration::get(Tools::strtolower($configs['CODE']) . '_private_key');
+        $this->allowedCountries    = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
         $this->getUserLanguage();
         return (
-            $cart->getOrderTotal() >= $pagantisDisplayMinAmount &&
-            ($cart->getOrderTotal() <= $pagantisDisplayMaxAmount || $pagantisDisplayMaxAmount == '0') &&
+            $cart->getOrderTotal() >= $clearpayDisplayMinAmount &&
+            ($cart->getOrderTotal() <= $clearpayDisplayMaxAmount || $clearpayDisplayMaxAmount == '0') &&
             in_array($currency->iso_code, $availableCurrencies) &&
             in_array(Tools::strtolower($this->language), $this->allowedCountries) &&
-            $pagantisPublicKey &&
-            $pagantisPrivateKey
+            $clearpayPublicKey &&
+            $clearpayPrivateKey
         );
     }
 
@@ -397,7 +397,7 @@ class Pagantis extends PaymentModule
     public function hookHeader()
     {
 
-        $url = 'https://cdn.pagantis.com/js/pg-v2/sdk.js';
+        $url = 'https://cdn.clearpay.com/js/pg-v2/sdk.js';
         if (_PS_VERSION_ >= "1.7") {
             $this->context->controller->registerJavascript(
                 sha1(mt_rand(1, 90000)),
@@ -434,11 +434,11 @@ class Pagantis extends PaymentModule
 
         $return = array();
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
-        $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
+        $products = explode(',', Clearpay::getExtraConfig('PRODUCTS', null));
         $templateConfigs = array();
         foreach ($products as $product) {
             if ($this->isPaymentMethodAvailable($product)) {
-                $productConfigs = Pagantis::getExtraConfig($product, null);
+                $productConfigs = Clearpay::getExtraConfig($product, null);
                 $productConfigs = json_decode($productConfigs, true);
                 $publicKey = Configuration::get(Tools::strtolower($productConfigs['CODE']) . '_public_key');
                 $simulatorIsEnabled = Configuration::get(Tools::strtolower($productConfigs['CODE']) . '_simulator_is_enabled');
@@ -454,7 +454,7 @@ class Pagantis extends PaymentModule
                 $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
                 $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_IS_ENABLED'] = $isEnabled;
                 $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_LOGO'] = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PAYMENT_URL'] = $link->getModuleLink('pagantis', 'payment') . '&product=' . $productConfigs['CODE'];
+                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PAYMENT_URL'] = $link->getModuleLink('clearpay', 'payment') . '&product=' . $productConfigs['CODE'];
                 $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
 
                 foreach ($productConfigs as $productConfigKey => $productConfigValue) {
@@ -463,7 +463,7 @@ class Pagantis extends PaymentModule
                 $this->context->smarty->assign($templateConfigs);
 
                 $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-                $uri = $link->getModuleLink('pagantis', 'payment');
+                $uri = $link->getModuleLink('clearpay', 'payment');
                 if (strpos($uri, '?') !== false) {
                     $uri .= '&product=' . $productConfigs['CODE'];
                 } else {
@@ -475,7 +475,7 @@ class Pagantis extends PaymentModule
                     ->setLogo($templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_LOGO'])
                     ->setModuleName(__CLASS__)
                     ->setAdditionalInformation(
-                        $this->fetch('module:pagantis/views/templates/hook/checkout-' . Tools::strtolower($productConfigs['CODE']) . '.tpl')
+                        $this->fetch('module:clearpay/views/templates/hook/checkout-' . Tools::strtolower($productConfigs['CODE']) . '.tpl')
                     )
                 ;
                 $return[] = $paymentOption;
@@ -494,10 +494,10 @@ class Pagantis extends PaymentModule
             */
     private function getConfigForm()
     {
-        $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
+        $products = explode(',', Clearpay::getExtraConfig('PRODUCTS', null));
         $inputs = array();
         foreach ($products as $product) {
-            $code = Tools::strtolower(Pagantis::getExtraConfig('CODE', $product));
+            $code = Tools::strtolower(Clearpay::getExtraConfig('CODE', $product));
             $inputs[] = array(
                 'name' => $code .'_is_enabled',
                 'type' =>  (version_compare(_PS_VERSION_, '1.6')<0) ?'radio' :'switch',
@@ -607,7 +607,7 @@ class Pagantis extends PaymentModule
     }
 
     /**
-     * Function to update the variables of Pagantis Module in the backoffice of prestashop
+     * Function to update the variables of Clearpay Module in the backoffice of prestashop
      *
      * @return string
      * @throws SmartyException
@@ -618,9 +618,9 @@ class Pagantis extends PaymentModule
         $message = '';
         $settings = array();
         $settingsKeys = array();
-        $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
+        $products = explode(',', Clearpay::getExtraConfig('PRODUCTS', null));
         foreach ($products as $product) {
-            $code = Tools::strtolower(Pagantis::getExtraConfig('CODE', $product));
+            $code = Tools::strtolower(Clearpay::getExtraConfig('CODE', $product));
             $settings[$code . '_public_key'] = Configuration::get($code . '_public_key');
             $settings[$code . '_private_key'] = Configuration::get($code . '_private_key');
             $settings[$code . '_is_enabled'] = Configuration::get($code . '_is_enabled');
@@ -696,11 +696,11 @@ class Pagantis extends PaymentModule
 
         $return = '';
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
-        $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
+        $products = explode(',', Clearpay::getExtraConfig('PRODUCTS', null));
         $templateConfigs = array();
         foreach ($products as $product) {
             if ($this->isPaymentMethodAvailable($product)) {
-                $productConfigs = Pagantis::getExtraConfig($product, null);
+                $productConfigs = Clearpay::getExtraConfig($product, null);
                 $productConfigs = json_decode($productConfigs, true);
                 $publicKey = Configuration::get(Tools::strtolower($productConfigs['CODE']) . '_public_key');
                 $simulatorIsEnabled = Configuration::get(Tools::strtolower($productConfigs['CODE']) . '_simulator_is_enabled');
@@ -716,7 +716,7 @@ class Pagantis extends PaymentModule
                 $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
                 $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_IS_ENABLED'] = $isEnabled;
                 $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_LOGO'] = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
-                $uri = $link->getModuleLink('pagantis', 'payment');
+                $uri = $link->getModuleLink('clearpay', 'payment');
                 if (strpos($uri, '?') !== false) {
                     $uri .= '&product=' . $productConfigs['CODE'];
                 } else {
@@ -759,16 +759,16 @@ class Pagantis extends PaymentModule
         }
         //Resolves bug of reference passtrow
         $amount = Product::getPriceStatic($productId);
-        $allowedCountries = unserialize(Pagantis::getExtraConfig('ALLOWED_COUNTRIES', null));
+        $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
 
         $itemCategoriesNames = $this->arrayColumn(Product::getProductCategoriesFull($productId), 'name');
         $isPromotedProduct = in_array(PROMOTIONS_CATEGORY_NAME, $itemCategoriesNames);
 
         $return = '';
-        $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
+        $products = explode(',', Clearpay::getExtraConfig('PRODUCTS', null));
         $templateConfigs = array();
         foreach ($products as $product) {
-            $productConfigs = Pagantis::getExtraConfig($product, null);
+            $productConfigs = Clearpay::getExtraConfig($product, null);
             $productConfigs = json_decode($productConfigs, true);
 
             $publicKey = Configuration::get(Tools::strtolower($productConfigs['CODE']) . '_public_key');
@@ -893,7 +893,7 @@ class Pagantis extends PaymentModule
             $category->name = array((int)Configuration::get('PS_LANG_DEFAULT')=> PROMOTIONS_CATEGORY_NAME);
             $category->id_parent = Configuration::get('PS_HOME_CATEGORY');
             $category->active=0;
-            $description = 'Pagantis: Products with this category have free financing assumed by the merchant. ' .
+            $description = 'Clearpay: Products with this category have free financing assumed by the merchant. ' .
                 'Use it to promote your products or brands.';
             $category->description = $this->l($description);
             $category->save();
@@ -913,7 +913,7 @@ class Pagantis extends PaymentModule
         }
 
         if (is_null($product)) {
-            $sql = 'SELECT value FROM '._DB_PREFIX_.'pagantis_config where config = \'' . pSQL($config) . '\' limit 1';
+            $sql = 'SELECT value FROM '._DB_PREFIX_.'clearpay_config where config = \'' . pSQL($config) . '\' limit 1';
             if ($results = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql)) {
                 if (is_array($results) && count($results) === 1 && isset($results[0]['value'])) {
                     return $results[0]['value'];
@@ -921,7 +921,7 @@ class Pagantis extends PaymentModule
             }
         }
 
-        $sql = 'SELECT value FROM '._DB_PREFIX_.'pagantis_config where config = \'' . pSQL($product) . '\' limit 1';
+        $sql = 'SELECT value FROM '._DB_PREFIX_.'clearpay_config where config = \'' . pSQL($product) . '\' limit 1';
         if ($results = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql)) {
             if (is_array($results) && count($results) === 1 && isset($results[0]['value'])) {
                 $configs = json_decode($results[0]['value'], true);
@@ -941,7 +941,7 @@ class Pagantis extends PaymentModule
      */
     public function checkLogoExists()
     {
-        $logoPg = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/pagantis.png';
+        $logoPg = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/clearpay.png';
         if (!file_exists($logoPg) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
             copy(
                 _PS_PAGANTIS_DIR . '/logo.png',

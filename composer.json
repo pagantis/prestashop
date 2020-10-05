@@ -1,12 +1,12 @@
 {
-    "name": "pagantis/prestashop",
-    "description": "Prestashop module to add Pagantis",
+    "name": "clearpay/prestashop",
+    "description": "Prestashop module to add Clearpay",
     "license": "proprietary",
     "type": "module",
     "authors": [
         {
-            "name": "Pagantis",
-            "email": "integrations@pagantis.com"
+            "name": "Clearpay",
+            "email": "integrations@clearpay.com"
         }
     ],
     "require": {
@@ -15,7 +15,7 @@
     },
     "require-dev": {
         "pagantis/autoindex": "^1.0",
-        "pagantis/selenium-form-utils": "^3.0"
+        "clearpay/selenium-form-utils": "^3.0"
     },
     "autoload-dev": {
         "psr-4": {

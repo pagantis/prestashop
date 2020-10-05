@@ -13,12 +13,12 @@ use Pagantis\ModuleUtils\Exception\MerchantOrderNotFoundException;
  *
  * @group prestashop16buy
  */
-class PagantisPs16BuyTest extends AbstractPs16Selenium
+class ClearpayPs16BuyTest extends AbstractPs16Selenium
 {
     /**
      * config route
      */
-    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=pagantis&controller=notify&product=PAGANTIS&key=xxxxxx';
+    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=clearpay&controller=notify&product=PAGANTIS&key=xxxxxx';
 
     /**
      * @throws  \Exception
@@ -29,9 +29,9 @@ class PagantisPs16BuyTest extends AbstractPs16Selenium
         $this->goToProduct();
         $this->addProduct();
         $this->goToCheckout();
-        $this->verifyPagantis();
+        $this->verifyClearpay();
         $this->checkConcurrency();
-        $this->checkPagantisOrderId();
+        $this->checkClearpayOrderId();
         $this->checkAlreadyProcessed();
         $this->quit();
     }
@@ -58,7 +58,7 @@ class PagantisPs16BuyTest extends AbstractPs16Selenium
      * Check if with a parameter called order-received set to a invalid identification,
      * we can get a NoIdentificationException
      */
-    protected function checkPagantisOrderId()
+    protected function checkClearpayOrderId()
     {
         $orderId=0;
         $notifyUrl = self::PS16URL.self::NOTIFICATION_FOLDER.'&id_cart='.$orderId;

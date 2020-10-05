@@ -21,7 +21,7 @@ class ValidatePs17Test extends AbstractPs17Selenium
     public function testConfirmationPage()
     {
         $this->loginToBackOffice();
-        $this->getPagantisBackOffice();
+        $this->getClearpayBackOffice();
         $this->findById('module_form_submit_btn')->click();
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(
@@ -35,11 +35,11 @@ class ValidatePs17Test extends AbstractPs17Selenium
         $this->goToProduct();
         $this->addProduct();
         $this->goToCheckout(true);
-        $pagantisOption = WebDriverBy::cssSelector('[for=payment-option-3]');
-        $condition = WebDriverExpectedCondition::elementToBeClickable($pagantisOption);
+        $clearpayOption = WebDriverBy::cssSelector('[for=payment-option-3]');
+        $condition = WebDriverExpectedCondition::elementToBeClickable($clearpayOption);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->webDriver->findElement($pagantisOption)->click();
+        $this->webDriver->findElement($clearpayOption)->click();
 
         var_dump("Pre title---->".$this->webDriver->getTitle());
         sleep(10);

@@ -1,13 +1,13 @@
 <?php
 /**
- * This file is part of the official Pagantis module for PrestaShop.
+ * This file is part of the official Clearpay module for PrestaShop.
  *
- * @author    Pagantis <integrations@pagantis.com>
- * @copyright 2019 Pagantis
+ * @author    Clearpay <integrations@clearpay.com>
+ * @copyright 2019 Clearpay
  * @license   proprietary
  */
 
-use Pagantis\ModuleUtils\Model\Log\LogEntry;
+use Clearpay\ModuleUtils\Model\Log\LogEntry;
 
 /**
  * Class AbstractController
@@ -17,7 +17,7 @@ abstract class AbstractController extends ModuleFrontController
     /**
      * CODE
      */
-    const CODE = 'pagantis';
+    const CODE = 'clearpay';
 
     /**
      * @var array $headers
@@ -65,7 +65,7 @@ abstract class AbstractController extends ModuleFrontController
                 }
             }
 
-            Db::getInstance()->insert('pagantis_log', array(
+            Db::getInstance()->insert('clearpay_log', array(
                 'log' => str_replace("'", "\'", $response)
             ));
         } catch (\Exception $error) {

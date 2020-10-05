@@ -7,15 +7,15 @@ use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
 use Facebook\WebDriver\WebDriverSelect;
-use Pagantis\SeleniumFormUtils\SeleniumHelper;
-use Test\PagantisPrestashopTest;
+use Clearpay\SeleniumFormUtils\SeleniumHelper;
+use Test\ClearpayPrestashopTest;
 
 /**
  * Class AbstractPrestashop17CommonTest
  *
  * @package Test\Common
  */
-abstract class AbstractPs17Selenium extends PagantisPrestashopTest
+abstract class AbstractPs17Selenium extends ClearpayPrestashopTest
 {
     /**
      * @throws \Exception
@@ -40,7 +40,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
      *
      * @throws \Exception
      */
-    public function uploadPagantis()
+    public function uploadClearpay()
     {
         $this->webDriver->executeScript('document.querySelector(\'.onboarding-button-shut-down\').click();');
         sleep(10);
@@ -54,7 +54,7 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
         $fileInputSearch = $moduleInstallBlock->className('dz-hidden-input');
         $fileInput = $this->webDriver->findElement($fileInputSearch);
         $fileInput->setFileDetector(new LocalFileDetector());
-        $fileInput->sendKeys(__DIR__.'/../../pagantis.zip');
+        $fileInput->sendKeys(__DIR__.'/../../clearpay.zip');
         $validatorSearch = WebDriverBy::className('module-import-success-msg');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->webDriver->wait(90, 3000)->until($condition);
@@ -95,18 +95,18 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
      *
      * @throws \Exception
      */
-    public function getPagantisBackOffice()
+    public function getClearpayBackOffice()
     {
         $this->webDriver->get(self::PS17URL.self::BACKOFFICE_FOLDER);
         $this->findByLinkText('Modules')->click();
         $this->findByLinkText('Installed modules')->click();
         $this->findByClass('pstaggerAddTagInput')
             ->clear()
-            ->sendKeys('Pagantis')
+            ->sendKeys('Clearpay')
             ->sendKeys(WebDriverKeys::ENTER)
         ;
         $this->findByClass('module_action_menu_configure')->click();
-        $verify = WebDriverBy::id('pagantis_public_key');
+        $verify = WebDriverBy::id('clearpay_public_key');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
     }
@@ -255,8 +255,8 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
         $this->waitUntil($condition);
         $this->assertTrue((bool)$condition);
         if ($verifySimulator) {
-            $pagantisSimulatorPagantis = WebDriverBy::className('pagantisSimulatorPagantis');
-            $condition = WebDriverExpectedCondition::presenceOfElementLocated($pagantisSimulatorPagantis);
+            $clearpaySimulatorClearpay = WebDriverBy::className('clearpaySimulatorClearpay');
+            $condition = WebDriverExpectedCondition::presenceOfElementLocated($clearpaySimulatorClearpay);
             $this->waitUntil($condition);
             $this->assertTrue((bool)$condition);
             // this sleep is to prevent simulator js render
@@ -265,17 +265,17 @@ abstract class AbstractPs17Selenium extends PagantisPrestashopTest
     }
 
     /**
-     * Verify pagantis
+     * Verify clearpay
      *
      * @throws \Exception
      */
-    public function verifyPagantis()
+    public function verifyClearpay()
     {
-        $pagantisCheckout = WebDriverBy::cssSelector('[for=payment-option-3]');
-        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($pagantisCheckout);
+        $clearpayCheckout = WebDriverBy::cssSelector('[for=payment-option-3]');
+        $condition = WebDriverExpectedCondition::visibilityOfElementLocated($clearpayCheckout);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
-        $this->webDriver->findElement($pagantisCheckout)->click();
+        $this->webDriver->findElement($clearpayCheckout)->click();
 
         var_dump("Pre title---->".$this->webDriver->getTitle());
         sleep(10);

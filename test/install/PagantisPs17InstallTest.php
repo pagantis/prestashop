@@ -10,16 +10,16 @@ use Test\Common\AbstractPs17Selenium;
  * @requires prestashop17basic
  * @group prestashop17install
  */
-class PagantisPs17InstallTest extends AbstractPs17Selenium
+class ClearpayPs17InstallTest extends AbstractPs17Selenium
 {
     /**
      * @throws \Exception
      */
-    public function testInstallAndConfigurePagantisInPrestashop17()
+    public function testInstallAndConfigureClearpayInPrestashop17()
     {
         $this->loginToBackOffice();
-        $this->uploadPagantis();
-        $this->configurePagantis();
+        $this->uploadClearpay();
+        $this->configureClearpay();
         $this->configureLanguagePack('72', 'Español (Spanish)');
         $this->quit();
     }
@@ -27,12 +27,12 @@ class PagantisPs17InstallTest extends AbstractPs17Selenium
     /**
      * @throws \Exception
      */
-    public function configurePagantis()
+    public function configureClearpay()
     {
-        $this->findByCss('#pagantis_is_enabled_on + label')->click();
-        $this->findById('pagantis_public_key')->clear()->sendKeys('tk_8517351ec6ae44b29f5dca6e');
-        $this->findById('pagantis_private_key')->clear()->sendKeys('c580df9e0b7b40c3');
-        $this->findByCss('#pagantis_simulator_is_enabled_on + label')->click();
+        $this->findByCss('#clearpay_is_enabled_on + label')->click();
+        $this->findById('clearpay_public_key')->clear()->sendKeys('tk_8517351ec6ae44b29f5dca6e');
+        $this->findById('clearpay_private_key')->clear()->sendKeys('c580df9e0b7b40c3');
+        $this->findByCss('#clearpay_simulator_is_enabled_on + label')->click();
         $this->findById('module_form_submit_btn')->click();
         $confirmationSearch = WebDriverBy::className('module_confirmation');
         $condition = WebDriverExpectedCondition::textToBePresentInElement(

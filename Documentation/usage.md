@@ -2,7 +2,7 @@
 
 ## :eyes: Checkout
 
-If the module has been enabled and configured correctly, Pagantis will be visible in the checkout as a payment method.
+If the module has been enabled and configured correctly, Clearpay will be visible in the checkout as a payment method.
 
 For more information about how to config the module, see our [configuration section](./configuration.md).
 
