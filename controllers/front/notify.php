@@ -11,6 +11,7 @@ require_once('AbstractController.php');
 
 use Pagantis\OrdersApiClient\Client as PagantisClient;
 use Pagantis\OrdersApiClient\Model\Order as PagantisModelOrder;
+use Pagantis\ModuleUtils\Exception\AmountMismatchException;
 use Pagantis\ModuleUtils\Exception\ConcurrencyException;
 use Pagantis\ModuleUtils\Exception\MerchantOrderNotFoundException;
 use Pagantis\ModuleUtils\Exception\NoIdentificationException;
@@ -387,42 +388,31 @@ class PagantisNotifyModuleFrontController extends AbstractController
         $merchantAmount = (string) (100 * $this->merchantCart->getOrderTotal(true));
         $merchantAmount = explode('.', explode(',', $merchantAmount)[0])[0];
         if ($totalAmount != $merchantAmount) {
-            try {
-                $psTotalAmount = substr_replace(
-                    $merchantAmount,
-                    '.',
-                    (Tools::strlen($merchantAmount) -2),
-                    0
-                );
+            $psTotalAmount = substr_replace(
+                $merchantAmount,
+                '.',
+                (Tools::strlen($merchantAmount) -2),
+                0
+            );
 
-                $pgTotalAmountInCents = (string) $this->pagantisOrder->getShoppingCart()->getTotalAmount();
-                $pgTotalAmount = substr_replace(
-                    $pgTotalAmountInCents,
-                    '.',
-                    (Tools::strlen($pgTotalAmountInCents) -2),
-                    0
-                );
+            $pgTotalAmountInCents = (string) $this->pagantisOrder->getShoppingCart()->getTotalAmount();
+            $pgTotalAmount = substr_replace(
+                $pgTotalAmountInCents,
+                '.',
+                (Tools::strlen($pgTotalAmountInCents) -2),
+                0
+            );
 
-                $this->amountMismatchError = '. Amount mismatch in PrestaShop Cart #'. $this->merchantCartId .
-                    ' compared with Pagantis Order: ' . $this->pagantisOrderId .
-                    '. The Cart in PrestaShop has an amount of ' . $psTotalAmount . ' and in Pagantis ' .
-                    $pgTotalAmount . ' PLEASE REVIEW THE ORDER';
+            $this->amountMismatchError = '. Amount mismatch in PrestaShop Cart #'. $this->merchantCartId .
+                ' compared with Pagantis Order: ' . $this->pagantisOrderId .
+                '. The Cart in PrestaShop has an amount of ' . $psTotalAmount . ' and in Pagantis ' .
+                $pgTotalAmount . ' PLEASE REVIEW THE ORDER';
 
-                $this->saveLog(array(
-                    'requestId' => $this->requestId,
-                    'message' => $this->amountMismatchError
-                ));
-            } catch (\Exception $exception) {
-                $exceptionMessage = sprintf(
-                    "validateAmount exception[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s][%s]",
-                    $this->getOrigin(),
-                    $this->merchantCartId,
-                    $this->merchantOrderId,
-                    $this->pagantisOrderId,
-                    $exception->getMessage()
-                );
-                $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage));
-            }
+            $this->saveLog(array(
+                'requestId' => $this->requestId,
+                'message' => $this->amountMismatchError
+            ));
+            throw new AmountMismatchException($totalAmount, $merchantAmount);
         }
     }
 
