@@ -109,7 +109,7 @@
                 .payment-option img[src*='cdn.digitalorigin.com'] {
                     height: 18px;
                     padding-left: 5px;
-                    content:url('https://cdn.digitalorigin.com/assets/master/logos/pg.png');
+                    content:url(_MODULE_DIR_ . 'clearpay/views/images/logo.png');
 
                 }
                 p.payment_module a.clearpay-checkout.ps_version_1-6 {

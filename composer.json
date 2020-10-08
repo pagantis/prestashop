@@ -9,17 +9,29 @@
             "email": "integrations@clearpay.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "path",
+            "url": "/Users/rmarin/Projects/ei-sdk-php",
+            "options": {
+                "symlink": false
+            }
+        }
+    ],
     "require": {
         "pagantis/orders-api-client": "^2.0",
+        "clearpay/cp-sdk-php": "*",
         "pagantis/module-utils": "^2.0"
     },
     "require-dev": {
         "pagantis/autoindex": "^1.0",
-        "clearpay/selenium-form-utils": "^3.0"
+        "pagantis/selenium-form-utils": "^3.0"
     },
     "autoload-dev": {
         "psr-4": {
-            "Test\\Common\\": "test/common", "Test\\": "test/"
+            "Test\\Common\\": "test/common",
+            "Test\\": "test/",
+            "Afterpay\\SDK\\": "vendor/clearpay/cp-sdk-php"
         }
     }
 }

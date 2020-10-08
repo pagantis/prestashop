@@ -16,12 +16,12 @@ class ClearpayPs15ControllerTest extends ClearpayPrestashopTest
     /**
      * log route
      */
-    const LOG_FOLDER = '/index.php?fc=module&module=clearpay&controller=log&product=PAGANTIS';
+    const LOG_FOLDER = '/index.php?fc=module&module=clearpay&controller=log&product=CLEARPAY';
 
     /**
      * config route
      */
-    const CONFIG_FOLDER = '/index.php?fc=module&module=clearpay&controller=config&product=PAGANTIS';
+    const CONFIG_FOLDER = '/index.php?fc=module&module=clearpay&controller=config&product=CLEARPAY';
 
     protected $configs = array(
         "TITLE",

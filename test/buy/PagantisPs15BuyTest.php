@@ -18,7 +18,7 @@ class ClearpayPs15BuyTest extends AbstractPs15Selenium
     /**
      * config route
      */
-    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=clearpay&controller=notify&product=PAGANTIS&key=xxxxxx';
+    const NOTIFICATION_FOLDER = '/index.php?fc=module&module=clearpay&controller=notify&product=CLEARPAY&key=xxxxxx';
 
     /**
      * @throws  \Exception

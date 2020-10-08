@@ -51,7 +51,7 @@ class ClearpayConfigModuleFrontController extends ModuleFrontController
         $unrequestedProductSQL = rtrim($unrequestedProductSQL, ",");
         $sql_content = 'select * from ' . _DB_PREFIX_.
             'clearpay_config where config not in (' . $unrequestedProductSQL . ') 
-             and config not like (\'PAGANTIS_%\')  and config not like (\'PMT_%\') ';
+             and config not like (\'CLEARPAY_%\')  and config not like (\'PMT_%\') ';
 
         $dbConfigs = Db::getInstance()->executeS($sql_content);
 

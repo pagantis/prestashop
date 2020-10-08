@@ -317,7 +317,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Find PAGANTIS Order Id
+     * Find CLEARPAY Order Id
      *
      * @throws Exception
      */
@@ -337,7 +337,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Find PAGANTIS Order in Orders Server using Clearpay\OrdersApiClient
+     * Find CLEARPAY Order in Orders Server using Clearpay\OrdersApiClient
      *
      * @throws Exception
      */
@@ -351,7 +351,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Compare statuses of merchant order and PAGANTIS order, witch have to be the same.
+     * Compare statuses of merchant order and CLEARPAY order, witch have to be the same.
      *
      * @throws Exception
      */
@@ -377,7 +377,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Check that the merchant order and the order in PAGANTIS have the same amount to prevent hacking
+     * Check that the merchant order and the order in CLEARPAY have the same amount to prevent hacking
      *
      * @throws Exception
      */
@@ -526,7 +526,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Confirm the order in PAGANTIS
+     * Confirm the order in CLEARPAY
      *
      * @throws Exception
      */

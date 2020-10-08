@@ -7,15 +7,19 @@
  * @license   proprietary
  */
 
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-define('_PS_PAGANTIS_DIR', _PS_MODULE_DIR_. '/clearpay');
+define('_PS_CLEARPAY_DIR', _PS_MODULE_DIR_. '/clearpay');
 define('PROMOTIONS_CATEGORY', 'clearpay-promotion-product');
 define('PROMOTIONS_CATEGORY_NAME', 'Clearpay Promoted Product');
 
-require _PS_PAGANTIS_DIR.'/vendor/autoload.php';
+require _PS_CLEARPAY_DIR.'/vendor/autoload.php';
+
+use Afterpay\SDK\Merchant as AfterpayMerchant;
+use Afterpay\SDK\HTTP\Request\GetConfiguration as AfterpayGetConfigurationRequest;
 
 /**
  * Class Clearpay
@@ -44,50 +48,12 @@ class Clearpay extends PaymentModule
         'URL_OK' => '',
         'URL_KO' => '',
         'ALLOWED_COUNTRIES' => 'a:3:{i:0;s:2:"es";i:1;s:2:"it";i:2;s:2:"fr";}',
-        'PRODUCTS' => 'P4X,PAGANTIS',
-        'P4X' => '{
-            "CODE": "P4X",
-            "TITLE": "Pay in 4 installments, without cost",
-            "SIMULATOR_TITLE": "up to 4 payments of",
-            "SIMULATOR_SUBTITLE": "without cost with",
-            "SIMULATOR_DISPLAY_TYPE": "p4x",
-            "SIMULATOR_DISPLAY_IMAGE": "https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png",
-            "SIMULATOR_DISPLAY_TYPE_CHECKOUT": "sdk.simulator.types.CHECKOUT_PAGE",
-            "SIMULATOR_START_INSTALLMENTS": "4",
-            "SIMULATOR_CSS_PRICE_SELECTOR": "default",
-            "SIMULATOR_CSS_QUANTITY_SELECTOR": "default",
-            "SIMULATOR_CSS_PRODUCT_PAGE_STYLES": "",
-            "SIMULATOR_CSS_CHECKOUT_PAGE_STYLES": "",
-            "SIMULATOR_DISPLAY_MAX_AMOUNT": "800",
-            "FORM_DISPLAY_TYPE" : "0",
-            "DISPLAY_MIN_AMOUNT": "0",
-            "DISPLAY_MAX_AMOUNT": "800",
-            "SIMULATOR_THOUSAND_SEPARATOR": ".",
-            "SIMULATOR_DECIMAL_SEPARATOR": ","
-            }',
-        'PAGANTIS' => '{
-            "CODE": "PAGANTIS",
-            "TITLE": "Instant Financing",
-            "SIMULATOR_TITLE": "Instant Financing",
-            "SIMULATOR_SUBTITLE": "",
-            "SIMULATOR_DISPLAY_TYPE": "sdk.simulator.types.PRODUCT_PAGE",
-            "SIMULATOR_DISPLAY_TYPE_CHECKOUT": "sdk.simulator.types.CHECKOUT_PAGE",
-            "SIMULATOR_DISPLAY_SKIN": "sdk.simulator.skins.BLUE",
-            "SIMULATOR_START_INSTALLMENTS": "3",
-            "SIMULATOR_CSS_POSITION_SELECTOR": "default",
-            "SIMULATOR_DISPLAY_CSS_POSITION": "sdk.simulator.positions.INNER",
-            "SIMULATOR_CSS_PRICE_SELECTOR": "default",
-            "SIMULATOR_CSS_QUANTITY_SELECTOR": "default",
-            "SIMULATOR_CSS_PRODUCT_PAGE_STYLES": "",
-            "SIMULATOR_CSS_CHECKOUT_PAGE_STYLES": "",   
-            "SIMULATOR_DISPLAY_MAX_AMOUNT": "1500",
-            "FORM_DISPLAY_TYPE" : "0",
-            "DISPLAY_MIN_AMOUNT": "0",
-            "DISPLAY_MAX_AMOUNT": "1500",
-            "PROMOTION_EXTRA": "Finance this product <span class=pg-no-interest>without interest!</span>",
-            "SIMULATOR_THOUSAND_SEPARATOR": ".",
-            "SIMULATOR_DECIMAL_SEPARATOR": ","
-            }',
+        'PRODUCTS' => 'CLEARPAY',
+        'CLEARPAY' => '{
+            "CODE": "clearpay",
+            "SIMULATOR_DISPLAY_TYPE": "clearpay",
+            "SIMULATOR_DISPLAY_PRODUCT_PAGE": true
+        }'
     );
     /**
      * @var null $shippingAddress
@@ -160,13 +126,13 @@ class Clearpay extends PaymentModule
 
         $products = explode(',', Clearpay::getExtraConfig('PRODUCTS', null));
         foreach ($products as $product) {
-            $code = Tools::strtolower(Clearpay::getExtraConfig('CODE', $product));
-            if ($code === 'p4x') {
-                Configuration::updateValue($code . '_simulator_is_enabled', 1);
-            }
+            $code = Clearpay::getExtraConfig('CODE', $product);
             Configuration::updateValue($code . '_is_enabled', 0);
             Configuration::updateValue($code . '_public_key', '');
-            Configuration::updateValue($code . '_private_key', '');
+            Configuration::updateValue($code . '_secret_key', '');
+            Configuration::updateValue($code . '_environment', 1);
+            Configuration::updateValue($code . '_min_amount', null);
+            Configuration::updateValue($code . '_max_amount', null);
         }
 
         $return =  (parent::install()
@@ -192,14 +158,17 @@ class Clearpay extends PaymentModule
      */
     public function uninstall()
     {
-        Configuration::deleteByName('4x_public_key');
-        Configuration::deleteByName('12x_public_key');
-        Configuration::deleteByName('4x_public_key');
-        Configuration::deleteByName('12x_public_key');
-        Configuration::deleteByName('12x_simulator_is_enabled');
+        $products = explode(',', Clearpay::getExtraConfig('PRODUCTS', null));
+        foreach ($products as $product) {
+            $code = Clearpay::getExtraConfig('CODE', $product);
+            Configuration::deleteByName($code . '_public_key');
+            Configuration::deleteByName($code . '_secret_key');
+            Configuration::deleteByName($code . '_environment');
+            Configuration::deleteByName($code . '_min_amount');
+            Configuration::deleteByName($code . '_max_amount');
+        }
         $sql_file = dirname(__FILE__).'/sql/uninstall.sql';
         $this->loadSQLFile($sql_file);
-
 
         return parent::uninstall();
     }
@@ -352,7 +321,7 @@ class Clearpay extends PaymentModule
      * @param string $product
      * @return bool
      */
-    public function isPaymentMethodAvailable($product = 'p4x')
+    public function isPaymentMethodAvailable($product = 'clearpay')
     {
         $configs = json_decode(Clearpay::getExtraConfig($product, null), true);
         $cart                      = $this->context->cart;
@@ -360,8 +329,8 @@ class Clearpay extends PaymentModule
         $availableCurrencies       = array('EUR');
         $clearpayDisplayMinAmount  = $configs['DISPLAY_MIN_AMOUNT'];
         $clearpayDisplayMaxAmount  = $configs['DISPLAY_MAX_AMOUNT'];
-        $clearpayPublicKey         = Configuration::get(Tools::strtolower($configs['CODE']) . '_public_key');
-        $clearpayPrivateKey        = Configuration::get(Tools::strtolower($configs['CODE']) . '_private_key');
+        $clearpayPublicKey         = Configuration::get($configs['CODE'] . '_public_key');
+        $clearpayPrivateKey        = Configuration::get($configs['CODE'] . '_secret_key');
         $this->allowedCountries    = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
         $this->getUserLanguage();
         return (
@@ -440,25 +409,25 @@ class Clearpay extends PaymentModule
             if ($this->isPaymentMethodAvailable($product)) {
                 $productConfigs = Clearpay::getExtraConfig($product, null);
                 $productConfigs = json_decode($productConfigs, true);
-                $publicKey = Configuration::get(Tools::strtolower($productConfigs['CODE']) . '_public_key');
-                $simulatorIsEnabled = Configuration::get(Tools::strtolower($productConfigs['CODE']) . '_simulator_is_enabled');
-                $isEnabled = Configuration::get(Tools::strtolower($productConfigs['CODE']) . '_is_enabled');
+                $publicKey = Configuration::get($productConfigs['CODE'] . '_public_key');
+                $simulatorIsEnabled = $productConfigs['SIMULATOR_DISPLAY_PRODUCT_PAGE'];
+                $isEnabled = Configuration::get($productConfigs['CODE'] . '_is_enabled');
 
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_TITLE'] = $this->l($productConfigs['TITLE']);
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_TITLE'] = $this->l($productConfigs['TITLE']);
                 unset($productConfigs['TITLE']);
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_AMOUNT'] = $orderTotal;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PROMOTED_AMOUNT'] = $promotedAmount;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_LOCALE'] = $this->language;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_COUNTRY'] = $this->language;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PUBLIC_KEY'] = $publicKey;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_IS_ENABLED'] = $isEnabled;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_LOGO'] = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PAYMENT_URL'] = $link->getModuleLink('clearpay', 'payment') . '&product=' . $productConfigs['CODE'];
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_AMOUNT'] = $orderTotal;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_PROMOTED_AMOUNT'] = $promotedAmount;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_LOCALE'] = $this->language;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_COUNTRY'] = $this->language;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_PUBLIC_KEY'] = $publicKey;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_IS_ENABLED'] = $isEnabled;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_LOGO'] = _MODULE_DIR_ . 'clearpay/views/images/logo.png';
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_PAYMENT_URL'] = $link->getModuleLink('clearpay', 'payment') . '&product=' . $productConfigs['CODE'];
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
 
                 foreach ($productConfigs as $productConfigKey => $productConfigValue) {
-                    $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . "_" . $productConfigKey] = $productConfigValue;
+                    $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . "_" . $productConfigKey] = $productConfigValue;
                 }
                 $this->context->smarty->assign($templateConfigs);
 
@@ -470,12 +439,12 @@ class Clearpay extends PaymentModule
                     $uri .= '?product=' . $productConfigs['CODE'];
                 }
                 $paymentOption
-                    ->setCallToActionText($templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_TITLE'])
+                    ->setCallToActionText($templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_TITLE'])
                     ->setAction($uri)
-                    ->setLogo($templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_LOGO'])
+                    ->setLogo($templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_LOGO'])
                     ->setModuleName(__CLASS__)
                     ->setAdditionalInformation(
-                        $this->fetch('module:clearpay/views/templates/hook/checkout-' . Tools::strtolower($productConfigs['CODE']) . '.tpl')
+                        $this->fetch('module:clearpay/views/templates/hook/checkout-' . $productConfigs['CODE'] . '.tpl')
                     )
                 ;
                 $return[] = $paymentOption;
@@ -491,17 +460,17 @@ class Clearpay extends PaymentModule
      * Get the form for editing the BackOffice options of the module
      *
      * @return array
-            */
+     */
     private function getConfigForm()
     {
         $products = explode(',', Clearpay::getExtraConfig('PRODUCTS', null));
         $inputs = array();
         foreach ($products as $product) {
-            $code = Tools::strtolower(Clearpay::getExtraConfig('CODE', $product));
+            $code = Clearpay::getExtraConfig('CODE', $product);
             $inputs[] = array(
                 'name' => $code .'_is_enabled',
                 'type' =>  (version_compare(_PS_VERSION_, '1.6')<0) ?'radio' :'switch',
-                'label' => $this->l('Module is enabled ' . $code),
+                'label' => $this->l('Module is enabled'),
                 'prefix' => '<i class="icon icon-key"></i>',
                 'class' => 't',
                 'required' => true,
@@ -519,48 +488,97 @@ class Clearpay extends PaymentModule
                 )
             );
             $inputs[] = array(
-                'name' => $code . '_public_key',
-                'suffix' => $this->l('ex: pk_fd53cd467ba49022e4gf215e'),
+                'name' => $code . '_sandbox_public_key',
+                'suffix' => $this->l('ex: 400101010'),
                 'type' => 'text',
-                'size' => 60,
-                'label' => $this->l('Public Key ' . $code),
+                'label' => $this->l('Merchant id for Sandbox environment'),
                 'prefix' => '<i class="icon icon-key"></i>',
                 'col' => 6,
                 'required' => true,
             );
             $inputs[] = array(
-                'name' => $code . '_private_key',
-                'suffix' => $this->l('ex: 21e5723a97459f6a'),
+                'name' => $code . '_sandbox_secret_key',
+                'suffix' => $this->l('128 alphanumeric code'),
                 'type' => 'text',
-                'size' => 60,
-                'label' => $this->l('Private Key ' . $code),
+                'size' => 128,
+                'label' => $this->l('Secret Key for Sandbox environment'),
                 'prefix' => '<i class="icon icon-key"></i>',
                 'col' => 6,
                 'required' => true,
             );
-            if ($code !== "p4x") {
-                $inputs[] = array(
-                    'name' => $code . '_simulator_is_enabled',
-                    'type' => (version_compare(_PS_VERSION_, '1.6')<0) ?'radio' :'switch',
-                    'label' => $this->l('Simulator is enabled ' . $code),
-                    'prefix' => '<i class="icon icon-key"></i>',
-                    'class' => 't',
-                    'required' => true,
-                    'values'=> array(
+            $inputs[] = array(
+                'name' => $code . '_production_public_key',
+                'suffix' => $this->l('ex: 400101010'),
+                'type' => 'text',
+                'label' => $this->l('Merchant id for Production environment'),
+                'prefix' => '<i class="icon icon-key"></i>',
+                'col' => 6,
+                'required' => true,
+            );
+            $inputs[] = array(
+                'name' => $code . '_production_secret_key',
+                'suffix' => $this->l('128 alphanumeric code'),
+                'type' => 'text',
+                'size' => 128,
+                'label' => $this->l('Secret Key for Production environment'),
+                'prefix' => '<i class="icon icon-key"></i>',
+                'col' => 6,
+                'required' => true,
+            );
+            $inputs[] = array(
+                'name' => $code . '_environment',
+                'type' => 'select',
+                'label' => $this->l('API Environment'),
+                'prefix' => '<i class="icon icon-key"></i>',
+                'class' => 't',
+                'required' => true,
+                'options' => array(
+                    'query' => array(
                         array(
-                            'id' => $code . '_simulator_is_enabled_on',
-                            'value' => 1,
-                            'label' => $this->l('Yes'),
+                            $code . '_environment_id' => 'sandbox',
+                            $code . '_environment_name' => $this->l('Sandbox')
                         ),
                         array(
-                            'id' => $code . '_simulator_is_enabled_off',
-                            'value' => 0,
-                            'label' => $this->l('No'),
-                        ),
-                    )
-                );
-            }
+                            $code . '_environment_id' => 'production',
+                            $code . '_environment_name' => $this->l('Production')
+                        )
+                    ),
+                    'id' => $code . '_environment_id',
+                    'name' => $code . '_environment_name'
+                )
+            );
         }
+        $inputs[] = array(
+            'name' => $code . '_min_amount',
+            'suffix' => $this->l('ex: 0.5'),
+            'type' => 'text',
+            'label' => $this->l('Min Payment Limit'),
+            'col' => 6,
+            'disabled' => true,
+            'required' => false,
+        );
+        $inputs[] = array(
+            'name' => $code . '_max_amount',
+            'suffix' => $this->l('ex: 800'),
+            'type' => 'text',
+            'label' => $this->l('Max Payment Limit'),
+            'col' => 6,
+            'disabled' => true,
+            'required' => false,
+        );
+        $inputs[] = array(
+            'name' => $code . '_restricted_categories',
+            'type' => 'categories',
+            'label' => $this->l('Restricted Categories'),
+            'tree' => array(
+                'id' => $code . '_restricted_categories',
+                'selected_categories' => json_decode(Configuration::get($code . '_restricted_categories')),
+                'root_category' => Category::getRootCategory()->id,
+                'use_search' => true,
+                'use_checkbox' => true,
+            ),
+        );
+
         $return = array(
             'form' => array(
                 'legend' => array(
@@ -620,18 +638,49 @@ class Clearpay extends PaymentModule
         $settingsKeys = array();
         $products = explode(',', Clearpay::getExtraConfig('PRODUCTS', null));
         foreach ($products as $product) {
-            $code = Tools::strtolower(Clearpay::getExtraConfig('CODE', $product));
-            $settings[$code . '_public_key'] = Configuration::get($code . '_public_key');
-            $settings[$code . '_private_key'] = Configuration::get($code . '_private_key');
+            $code = Clearpay::getExtraConfig('CODE', $product);
+            $sandboxPublicKey = Configuration::get($code . '_public_key');
+            $sandboxSecretKey = Configuration::get($code . '_secret_key');
+            $productionPublicKey = Configuration::get($code . '_public_key');
+            $productionSecretKey = Configuration::get($code . '_secret_key');
+            $environment = Configuration::get($code . '_environment');
+            $settings[$code . '_sandbox_public_key'] = $sandboxPublicKey;
+            $settings[$code . '_sandbox_secret_key'] = $sandboxSecretKey;
+            $settings[$code . '_production_public_key'] = $productionPublicKey;
+            $settings[$code . '_production_secret_key'] = $productionSecretKey;
             $settings[$code . '_is_enabled'] = Configuration::get($code . '_is_enabled');
-            if ($code !== 'p4x') {
-                $settings[$code . '_simulator_is_enabled'] = Configuration::get($code . '_simulator_is_enabled');
-            }
+            $settings[$code . '_environment'] = Configuration::get($code . '_environment');
+            $settings[$code . '_min_amount'] = Configuration::get($code . '_min_amount');
+            $settings[$code . '_max_amount'] = Configuration::get($code . '_max_amount');
+            $settings[$code . '_restricted_categories'] = Configuration::get($code . '_restricted_categories');
+
             $settingsKeys[] = $code . '_is_enabled';
-            $settingsKeys[] = $code . '_public_key';
-            $settingsKeys[] = $code . '_private_key';
-            if ($code !== 'p4x') {
-                $settingsKeys[] = $code . '_simulator_is_enabled';
+            $settingsKeys[] = $code . '_sandbox_public_key';
+            $settingsKeys[] = $code . '_sandbox_secret_key';
+            $settingsKeys[] = $code . '_production_public_key';
+            $settingsKeys[] = $code . '_production_secret_key';
+            $settingsKeys[] = $code . '_sandbox_secret_key';
+            $settingsKeys[] = $code . '_production_secret_key';
+            $settingsKeys[] = $code . '_environment';
+            $settingsKeys[] = $code . '_restricted_categories';
+
+            // auto update configs
+            if (!empty($sandboxPublicKey) && !empty($sandboxSecretKey)  && $environment === 'sandbox' ||
+                !empty($productionPublicKey) && !empty($productionSecretKey)  && $environment === 'production') {
+                // auto update configs
+                $merchant = new AfterpayMerchant();
+                $merchant
+                    ->setMerchantId(($environment === 'sandbox') ? $sandboxPublicKey : $productionPublicKey)
+                    ->setSecretKey(($environment === 'sandbox') ? $sandboxSecretKey : $productionSecretKey)
+                ;
+
+                $getConfigurationRequest = new AfterpayGetConfigurationRequest();
+                $getConfigurationRequest->setMerchant($merchant);
+                $getConfigurationRequest->send();
+                $configuration = $getConfigurationRequest->getResponse()->getParsedBody();
+
+                Configuration::updateValue($code . '_min_amount', $configuration[0]->minimumAmount->amount);
+                Configuration::updateValue($code . '_max_amount', $configuration[0]->maximumAmount->amount);
             }
         }
 
@@ -639,20 +688,24 @@ class Clearpay extends PaymentModule
         if (Tools::isSubmit('submit'.$this->name)) {
             foreach ($settingsKeys as $key) {
                 $value = Tools::getValue($key);
+                if (is_array($value)) {
+                    $value = json_encode($value);
+                }
                 Configuration::updateValue($key, $value);
                 $settings[$key] = $value;
             }
             $message = $this->displayConfirmation($this->l('All changes have been saved'));
         } else {
             foreach ($settingsKeys as $key) {
-                    $settings[$key] = Configuration::get($key);
+                $settings[$key] = Configuration::get($key);
             }
         }
         if ($error) {
             $message = $this->displayError($error);
         }
 
-        $logo = 'https://cdn.digitalorigin.com/assets/master/logos/pg.png';
+
+        $logo = _MODULE_DIR_ . 'clearpay/views/images/logo.png';
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
@@ -702,43 +755,46 @@ class Clearpay extends PaymentModule
             if ($this->isPaymentMethodAvailable($product)) {
                 $productConfigs = Clearpay::getExtraConfig($product, null);
                 $productConfigs = json_decode($productConfigs, true);
-                $publicKey = Configuration::get(Tools::strtolower($productConfigs['CODE']) . '_public_key');
-                $simulatorIsEnabled = Configuration::get(Tools::strtolower($productConfigs['CODE']) . '_simulator_is_enabled');
-                $isEnabled = Configuration::get(Tools::strtolower($productConfigs['CODE']) . '_is_enabled');
+                $sandboxPublicKey = Configuration::get($code . '_public_key');
+                $productionPublicKey = Configuration::get($code . '_public_key');
+                $environment = Configuration::get($code . '_environment');
+                $publicKey = ($environment === 'sandbox') ? $sandboxPublicKey : $productionPublicKey;
+                $simulatorIsEnabled = Configuration::get($productConfigs['CODE'] . '_environment');
+                $isEnabled = Configuration::get($productConfigs['CODE'] . '_is_enabled');
 
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_TITLE'] = $this->l($productConfigs['TITLE']);
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_TITLE'] = $this->l($productConfigs['TITLE']);
                 unset($productConfigs['TITLE']);
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_AMOUNT'] = $orderTotal;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PROMOTED_AMOUNT'] = $promotedAmount;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_LOCALE'] = $this->language;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_COUNTRY'] = $this->language;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PUBLIC_KEY'] = $publicKey;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_IS_ENABLED'] = $isEnabled;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_LOGO'] = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_AMOUNT'] = $orderTotal;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_PROMOTED_AMOUNT'] = $promotedAmount;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_LOCALE'] = $this->language;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_COUNTRY'] = $this->language;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_PUBLIC_KEY'] = $publicKey;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_IS_ENABLED'] = $isEnabled;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_LOGO'] = _MODULE_DIR_ . 'clearpay/views/images/logo.png';
                 $uri = $link->getModuleLink('clearpay', 'payment');
                 if (strpos($uri, '?') !== false) {
                     $uri .= '&product=' . $productConfigs['CODE'];
                 } else {
                     $uri .= '?product=' . $productConfigs['CODE'];
                 }
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PAYMENT_URL'] = $uri;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_PAYMENT_URL'] = $uri;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
 
                 foreach ($productConfigs as $productConfigKey => $productConfigValue) {
-                    $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . "_" . $productConfigKey] = $productConfigValue;
+                    $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . "_" . $productConfigKey] = $productConfigValue;
                 }
                 $this->context->smarty->assign($templateConfigs);
                 if ($supercheckout_enabled || $onepagecheckout_enabled || $onepagecheckoutps_enabled) {
                     $this->checkLogoExists();
                     $return .= $this->display(
                         __FILE__,
-                        'views/templates/hook/onepagecheckout-' . Tools::strtolower($productConfigs['CODE']) . '.tpl'
+                        'views/templates/hook/onepagecheckout-' . $productConfigs['CODE'] . '.tpl'
                     );
                 } elseif (_PS_VERSION_ < 1.7) {
                     $return .= $this->display(
                         __FILE__,
-                        'views/templates/hook/checkout-' . Tools::strtolower($productConfigs['CODE']) . '.tpl'
+                        'views/templates/hook/checkout-' . $productConfigs['CODE'] . '.tpl'
                     );
                 }
             }
@@ -770,13 +826,12 @@ class Clearpay extends PaymentModule
         foreach ($products as $product) {
             $productConfigs = Clearpay::getExtraConfig($product, null);
             $productConfigs = json_decode($productConfigs, true);
-
-            $publicKey = Configuration::get(Tools::strtolower($productConfigs['CODE']) . '_public_key');
-            $simulatorIsEnabled = Configuration::get(Tools::strtolower($productConfigs['CODE']) . '_simulator_is_enabled');
-            if (Tools::strtolower($productConfigs['CODE']) === 'p4x') {
-                $simulatorIsEnabled = true;
-            }
-            $isEnabled = Configuration::get(Tools::strtolower($productConfigs['CODE']) . '_is_enabled');
+            $sandboxPublicKey = Configuration::get($code . '_public_key');
+            $productionPublicKey = Configuration::get($code . '_public_key');
+            $environment = Configuration::get($code . '_environment');
+            $publicKey = ($environment === 'sandbox') ? $sandboxPublicKey : $productionPublicKey;
+            $simulatorIsEnabled = $productConfigs['SIMULATOR_DISPLAY_PRODUCT_PAGE'];
+            $isEnabled = Configuration::get($productConfigs['CODE'] . '_is_enabled');
             $availableSimulators = array(
                 'hookDisplayProductButtons' => array(
                     'sdk.simulator.types.SIMPLE',
@@ -799,30 +854,30 @@ class Clearpay extends PaymentModule
                 in_array(Tools::strtolower($this->language), $allowedCountries) &&
                 (in_array($productConfigs['SIMULATOR_DISPLAY_TYPE'], $availableSimulators[$hookName]) || _PS_VERSION_ < 1.6)
             ) {
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_TITLE'] = $this->l($productConfigs['TITLE']);
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_SIMULATOR_TITLE'] = $this->l($productConfigs['SIMULATOR_TITLE']);
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_SIMULATOR_SUBTITLE'] = $this->l($productConfigs['SIMULATOR_SUBTITLE']);
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_TITLE'] = $this->l($productConfigs['TITLE']);
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_SIMULATOR_TITLE'] = $this->l($productConfigs['SIMULATOR_TITLE']);
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_SIMULATOR_SUBTITLE'] = $this->l($productConfigs['SIMULATOR_SUBTITLE']);
                 unset($productConfigs['TITLE']);
                 unset($productConfigs['SIMULATOR_TITLE']);
                 unset($productConfigs['SIMULATOR_SUBTITLE']);
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_AMOUNT'] = $amount;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_AMOUNT4X'] = number_format(($amount / 4), 2, '.', '');
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_IS_PROMOTED_PRODUCT'] = $isPromotedProduct;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_LOCALE'] = $this->language;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_COUNTRY'] = $this->language;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PUBLIC_KEY'] = $publicKey;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_IS_ENABLED'] = $isEnabled;
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_LOGO'] = 'https://cdn.digitalorigin.com/assets/master/logos/pg-favicon.png';
-                $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_AMOUNT'] = $amount;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_AMOUNT4X'] = number_format(($amount / 4), 2, '.', '');
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_IS_PROMOTED_PRODUCT'] = $isPromotedProduct;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_LOCALE'] = $this->language;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_COUNTRY'] = $this->language;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_PUBLIC_KEY'] = $publicKey;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_SIMULATOR_IS_ENABLED'] = $simulatorIsEnabled;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_IS_ENABLED'] = $isEnabled;
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_LOGO'] = _MODULE_DIR_ . 'clearpay/views/images/logo.png';
+                $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . '_PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
                 foreach ($productConfigs as $productConfigKey => $productConfigValue) {
-                    $templateConfigs[Tools::strtoupper(Tools::strtolower($productConfigs['CODE'])) . "_" . $productConfigKey] = $productConfigValue;
+                    $templateConfigs[Tools::strtoupper($productConfigs['CODE']) . "_" . $productConfigKey] = $productConfigValue;
                 }
 
                 $this->context->smarty->assign($templateConfigs);
                 $return .= $this->display(
                     __FILE__,
-                    'views/templates/hook/product-simulator-' . Tools::strtolower($productConfigs['CODE']) . '.tpl'
+                    'views/templates/hook/product-simulator-' . $productConfigs['CODE'] . '.tpl'
                 );
             }
         }
@@ -852,7 +907,7 @@ class Clearpay extends PaymentModule
         if (isset($params['type']) && $params['type'] === 'price' &&
             isset($params['smarty']) && isset($params['smarty']->template_resource) &&
             (strpos($params['smarty']->template_resource, 'product.tpl') !== false  ||
-            strpos($params['smarty']->template_resource, 'product-prices.tpl') !== false)
+                strpos($params['smarty']->template_resource, 'product-prices.tpl') !== false)
         ) {
             return $this->productPageSimulatorDisplay("hookDisplayProductPriceBlock");
         }
@@ -906,7 +961,43 @@ class Clearpay extends PaymentModule
      * @param string $default
      * @return string
      */
-    public static function getExtraConfig($config = null, $product = "P4X", $default = '')
+    public static function getExtraConfig($config = null, $product = "CLEARPAY", $default = '')
+    {
+        if (is_null($config)) {
+            return '';
+        }
+
+        if (is_null($product)) {
+            $sql = 'SELECT value FROM '._DB_PREFIX_.'clearpay_config where config = \'' . pSQL($config) . '\' limit 1';
+            if ($results = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql)) {
+                if (is_array($results) && count($results) === 1 && isset($results[0]['value'])) {
+                    return $results[0]['value'];
+                }
+            }
+        }
+
+        $sql = 'SELECT value FROM '._DB_PREFIX_.'clearpay_config where config = \'' . pSQL($product) . '\' limit 1';
+        if ($results = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql)) {
+            if (is_array($results) && count($results) === 1 && isset($results[0]['value'])) {
+                $configs = json_decode($results[0]['value'], true);
+                $value = '';
+                if (isset($configs[$config])) {
+                    $value = $configs[$config];
+                }
+                return $value;
+            }
+        }
+
+        return $default;
+    }
+
+    /**
+     * @param null   $config
+     * @param string $product
+     * @param string $default
+     * @return mixed|string
+     */
+    public function setExtraConfig($config = null, $product = "CLEARPAY", $default = '')
     {
         if (is_null($config)) {
             return '';
@@ -941,10 +1032,10 @@ class Clearpay extends PaymentModule
      */
     public function checkLogoExists()
     {
-        $logoPg = _PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments/clearpay.png';
-        if (!file_exists($logoPg) && is_dir(_PS_MODULE_DIR_ . '/onepagecheckoutps/views/img/payments')) {
+        $logoPg = _PS_MODULE_DIR_ . 'clearpay//onepagecheckoutps/views/img/payments/clearpay.png';
+        if (!file_exists($logoPg) && is_dir(_PS_MODULE_DIR_ . 'clearpay//onepagecheckoutps/views/img/payments')) {
             copy(
-                _PS_PAGANTIS_DIR . '/logo.png',
+                _PS_CLEARPAY_DIR . '/logo.png',
                 $logoPg
             );
         }

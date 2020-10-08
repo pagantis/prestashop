@@ -5,13 +5,13 @@
  * @copyright 2019 Clearpay
  * @license   proprietary
  *}
-{if $PAGANTIS_IS_ENABLED}
+{if $CLEARPAY_IS_ENABLED}
     <div class="row">
         <div class="col-xs-12">
-            <p class="payment_module Clearpay ps_version_{$PAGANTIS_PS_VERSION|escape:'htmlall':'UTF-8'}">
-                <a class="clearpay-checkout clearpay-checkout-Clearpay ps_version_{$PAGANTIS_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$PAGANTIS_LOCALE|escape:'htmlall':'UTF-8'}" href="{$PAGANTIS_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="{$PAGANTIS_TITLE|escape:'htmlall':'UTF-8'}">
-                    {if $PAGANTIS_PS_VERSION !== '1-7'}{$PAGANTIS_TITLE|escape:'quotes'}&nbsp;{/if}
-                    <span class="clearpaySimulatorClearpay ps_version_{$PAGANTIS_PS_VERSION|escape:'htmlall':'UTF-8'}"></span>
+            <p class="payment_module Clearpay ps_version_{$CLEARPAY_PS_VERSION|escape:'htmlall':'UTF-8'}">
+                <a class="clearpay-checkout clearpay-checkout-Clearpay ps_version_{$CLEARPAY_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$CLEARPAY_LOCALE|escape:'htmlall':'UTF-8'}" href="{$CLEARPAY_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="{$CLEARPAY_TITLE|escape:'htmlall':'UTF-8'}">
+                    {if $CLEARPAY_PS_VERSION !== '1-7'}{$CLEARPAY_TITLE|escape:'quotes'}&nbsp;{/if}
+                    <span class="clearpaySimulatorClearpay ps_version_{$CLEARPAY_PS_VERSION|escape:'htmlall':'UTF-8'}"></span>
 
                 </a>
             </p>
@@ -47,17 +47,17 @@
                     var sdk = pgSDK;
 
                     sdk.simulator.init({
-                        type: {$PAGANTIS_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
-                        locale: '{$PAGANTIS_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
-                        country: '{$PAGANTIS_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
-                        publicKey: '{$PAGANTIS_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
+                        type: {$CLEARPAY_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
+                        locale: '{$CLEARPAY_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                        country: '{$CLEARPAY_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                        publicKey: '{$CLEARPAY_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
                         selector: '.clearpaySimulatorClearpay',
-                        numInstalments: '{$PAGANTIS_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}',
-                        totalAmount: '{$PAGANTIS_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
-                        totalPromotedAmount: '{$PAGANTIS_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                        numInstalments: '{$CLEARPAY_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}',
+                        totalAmount: '{$CLEARPAY_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                        totalPromotedAmount: '{$CLEARPAY_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
                         amountParserConfig: {
-                            thousandSeparator: '{$PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
-                            decimalSeparator: '{$PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
+                            thousandSeparator: '{$CLEARPAY_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
+                            decimalSeparator: '{$CLEARPAY_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
                         }
                     });
                     return true;
@@ -109,7 +109,7 @@
                 .payment-option img[src*='cdn.digitalorigin.com'] {
                     height: 18px;
                     padding-left: 5px;
-                    content:url('https://cdn.digitalorigin.com/assets/master/logos/pg.png');
+                    content:url(_MODULE_DIR_ . 'clearpay/views/images/logo.png');
 
                 }
                 p.payment_module a.clearpay-checkout.ps_version_1-6 {
@@ -140,7 +140,7 @@
                     min-height: 0px;
                     display: inline;
                 }
-                {$PAGANTIS_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
+                {$CLEARPAY_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
             </style>
         </div>
     </div>

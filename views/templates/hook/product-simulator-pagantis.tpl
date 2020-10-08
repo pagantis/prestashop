@@ -5,7 +5,7 @@
  * @copyright 2019 Clearpay
  * @license   proprietary
 *}
-{if ($PAGANTIS_IS_ENABLED && $PAGANTIS_SIMULATOR_IS_ENABLED)}
+{if ($CLEARPAY_IS_ENABLED && $CLEARPAY_SIMULATOR_IS_ENABLED)}
     <style>
         .clearpay-promotion {
             font-size: 11px;
@@ -36,7 +36,7 @@
         iframe#pg-iframe-product-simulator {
             display: block;
         }
-        {$PAGANTIS_SIMULATOR_CSS_PRODUCT_PAGE_STYLES|escape:'javascript':'UTF-8'}
+        {$CLEARPAY_SIMULATOR_CSS_PRODUCT_PAGE_STYLES|escape:'javascript':'UTF-8'}
     </style>
     <script>
         function findPriceSelector()
@@ -94,18 +94,18 @@
             var sdk = pgSDK;
             var price = null;
             var quantity = null;
-            var priceSelector = '{$PAGANTIS_SIMULATOR_CSS_PRICE_SELECTOR|escape:'javascript':'UTF-8'}';
-            var quantitySelector = '{$PAGANTIS_SIMULATOR_CSS_QUANTITY_SELECTOR|escape:'javascript':'UTF-8'}';
-            var sdkPositionSelector = '{$PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR|escape:'javascript':'UTF-8'}';
+            var priceSelector = '{$CLEARPAY_SIMULATOR_CSS_PRICE_SELECTOR|escape:'javascript':'UTF-8'}';
+            var quantitySelector = '{$CLEARPAY_SIMULATOR_CSS_QUANTITY_SELECTOR|escape:'javascript':'UTF-8'}';
+            var sdkPositionSelector = '{$CLEARPAY_SIMULATOR_CSS_POSITION_SELECTOR|escape:'javascript':'UTF-8'}';
 
-            if ('{$PAGANTIS_SIMULATOR_CSS_POSITION_SELECTOR|escape:'javascript':'UTF-8'}' === 'default') {
+            if ('{$CLEARPAY_SIMULATOR_CSS_POSITION_SELECTOR|escape:'javascript':'UTF-8'}' === 'default') {
                 sdkPositionSelector = '.clearpaySimulatorClearpay';
             }
 
             if (priceSelector === 'default') {
                 priceSelector = findPriceSelector();
                 if (priceSelector === 'default') {
-                    price = '{$PAGANTIS_AMOUNT|escape:'javascript':'UTF-8'}'
+                    price = '{$CLEARPAY_AMOUNT|escape:'javascript':'UTF-8'}'
                 }
             }
 
@@ -118,22 +118,22 @@
 
             sdk.product_simulator = {};
             sdk.product_simulator.id = 'product-simulator';
-            sdk.product_simulator.locale = '{$PAGANTIS_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase();
-            sdk.product_simulator.country = '{$PAGANTIS_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase();
-            sdk.product_simulator.publicKey = '{$PAGANTIS_PUBLIC_KEY|escape:'javascript':'UTF-8'}';
+            sdk.product_simulator.locale = '{$CLEARPAY_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase();
+            sdk.product_simulator.country = '{$CLEARPAY_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase();
+            sdk.product_simulator.publicKey = '{$CLEARPAY_PUBLIC_KEY|escape:'javascript':'UTF-8'}';
             sdk.product_simulator.selector = sdkPositionSelector;
-            sdk.product_simulator.numInstalments = '{$PAGANTIS_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}';
-            sdk.product_simulator.type = {$PAGANTIS_SIMULATOR_DISPLAY_TYPE|escape:'javascript':'UTF-8'};
-            sdk.product_simulator.skin = {$PAGANTIS_SIMULATOR_DISPLAY_SKIN|escape:'javascript':'UTF-8'};
-            sdk.product_simulator.position = {$PAGANTIS_SIMULATOR_DISPLAY_CSS_POSITION|escape:'javascript':'UTF-8'};
+            sdk.product_simulator.numInstalments = '{$CLEARPAY_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}';
+            sdk.product_simulator.type = {$CLEARPAY_SIMULATOR_DISPLAY_TYPE|escape:'javascript':'UTF-8'};
+            sdk.product_simulator.skin = {$CLEARPAY_SIMULATOR_DISPLAY_SKIN|escape:'javascript':'UTF-8'};
+            sdk.product_simulator.position = {$CLEARPAY_SIMULATOR_DISPLAY_CSS_POSITION|escape:'javascript':'UTF-8'};
             sdk.product_simulator.amountParserConfig =  {
-                thousandSeparator: '{$PAGANTIS_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
-                decimalSeparator: '{$PAGANTIS_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
+                thousandSeparator: '{$CLEARPAY_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
+                decimalSeparator: '{$CLEARPAY_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
             };
 
             if (priceSelector !== 'default') {
                 sdk.product_simulator.itemAmountSelector = priceSelector;
-                {if $PAGANTIS_IS_PROMOTED_PRODUCT == true}
+                {if $CLEARPAY_IS_PROMOTED_PRODUCT == true}
                 sdk.product_simulator.itemPromotedAmountSelector = priceSelector;
                 {/if}
             }
@@ -142,7 +142,7 @@
             }
             if (price != null) {
                 sdk.product_simulator.itemAmount = price.toString().replace('.', ',');
-                {if $PAGANTIS_IS_PROMOTED_PRODUCT == true}
+                {if $CLEARPAY_IS_PROMOTED_PRODUCT == true}
                 sdk.product_simulator.itemPromotedAmount = price.toString().replace('.', ',');
                 {/if}
             }
@@ -174,8 +174,8 @@
             }
         }, 2000);
     </script>
-    {if $PAGANTIS_IS_PROMOTED_PRODUCT == true}
-            <span class="clearpay-promotion ps_version_{$PAGANTIS_PS_VERSION|escape:'htmlall':'UTF-8'}" id="clearpay-promotion-extra">{$PAGANTIS_PROMOTION_EXTRA nofilter}</span>
+    {if $CLEARPAY_IS_PROMOTED_PRODUCT == true}
+            <span class="clearpay-promotion ps_version_{$CLEARPAY_PS_VERSION|escape:'htmlall':'UTF-8'}" id="clearpay-promotion-extra">{$CLEARPAY_PROMOTION_EXTRA nofilter}</span>
     {/if}
     <div class="clearpaySimulatorClearpay"></div>
 {/if}
