@@ -39,24 +39,31 @@ abstract class AbstractController extends ModuleFrontController
     }
 
     /**
-     * Save log in SQL database
+     * Save log on PS log
      *
      * @param array $data
-     * @param \Exception  $exception
+     * @param null  $exception
+     * @param int   $severity
      */
-    public function saveLog($data = array(), $exception = null)
+    public function saveLog($data = array(), $exception = null, $severity = null)
     {
         $response = "";
         try {
             if (count($data) > 0) {
                 $response = json_encode($data);
             } elseif (!is_null($exception)) {
+                if ($severity === null) {
+                    $severity = 3;
+                }
                 $logEntry = new LogEntry();
                 $logEntry->error($exception);
                 $response = $logEntry->toJson();
             }
             if (is_null($response)) {
                 if (!is_null($exception)) {
+                    if ($severity === null) {
+                        $severity = 3;
+                    }
                     $response = $exception->getMessage();
                 } else {
                     $response = 'Unable to serialize log.'.
@@ -65,9 +72,11 @@ abstract class AbstractController extends ModuleFrontController
                 }
             }
 
-            Db::getInstance()->insert('clearpay_log', array(
-                'log' => str_replace("'", "\'", $response)
-            ));
+            if ($severity === null) {
+                $severity = 1;
+            }
+            PrestaShopLogger::addLog($response, $severity, NULL, "Clearpay", 1);
+
         } catch (\Exception $error) {
             // Do nothing
         }

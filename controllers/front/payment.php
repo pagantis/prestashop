@@ -258,7 +258,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
                 ->setUser($orderUser)
             ;
         } catch (\Exception $exception) {
-            $this->saveLog(array(), $exception);
+            $this->saveLog(array(), $exception, 2);
             Tools::redirect($cancelUrl);
         }
 
@@ -284,7 +284,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
                 throw new OrderNotFoundException();
             }
         } catch (\Exception $exception) {
-            $this->saveLog(array(), $exception);
+            $this->saveLog(array(), $exception, 2);
             Tools::redirect($cancelUrl);
         }
 
@@ -303,7 +303,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
                     $this->setTemplate('module:clearpay/views/templates/front/payment-17.tpl');
                 }
             } catch (\Exception $exception) {
-                $this->saveLog(array(), $exception);
+                $this->saveLog(array(), $exception, 2);
                 Tools::redirect($url);
             }
         }

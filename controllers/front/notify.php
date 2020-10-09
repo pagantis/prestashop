@@ -1,9 +1,9 @@
 <?php
 /**
- * This file is part of the official Clearpay module for PrestaShop.
+ * This file is part of the official Pagantis module for PrestaShop.
  *
- * @author    Clearpay <integrations@clearpay.com>
- * @copyright 2019 Clearpay
+ * @author    Pagantis <integrations@pagantis.com>
+ * @copyright 2019 Pagantis
  * @license   proprietary
  */
 
@@ -11,6 +11,7 @@ require_once('AbstractController.php');
 
 use Pagantis\OrdersApiClient\Client as PagantisClient;
 use Pagantis\OrdersApiClient\Model\Order as PagantisModelOrder;
+use Pagantis\ModuleUtils\Exception\AmountMismatchException;
 use Pagantis\ModuleUtils\Exception\ConcurrencyException;
 use Pagantis\ModuleUtils\Exception\MerchantOrderNotFoundException;
 use Pagantis\ModuleUtils\Exception\NoIdentificationException;
@@ -22,15 +23,15 @@ use Pagantis\ModuleUtils\Model\Response\JsonSuccessResponse;
 use Pagantis\ModuleUtils\Model\Response\JsonExceptionResponse;
 
 /**
- * Class ClearpayNotifyModuleFrontController
+ * Class PagantisNotifyModuleFrontController
  */
-class ClearpayNotifyModuleFrontController extends AbstractController
+class PagantisNotifyModuleFrontController extends AbstractController
 {
     /** Cart tablename */
-    const CART_TABLE = 'clearpay_cart_process';
+    const CART_TABLE = 'pagantis_cart_process';
 
-    /** Clearpay orders tablename */
-    const ORDERS_TABLE = 'clearpay_order';
+    /** Pagantis orders tablename */
+    const ORDERS_TABLE = 'pagantis_order';
 
     /**
      * Seconds to expire a locked request
@@ -73,9 +74,9 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     protected $merchantCart;
 
     /**
-     * @var string $clearpayOrderId
+     * @var string $pagantisOrderId
      */
-    protected $clearpayOrderId;
+    protected $pagantisOrderId;
 
     /**
      * @var string $amountMismatchError
@@ -83,9 +84,9 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     protected $amountMismatchError = '';
 
     /**
-     * @var \Pagantis\OrdersApiClient\Model\Order $clearpayOrder
+     * @var \Pagantis\OrdersApiClient\Model\Order $pagantisOrder
      */
-    protected $clearpayOrder;
+    protected $pagantisOrder;
 
     /**
      * @var Pagantis\OrdersApiClient\Client $orderClient
@@ -111,7 +112,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     public function postProcess()
     {
         $thrownException = false;
-        $this->origin = ($this->isPost() || Tools::getValue('origin') === 'notification') ? 'Notification' : 'Order';
+        $this->origin = ($this->isPost() || Tools::getValue('origin') === 'notification') ? 'Notification' : 'Redirection';
         $this->requestId = rand(1, 999999999);
 
         // Validations
@@ -122,18 +123,11 @@ class ClearpayNotifyModuleFrontController extends AbstractController
                 die;
             }
 
-            $redirectMessage = sprintf(
-                "Request [origin=%s][cartId=%s]",
-                $this->getOrigin(),
-                Tools::getValue('id_cart')
-            );
-            $this->saveLog(array('requestId' => $this->requestId, 'message' => $redirectMessage));
-
             $this->prepareVariables();
             $this->checkConcurrency();
             $this->getMerchantOrder();
-            $this->getClearpayOrderId();
-            $this->getClearpayOrder();
+            $this->getPagantisOrderId();
+            $this->getPagantisOrder();
             if ($this->checkOrderStatus()) {
                 $thrownException = true;
                 return $this->finishProcess(false);
@@ -147,21 +141,21 @@ class ClearpayNotifyModuleFrontController extends AbstractController
             if ($this->isPost()) {
                 $this->jsonResponse = new JsonExceptionResponse();
                 $this->jsonResponse->setMerchantOrderId($theId);
-                $this->jsonResponse->setClearpayOrderId($this->clearpayOrderId);
+                $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
                 $this->jsonResponse->setException($exception);
             }
             return $this->cancelProcess($exception);
         }
 
-        // Proccess Clearpay Order
+        // Proccess Pagantis Order
         try {
             if (!$thrownException) {
                 $this->jsonResponse = new JsonSuccessResponse();
                 $this->getMerchantOrderId();
                 $theId = ($this->merchantOrderId)? $this->merchantOrderId : $this->merchantCartId;
                 $this->jsonResponse->setMerchantOrderId($theId);
-                $this->jsonResponse->setClearpayOrderId($this->clearpayOrderId);
-                $this->confirmClearpayOrder();
+                $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
+                $this->confirmPagantisOrder();
             }
         } catch (\Exception $exception) {
             $this->rollbackMerchantOrder();
@@ -170,7 +164,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
                 $theId = ($this->merchantOrderId)? $this->merchantOrderId : $this->merchantCartId;
                 $this->jsonResponse = new JsonExceptionResponse();
                 $this->jsonResponse->setMerchantOrderId($theId);
-                $this->jsonResponse->setClearpayOrderId($this->clearpayOrderId);
+                $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
                 $this->jsonResponse->setException($exception);
             }
             return $this->cancelProcess($exception);
@@ -188,7 +182,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
             if ($this->isPost()) {
                 $this->jsonResponse = new JsonExceptionResponse();
                 $this->jsonResponse->setMerchantOrderId($theId);
-                $this->jsonResponse->setClearpayOrderId($this->clearpayOrderId);
+                $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
                 $this->jsonResponse->setException($exception);
             }
             return $this->cancelProcess($exception);
@@ -198,14 +192,14 @@ class ClearpayNotifyModuleFrontController extends AbstractController
             $this->unblockConcurrency($this->merchantCartId);
         } catch (\Exception $exception) {
             $exceptionMessage = sprintf(
-                "unblocking exception[origin=%s][cartId=%s][merchantOrderId=%s][clearpayOrderId=%s][%s]",
+                "unblocking exception[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s][%s]",
                 $this->getOrigin(),
                 $this->merchantCartId,
                 $this->merchantOrderId,
-                $this->clearpayOrderId,
+                $this->pagantisOrderId,
                 $exception->getMessage()
             );
-            $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage));
+            $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage), null, 2);
         }
 
         return $this->finishProcess(false);
@@ -242,21 +236,21 @@ class ClearpayNotifyModuleFrontController extends AbstractController
         $callbackKoUrl = $this->context->link->getPageLink('order', null, null, array('step'=>3));
 
         $this->config = array(
-            'urlOK' => (Clearpay::getExtraConfig('URL_OK') !== '') ?
-                Clearpay::getExtraConfig('URL_OK') : $callbackOkUrl,
-            'urlKO' => (Clearpay::getExtraConfig('URL_KO') !== '') ?
-                Clearpay::getExtraConfig('URL_KO') : $callbackKoUrl,
+            'urlOK' => (Pagantis::getExtraConfig('URL_OK') !== '') ?
+                Pagantis::getExtraConfig('URL_OK') : $callbackOkUrl,
+            'urlKO' => (Pagantis::getExtraConfig('URL_KO') !== '') ?
+                Pagantis::getExtraConfig('URL_KO') : $callbackKoUrl,
             'secureKey' => Tools::getValue('key'),
         );
         $productCode = Tools::getValue('product');
         $this->token = Tools::getValue('token');
-        $products = explode(',', Clearpay::getExtraConfig('PRODUCTS', null));
+        $products = explode(',', Pagantis::getExtraConfig('PRODUCTS', null));
         if (!in_array(Tools::strtoupper($productCode), $products)) {
             throw new UnknownException(
-                'No valid Clearpay product provided in the url: ' . Tools::getValue('product')
+                'No valid Pagantis product provided in the url: ' . Tools::getValue('product')
             );
         }
-        $this->productName = "Clearpay " . Tools::strtolower($productCode);
+        $this->productName = "Pagantis " . Tools::strtolower($productCode);
 
         $this->config['publicKey'] = trim(Configuration::get(Tools::strtolower($productCode) . '_public_key'));
         $this->config['privateKey'] = trim(Configuration::get(Tools::strtolower($productCode) . '_private_key'));
@@ -284,14 +278,14 @@ class ClearpayNotifyModuleFrontController extends AbstractController
             $this->merchantOrderId = Db::getInstance()->getValue($sql);
         } catch (\Exception $exception) {
             $exceptionMessage = sprintf(
-                "getMerchantOrderId exception[origin=%s][cartId=%s][merchantOrderId=%s][clearpayOrderId=%s][%s]",
+                "getMerchantOrderId exception[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s][%s]",
                 $this->getOrigin(),
                 $this->merchantCartId,
                 $this->merchantOrderId,
-                $this->clearpayOrderId,
+                $this->pagantisOrderId,
                 $exception->getMessage()
             );
-            $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage));
+            $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage), 3);
         }
     }
 
@@ -303,6 +297,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     public function getMerchantOrder()
     {
         try {
+            $this->merchantCart = Context::getContext()->cart;
             $this->merchantCart = new Cart($this->merchantCartId);
             if (!Validate::isLoadedObject($this->merchantCart)) {
                 // This exception is only for Prestashop
@@ -317,18 +312,18 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Find CLEARPAY Order Id
+     * Find PAGANTIS Order Id
      *
      * @throws Exception
      */
-    private function getClearpayOrderId()
+    private function getPagantisOrderId()
     {
         try {
             $sql = 'select order_id from ' . _DB_PREFIX_.self::ORDERS_TABLE .' where id = '
                 .(int)$this->merchantCartId . ' and token = \'' . $this->token . '\'';
-            $this->clearpayOrderId= Db::getInstance()->getValue($sql);
+            $this->pagantisOrderId= Db::getInstance()->getValue($sql);
 
-            if (is_null($this->clearpayOrderId)) {
+            if (is_null($this->pagantisOrderId)) {
                 throw new NoIdentificationException();
             }
         } catch (\Exception $exception) {
@@ -337,39 +332,39 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Find CLEARPAY Order in Orders Server using Clearpay\OrdersApiClient
+     * Find PAGANTIS Order in Orders Server using Pagantis\OrdersApiClient
      *
      * @throws Exception
      */
-    private function getClearpayOrder()
+    private function getPagantisOrder()
     {
         $this->orderClient = new PagantisClient($this->config['publicKey'], $this->config['privateKey']);
-        $this->clearpayOrder = $this->orderClient->getOrder($this->clearpayOrderId);
-        if (!($this->clearpayOrder instanceof PagantisModelOrder)) {
+        $this->pagantisOrder = $this->orderClient->getOrder($this->pagantisOrderId);
+        if (!($this->pagantisOrder instanceof PagantisModelOrder)) {
             throw new OrderNotFoundException();
         }
     }
 
     /**
-     * Compare statuses of merchant order and CLEARPAY order, witch have to be the same.
+     * Compare statuses of merchant order and PAGANTIS order, witch have to be the same.
      *
      * @throws Exception
      */
     public function checkOrderStatus()
     {
-        if ($this->clearpayOrder->getStatus() === PagantisModelOrder::STATUS_CONFIRMED) {
+        if ($this->pagantisOrder->getStatus() === PagantisModelOrder::STATUS_CONFIRMED) {
             $this->getMerchantOrderId();
             $theId = ($this->merchantOrderId)? $this->merchantOrderId : $this->merchantCartId;
             $this->jsonResponse = new JsonSuccessResponse();
             $this->jsonResponse->setMerchantOrderId($theId);
-            $this->jsonResponse->setClearpayOrderId($this->clearpayOrderId);
+            $this->jsonResponse->setPagantisOrderId($this->pagantisOrderId);
             return true;
         }
 
-        if ($this->clearpayOrder->getStatus() !== PagantisModelOrder::STATUS_AUTHORIZED) {
+        if ($this->pagantisOrder->getStatus() !== PagantisModelOrder::STATUS_AUTHORIZED) {
             $status = '-';
-            if ($this->clearpayOrder instanceof \Pagantis\OrdersApiClient\Model\Order) {
-                $status = $this->clearpayOrder->getStatus();
+            if ($this->pagantisOrder instanceof \Pagantis\OrdersApiClient\Model\Order) {
+                $status = $this->pagantisOrder->getStatus();
             }
             throw new WrongStatusException($status);
         }
@@ -377,52 +372,45 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Check that the merchant order and the order in CLEARPAY have the same amount to prevent hacking
+     * Check that the merchant order and the order in PAGANTIS have the same amount to prevent hacking
      *
      * @throws Exception
      */
     public function validateAmount()
     {
         $totalAmount = (string) $this->clearpayOrder->getShoppingCart()->getTotalAmount();
-        $merchantAmount = (string) (100 * $this->merchantCart->getOrderTotal(true));
+        $merchantAmount = (string) (100 * $this->merchantCart->getOrderTotal(true, Cart::BOTH));
         $merchantAmount = explode('.', explode(',', $merchantAmount)[0])[0];
         if ($totalAmount != $merchantAmount) {
-            try {
-                $psTotalAmount = substr_replace(
-                    $merchantAmount,
-                    '.',
-                    (Tools::strlen($merchantAmount) -2),
-                    0
-                );
+            $psTotalAmount = substr_replace(
+                $merchantAmount,
+                '.',
+                (Tools::strlen($merchantAmount) -2),
+                0
+            );
 
-                $pgTotalAmountInCents = (string) $this->clearpayOrder->getShoppingCart()->getTotalAmount();
-                $pgTotalAmount = substr_replace(
-                    $pgTotalAmountInCents,
-                    '.',
-                    (Tools::strlen($pgTotalAmountInCents) -2),
-                    0
-                );
+            $pgTotalAmountInCents = (string) $this->clearpayOrder->getShoppingCart()->getTotalAmount();
+            $pgTotalAmount = substr_replace(
+                $pgTotalAmountInCents,
+                '.',
+                (Tools::strlen($pgTotalAmountInCents) -2),
+                0
+            );
 
-                $this->amountMismatchError = '. Amount mismatch in PrestaShop Cart #'. $this->merchantCartId .
-                    ' compared with Clearpay Order: ' . $this->clearpayOrderId .
-                    '. The Cart in PrestaShop has an amount of ' . $psTotalAmount . ' and in Clearpay ' .
-                    $pgTotalAmount . ' PLEASE REVIEW THE ORDER';
+            $this->amountMismatchError = '. Amount mismatch in PrestaShop Cart #'. $this->merchantCartId .
+                ' compared with Clearpay Order: ' . $this->clearpayOrderId .
+                '. The Cart in PrestaShop has an amount of ' . $psTotalAmount . ' and in Clearpay ' .
+                $pgTotalAmount . ' PLEASE REVIEW THE ORDER';
 
-                $this->saveLog(array(
-                    'requestId' => $this->requestId,
-                    'message' => $this->amountMismatchError
-                ));
-            } catch (\Exception $exception) {
-                $exceptionMessage = sprintf(
-                    "validateAmount exception[origin=%s][cartId=%s][merchantOrderId=%s][clearpayOrderId=%s][%s]",
-                    $this->getOrigin(),
-                    $this->merchantCartId,
-                    $this->merchantOrderId,
-                    $this->clearpayOrderId,
-                    $exception->getMessage()
-                );
-                $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage));
-            }
+            $this->saveLog(
+                array(
+                'requestId' => $this->requestId,
+                'message' => $this->amountMismatchError
+                ),
+                null,
+                3
+            );
+            throw new AmountMismatchException($totalAmount, $merchantAmount);
         }
     }
 
@@ -436,11 +424,11 @@ class ClearpayNotifyModuleFrontController extends AbstractController
         try {
             if ($this->merchantCart->orderExists() !== false) {
                 $exceptionMessage = sprintf(
-                    "Existing Order[origin=%s][cartId=%s][merchantOrderId=%s][clearpayOrderId=%s]",
+                    "Existing Order[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s]",
                     $this->getOrigin(),
                     $this->merchantCartId,
                     $this->merchantOrderId,
-                    $this->clearpayOrderId
+                    $this->pagantisOrderId
                 );
                 throw new UnknownException($exceptionMessage);
             }
@@ -449,18 +437,18 @@ class ClearpayNotifyModuleFrontController extends AbstractController
             $tableName = _DB_PREFIX_ . self::ORDERS_TABLE;
             $fieldName = 'ps_order_id';
             $sql = ('select ' . $fieldName . ' from `' . $tableName . '` where `id` = ' . (int)$this->merchantCartId
-                . ' and `order_id` = \'' . $this->clearpayOrderId . '\''
+                . ' and `order_id` = \'' . $this->pagantisOrderId . '\''
                 . ' and `token` = \'' . $this->token . '\''
                 . ' and `' . $fieldName . '` is not null');
             $results = Db::getInstance()->ExecuteS($sql);
             if (is_array($results) && count($results) === 1) {
                 $this->getMerchantOrderId();
                 $exceptionMessage = sprintf(
-                    "Order was already created [origin=%s][cartId=%s][merchantOrderId=%s][clearpayOrderId=%s]",
+                    "Order was already created [origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s]",
                     $this->getOrigin(),
                     $this->merchantCartId,
                     $this->merchantOrderId,
-                    $this->clearpayOrderId
+                    $this->pagantisOrderId
                 );
                 throw new UnknownException($exceptionMessage);
             }
@@ -478,7 +466,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     public function processMerchantOrder()
     {
         try {
-            $metadataOrder = $this->clearpayOrder->getMetadata();
+            $metadataOrder = $this->pagantisOrder->getMetadata();
             $metadataInfo = '';
             foreach ($metadataOrder as $metadataKey => $metadataValue) {
                 if ($metadataKey == 'promotedProduct') {
@@ -489,13 +477,13 @@ class ClearpayNotifyModuleFrontController extends AbstractController
             $this->module->validateOrder(
                 $this->merchantCartId,
                 Configuration::get('PS_OS_PAYMENT'),
-                $this->merchantCart->getOrderTotal(true),
+                $this->merchantCart->getOrderTotal(true, Cart::BOTH),
                 $this->productName,
-                'clearpayOrderId: ' . $this->clearpayOrder->getId() . ' ' .
-                'clearpayOrderStatus: '. $this->clearpayOrder->getStatus() .
+                'pagantisOrderId: ' . $this->pagantisOrder->getId() . ' ' .
+                'pagantisOrderStatus: '. $this->pagantisOrder->getStatus() .
                 $this->amountMismatchError .
                 $metadataInfo,
-                array('transaction_id' => $this->clearpayOrderId),
+                array('transaction_id' => $this->pagantisOrderId),
                 null,
                 false,
                 $this->config['secureKey']
@@ -508,48 +496,48 @@ class ClearpayNotifyModuleFrontController extends AbstractController
                 self::ORDERS_TABLE,
                 array('ps_order_id' => $this->module->currentOrder),
                 'id = '. (int)$this->merchantCartId
-                    . ' and order_id = \'' . $this->clearpayOrderId . '\''
+                    . ' and order_id = \'' . $this->pagantisOrderId . '\''
                     . ' and token = \'' . $this->token . '\''
             );
 
         } catch (\Exception $exception) {
             $exceptionMessage = sprintf(
-                "processMerchantOrder exception[origin=%s][cartId=%s][merchantOrderId=%s][clearpayOrderId=%s][%s]",
+                "processMerchantOrder exception[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s][%s]",
                 $this->getOrigin(),
                 $this->merchantCartId,
                 $this->merchantOrderId,
-                $this->clearpayOrderId,
+                $this->pagantisOrderId,
                 $exception->getMessage()
             );
-            $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage));
+            $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage), null, 2);
         }
     }
 
     /**
-     * Confirm the order in CLEARPAY
+     * Confirm the order in PAGANTIS
      *
      * @throws Exception
      */
-    private function confirmClearpayOrder()
+    private function confirmPagantisOrder()
     {
         try {
-            $this->orderClient->confirmOrder($this->clearpayOrderId);
+            $this->orderClient->confirmOrder($this->pagantisOrderId);
             try {
                 $mode = ($this->isPost()) ? 'NOTIFICATION' : 'REDIRECTION';
                 $message = 'Order CONFIRMED. The order was confirmed by a ' . $mode .
-                    '. Clearpay OrderId=' . $this->clearpayOrderId .
+                    '. Pagantis OrderId=' . $this->pagantisOrderId .
                     '. Prestashop OrderId=' . $this->module->currentOrder;
-                $this->saveLog(array('requestId' => $this->requestId, 'message' => $message));
+                $this->saveLog(array('requestId' => $this->requestId, 'message' => $message), null, 1);
             } catch (\Exception $exception) {
                 $exceptionMessage = sprintf(
-                    "confirmClearpayOrder exception[origin=%s][cartId=%s][merchantOrderId=%s][clearpayOrderId=%s][%s]",
+                    "confirmPagantisOrder exception[origin=%s][cartId=%s][merchantOrderId=%s][pagantisOrderId=%s][%s]",
                     $this->getOrigin(),
                     $this->merchantCartId,
                     $this->merchantOrderId,
-                    $this->clearpayOrderId,
+                    $this->pagantisOrderId,
                     $exception->getMessage()
                 );
-                $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage));
+                $this->saveLog(array('requestId' => $this->requestId, 'message' => $exceptionMessage), null, 3);
             }
         } catch (\Exception $exception) {
             throw new UnknownException(sprintf("[%s]%s", $this->getOrigin(), $exception->getMessage()));
@@ -566,7 +554,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
         try {
             $this->getMerchantOrderId();
             $message = 'Roolback method: ' .
-                '. Clearpay OrderId=' . $this->clearpayOrderId .
+                '. Pagantis OrderId=' . $this->pagantisOrderId .
                 '. Prestashop CartId=' . $this->merchantCartId .
                 '. Prestashop OrderId=' . $this->merchantOrderId;
             if ($this->module->currentOrder) {
@@ -579,12 +567,12 @@ class ClearpayNotifyModuleFrontController extends AbstractController
             $this->saveLog(array(
                 'requestId' => $this->requestId,
                 'message' => $message
-            ));
+            ), null, 3);
         } catch (\Exception $exception) {
             $this->saveLog(array(
                 'requestId' => $this->requestId,
-                'message' => $exception->getMessage()
-            ));
+                'message' => 'Error on rollbackTransaction: ' . $exception->getMessage()
+            ), null, 3);
         }
     }
 
@@ -620,7 +608,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
                     }
 
                     $this->getMerchantOrderId();
-                    $this->getClearpayOrderId();
+                    $this->getPagantisOrderId();
 
                     $logMessage  = sprintf(
                         "User has waited %s seconds, default %s, bd time to expire %s [cartId=%s][origin=%s]",
@@ -630,9 +618,6 @@ class ClearpayNotifyModuleFrontController extends AbstractController
                         $this->merchantCartId,
                         $this->getOrigin()
                     );
-
-                    $this->saveLog(array('requestId' => $this->requestId, 'message' => $logMessage));
-
                     // After waiting...user continue the confirmation, hoping that previous call have finished.
                     return true;
                 }
@@ -670,22 +655,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
      */
     public function cancelProcess($exception = null)
     {
-        $debug = debug_backtrace();
-        $method = $debug[1]['function'];
-        $line = $debug[1]['line'];
-        $this->getMerchantOrderId();
-        $data = array(
-            'requestId' => $this->requestId,
-            'merchantCartId' => $this->merchantCartId,
-            'merchantOrderId' => $this->merchantOrderId,
-            'clearpayOrderId' => $this->clearpayOrderId,
-            'message' => ($exception)? $exception->getMessage() : 'Unable to get Exception message',
-            'statusCode' => ($exception)? $exception->getCode() : 'Unable to get Exception statusCode',
-            'method' => $method,
-            'file' => __FILE__,
-            'line' => $line,
-        );
-        $this->saveLog($data);
+        $this->saveLog(array(), $data, 2);
         return $this->finishProcess(true);
     }
 
@@ -693,40 +663,20 @@ class ClearpayNotifyModuleFrontController extends AbstractController
      * Redirect the request to the e-commerce or show the output in json
      *
      * @param bool $error
-     * @return mixed
      */
     public function finishProcess($error = true)
     {
         $this->getMerchantOrderId();
         if ($this->isPost()) {
-            $returnMessage = sprintf(
-                "[origin=%s][cartId=%s][prestashopOrderId=%s][clearpayOrderId=%s][message=%s]",
-                $this->getOrigin(),
-                $this->merchantCartId,
-                $this->merchantOrderId,
-                $this->clearpayOrderId,
-                $this->jsonResponse->getResult()
-            );
-            $this->saveLog(array('requestId' => $this->requestId, 'message' => $returnMessage));
             $this->jsonResponse->printResponse();
         } else {
             $parameters = array(
                 'id_cart' => $this->merchantCartId,
                 'key' => $this->config['secureKey'],
                 'id_module' => $this->module->id,
-                'id_order' => ($this->clearpayOrder) ? $this->clearpayOrder->getId() : null,
+                'id_order' => ($this->pagantisOrder) ? $this->pagantisOrder->getId() : null,
             );
             $url = ($error)? $this->config['urlKO'] : $this->config['urlOK'];
-            $returnMessage = sprintf(
-                "[origin=%s][cartId=%s][prestashopOrderId=%s][clearpayOrderId=%s][returnUrl=%s]",
-                $this->getOrigin(),
-                $this->merchantCartId,
-                $this->merchantOrderId,
-                $this->clearpayOrderId,
-                $url
-            );
-            $this->saveLog(array('requestId' => $this->requestId, 'message' => $returnMessage));
-
             return $this->redirect($url, $parameters);
         }
     }
