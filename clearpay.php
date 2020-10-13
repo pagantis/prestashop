@@ -91,6 +91,11 @@ class Clearpay extends PaymentModule
 +        $this->displayName = $this->l('Afterpay Payment Gateway');
         $this->description = $this->l('Buy now, pay later - Enjoy interest-free payments');
 
+        $current_context = Context::getContext();
+        if (!is_null($current_context->controller) && $current_context->controller->controller_type != 'front') {
+            $this->checkEnvVariables();
+        }
+
         parent::__construct();
 
         $this->presetUserLanguage();
@@ -182,6 +187,32 @@ class Clearpay extends PaymentModule
         }
 
         return $result;
+    }
+
+    /**
+     * @throws PrestaShopDatabaseException
+     */
+    public function checkEnvVariables()
+    {
+        $sql_content = 'select * from ' . _DB_PREFIX_. 'clearpay_config';
+        $dbConfigs = Db::getInstance()->executeS($sql_content);
+
+        // Convert a multimple dimension array for SQL insert statements into a simple key/value
+        $simpleDbConfigs = array();
+        foreach ($dbConfigs as $config) {
+            $simpleDbConfigs[$config['config']] = $config['value'];
+        }
+        $newConfigs = array_diff_key($this->defaultConfigs, $simpleDbConfigs);
+        if (!empty($newConfigs)) {
+            $data = array();
+            foreach ($newConfigs as $key => $value) {
+                $data[] = array(
+                    'config' => $key,
+                    'value' => $value,
+                );
+            }
+            Db::getInstance()->insert('clearpay_config', $data);
+        }
     }
 
     /**
@@ -635,29 +666,27 @@ class Clearpay extends PaymentModule
 
 
         $simulatorIsEnabled = Clearpay::getExtraConfig('SIMULATOR_IS_ENABLED');
-        $publicKey = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
-        $environment = Configuration::get('CLEARPAY_ENVIRONMENT');
-        if ($environment === 'production') {
-            $publicKey = Configuration::get('CLEARPAY_PRODUCTION_PUBLIC_KEY');
-        }
         $isEnabled = Configuration::get('CLEARPAY_IS_ENABLED');
 
         $return = '';
         $templateConfigs = array();
+
         if ($isEnabled &&
             $simulatorIsEnabled &&
             $amount > 0 &&
-            $amount >= $productConfigs['DISPLAY_MIN_AMOUNT'] &&
-            $amount <= $productConfigs['DISPLAY_MAX_AMOUNT'] &&
+            $amount >= Configuration::get('CLEARPAY_MIN_AMOUNT') &&
+            $amount <= Configuration::get('CLEARPAY_MAX_AMOUNT') &&
             in_array(Tools::strtolower($this->language), $allowedCountries)
         ) {
             $templateConfigs['PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
             $templateConfigs['SDK_URL'] = 'https://js.afterpay.com/afterpay-1.x.js';
-            $templateConfigs['DISPLAY_MIN_AMOUNT'] = $productConfigs['DISPLAY_MIN_AMOUNT'];
-            $templateConfigs['DISPLAY_MAX_AMOUNT'] = $productConfigs['DISPLAY_MAX_AMOUNT'];
+            $templateConfigs['CLEARPAY_MIN_AMOUNT'] = Configuration::get('CLEARPAY_MIN_AMOUNT');
+            $templateConfigs['CLEARPAY_MAX_AMOUNT'] = Configuration::get('CLEARPAY_MAX_AMOUNT');
             $templateConfigs['CURRENCY'] = self::CLEARPAY_CURRENCY;
-            $templateConfigs['ISO_COUNTRY_CODE'] = Language::getLanguage($this->context->language->id);
+            $language = Language::getLanguage($this->context->language->id);
+            $templateConfigs['ISO_COUNTRY_CODE'] = $language['locale'];
             $templateConfigs['AMOUNT'] = $amount;
+
 
             $this->context->smarty->assign($templateConfigs);
             $return .= $this->display(

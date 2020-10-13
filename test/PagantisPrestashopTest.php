@@ -221,8 +221,8 @@ abstract class ClearpayPrestashopTest extends TestCase
             'SIMULATOR_CSS_PRICE_SELECTOR' => 'default',
             'SIMULATOR_CSS_QUANTITY_SELECTOR' => 'default',
             'FORM_DISPLAY_TYPE' => '0',
-            'DISPLAY_MIN_AMOUNT' => '1',
-            'DISPLAY_MAX_AMOUNT' => '0',
+            'CLEARPAY_MIN_AMOUNT' => '1',
+            'CLEARPAY_MAX_AMOUNT' => '0',
             'URL_OK' => '',
             'URL_KO' => '',
         );

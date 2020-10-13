@@ -48,8 +48,8 @@ You have to ways to edit your settings:
 | SIMULATOR_CSS_POSITION_SELECTOR | CSS Selector to place the widget. (Example: '#simulator', '.PgSimulator')
 | SIMULATOR_CSS_QUANTITY_SELECTOR | CSS selector of the DOM element containing the quantity selector value.
 | FORM_DISPLAY_TYPE               | Allows you to select the way the Pagantis payment form is displayed site
-| DISPLAY_MIN_AMOUNT              | Minimum amount to use the module and show the payment method in the checkout page and in product page.
-| DISPLAY_MAX_AMOUNT              | Maximum amount to use the module and show the payment method in the checkout page and in product page.
+| CLEARPAY_MIN_AMOUNT              | Minimum amount to use the module and show the payment method in the checkout page and in product page.
+| CLEARPAY_MAX_AMOUNT              | Maximum amount to use the module and show the payment method in the checkout page and in product page.
 | URL_OK                          | Location where user will be redirected after a successful payment. This string will be concatenated to the base url to build the full url
 | URL_KO                          | Location where user will be redirected after a wrong payment. This string will be concatenated to the base url to build the full url  
 | ALLOWED_COUNTRIES               | Array of country codes where Pagantis will be used as a payment method. 
