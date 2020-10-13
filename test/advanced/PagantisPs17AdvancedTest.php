@@ -26,7 +26,7 @@ class ClearpayPs17InstallTest extends AbstractPs17Selenium
         $this->getClearpayBackOffice();
 
         //2 elements exist:
-        $validatorSearch = WebDriverBy::id('clearpay_public_key');
+        $validatorSearch = WebDriverBy::id('CLEARPAY_PUBLIC_KEY');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
@@ -37,14 +37,14 @@ class ClearpayPs17InstallTest extends AbstractPs17Selenium
 
         /* no longer checked in multiproduct
         //save with empty public Key
-        $this->findById('clearpay_public_key')->clear();
+        $this->findById('CLEARPAY_PUBLIC_KEY')->clear();
         $this->findById('module_form_submit_btn')->click();
         $validatorSearch = WebDriverBy::className('module_error');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
         $this->assertContains('Please add a Clearpay API Public Key', $this->webDriver->getPageSource());
-        $this->findById('clearpay_public_key')->clear()->sendKeys($this->configuration['publicKey']);
+        $this->findById('CLEARPAY_PUBLIC_KEY')->clear()->sendKeys($this->configuration['publicKey']);
 
         //save with empty private Key
         $this->findById('clearpay_private_key')->clear();

@@ -110,7 +110,7 @@ abstract class AbstractPs15Selenium extends ClearpayPrestashopTest
             ->sendKeys(WebDriverKeys::ENTER)
         ;
         $this->findByLinkText('Configure')->click();
-        $verify = WebDriverBy::id('clearpay_public_key');
+        $verify = WebDriverBy::id('CLEARPAY_PUBLIC_KEY');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
     }

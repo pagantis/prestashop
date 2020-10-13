@@ -3,7 +3,7 @@
  * This file is part of the official Clearpay module for PrestaShop.
  *
  * @author    Clearpay <integrations@clearpay.com>
- * @copyright 2019 Clearpay
+ * @copyright 2020 Clearpay
  * @license   proprietary
  */
 
@@ -138,7 +138,7 @@ class ClearpayConfigModuleFrontController extends ModuleFrontController
     {
         $productCode = Tools::getValue('product', false);
         $products = explode(',', Clearpay::getExtraConfig('PRODUCTS', null));
-        $privateKey = Configuration::get(Tools::strtolower($productCode) . '_private_key');
+        $privateKey = Configuration::get('clearpay_private_key');
         $privateKeyGet = Tools::getValue('secret', false);
         if (!empty($privateKeyGet) && $privateKeyGet === $privateKey && in_array(Tools::strtoupper($productCode), $products)) {
             return true;

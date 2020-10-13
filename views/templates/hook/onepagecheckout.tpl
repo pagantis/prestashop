@@ -2,7 +2,7 @@
  * This file is part of the official Clearpay module for PrestaShop.
  *
  * @author    Clearpay <integrations@clearpay.com>
- * @copyright 2019 Clearpay
+ * @copyright 2020 Clearpay
  * @license   proprietary
  *}
 <form id="clearpay_form_{$P4X_CODE|escape:'htmlall':'UTF-8'}" action="{$P4X_PAYMENT_URL|escape:'htmlall':'UTF-8'}">

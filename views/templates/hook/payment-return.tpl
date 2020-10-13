@@ -2,7 +2,7 @@
  * This file is part of the official Clearpay module for PrestaShop.
  *
  * @author    Clearpay <integrations@clearpay.com>
- * @copyright 2019 Clearpay
+ * @copyright 2020 Clearpay
  * @license   proprietary
  *}
 <p>

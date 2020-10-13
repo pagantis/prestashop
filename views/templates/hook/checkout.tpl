@@ -2,22 +2,21 @@
  * This file is part of the official Clearpay module for PrestaShop.
  *
  * @author    Clearpay <integrations@clearpay.com>
- * @copyright 2019 Clearpay
+ * @copyright 2020 Clearpay
  * @license   proprietary
  *}
-{if $CLEARPAY_IS_ENABLED}
+{if $P4X_IS_ENABLED}
     <div class="row">
         <div class="col-xs-12">
-            <p class="payment_module Clearpay ps_version_{$CLEARPAY_PS_VERSION|escape:'htmlall':'UTF-8'}">
-                <a class="clearpay-checkout clearpay-checkout-Clearpay ps_version_{$CLEARPAY_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$CLEARPAY_LOCALE|escape:'htmlall':'UTF-8'}" href="{$CLEARPAY_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="{$CLEARPAY_TITLE|escape:'htmlall':'UTF-8'}">
-                    {if $CLEARPAY_PS_VERSION !== '1-7'}{$CLEARPAY_TITLE|escape:'quotes'}&nbsp;{/if}
-                    <span class="clearpaySimulatorClearpay ps_version_{$CLEARPAY_PS_VERSION|escape:'htmlall':'UTF-8'}"></span>
-
+            <p class="payment_module Clearpay ps_version_{$P4X_PS_VERSION|escape:'htmlall':'UTF-8'}">
+                <a class="clearpay-checkout clearpay-checkout-p4x ps_version_{$P4X_PS_VERSION|escape:'htmlall':'UTF-8'} locale_{$P4X_LOCALE|escape:'htmlall':'UTF-8'}" href="{$P4X_PAYMENT_URL|escape:'htmlall':'UTF-8'}" title="{$P4X_TITLE|escape:'htmlall':'UTF-8'}">
+                    {if $P4X_PS_VERSION !== '1-7'}{$P4X_TITLE|escape:'quotes'}&nbsp;{/if}
+                    <span class="clearpaySimulator4x ps_version_{$P4X_PS_VERSION|escape:'htmlall':'UTF-8'}"></span>
                 </a>
             </p>
             <script type="text/javascript">
-                function checkSimulatorContentClearpay() {
-                    var pgContainer = document.getElementsByClassName("clearpaySimulatorClearpay");
+                function checkSimulatorContent4x() {
+                    var pgContainer = document.getElementsByClassName("clearpaySimulator4x");
                     if(pgContainer.length > 0) {
                         var pgElement = pgContainer[0];
                         if (pgElement.innerHTML != '') {
@@ -27,17 +26,17 @@
                     return false;
                 }
 
-                function loadSimulatorClearpay()
+                function loadSimulator4x()
                 {
-                    window.PSSimulatorAttemptsClearpay = window.PSSimulatorAttemptsClearpay + 1;
-                    if (window.PSSimulatorAttemptsClearpay > 10 )
+                    window.PSSimulatorAttempts4x = window.PSSimulatorAttempts4x + 1;
+                    if (window.PSSimulatorAttempts4x > 10 )
                     {
-                        clearInterval(window.PSSimulatorIdClearpay);
+                        clearInterval(window.PSSimulatorId4x);
                         return true;
                     }
 
-                    if (checkSimulatorContentClearpay()) {
-                        clearInterval(window.PSSimulatorIdClearpay);
+                    if (checkSimulatorContent4x()) {
+                        clearInterval(window.PSSimulatorId4x);
                         return true;
                     }
 
@@ -47,52 +46,53 @@
                     var sdk = pgSDK;
 
                     sdk.simulator.init({
-                        type: {$CLEARPAY_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
-                        locale: '{$CLEARPAY_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
-                        country: '{$CLEARPAY_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
-                        publicKey: '{$CLEARPAY_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
-                        selector: '.clearpaySimulatorClearpay',
-                        numInstalments: '{$CLEARPAY_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}',
-                        totalAmount: '{$CLEARPAY_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
-                        totalPromotedAmount: '{$CLEARPAY_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                        type: {$P4X_SIMULATOR_DISPLAY_TYPE_CHECKOUT|escape:'javascript':'UTF-8'},
+                        locale: '{$P4X_LOCALE|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                        country: '{$P4X_COUNTRY|escape:'javascript':'UTF-8'}'.toLowerCase(),
+                        publicKey: '{$P4X_PUBLIC_KEY|escape:'javascript':'UTF-8'}',
+                        selector: '.clearpaySimulator4x',
+                        numInstalments: '{$P4X_SIMULATOR_START_INSTALLMENTS|escape:'javascript':'UTF-8'}',
+                        totalAmount: '{$P4X_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
+                        totalPromotedAmount: '{$P4X_PROMOTED_AMOUNT|escape:'javascript':'UTF-8'}'.replace('.', ','),
                         amountParserConfig: {
-                            thousandSeparator: '{$CLEARPAY_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
-                            decimalSeparator: '{$CLEARPAY_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
+                            thousandSeparator: '{$P4X_SIMULATOR_THOUSAND_SEPARATOR|escape:'javascript':'UTF-8'}',
+                            decimalSeparator: '{$P4X_SIMULATOR_DECIMAL_SEPARATOR|escape:'javascript':'UTF-8'}',
                         }
                     });
                     return true;
                 }
-                window.PSSimulatorAttemptsClearpay = 0;
-                if (!loadSimulatorClearpay()) {
-                    window.PSSimulatorIdClearpay = setInterval(function () {
-                        loadSimulatorClearpay();
+                window.PSSimulatorAttempts4x = 0;
+                if (!loadSimulator4x()) {
+                    window.PSSimulatorId4x = setInterval(function () {
+                        loadSimulator4x();
                     }, 2000);
                 }
             </script>
             <style>
-                .clearpaySimulatorClearpay {
+                .clearpaySimulator4x {
                     display: inline-block;
                 }
-                .clearpaySimulatorClearpay .mainImageLogo{
+                .clearpaySimulator4x .mainImageLogo{
                     width: 20px;
                     height: 20px;
                 }
-                .clearpaySimulatorClearpay.ps_version_1-5 {
+                .clearpaySimulator4x.ps_version_1-5 {
                     vertical-align: middle;
                     padding-top: 20px;
                     margin-left: 10px;
                 }
-                .clearpaySimulatorClearpay.ps_version_1-6 {
+                .clearpaySimulator4x.ps_version_1-6 {
                     vertical-align: top;
                     margin-left: 20px;
                     margin-top: -5px;
 
                 }
-                .clearpaySimulatorClearpay.ps_version_1-7 {
+                .clearpaySimulator4x.ps_version_1-7 {
                     padding-top: 0px;
                 }
                 p.payment_module.Clearpay.ps_version_1-5 {
                     min-height: 0px;
+                    display: inline;
                 }
                 p.payment_module.Clearpay.ps_version_1-7 {
                     margin-left: -5px;
@@ -136,11 +136,7 @@
                 p.payment_module a:hover {
                     background-color: #f6f6f6;
                 }
-                p.payment_module.Clearpay.ps_version_1-5 {
-                    min-height: 0px;
-                    display: inline;
-                }
-                {$CLEARPAY_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
+                {$P4X_SIMULATOR_CSS_CHECKOUT_PAGE_STYLES|escape:'javascript':'UTF-8'}
             </style>
         </div>
     </div>

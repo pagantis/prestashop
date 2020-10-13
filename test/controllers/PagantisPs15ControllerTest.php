@@ -26,15 +26,6 @@ class ClearpayPs15ControllerTest extends ClearpayPrestashopTest
     protected $configs = array(
         "TITLE",
         "SIMULATOR_DISPLAY_TYPE",
-        "SIMULATOR_DISPLAY_SKIN",
-        "SIMULATOR_START_INSTALLMENTS",
-        "SIMULATOR_CSS_POSITION_SELECTOR",
-        "SIMULATOR_DISPLAY_CSS_POSITION",
-        "SIMULATOR_CSS_PRICE_SELECTOR",
-        "SIMULATOR_CSS_QUANTITY_SELECTOR",
-        "FORM_DISPLAY_TYPE",
-        "DISPLAY_MIN_AMOUNT",
-        "DISPLAY_MAX_AMOUNT",
         "URL_OK",
         "URL_KO",
     );

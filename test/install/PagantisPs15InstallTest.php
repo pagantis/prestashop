@@ -38,10 +38,10 @@ class ClearpayPs15InstallTest extends AbstractPs15Selenium
             $this->findByLinkText('Configure')->click();
         }
 
-        $this->findByCss('#clearpay_is_enabled_true + label')->click();
-        $this->findById('clearpay_public_key')->clear()->sendKeys('tk_8517351ec6ae44b29f5dca6e');
+        $this->findByCss('#CLEARPAY_IS_ENABLED_true + label')->click();
+        $this->findById('CLEARPAY_PUBLIC_KEY')->clear()->sendKeys('tk_8517351ec6ae44b29f5dca6e');
         $this->findById('clearpay_private_key')->clear()->sendKeys('c580df9e0b7b40c3');
-        $this->findByCss('#clearpay_environment_sandbox + label')->click();
+        $this->findByCss('#CLEARPAY_ENVIRONMENT_sandbox + label')->click();
         $this->webDriver->executeScript('window.scrollBy(0,250)');
         $this->findById('module_form')->submit();
         $confirmationSearch = WebDriverBy::className('module_confirmation');

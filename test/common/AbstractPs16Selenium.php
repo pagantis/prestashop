@@ -98,7 +98,7 @@ abstract class AbstractPs16Selenium extends ClearpayPrestashopTest
         $this->moveToElementAndClick($clearpayAnchorGrandParent->findElement(
             WebDriverBy::partialLinkText('Configure')
         ));
-        $verify = WebDriverBy::id('clearpay_public_key');
+        $verify = WebDriverBy::id('CLEARPAY_PUBLIC_KEY');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($verify);
         $this->waitUntil($condition);
     }

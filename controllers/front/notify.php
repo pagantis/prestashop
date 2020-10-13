@@ -250,10 +250,10 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 'No valid Pagantis product provided in the url: ' . Tools::getValue('product')
             );
         }
-        $this->productName = "Pagantis " . Tools::strtolower($productCode);
+        $this->productName = "Clearpay";
 
-        $this->config['publicKey'] = trim(Configuration::get(Tools::strtolower($productCode) . '_public_key'));
-        $this->config['privateKey'] = trim(Configuration::get(Tools::strtolower($productCode) . '_private_key'));
+        $this->config['publicKey'] = trim(Configuration::get('CLEARPAY_PUBLIC_KEY'));
+        $this->config['privateKey'] = trim(Configuration::get('CLEARPAY_private_key'));
 
         $this->merchantCartId = Tools::getValue('id_cart');
 

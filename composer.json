@@ -20,8 +20,7 @@
     ],
     "require": {
         "pagantis/orders-api-client": "^2.0",
-        "clearpay/cp-sdk-php": "*",
-        "pagantis/module-utils": "^2.0"
+        "clearpay/cp-sdk-php": "*"
     },
     "require-dev": {
         "pagantis/autoindex": "^1.0",

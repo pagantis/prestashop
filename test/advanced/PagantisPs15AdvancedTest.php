@@ -26,7 +26,7 @@ class ClearpayPs15InstallTest extends AbstractPs15Selenium
         $this->getClearpayBackOffice();
 
         //2 elements exist:
-        $validatorSearch = WebDriverBy::id('clearpay_public_key');
+        $validatorSearch = WebDriverBy::id('CLEARPAY_PUBLIC_KEY');
         $condition = WebDriverExpectedCondition::visibilityOfElementLocated($validatorSearch);
         $this->waitUntil($condition);
         $this->assertTrue((bool) $condition);
