@@ -50,7 +50,7 @@ class Clearpay extends PaymentModule
      */
     public $defaultConfigs = array(
         'CODE' =>'clearpay',
-        'ALLOWED_COUNTRIES' => 'a:3:{i:0;s:2:"es";i:1;s:2:"it";i:2;s:2:"fr";}',
+        'ALLOWED_COUNTRIES' => 'a:4:{i:1;s:2:"en";i:2;s:2:"es";i:3;s:2:"fr";i:4;s:2:"it";}',
         'SIMULATOR_DISPLAY_TYPE' => 'clearpay',
         'SIMULATOR_IS_ENABLED' => true,
         'URL_OK' => '',

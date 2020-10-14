@@ -154,7 +154,6 @@ class ClearpayPaymentModuleFrontController extends AbstractController
 
         $items = $cart->getProducts();
         $products = array();
-        $promotedAmount = 0;
         foreach ($items as $key => $item) {
             $products[] = array(
                 'name' => $item['name'],
@@ -167,8 +166,10 @@ class ClearpayPaymentModuleFrontController extends AbstractController
             );
         }
         $createCheckoutRequest->setItems($products);
-        //MyClearpayModule/1.0.0 (E-Commerce Platform Name/1.0.0; PHP/7.0.0; Merchant/60032000) https://merchant.example.com
-        $header = '';
+
+        $header = $this->module->name . '/' . $this->module->version
+            . '(Prestashop/' . _PS_VERSION_ . '; PHP/' . phpversion() . '; Merchant/' . $publicKey
+            . ' ' . _PS_BASE_URL_SSL_.__PS_BASE_URI__;
         $createCheckoutRequest->addHeader('User-Agent', $header);
 
 //        $createCheckoutRequest->setCourier(array(
@@ -178,16 +179,21 @@ class ClearpayPaymentModuleFrontController extends AbstractController
 //            'priority' => 'STANDARD'
 //        ))
 
+        $url = '';
         if ($createCheckoutRequest->isValid()) {
             $createCheckoutRequest->send();
-            echo"<pre>";
-            echo $createCheckoutRequest->getRawLog();
+            if (isset($createCheckoutRequest->getResponse()->getParsedBody()->errorCode)) {
+                $this->saveLog($createCheckoutRequest->getResponse()->getParsedBody()->message);
+                $url = 'ko2';
+            }
+            $url = 'ok';
+            var_dump($createCheckoutRequest->getResponse()->getParsedBody()->message);
         } else {
-            echo $createCheckoutRequest->getValidationErrorsAsHtml();
+            $this->saveLog($createCheckoutRequest->getValidationErrors());
+            $url = 'ko2';
         }
 
-        die;
-        $url = '';
+        die($url);
         Tools::redirect($url);
     }
 
