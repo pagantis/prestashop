@@ -7,6 +7,7 @@
  * @license   proprietary
  */
 use Afterpay\SDK\HTTP\Request\CreateCheckout;
+use Afterpay\SDK\Merchant as ClearpayMerchant;
 
 require_once('AbstractController.php');
 
@@ -46,7 +47,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
             $billingStateCode = $billingStateObj->iso_code;
         }
 
-        $discountAmount = $this->cart_object->getOrderTotal(true, Cart::ONLY_DISCOUNTS);
+        $discountAmount = $cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS);
 
         /** @var Carrier $carrier */
         $carrier = new Carrier($cart->id_carrier);
@@ -58,7 +59,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
             Tools::redirect('index.php?controller=order');
         }
 
-        $urlToken = strtoupper(md5(uniqid(rand(), true)));
+        $urlToken = Tools::strtoupper(md5(uniqid(rand(), true)));
 
         $query = array(
             'id_cart' => $cart->id,
@@ -74,12 +75,12 @@ class ClearpayPaymentModuleFrontController extends AbstractController
         $cancelUrl = (Clearpay::getExtraConfig('URL_KO') !== '') ? Clearpay::getExtraConfig('URL_KO', null) : $koUrl;
 
         $publicKey = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
-        $privateKey = Configuration::get('CLEARPAY_SANDBOX_SECRET_KEY');
+        $secretKey = Configuration::get('CLEARPAY_SANDBOX_SECRET_KEY');
         $environment = Configuration::get('CLEARPAY_ENVIRONMENT');
 
         if ($environment === 'production') {
             $publicKey = Configuration::get('CLEARPAY_PRODUCTION_PUBLIC_KEY');
-            $privateKey = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
+            $secretKey = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
         }
 
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
@@ -89,7 +90,14 @@ class ClearpayPaymentModuleFrontController extends AbstractController
 
         \Afterpay\SDK\Model::setAutomaticValidationEnabled(true);
         $createCheckoutRequest = new CreateCheckout();
+        $clearpayMerchant = new ClearpayMerchant();
+        $clearpayMerchant
+            ->setMerchantId($publicKey)
+            ->setSecretKey($secretKey)
+            ->setApiEnvironment($environment)
+        ;
         $createCheckoutRequest
+            ->setMerchant($clearpayMerchant)
             ->setMerchant(array(
                 'redirectConfirmUrl' => $okUrl,
                 'redirectCancelUrl' => $cancelUrl
@@ -159,6 +167,9 @@ class ClearpayPaymentModuleFrontController extends AbstractController
             );
         }
         $createCheckoutRequest->setItems($products);
+        //MyClearpayModule/1.0.0 (E-Commerce Platform Name/1.0.0; PHP/7.0.0; Merchant/60032000) https://merchant.example.com
+        $header = '';
+        $createCheckoutRequest->addHeader('User-Agent', $header);
 
 //        $createCheckoutRequest->setCourier(array(
 //            'shippedAt' => '2019-01-01T00:00:00+10:00',
@@ -169,38 +180,14 @@ class ClearpayPaymentModuleFrontController extends AbstractController
 
         if ($createCheckoutRequest->isValid()) {
             $createCheckoutRequest->send();
-
+            echo"<pre>";
             echo $createCheckoutRequest->getRawLog();
         } else {
             echo $createCheckoutRequest->getValidationErrorsAsHtml();
         }
 
+        die;
         $url = '';
-        try {
-            $orderClient = new \Pagantis\OrdersApiClient\Client(
-                trim($publicKey),
-                trim($privateKey)
-            );
-            $order = $orderClient->createOrder($order);
-
-            if ($order instanceof \Pagantis\OrdersApiClient\Model\Order) {
-                $url = $order->getActionUrls()->getForm();
-                /** @var string $orderId MD5 value */
-                $orderId = $order->getId();
-                $sql = "INSERT INTO `" . _DB_PREFIX_ . "clearpay_order` (`id`, `order_id`, `token`)
-                     VALUES ('$cart->id','$orderId', '$urlToken')";
-                $result = Db::getInstance()->execute($sql);
-                if (!$result) {
-                    throw new UnknownException('Unable to save clearpay-order-id in database: '. $sql);
-                }
-            } else {
-                throw new OrderNotFoundException();
-            }
-        } catch (\Exception $exception) {
-            $this->saveLog(array(), $exception, 2);
-            Tools::redirect($cancelUrl);
-        }
-
         Tools::redirect($url);
     }
 

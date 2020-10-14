@@ -7,11 +7,6 @@
  * @license   proprietary
  */
 
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
 define('_PS_CLEARPAY_DIR', _PS_MODULE_DIR_. '/clearpay');
 define('PROMOTIONS_CATEGORY', 'clearpay-promotion-product');
 define('PROMOTIONS_CATEGORY_NAME', 'Clearpay Promoted Product');
@@ -20,6 +15,10 @@ require _PS_CLEARPAY_DIR.'/vendor/autoload.php';
 
 use Afterpay\SDK\Merchant as AfterpayMerchant;
 use Afterpay\SDK\HTTP\Request\GetConfiguration as AfterpayGetConfigurationRequest;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Class Clearpay
@@ -88,13 +87,8 @@ class Clearpay extends PaymentModule
         $this->currencies_mode = 'checkbox';
         $this->module_key = '2b9bc901b4d834bb7069e7ea6510438f';
         $this->ps_versions_compliancy = array('min' => '1.5', 'max' => _PS_VERSION_);
-+        $this->displayName = $this->l('Afterpay Payment Gateway');
+        $this->displayName = $this->l('Clearpay Payment Gateway');
         $this->description = $this->l('Buy now, pay later - Enjoy interest-free payments');
-
-        $current_context = Context::getContext();
-        if (!is_null($current_context->controller) && $current_context->controller->controller_type != 'front') {
-            $this->checkEnvVariables();
-        }
 
         parent::__construct();
 
@@ -120,6 +114,8 @@ class Clearpay extends PaymentModule
 
         $sql_file = dirname(__FILE__) . '/sql/install.sql';
         $this->loadSQLFile($sql_file);
+
+        $this->populateEnvVariables();
 
         Configuration::updateValue('CLEARPAY_IS_ENABLED', 0);
         Configuration::updateValue('CLEARPAY_SANDBOX_PUBLIC_KEY', '');
@@ -190,9 +186,9 @@ class Clearpay extends PaymentModule
     }
 
     /**
-     * @throws PrestaShopDatabaseException
+     * Populate DB variables on installation
      */
-    public function checkEnvVariables()
+    public function populateEnvVariables()
     {
         $sql_content = 'select * from ' . _DB_PREFIX_. 'clearpay_config';
         $dbConfigs = Db::getInstance()->executeS($sql_content);
@@ -225,29 +221,31 @@ class Clearpay extends PaymentModule
      */
     public function isPaymentMethodAvailable()
     {
+
         $cart = $this->context->cart;
         $totalAmount = $cart->getOrderTotal(true, Cart::BOTH);
         $currency = new Currency($cart->id_currency);
-        $availableCurrencies = array(CLEARPAY_CURRENCY);
+        $availableCurrencies = array(self::CLEARPAY_CURRENCY);
         $displayMinAmount = Configuration::get('CLEARPAY_MIN_AMOUNT');
         $displayMaxAmount = Configuration::get('CLEARPAY_MAX_AMOUNT');
         $publicKey = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
-        $privateKey = Configuration::get('CLEARPAY_SANDBOX_SECRET_KEY');
+        $secretKey = Configuration::get('CLEARPAY_SANDBOX_SECRET_KEY');
         $environment = Configuration::get('CLEARPAY_ENVIRONMENT');
 
         if ($environment === 'production') {
             $publicKey = Configuration::get('CLEARPAY_PRODUCTION_PUBLIC_KEY');
-            $privateKey = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
+            $secretKey = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
         }
         $this->allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
         $this->presetUserLanguage();
+
         return (
             $totalAmount >= $displayMinAmount &&
             $totalAmount <= $displayMaxAmount &&
             in_array($currency->iso_code, $availableCurrencies) &&
             in_array(Tools::strtolower($this->language), $this->allowedCountries) &&
             $publicKey &&
-            $privateKey
+            $secretKey
         );
     }
 
@@ -300,7 +298,7 @@ class Clearpay extends PaymentModule
 
         $link = $this->context->link;
 
-        $return = '';
+        $return = array();
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $templateConfigs = array();
         if ($this->isPaymentMethodAvailable()) {
@@ -313,10 +311,11 @@ class Clearpay extends PaymentModule
 
             $isEnabled = Configuration::get('CLEARPAY_IS_ENABLED');
 
-            $templateConfigs['PUBLIC_KEY'] = $publicKey;
+            $templateConfigs['TITLE'] = $this->l('Pay with ');
             $templateConfigs['TOTAL_AMOUNT'] = $totalAmount;
             $templateConfigs['IS_ENABLED'] = $isEnabled;
-            $templateConfigs['LOGO'] = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/images/checkout_logo.png');
+            $templateConfigs['ICON'] = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/app_icon.png');
+            $templateConfigs['LOGO'] = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/logo.png');
             $templateConfigs['PAYMENT_URL'] = $link->getModuleLink('clearpay', 'payment');
             $templateConfigs['PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
 
@@ -333,7 +332,7 @@ class Clearpay extends PaymentModule
                     $this->fetch('module:clearpay/views/templates/hook/checkout.tpl')
                 )
             ;
-            $return = $paymentOption;
+            $return[] = $paymentOption;
         }
 
         return $return;
@@ -552,19 +551,23 @@ class Clearpay extends PaymentModule
             $message = $this->displayConfirmation($this->l('All changes have been saved'));
         }
 
-        // auto update configs
-        $sandboxPublicKey = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
-        $sandboxSecretKey = Configuration::get('CLEARPAY_SANDBOX_SECRET_KEY');
-        $productionPublicKey = Configuration::get('CLEARPAY_PRODUCTION_PUBLIC_KEY');
-        $productionSecretKey = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
+        // auto update configs on background
+        $publicKey = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
+        $secretKey = Configuration::get('CLEARPAY_SANDBOX_SECRET_KEY');
         $environment = Configuration::get('CLEARPAY_ENVIRONMENT');
-        if (!empty($sandboxPublicKey) && !empty($sandboxSecretKey)  && $environment === 'sandbox' ||
-            !empty($productionPublicKey) && !empty($productionSecretKey)  && $environment === 'production') {
+        $isEnabled = Configuration::get('CLEARPAY_IS_ENABLED');
+
+        if ($environment === 'production') {
+            $publicKey = Configuration::get('CLEARPAY_PRODUCTION_PUBLIC_KEY');
+            $secretKey = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
+        }
+
+        if (!empty($publicKey) && !empty($secretKey)  && $isEnabled) {
             // auto update configs
             $merchant = new AfterpayMerchant();
             $merchant
-                ->setMerchantId(($environment === 'sandbox') ? $sandboxPublicKey : $productionPublicKey)
-                ->setSecretKey(($environment === 'sandbox') ? $sandboxSecretKey : $productionSecretKey)
+                ->setMerchantId($publicKey)
+                ->setSecretKey($secretKey)
             ;
 
             $getConfigurationRequest = new AfterpayGetConfigurationRequest();
@@ -581,7 +584,7 @@ class Clearpay extends PaymentModule
         }
 
 
-        $logo = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/images/logo.png');
+        $logo = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/logo.png');
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
@@ -629,7 +632,7 @@ class Clearpay extends PaymentModule
             $templateConfigs['PUBLIC_KEY'] = $publicKey;
             $templateConfigs['TOTAL_AMOUNT'] = $totalAmount;
             $templateConfigs['IS_ENABLED'] = $isEnabled;
-            $templateConfigs['LOGO'] = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/images/checkout_logo.png');
+            $templateConfigs['LOGO'] = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/checkout_logo.png');
             $templateConfigs['PAYMENT_URL'] = $link->getModuleLink('clearpay', 'payment');
             $templateConfigs['PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
 

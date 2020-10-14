@@ -138,9 +138,9 @@ class ClearpayConfigModuleFrontController extends ModuleFrontController
     {
         $productCode = Tools::getValue('product', false);
         $products = explode(',', Clearpay::getExtraConfig('PRODUCTS', null));
-        $privateKey = Configuration::get('clearpay_private_key');
-        $privateKeyGet = Tools::getValue('secret', false);
-        if (!empty($privateKeyGet) && $privateKeyGet === $privateKey && in_array(Tools::strtoupper($productCode), $products)) {
+        $secretKey = Configuration::get('clearpay_private_key');
+        $secretKeyGet = Tools::getValue('secret', false);
+        if (!empty($secretKeyGet) && $secretKeyGet === $secretKey && in_array(Tools::strtoupper($productCode), $products)) {
             return true;
         }
 
