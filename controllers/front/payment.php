@@ -183,13 +183,12 @@ class ClearpayPaymentModuleFrontController extends AbstractController
         if ($createCheckoutRequest->isValid()) {
             $createCheckoutRequest->send();
             if (isset($createCheckoutRequest->getResponse()->getParsedBody()->errorCode)) {
-                $this->saveLog($createCheckoutRequest->getResponse()->getParsedBody()->message);
+                $this->saveLog($createCheckoutRequest->getResponse()->getParsedBody()->message, null, 2);
                 $url = 'ko2';
             }
             $url = 'ok';
-            var_dump($createCheckoutRequest->getResponse()->getParsedBody()->message);
         } else {
-            $this->saveLog($createCheckoutRequest->getValidationErrors());
+            $this->saveLog($createCheckoutRequest->getValidationErrors(), null, 2);
             $url = 'ko2';
         }
 
