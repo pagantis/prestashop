@@ -27,6 +27,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
     public function postProcess()
     {
         $context = Context::getContext();
+        $currency = $context->currency->iso_code;
 
         /** @var Cart $cart */
         $cart = $context->cart;
@@ -104,13 +105,13 @@ class ClearpayPaymentModuleFrontController extends AbstractController
             ))
             ->setTotalAmount(
                 $this->parseAmount($cart->getOrderTotal(true, Cart::BOTH)),
-                'EUR'
+                $currency
             )
             ->setTaxAmount(
                 $this->parseAmount(
                     $cart->getOrderTotal(true, Cart::BOTH) - $cart->getOrderTotal(false, Cart::BOTH)
                 ),
-                'EUR'
+                $currency
             )
             ->setConsumer(array(
                 'phoneNumber' => $billingAddress->phone,
@@ -140,14 +141,14 @@ class ClearpayPaymentModuleFrontController extends AbstractController
             ))
             ->setShippingAmount(
                 $this->parseAmount($cart->getTotalShippingCost()),
-                'EUR'
+                $currency
             );
 
         if (!empty($discountAmount)) {
             $createCheckoutRequest->setDiscounts(array(
                 array(
                     'displayName' => 'Clearpay Discount coupon',
-                    'amount' => array($this->parseAmount($discountAmount), 'EUR')
+                    'amount' => array($this->parseAmount($discountAmount), $currency)
                 )
             ));
         }
@@ -161,7 +162,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
                 'quantity' => $item['quantity'],
                 'price' => array(
                     $this->parseAmount($item['price_wt']),
-                    'EUR'
+                    $currency
                 )
             );
         }
@@ -179,20 +180,18 @@ class ClearpayPaymentModuleFrontController extends AbstractController
 //            'priority' => 'STANDARD'
 //        ))
 
-        $url = '';
+        $url = $cancelUrl;
         if ($createCheckoutRequest->isValid()) {
             $createCheckoutRequest->send();
             if (isset($createCheckoutRequest->getResponse()->getParsedBody()->errorCode)) {
                 $this->saveLog($createCheckoutRequest->getResponse()->getParsedBody()->message, null, 2);
-                $url = 'ko2';
+            } else {
+                $url = $createCheckoutRequest->getResponse()->getParsedBody()->redirectCheckoutUrl;
             }
-            $url = 'ok';
         } else {
             $this->saveLog($createCheckoutRequest->getValidationErrors(), null, 2);
-            $url = 'ko2';
         }
 
-        die($url);
         Tools::redirect($url);
     }
 

@@ -28,7 +28,7 @@ class Clearpay extends PaymentModule
     /**
      * Available currency
      */
-    const CLEARPAY_CURRENCY = 'EUR';
+    const CLEARPAY_AVAILABLE_CURRENCIES = 'EUR,GBP,USD';
 
     /**
      * @var string
@@ -50,7 +50,7 @@ class Clearpay extends PaymentModule
      */
     public $defaultConfigs = array(
         'CODE' =>'clearpay',
-        'ALLOWED_COUNTRIES' => 'a:4:{i:1;s:2:"en";i:2;s:2:"es";i:3;s:2:"fr";i:4;s:2:"it";}',
+        'ALLOWED_COUNTRIES' => 'a:4:{i:1;s:2:"gb";i:2;s:2:"es";i:3;s:2:"fr";i:4;s:2:"it";}',
         'SIMULATOR_DISPLAY_TYPE' => 'clearpay',
         'SIMULATOR_IS_ENABLED' => true,
         'URL_OK' => '',
@@ -89,6 +89,12 @@ class Clearpay extends PaymentModule
         $this->ps_versions_compliancy = array('min' => '1.5', 'max' => _PS_VERSION_);
         $this->displayName = $this->l('Clearpay Payment Gateway');
         $this->description = $this->l('Buy now, pay later - Enjoy interest-free payments');
+        $this->checkoutText = $this->l('or 4 payments of %€ with %');
+        $this->currency = 'EUR';
+        $context = Context::getContext();
+        if (isset($context->currency)) {
+            $this->currency =$context->currency->iso_code;
+        }
 
         parent::__construct();
 
@@ -221,11 +227,10 @@ class Clearpay extends PaymentModule
      */
     public function isPaymentMethodAvailable()
     {
-
         $cart = $this->context->cart;
         $totalAmount = $cart->getOrderTotal(true, Cart::BOTH);
         $currency = new Currency($cart->id_currency);
-        $availableCurrencies = array(self::CLEARPAY_CURRENCY);
+        $availableCurrencies = explode(",", self::CLEARPAY_AVAILABLE_CURRENCIES);
         $displayMinAmount = Configuration::get('CLEARPAY_MIN_AMOUNT');
         $displayMaxAmount = Configuration::get('CLEARPAY_MAX_AMOUNT');
         $publicKey = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
@@ -311,7 +316,8 @@ class Clearpay extends PaymentModule
 
             $isEnabled = Configuration::get('CLEARPAY_IS_ENABLED');
 
-            $templateConfigs['TITLE'] = $this->l('Pay with ');
+            $templateConfigs['TITLE'] = $this->checkoutText;
+            $templateConfigs['MERCHANT_ID'] = $publicKey;
             $templateConfigs['TOTAL_AMOUNT'] = $totalAmount;
             $templateConfigs['IS_ENABLED'] = $isEnabled;
             $templateConfigs['ICON'] = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/app_icon.png');
@@ -685,7 +691,7 @@ class Clearpay extends PaymentModule
             $templateConfigs['SDK_URL'] = 'https://js.afterpay.com/afterpay-1.x.js';
             $templateConfigs['CLEARPAY_MIN_AMOUNT'] = Configuration::get('CLEARPAY_MIN_AMOUNT');
             $templateConfigs['CLEARPAY_MAX_AMOUNT'] = Configuration::get('CLEARPAY_MAX_AMOUNT');
-            $templateConfigs['CURRENCY'] = self::CLEARPAY_CURRENCY;
+            $templateConfigs['CURRENCY'] = $this->currency;
             $language = Language::getLanguage($this->context->language->id);
             $templateConfigs['ISO_COUNTRY_CODE'] = $language['locale'];
             $templateConfigs['AMOUNT'] = $amount;

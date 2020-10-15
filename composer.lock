@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "923365fd0f36180ad71753cbe03231ab",
+    "content-hash": "7841531deaa4fbedc7eec02d5040445b",
     "packages": [
         {
             "name": "clearpay/cp-sdk-php",
@@ -12,7 +12,7 @@
             "dist": {
                 "type": "path",
                 "url": "/Users/rmarin/Projects/ei-sdk-php",
-                "reference": "98b95a65bf3029d1ce077c916f7e2d3f6cb2a0c3",
+                "reference": "0e68dbea9086cda8a1ced45088dbcc78c4e45fde",
                 "shasum": null
             },
             "require-dev": {
@@ -158,50 +158,6 @@
             ],
             "description": "Library for converting strings from camel case to snake case and vice versa.",
             "time": "2015-06-04T13:11:29+00:00"
-        },
-        {
-            "name": "pagantis/module-utils",
-            "version": "v2.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pagantis/module-utils.git",
-                "reference": "e7e09ecfe0dcbe3de37445fef5183cfa3b8d3ddd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pagantis/module-utils/zipball/e7e09ecfe0dcbe3de37445fef5183cfa3b8d3ddd",
-                "reference": "e7e09ecfe0dcbe3de37445fef5183cfa3b8d3ddd",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": ">=5.3"
-            },
-            "require-dev": {
-                "facebook/webdriver": "^1.1",
-                "fzaninotto/faker": "^1.7",
-                "nayjest/str-case-converter": "^1.0",
-                "phpunit/phpunit": "^4.8",
-                "phpunit/phpunit-selenium": "^2.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Pagantis\\ModuleUtils\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "proprietary"
-            ],
-            "authors": [
-                {
-                    "name": "Pagantis",
-                    "email": "integration@pagantis.com"
-                }
-            ],
-            "description": "Pagantis PHP Library. Module utils",
-            "time": "2019-03-14T10:52:05+00:00"
         },
         {
             "name": "pagantis/orders-api-client",
