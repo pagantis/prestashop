@@ -20,7 +20,7 @@ To install the plugin of Clearpay in your prestashop, we need to open the Presta
 ![Step 4](./prestashop_installation_4a.png?raw=true "Step 4")-->
 
 
-3. Download the zip file from [here](https://github.com/pagantis/prestashop/releases/latest). The name could be different according the last version of the plugin(Vx.x.x)
+3. Download the zip file from [here](https://github.com/clearpay/prestashop/releases/latest). The name could be different according the last version of the plugin(Vx.x.x)
 ![Step 3](./prestashop_installation_3b.png?raw=true "Step 3")
 
 4. Click 'Choose a file'

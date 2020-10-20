@@ -23,7 +23,7 @@ In the Pagantis admin panel, we can set the following options:
 | Secret Key(*) |  String. 
 | Simulator is enabled |  * Yes => Display the installments simulator  (Default) <br/> * No => Do not display the simulator
 
-:information_source: - Your keys are located on your [Pagantis profile](https://bo.pagantis.com/shop)
+:information_source: - Your keys are located on your [Pagantis profile](https://bo.clearpay.com/shop)
 
 
 ## :clipboard: Advanced configuration:
@@ -62,7 +62,7 @@ You have to ways to edit your settings:
 3 - Launch a query to check if the table exists:
   * Query: 
         ```
-        SELECT * FROM pagantis_config;
+        SELECT * FROM clearpay_config;
         ```
         
     ![Step 3](./sql_step3.png?raw=true "Step 1")
@@ -72,7 +72,7 @@ You have to ways to edit your settings:
 5 - Launch the following query to edit the value:
   * Query: 
         ```
-        UPDATE pagantis_config set value='New title' WHERE config='TITLE';
+        UPDATE clearpay_config set value='New title' WHERE config='TITLE';
         ```
    
    ![Step 5](./sql_step5.png?raw=true "Step 5")
@@ -81,7 +81,7 @@ You have to ways to edit your settings:
 6 - After the modification, you can verify it with the following query :
   * Query:
         ```
-        SELECT * FROM pagantis_config;
+        SELECT * FROM clearpay_config;
         ```
 
     ![Step 6](./sql_step6.png?raw=true "Step 6")
@@ -102,7 +102,7 @@ You have to ways to edit your settings:
 
 3. Set your request  
 3.1 - On the upper-left side, you need to set a POST request  
-3.2 - Fill the url field with your domain, and your secret key which is located on your [Pagantis profile](https://bo.pagantis.com/shop).     
+3.2 - Fill the url field with your domain, and your secret key which is located on your [Pagantis profile](https://bo.clearpay.com/shop).     
 3.3 - Set the config key to modify.[List of config keys](./configuration.md#list-of-settings-and-their-description).  
 3.4 - Set the value for the selected key  
 ![Step 3](./postman_step3.png?raw=true "Step 3")

@@ -1,26 +1,35 @@
 {
-  "name": "clearpay",
-  "version": "8.6.11",
-  "description": "Clearpay integration in prestashop",
-  "main": "Gruntfile.js",
-  "dependencies": {},
-  "devDependencies": {
-    "bower": "^1.8.0",
-    "grunt": "^1.0.1",
-    "grunt-contrib-compress": "^1.4.3",
-    "grunt-shell": "^2.1.0"
+  "name": "clearpay/prestashop",
+  "description": "Prestashop module to add Clearpay",
+  "license": "proprietary",
+  "type": "module",
+  "authors": [
+    {
+      "name": "Clearpay",
+      "email": "integrations@clearpay.com"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "path",
+      "url": "/Users/rmarin/Projects/ei-sdk-php",
+      "options": {
+        "symlink": false
+      }
+    }
+  ],
+  "require": {
+    "afterpay-global/afterpay-sdk-php": "*"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "require-dev": {
+    "pagantis/autoindex": "^1.0",
+    "pagantis/selenium-form-utils": "^3.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/clearpay/prestashop.git"
-  },
-  "author": "Clearpay",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/clearpay/prestashop/issues"
-  },
-  "homepage": "https://github.com/clearpay/prestashop"
+  "autoload-dev": {
+    "psr-4": {
+      "Test\\Common\\": "test/common",
+      "Test\\": "test/",
+      "Afterpay\\SDK\\": "vendor/afterpay-global/afterpay-sdk-php"
+    }
+  }
 }

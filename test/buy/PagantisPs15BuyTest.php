@@ -4,8 +4,8 @@ namespace Test\Buy;
 
 use Test\Common\AbstractPs15Selenium;
 use Httpful\Request;
-use Pagantis\ModuleUtils\Exception\QuoteNotFoundException;
-use Pagantis\ModuleUtils\Exception\MerchantOrderNotFoundException;
+use Clearpay\ModuleUtils\Exception\QuoteNotFoundException;
+use Clearpay\ModuleUtils\Exception\MerchantOrderNotFoundException;
 
 /**
  * @requires prestashop15install

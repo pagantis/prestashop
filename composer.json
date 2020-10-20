@@ -19,8 +19,7 @@
         }
     ],
     "require": {
-        "pagantis/orders-api-client": "^2.0",
-        "clearpay/cp-sdk-php": "*"
+        "afterpay-global/afterpay-sdk-php": "dev-downgrade-to-api-v1"
     },
     "require-dev": {
         "pagantis/autoindex": "^1.0",
@@ -29,8 +28,7 @@
     "autoload-dev": {
         "psr-4": {
             "Test\\Common\\": "test/common",
-            "Test\\": "test/",
-            "Afterpay\\SDK\\": "vendor/clearpay/cp-sdk-php"
+            "Test\\": "test/"
         }
     }
 }

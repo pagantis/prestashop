@@ -7,8 +7,6 @@
  * @license   proprietary
  */
 
-use Pagantis\ModuleUtils\Model\Log\LogEntry;
-
 /**
  * Class AbstractController
  */

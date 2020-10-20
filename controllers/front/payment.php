@@ -7,7 +7,7 @@
  * @license   proprietary
  */
 use Afterpay\SDK\HTTP\Request\CreateCheckout;
-use Afterpay\SDK\Merchant as ClearpayMerchant;
+use Afterpay\SDK\MerchantAccount as ClearpayMerchantAccount;
 
 require_once('AbstractController.php');
 
@@ -86,29 +86,34 @@ class ClearpayPaymentModuleFrontController extends AbstractController
 
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
             .'index.php?canonical=true&fc=module&module=clearpay&controller=notify'
-            .'&token='.$urlToken.http_build_query($query)
+            .'&token='.$urlToken . '&' . http_build_query($query)
         ;
 
         \Afterpay\SDK\Model::setAutomaticValidationEnabled(true);
         $createCheckoutRequest = new CreateCheckout();
-        $clearpayMerchant = new ClearpayMerchant();
-        $clearpayMerchant
+        $clearpayMerchantAccount = new ClearpayMerchantAccount();
+        $countryCode = $this->getCountryCode();
+        $clearpayMerchantAccount
             ->setMerchantId($publicKey)
             ->setSecretKey($secretKey)
             ->setApiEnvironment($environment)
         ;
+        if (!is_null($countryCode)) {
+            $clearpayMerchantAccount->setCountryCode($countryCode);
+        }
+
         $createCheckoutRequest
-            ->setMerchant($clearpayMerchant)
             ->setMerchant(array(
                 'redirectConfirmUrl' => $okUrl,
                 'redirectCancelUrl' => $cancelUrl
             ))
+            ->setMerchantAccount($clearpayMerchantAccount)
             ->setTotalAmount(
-                $this->parseAmount($cart->getOrderTotal(true, Cart::BOTH)),
+                Clearpay::parseAmount($cart->getOrderTotal(true, Cart::BOTH)),
                 $currency
             )
             ->setTaxAmount(
-                $this->parseAmount(
+                Clearpay::parseAmount(
                     $cart->getOrderTotal(true, Cart::BOTH) - $cart->getOrderTotal(false, Cart::BOTH)
                 ),
                 $currency
@@ -140,7 +145,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
                 'phoneNumber' => $shippingAddress->phone
             ))
             ->setShippingAmount(
-                $this->parseAmount($cart->getTotalShippingCost()),
+                Clearpay::parseAmount($cart->getTotalShippingCost()),
                 $currency
             );
 
@@ -148,7 +153,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
             $createCheckoutRequest->setDiscounts(array(
                 array(
                     'displayName' => 'Clearpay Discount coupon',
-                    'amount' => array($this->parseAmount($discountAmount), $currency)
+                    'amount' => array(Clearpay::parseAmount($discountAmount), $currency)
                 )
             ));
         }
@@ -161,7 +166,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
                 'sku' => $item['reference'],
                 'quantity' => $item['quantity'],
                 'price' => array(
-                    $this->parseAmount($item['price_wt']),
+                    Clearpay::parseAmount($item['price_wt']),
                     $currency
                 )
             );
@@ -170,7 +175,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
 
         $header = $this->module->name . '/' . $this->module->version
             . '(Prestashop/' . _PS_VERSION_ . '; PHP/' . phpversion() . '; Merchant/' . $publicKey
-            . ' ' . _PS_BASE_URL_SSL_.__PS_BASE_URI__;
+            . ') ' . _PS_BASE_URL_SSL_.__PS_BASE_URI__;
         $createCheckoutRequest->addHeader('User-Agent', $header);
 
 //        $createCheckoutRequest->setCourier(array(
@@ -180,6 +185,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
 //            'priority' => 'STANDARD'
 //        ))
 
+
         $url = $cancelUrl;
         if ($createCheckoutRequest->isValid()) {
             $createCheckoutRequest->send();
@@ -187,6 +193,18 @@ class ClearpayPaymentModuleFrontController extends AbstractController
                 $this->saveLog($createCheckoutRequest->getResponse()->getParsedBody()->message, null, 2);
             } else {
                 $url = $createCheckoutRequest->getResponse()->getParsedBody()->redirectCheckoutUrl;
+                try {
+                    $orderId = $createCheckoutRequest->getResponse()->getParsedBody()->token;
+                    $sql = "INSERT INTO `" . _DB_PREFIX_ . "clearpay_order` (`id`, `order_id`, `token`)
+                     VALUES ('$cart->id','$orderId', '$urlToken')";
+                    $result = Db::getInstance()->execute($sql);
+                    if (!$result) {
+                        throw new \Exception('Unable to save clearpay-order-id in database: '. $sql);
+                    }
+                } catch (\Exception $exception) {
+                    $this->saveLog($exception->getMessage(), 3);
+                    $url = $cancelUrl;
+                }
             }
         } else {
             $this->saveLog($createCheckoutRequest->getValidationErrors(), null, 2);
@@ -195,13 +213,39 @@ class ClearpayPaymentModuleFrontController extends AbstractController
         Tools::redirect($url);
     }
 
-    public function parseAmount($amount = null)
+    /**
+     * @param null $shippingAddress
+     * @param null $billingAddress
+     * @return mixed
+     */
+    private function getCountryCode()
     {
-        return number_format(
-            round($amount, 2, PHP_ROUND_HALF_UP),
-            2,
-            '.',
-            ''
-        );
+        $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
+        $lang = Language::getLanguage($this->context->language->id);
+        $langArray = explode("-", $lang['language_code']);
+        if (count($langArray) != 2 && isset($lang['locale'])) {
+            $langArray = explode("-", $lang['locale']);
+        }
+        $language = Tools::strtoupper($langArray[count($langArray)-1]);
+        // Prevent null language detection
+        if (in_array(Tools::strtolower($language), $allowedCountries)) {
+            return $language;
+        }
+
+        $shippingAddress = new Address($cart->id_address_delivery);
+        if ($shippingAddress) {
+            $language = Country::getIsoById($shippingAddress->id_country);
+            if (in_array(Tools::strtolower($language), $allowedCountries)) {
+                return $language;
+            }
+        }
+        $billingAddress = new Address($cart->id_address_invoice);
+        if ($billingAddress) {
+            $language = Country::getIsoById($billingAddress->id_country);
+            if (in_array(Tools::strtolower($language), $allowedCountries)) {
+                return $language;
+            }
+        }
+        return null;
     }
 }
