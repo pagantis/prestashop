@@ -147,7 +147,13 @@ class ClearpayPaymentModuleFrontController extends AbstractController
             ->setShippingAmount(
                 Clearpay::parseAmount($cart->getTotalShippingCost()),
                 $currency
-            );
+            )
+            ->setCourier(array(
+                'shippedAt' => '',
+                'name' => $carrier->name,
+                'tracking' => '',
+                'priority' => 'STANDARD'
+            ));
 
         if (!empty($discountAmount)) {
             $createCheckoutRequest->setDiscounts(array(
@@ -177,14 +183,6 @@ class ClearpayPaymentModuleFrontController extends AbstractController
             . '(Prestashop/' . _PS_VERSION_ . '; PHP/' . phpversion() . '; Merchant/' . $publicKey
             . ') ' . _PS_BASE_URL_SSL_.__PS_BASE_URI__;
         $createCheckoutRequest->addHeader('User-Agent', $header);
-
-//        $createCheckoutRequest->setCourier(array(
-//            'shippedAt' => '2019-01-01T00:00:00+10:00',
-//            'name' => 'Australia Post',
-//            'tracking' => 'AA0000000000000',
-//            'priority' => 'STANDARD'
-//        ))
-
 
         $url = $cancelUrl;
         if ($createCheckoutRequest->isValid()) {

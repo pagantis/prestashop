@@ -100,8 +100,7 @@ class Clearpay extends PaymentModule
         parent::__construct();
 
         $this->presetUserLanguage();
-
-        $this->registerHook('displayExpressCheckout');
+        $this->allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
     }
 
     /**
@@ -245,8 +244,6 @@ class Clearpay extends PaymentModule
             $publicKey = Configuration::get('CLEARPAY_PRODUCTION_PUBLIC_KEY');
             $secretKey = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
         }
-        $this->allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
-        $this->presetUserLanguage();
 
         return (
             $totalAmount >= $displayMinAmount &&
@@ -281,7 +278,7 @@ class Clearpay extends PaymentModule
     public function hookHeader()
     {
 
-        $url = 'https://js.afterpay.com/afterpay-1.x.js';
+        $url = 'https://js.sandbox.afterpay.com/afterpay-1.x.js';
         if (_PS_VERSION_ >= "1.7") {
             $this->context->controller->registerJavascript(
                 sha1(mt_rand(1, 90000)),
@@ -303,7 +300,7 @@ class Clearpay extends PaymentModule
         $cart = $this->context->cart;
         $this->shippingAddress = new Address($cart->id_address_delivery);
         $this->billingAddress = new Address($cart->id_address_invoice);
-        $totalAmount = $cart->getOrderTotal(true, Cart::BOTH);
+        $totalAmount = Clearpay::parseAmount($cart->getOrderTotal(true, Cart::BOTH));
 
         $link = $this->context->link;
 
@@ -311,15 +308,6 @@ class Clearpay extends PaymentModule
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $templateConfigs = array();
         if ($this->isPaymentMethodAvailable()) {
-            $publicKey = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
-            $environment = Configuration::get('CLEARPAY_ENVIRONMENT');
-
-            if ($environment === 'production') {
-                $publicKey = Configuration::get('CLEARPAY_PRODUCTION_PUBLIC_KEY');
-            }
-
-            $isEnabled = Configuration::get('CLEARPAY_IS_ENABLED');
-
             $amountWithCurrency = Clearpay::parseAmount($totalAmount/4) . $this->currencySymbol;
             if ($this->currency === 'GBP') {
                 $amountWithCurrency = $this->currencySymbol. Clearpay::parseAmount($totalAmount/4);
@@ -329,6 +317,7 @@ class Clearpay extends PaymentModule
             $templateConfigs['TITLE'] = $checkoutText;
             $templateConfigs['MOREINFO_HEADER'] = $this->l('Instant approval decision - 4 interest-free payments of')
                 . ' ' . $amountWithCurrency;
+            $templateConfigs['TOTAL_AMOUNT'] = $totalAmount;
             $templateConfigs['MOREINFO_ONE'] = $this->l('You will be redirected to Clearpay website to fill out your payment information. You will be redirected to our site to complete your order. Please note: Clearpay can only be used as a payment method for orders with a shipping and billing address within the UK.');
             $templateConfigs['TERMS_AND_CONDITIONS'] = $this->l('Terms and conditions');
             $templateConfigs['TERMS_AND_CONDITIONS_LINK'] = $this->l('https://www.clearpay.co.uk/en-GB/terms-of-service');
@@ -580,41 +569,50 @@ class Clearpay extends PaymentModule
             $secretKey = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
         }
 
-        try {
-            if (!empty($publicKey) && !empty($secretKey)  && $isEnabled) {
-                // auto update configs
-                $merchantAccount = new AfterpayMerchant();
-                $merchantAccount
-                    ->setMerchantId($publicKey)
-                    ->setSecretKey($secretKey)
-                    ->setApiEnvironment($environment)
-                ;
-                if (!is_null($this->language)) {
-                    $merchantAccount->setCountryCode($this->language);
-                }
+        // auto update configuration price thresholds
+        if (!is_null($this->language) and in_array(Tools::strtolower($this->language), $this->allowedCountries)) {
+            try {
+                if (!empty($publicKey) && !empty($secretKey)  && $isEnabled) {
+                    $merchantAccount = new AfterpayMerchant();
+                    $merchantAccount
+                        ->setMerchantId($publicKey)
+                        ->setSecretKey($secretKey)
+                        ->setApiEnvironment($environment)
+                        ->setCountryCode($this->language)
+                    ;
 
-                $getConfigurationRequest = new AfterpayGetConfigurationRequest();
-                $getConfigurationRequest->setMerchantAccount($merchantAccount);
-                $getConfigurationRequest->send();
-                $configuration = $getConfigurationRequest->getResponse()->getParsedBody();
+                    $getConfigurationRequest = new AfterpayGetConfigurationRequest();
+                    $getConfigurationRequest->setMerchantAccount($merchantAccount);
+                    $getConfigurationRequest->send();
+                    $configuration = $getConfigurationRequest->getResponse()->getParsedBody();
 
-                if (isset($configuration->message)) {
-                    $message = $this->displayError($configuration->message. $this->l(' please review the credentials'));
-                } else {
-                    if (isset($configuration[0]->minimumAmount)) {
-                        Configuration::updateValue('CLEARPAY_MIN_AMOUNT', $configuration[0]->minimumAmount->amount);
-                    }
-                    if (isset($configuration[0]->maximumAmount)) {
-                        Configuration::updateValue('CLEARPAY_MAX_AMOUNT', $configuration[0]->maximumAmount->amount);
+                    if (isset($configuration->message)) {
+                        $message = $this->displayError(
+                            $configuration->message. ' ' . $this->l('please review the credentials')
+                        );
+                    } else {
+                        if (isset($configuration[0]->minimumAmount)) {
+                            Configuration::updateValue('CLEARPAY_MIN_AMOUNT', $configuration[0]->minimumAmount->amount);
+                        }
+                        if (isset($configuration[0]->maximumAmount)) {
+                            Configuration::updateValue('CLEARPAY_MAX_AMOUNT', $configuration[0]->maximumAmount->amount);
+                        }
                     }
                 }
+            } catch (\Exception $exception) {
+                $uri = 'Unable to retrieve URL';
+                if (isset($getConfigurationRequest)) {
+                    $uri = $getConfigurationRequest->getApiEnvironmentUrl() . $getConfigurationRequest->getUri();
+                }
+                $message = $this->displayError(
+                    $this->l('An error occurred when retrieving configuration from') . ' ' . $uri
+                );
             }
-        } catch (\Exception $exception) {
-            $uri = 'Unable to retrieve URL';
-            if (isset($getConfigurationRequest)) {
-                $uri = $getConfigurationRequest->getApiEnvironmentUrl() . $getConfigurationRequest->getUri();
-            }
-            $message = $this->displayError($this->l('An error occurred when retrieving configuration from ') . $uri);
+        } else {
+            $message = $this->displayError(
+                $this->l('The country code provided to get merchant configuration is not allowed:')
+                . ' ' . $this->language
+            );
         }
 
 
@@ -692,7 +690,7 @@ class Clearpay extends PaymentModule
      * @param string $templateName
      * @return bool|string
      */
-    public function simulatorDisplay($templateName = '')
+    public function templateDisplay($templateName = '')
     {
         $templateConfigs = array();
 
@@ -700,33 +698,30 @@ class Clearpay extends PaymentModule
             $amount = Clearpay::parseAmount($this->context->cart->getOrderTotal()/4);
             $templateConfigs['PRICE_TEXT'] = $this->l('4 interest-free payments of');
             $templateConfigs['MORE_INFO'] = $this->l('FIND OUT MORE');
-            $templateConfigs['DESCRIPTION_TEXT_ONE'] = $this->l('With Clearpay you can receive your order now and pay in 4 
-            interest-free equal fortnightly payments. Available to customers in the United Kingdom with a debit or 
-            credit card.');
-            $templateConfigs['DESCRIPTION_TEXT_TWO'] = $this->l('When you click “Checkout with Clearpay” you will be 
-            redirected to Clearpay to complete your order.');
+            $templateConfigs['DESCRIPTION_TEXT_ONE'] = $this->l('With Clearpay you can receive your order now and pay in 4 interest-free equal fortnightly payments. Available to customers in the United Kingdom with a debit or credit card.');
+            $templateConfigs['DESCRIPTION_TEXT_TWO'] = $this->l('When you click “Checkout with Clearpay” you will be redirected to Clearpay to complete your order.');
+            $categoryRestriction = $this->isCartRestricted($this->context->cart);
         } else {
             $productId = Tools::getValue('id_product');
             if (!$productId) {
                 return false;
             }
+            $categoryRestriction = $this->isProductRestricted($productId);
             $amount = Product::getPriceStatic($productId);
         }
-
-        $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
 
         $simulatorIsEnabled = Clearpay::getExtraConfig('SIMULATOR_IS_ENABLED');
         $isEnabled = Configuration::get('CLEARPAY_IS_ENABLED');
 
         $return = '';
 
-
         if ($isEnabled &&
             $simulatorIsEnabled &&
             $amount > 0 &&
             $amount >= Configuration::get('CLEARPAY_MIN_AMOUNT') &&
             $amount <= Configuration::get('CLEARPAY_MAX_AMOUNT') &&
-            in_array(Tools::strtolower($this->language), $allowedCountries)
+            in_array(Tools::strtolower($this->language), $this->allowedCountries) &&
+            !$categoryRestriction
         ) {
             $templateConfigs['PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
             $templateConfigs['SDK_URL'] = 'https://js.afterpay.com/afterpay-1.x.js';
@@ -766,7 +761,7 @@ class Clearpay extends PaymentModule
             (strpos($params['smarty']->template_resource, 'product.tpl') !== false  ||
                 strpos($params['smarty']->template_resource, 'product-prices.tpl') !== false)
         ) {
-            return $this->simulatorDisplay('product.tpl');
+            return $this->templateDisplay('product.tpl');
         }
         return '';
     }
@@ -777,7 +772,7 @@ class Clearpay extends PaymentModule
      */
     public function hookDisplayExpressCheckout($params)
     {
-        return $this->simulatorDisplay('cart.tpl');
+        return $this->templateDisplay('cart.tpl');
     }
 
     /**
@@ -874,5 +869,33 @@ class Clearpay extends PaymentModule
             '.',
             ''
         );
+    }
+
+    /**
+     * @param $productId
+     * @return bool
+     */
+    private function isProductRestricted($productId)
+    {
+        $clearpayRestrictedCategories = json_decode(Configuration::get('CLEARPAY_RESTRICTED_CATEGORIES'));
+        if (!is_array($clearpayRestrictedCategories)) {
+            return false;
+        }
+        $productCategories = Product::getProductCategories($productId);
+        return (bool) count(array_intersect($productCategories, $clearpayRestrictedCategories));
+    }
+
+    /**
+     * @param $cart
+     * @return bool
+     */
+    private function isCartRestricted($cart)
+    {
+        foreach ($cart->getProducts() as $product) {
+            if ($this->isProductRestricted($product['id_product'])) {
+                return true;
+            }
+        }
+        return false;
     }
 }

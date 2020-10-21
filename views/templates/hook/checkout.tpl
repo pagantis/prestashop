@@ -19,7 +19,7 @@
         background: none;
     }
     .payment-option img[src*='clearpay'] {
-        height: 30px;
+        height: 25px;
         padding-left: 5px;
         content:url('{$LOGO|escape:'htmlall':'UTF-8'}');
     }
@@ -67,10 +67,9 @@
         padding: 1em 3em;
         text-align: center;
     }
-    afterpay-price-table {
-        height: 150px;
-        display: block;
-        background: lightgrey;
+    .clearpay-terms {
+        margin-top: 10px;
+        display: inline-block;
     }
 </style>
 <section>
@@ -85,10 +84,12 @@
                 <img src="{$LOGO|escape:'htmlall':'UTF-8'}"> {$MOREINFO_HEADER|escape:'htmlall':'UTF-8'}
             </div>
             <div class="clearpay-more-info-text">
-                {$MOREINFO_ONE|escape:'htmlall':'UTF-8'}
+                <div class="clearpay-more-info">
+                    {$MOREINFO_ONE|escape:'htmlall':'UTF-8'}
+                </div>
                 <afterpay-price-table
                         data-type="price-table"
-                        data-amount="$19.99"
+                        data-amount="{$TOTAL_AMOUNT|escape:'htmlall':'UTF-8'}"
                         data-price-table-theme="white"
                         data-locale="en_US"
                         data-currency="USD">
