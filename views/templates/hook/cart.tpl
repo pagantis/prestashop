@@ -1,3 +1,10 @@
+{*
+ * This file is part of the official Clearpay module for PrestaShop.
+ *
+ * @author    Clearpay <integrations@clearpay.com>
+ * @copyright 2020 Clearpay
+ * @license   proprietary
+ *}
 <style>
     .payment-method-note.clearpay-cart-note {
         padding: 20px 0 10px 0;

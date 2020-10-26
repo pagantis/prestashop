@@ -6,6 +6,7 @@
  * @copyright 2020 Clearpay
  * @license   proprietary
  */
+
 use Afterpay\SDK\HTTP\Request\CreateCheckout;
 use Afterpay\SDK\MerchantAccount as ClearpayMerchantAccount;
 
@@ -36,7 +37,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
         $shippingCountryCode = $shippingCountryObj->iso_code;
         $shippingStateObj = new State($shippingAddress->id_state);
         $shippingStateCode = '';
-        if (!empty($shippingAddress->id_state) && !empty($state_object)) {
+        if (!empty($shippingAddress->id_state)) {
             $shippingStateCode = $shippingStateObj->iso_code;
         }
 
@@ -44,7 +45,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
         $billingCountryCode = Country::getIsoById($billingAddress->id_country);
         $billingStateObj = new State($billingAddress->id_state);
         $billingStateCode = '';
-        if (!empty($billingAddress->id_state) && !empty($state_object)) {
+        if (!empty($billingAddress->id_state)) {
             $billingStateCode = $billingStateObj->iso_code;
         }
 
@@ -166,7 +167,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
 
         $items = $cart->getProducts();
         $products = array();
-        foreach ($items as $key => $item) {
+        foreach ($items as $item) {
             $products[] = array(
                 'name' => $item['name'],
                 'sku' => $item['reference'],
@@ -185,16 +186,30 @@ class ClearpayPaymentModuleFrontController extends AbstractController
         $createCheckoutRequest->addHeader('User-Agent', $header);
 
         $url = $cancelUrl;
+        $errorMessage = 'without response';
         if ($createCheckoutRequest->isValid()) {
             $createCheckoutRequest->send();
-            if (isset($createCheckoutRequest->getResponse()->getParsedBody()->errorCode)) {
-                $this->saveLog($createCheckoutRequest->getResponse()->getParsedBody()->message, null, 2);
+            if ($createCheckoutRequest->getResponse()->getHttpStatusCode() >= 400
+            || isset($createCheckoutRequest->getResponse()->getParsedBody()->errorCode)
+            ) {
+                if (isset($createCheckoutRequest->getResponse()->getParsedBody()->message)) {
+                    $errorMessage = $createCheckoutRequest->getResponse()->getParsedBody()->message;
+                }
+                $errorMessage .= $this->l('. Status code: ')
+                    . $createCheckoutRequest->getResponse()->getHttpStatusCode()
+                ;
+                $this->saveLog(
+                    $this->l('Error received when trying to create a order: ') .
+                    $errorMessage,
+                    2
+                );
             } else {
-                $url = $createCheckoutRequest->getResponse()->getParsedBody()->redirectCheckoutUrl;
                 try {
+                    $url = $createCheckoutRequest->getResponse()->getParsedBody()->redirectCheckoutUrl;
                     $orderId = $createCheckoutRequest->getResponse()->getParsedBody()->token;
-                    $sql = "INSERT INTO `" . _DB_PREFIX_ . "clearpay_order` (`id`, `order_id`, `token`)
-                     VALUES ('$cart->id','$orderId', '$urlToken')";
+                    $countryCode = $this->getCountryCode();
+                    $sql = "INSERT INTO `" . _DB_PREFIX_ . "clearpay_order` (`id`, `order_id`, `token`, `country_code`) 
+                    VALUES ('$cart->id','$orderId', '$urlToken', '$countryCode')";
                     $result = Db::getInstance()->execute($sql);
                     if (!$result) {
                         throw new \Exception('Unable to save clearpay-order-id in database: '. $sql);
@@ -218,6 +233,8 @@ class ClearpayPaymentModuleFrontController extends AbstractController
      */
     private function getCountryCode()
     {
+        $context = Context::getContext();
+        $cart = $context->cart;
         $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
         $lang = Language::getLanguage($this->context->language->id);
         $langArray = explode("-", $lang['language_code']);

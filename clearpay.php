@@ -98,9 +98,6 @@ class Clearpay extends PaymentModule
         }
 
         parent::__construct();
-
-        $this->presetUserLanguage();
-        $this->allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
     }
 
     /**
@@ -245,11 +242,13 @@ class Clearpay extends PaymentModule
             $secretKey = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
         }
 
+        $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
+        $language = $this->getCurrentLanguage();
         return (
             $totalAmount >= $displayMinAmount &&
             $totalAmount <= $displayMaxAmount &&
             in_array($currency->iso_code, $availableCurrencies) &&
-            in_array(Tools::strtolower($this->language), $this->allowedCountries) &&
+            in_array(Tools::strtolower($language), $allowedCountries) &&
             $publicKey &&
             $secretKey
         );
@@ -318,9 +317,15 @@ class Clearpay extends PaymentModule
             $templateConfigs['MOREINFO_HEADER'] = $this->l('Instant approval decision - 4 interest-free payments of')
                 . ' ' . $amountWithCurrency;
             $templateConfigs['TOTAL_AMOUNT'] = $totalAmount;
-            $templateConfigs['MOREINFO_ONE'] = $this->l('You will be redirected to Clearpay website to fill out your payment information. You will be redirected to our site to complete your order. Please note: Clearpay can only be used as a payment method for orders with a shipping and billing address within the UK.');
+            $templateConfigs['MOREINFO_ONE'] = $this->l(
+                'You will be redirected to Clearpay website to fill out your 
+                payment information. You will be redirected to our site to complete your order. Please note: Clearpay 
+                can only be used as a payment method for orders with a shipping and billing address within the UK.'
+            );
             $templateConfigs['TERMS_AND_CONDITIONS'] = $this->l('Terms and conditions');
-            $templateConfigs['TERMS_AND_CONDITIONS_LINK'] = $this->l('https://www.clearpay.co.uk/en-GB/terms-of-service');
+            $templateConfigs['TERMS_AND_CONDITIONS_LINK'] = $this->l(
+                'https://www.clearpay.co.uk/en-GB/terms-of-service'
+            );
             $templateConfigs['ICON'] = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/app_icon.png');
             $templateConfigs['LOGO'] = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/logo.png');
             $templateConfigs['PAYMENT_URL'] = $link->getModuleLink('clearpay', 'payment');
@@ -570,7 +575,9 @@ class Clearpay extends PaymentModule
         }
 
         // auto update configuration price thresholds
-        if (!is_null($this->language) and in_array(Tools::strtolower($this->language), $this->allowedCountries)) {
+        $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
+        $language = $this->getCurrentLanguage();
+        if (!is_null($language) and in_array(Tools::strtolower($language), $allowedCountries)) {
             try {
                 if (!empty($publicKey) && !empty($secretKey)  && $isEnabled) {
                     $merchantAccount = new AfterpayMerchant();
@@ -578,7 +585,7 @@ class Clearpay extends PaymentModule
                         ->setMerchantId($publicKey)
                         ->setSecretKey($secretKey)
                         ->setApiEnvironment($environment)
-                        ->setCountryCode($this->language)
+                        ->setCountryCode($language)
                     ;
 
                     $getConfigurationRequest = new AfterpayGetConfigurationRequest();
@@ -611,7 +618,7 @@ class Clearpay extends PaymentModule
         } else {
             $message = $this->displayError(
                 $this->l('The country code provided to get merchant configuration is not allowed:')
-                . ' ' . $this->language
+                . ' ' . $language
             );
         }
 
@@ -652,7 +659,7 @@ class Clearpay extends PaymentModule
         $return = '';
         $this->context->smarty->assign($this->getButtonTemplateVars($cart));
         $templateConfigs = array();
-        if ($this->isPaymentMethodAvailable($product)) {
+        if ($this->isPaymentMethodAvailable()) {
             $publicKey = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
             $environment = Configuration::get('CLEARPAY_ENVIRONMENT');
             if ($environment === 'production') {
@@ -693,13 +700,17 @@ class Clearpay extends PaymentModule
     public function templateDisplay($templateName = '')
     {
         $templateConfigs = array();
-
         if ($templateName === 'cart.tpl') {
             $amount = Clearpay::parseAmount($this->context->cart->getOrderTotal()/4);
             $templateConfigs['PRICE_TEXT'] = $this->l('4 interest-free payments of');
             $templateConfigs['MORE_INFO'] = $this->l('FIND OUT MORE');
-            $templateConfigs['DESCRIPTION_TEXT_ONE'] = $this->l('With Clearpay you can receive your order now and pay in 4 interest-free equal fortnightly payments. Available to customers in the United Kingdom with a debit or credit card.');
-            $templateConfigs['DESCRIPTION_TEXT_TWO'] = $this->l('When you click “Checkout with Clearpay” you will be redirected to Clearpay to complete your order.');
+            $templateConfigs['DESCRIPTION_TEXT_ONE'] = $this->l(
+                'With Clearpay you can receive your order now and pay in 4 interest-free equal fortnightly payments. 
+                Available to customers in the United Kingdom with a debit or credit card.'
+            );
+            $templateConfigs['DESCRIPTION_TEXT_TWO'] = $this->l(
+                'When you click “Checkout with Clearpay” you will be redirected to Clearpay to complete your order.'
+            );
             $categoryRestriction = $this->isCartRestricted($this->context->cart);
         } else {
             $productId = Tools::getValue('id_product');
@@ -715,12 +726,14 @@ class Clearpay extends PaymentModule
 
         $return = '';
 
+        $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
+        $language = $this->getCurrentLanguage();
         if ($isEnabled &&
             $simulatorIsEnabled &&
             $amount > 0 &&
             $amount >= Configuration::get('CLEARPAY_MIN_AMOUNT') &&
             $amount <= Configuration::get('CLEARPAY_MAX_AMOUNT') &&
-            in_array(Tools::strtolower($this->language), $this->allowedCountries) &&
+            in_array(Tools::strtolower($language), $allowedCountries) &&
             !$categoryRestriction
         ) {
             $templateConfigs['PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
@@ -758,8 +771,7 @@ class Clearpay extends PaymentModule
         // $params['type'] = weight | price | after_price
         if (isset($params['type']) && $params['type'] === 'after_price' &&
             isset($params['smarty']) && isset($params['smarty']->template_resource) &&
-            (strpos($params['smarty']->template_resource, 'product.tpl') !== false  ||
-                strpos($params['smarty']->template_resource, 'product-prices.tpl') !== false)
+            strpos($params['smarty']->template_resource, 'product-prices.tpl') !== false
         ) {
             return $this->templateDisplay('product.tpl');
         }
@@ -829,32 +841,33 @@ class Clearpay extends PaymentModule
     /**
      * Get user language
      */
-    private function presetUserLanguage()
+    private function getCurrentLanguage()
     {
+        $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
         $lang = Language::getLanguage($this->context->language->id);
         $langArray = explode("-", $lang['language_code']);
         if (count($langArray) != 2 && isset($lang['locale'])) {
             $langArray = explode("-", $lang['locale']);
         }
-        $this->language = Tools::strtoupper($langArray[count($langArray)-1]);
+        $language = Tools::strtoupper($langArray[count($langArray)-1]);
 
         // Prevent null language detection
-        if (in_array(Tools::strtolower($this->language), $this->allowedCountries)) {
-            return;
+        if (in_array(Tools::strtolower($language), $allowedCountries)) {
+            return $language;
         }
         if ($this->shippingAddress) {
-            $this->language = Country::getIsoById($this->shippingAddress->id_country);
-            if (in_array(Tools::strtolower($this->language), $this->allowedCountries)) {
-                return;
+            $language = Country::getIsoById($this->shippingAddress->id_country);
+            if (in_array(Tools::strtolower($language), $allowedCountries)) {
+                return $language;
             }
         }
         if ($this->billingAddress) {
-            $this->language = Country::getIsoById($this->billingAddress->id_country);
-            if (in_array(Tools::strtolower($this->language), $this->allowedCountries)) {
-                return;
+            $language = Country::getIsoById($this->billingAddress->id_country);
+            if (in_array(Tools::strtolower($language), $allowedCountries)) {
+                return $language;
             }
         }
-        return $this->language;
+        return $language;
     }
 
     /**

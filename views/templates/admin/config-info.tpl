@@ -49,7 +49,7 @@
             width: 150px;
         }
     </style>
-    {$message|escape:'quotes'}
+    {$message|escape:'quotes':'UTF-8'}
     <div class="panel clearpay-content-form">
         <h3><i class="icon icon-credit-card"></i> {l s='Clearpay Configuration Panel' mod='clearpay'}</h3>
         <div class="column-left">
@@ -58,10 +58,6 @@
         <div class="column-center">
             <p>
                 {l s='Clearpay configuration panel, please take your time to configure the payment method behavior' mod='clearpay'}
-            </p>
-            <p>
-                {l s='If you need help or want to customize the module, please take a look to our documentation on' mod='clearpay'}
-                <a href="https://github.com/clearpay/prestashop/tree/{$version|escape:'htmlall':'UTF-8'}">GitHub </a>
             </p>
         </div>
         <div class="column-right">
