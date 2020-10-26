@@ -381,10 +381,22 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     private function captureClearpayPayment()
     {
         $immediatePaymentCaptureRequest = new ClearpayImmediatePaymentCaptureRequest(array(
-            'token' => $this->token
+            'token' => $this->clearpayOrder->token,
+            'merchantReference' => $this->config['publicKey']
         ));
         $immediatePaymentCaptureRequest->setMerchantAccount($this->clearpayMerchantAccount);
         $immediatePaymentCaptureRequest->send();
+        if ($immediatePaymentCaptureRequest->getResponse()->getHttpStatusCode() >= 400) {
+            throw new \Exception(
+                $this->l('Clearpay capture payment error, order token: ') . $this->token . '. ' .
+                $immediatePaymentCaptureRequest->getResponse()->getParsedBody()->errorCode
+            );
+        }
+        if ($immediatePaymentCaptureRequest->getResponse()->getParsedBody()->status !== 'APPROVED') {
+            throw new \Exception(
+                $this->l('Clearpay capture payment error, the payment was not proccesed successfully')
+            );
+        }
     }
 
     /**
