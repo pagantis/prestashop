@@ -1,6 +1,6 @@
 /node_modules
 /vendor
 /views/css/
-clearpay*.zip
+clearpay.zip
 config_es.xml
 .env

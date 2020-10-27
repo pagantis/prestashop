@@ -10,8 +10,15 @@
         padding: 20px 0 10px 0;
         text-align: left;
     }
+    .payment-method-note.clearpay-cart-note.ps-1-6{
+        float: right;
+        width: 350px;
+    }
     .clearpay-cart-note span {
         font-size: 0.85rem;
+    }
+    .clearpay-cart-note.ps-1-6 span {
+        font-size: 1.20rem;
     }
     .clearpay-price-text {
         font-weight: bold;
@@ -20,9 +27,12 @@
         text-align: right;
         font-size: 0.85rem;
     }
+    .clearpay-cart-note.ps-1-6 .clearpay-more-info {
+        font-size: 1.20rem;
+    }
 
 </style>
-<div class="payment-method-note clearpay-cart-note" style="">
+<div class="payment-method-note clearpay-cart-note ps-{$PS_VERSION|escape:'htmlall':'UTF-8'}" style="">
     <span class="clearpay-price-text">
         {$PRICE_TEXT|escape:'htmlall':'UTF-8'} {$AMOUNT_WITH_CURRENCY|escape:'htmlall':'UTF-8'}
     </span>

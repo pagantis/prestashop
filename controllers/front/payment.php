@@ -169,7 +169,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
         $products = array();
         foreach ($items as $item) {
             $products[] = array(
-                'name' => $item['name'],
+                'name' => str_replace("'", "", $item['name']),
                 'sku' => $item['reference'],
                 'quantity' => $item['quantity'],
                 'price' => array(
@@ -184,11 +184,11 @@ class ClearpayPaymentModuleFrontController extends AbstractController
             . '(Prestashop/' . _PS_VERSION_ . '; PHP/' . phpversion() . '; Merchant/' . $publicKey
             . ') ' . _PS_BASE_URL_SSL_.__PS_BASE_URI__;
         $createCheckoutRequest->addHeader('User-Agent', $header);
-
+        $createCheckoutRequest->addHeader('Country', $countryCode);
         $url = $cancelUrl;
-        $errorMessage = 'without response';
         if ($createCheckoutRequest->isValid()) {
             $createCheckoutRequest->send();
+            $errorMessage = 'empty response';
             if ($createCheckoutRequest->getResponse()->getHttpStatusCode() >= 400
             || isset($createCheckoutRequest->getResponse()->getParsedBody()->errorCode)
             ) {

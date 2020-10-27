@@ -96,7 +96,7 @@ jobs:
           name: Package Generation
           command: |
             ./node_modules/.bin/grunt
-            mv clearpay.zip clearpay-$CIRCLE_TAG.zip
+            mv clearpay.zip clearpay-prestashop-$CIRCLE_TAG.zip
             ls *.zip
       - run:
           name: Install GitHub CLI
