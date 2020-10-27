@@ -695,49 +695,6 @@ class Clearpay extends PaymentModule
             }
         }
         return $return;
-
-        die("mierda");
-        /** @var Cart $cart */
-        $cart = $this->context->cart;
-        $this->shippingAddress = new Address($cart->id_address_delivery);
-        $this->billingAddress = new Address($cart->id_address_invoice);
-
-        $totalAmount = $cart->getOrderTotal(true, Cart::BOTH);
-        $link = $this->context->link;
-
-        $return = '';
-        $this->context->smarty->assign($this->getButtonTemplateVars($cart));
-        $templateConfigs = array();
-        if ($this->isPaymentMethodAvailable()) {
-            $publicKey = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
-            $environment = Configuration::get('CLEARPAY_ENVIRONMENT');
-            if ($environment === 'production') {
-                $publicKey = Configuration::get('CLEARPAY_PRODUCTION_PUBLIC_KEY');
-            }
-            $isEnabled = Configuration::get('CLEARPAY_IS_ENABLED');
-
-
-            $templateConfigs['PUBLIC_KEY'] = $publicKey;
-            $templateConfigs['TOTAL_AMOUNT'] = $totalAmount;
-            $templateConfigs['IS_ENABLED'] = $isEnabled;
-            $templateConfigs['LOGO'] = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/checkout_logo.png');
-            $templateConfigs['PAYMENT_URL'] = $link->getModuleLink('clearpay', 'payment');
-            $templateConfigs['PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
-
-            $this->context->smarty->assign($templateConfigs);
-            if ($supercheckout_enabled || $onepagecheckout_enabled || $onepagecheckoutps_enabled) {
-                $this->checkLogoExists();
-                $return .= $this->display(
-                    __FILE__,
-                    'views/templates/hook/onepagecheckout.tpl'
-                );
-            } elseif (_PS_VERSION_ < 1.7) {
-                $return .= $this->display(
-                    __FILE__,
-                    'views/templates/hook/checkout.tpl'
-                );
-            }
-        }
     }
 
     /**
