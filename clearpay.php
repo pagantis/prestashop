@@ -460,7 +460,7 @@ class Clearpay extends PaymentModule
                 'id' => 'CLEARPAY_RESTRICTED_CATEGORIES',
                 'selected_categories' => json_decode(Configuration::get('CLEARPAY_RESTRICTED_CATEGORIES')),
                 'root_category' => Category::getRootCategory()->id,
-                'use_search' => false,
+                'use_search' => true,
                 'use_checkbox' => true,
             ),
         );
@@ -468,12 +468,13 @@ class Clearpay extends PaymentModule
         $return = array(
             'form' => array(
                 'legend' => array(
-                    'title' => $this->l('Basic Settings'),
+                    'title' => $this->l('Settings'),
                     'icon' => 'icon-cogs',
                 ),
                 'input' => $inputs,
                 'submit' => array(
                     'title' => $this->l('Save'),
+                    'class' => 'btn btn-default pull-right'
                 )
             )
         );
@@ -629,12 +630,12 @@ class Clearpay extends PaymentModule
         $tpl = $this->local_path.'views/templates/admin/config-info.tpl';
         $this->context->smarty->assign(array(
             'logo' => $logo,
-            'form' => $this->renderForm(),
+            'form' => '',
             'message' => $message,
             'version' => 'v'.$this->version,
         ));
 
-        return $this->context->smarty->fetch($tpl);
+        return $this->context->smarty->fetch($tpl) . $this->renderForm();
     }
 
     /**
