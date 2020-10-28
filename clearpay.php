@@ -81,7 +81,7 @@ class Clearpay extends PaymentModule
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
         $this->module_key = '2b9bc901b4d834bb7069e7ea6510438f';
-        $this->ps_versions_compliancy = array('min' => '1.5', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
         $this->displayName = $this->l('Clearpay Payment Gateway');
         $this->description = $this->l('Buy now, pay later - Enjoy interest-free payments');
         $this->currency = 'EUR';
@@ -595,10 +595,16 @@ class Clearpay extends PaymentModule
                             );
                         } else {
                             if (isset($configuration[0]->minimumAmount)) {
-                                Configuration::updateValue('CLEARPAY_MIN_AMOUNT', $configuration[0]->minimumAmount->amount);
+                                Configuration::updateValue(
+                                    'CLEARPAY_MIN_AMOUNT',
+                                    $configuration[0]->minimumAmount->amount
+                                );
                             }
                             if (isset($configuration[0]->maximumAmount)) {
-                                Configuration::updateValue('CLEARPAY_MAX_AMOUNT', $configuration[0]->maximumAmount->amount);
+                                Configuration::updateValue(
+                                    'CLEARPAY_MAX_AMOUNT',
+                                    $configuration[0]->maximumAmount->amount
+                                );
                             }
                         }
                     }
@@ -746,7 +752,11 @@ class Clearpay extends PaymentModule
             $templateConfigs['CLEARPAY_MAX_AMOUNT'] = Configuration::get('CLEARPAY_MAX_AMOUNT');
             $templateConfigs['CURRENCY'] = $this->currency;
             $language = Language::getLanguage($this->context->language->id);
-            $language = (isset($this->language['locale'])) ? $this->language['locale'] : $this->language['language_code'];
+            if (isset($this->language['locale'])) {
+                $this->language['locale'];
+            } else {
+                $this->language['language_code'];
+            }
             $templateConfigs['ISO_COUNTRY_CODE'] = str_replace('-', '_', $language);
             $templateConfigs['AMOUNT'] = $amount;
             $templateConfigs['AMOUNT_WITH_CURRENCY'] = $amount . $this->currencySymbol;

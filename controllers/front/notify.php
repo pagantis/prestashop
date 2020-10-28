@@ -13,7 +13,6 @@ use Afterpay\SDK\HTTP\Request as ClearpayRequest;
 use Afterpay\SDK\HTTP\Request\ImmediatePaymentCapture as ClearpayImmediatePaymentCaptureRequest;
 use Afterpay\SDK\MerchantAccount as ClearpayMerchant;
 
-
 /**
  * Class ClearpayNotifyModuleFrontController
  */
@@ -290,7 +289,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
         if ($totalAmount != $merchantAmount) {
             $amountMismatchError = '. Amount mismatch in PrestaShop Cart #'. $this->merchantCartId .
                 ' compared with Clearpay Order: ' . $this->clearpayOrderId .
-                '. The Cart in PrestaShop has an amount of ' . $psTotalAmount . ' and in Clearpay ' . $pgTotalAmount;
+                '. The Cart in PrestaShop has an amount of ' . $merchantAmount . ' and in Clearpay ' . $totalAmount;
 
             $this->saveLog($amountMismatchError, 3);
             throw new \Exception($amountMismatchError);
