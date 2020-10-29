@@ -754,7 +754,12 @@ class Clearpay extends PaymentModule
 
         $return = '';
 
+
+        $cart = $this->context->cart;
+        $currency = new Currency($cart->id_currency);
+
         $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
+        $availableCurrencies = explode(",", self::CLEARPAY_AVAILABLE_CURRENCIES);
         $language = $this->getCurrentLanguage();
         if ($isEnabled &&
             $simulatorIsEnabled &&
@@ -762,6 +767,7 @@ class Clearpay extends PaymentModule
             $amount >= Configuration::get('CLEARPAY_MIN_AMOUNT') &&
             $amount <= Configuration::get('CLEARPAY_MAX_AMOUNT') &&
             in_array(Tools::strtolower($language), $allowedCountries) &&
+            in_array($currency->iso_code, $availableCurrencies) &&
             !$categoryRestriction
         ) {
             $templateConfigs['PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));

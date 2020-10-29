@@ -18,8 +18,8 @@
 <!-- Afterpay.js -->
 <div class="ClearpaySimulator ps-version-{$PS_VERSION|escape:'htmlall':'UTF-8'}">
     <afterpay-placement
-            data-locale="en_GB"
-            data-currency="GDB"
+            data-locale="{$ISO_COUNTRY_CODE|escape:'htmlall':'UTF-8'}"
+            data-currency="{$CURRENCY|escape:'htmlall':'UTF-8'}"
             data-amount="{$AMOUNT|escape:'htmlall':'UTF-8'}"
             data-size="sm">
     </afterpay-placement>
