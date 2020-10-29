@@ -65,6 +65,11 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     protected $clearpayOrderId;
 
     /**
+     * @var string $clearpayCapturedPaymentId
+     */
+    protected $clearpayCapturedPaymentId;
+
+    /**
      * @var ClearpayMerchant $clearpayMerchantAccount
      */
     protected $clearpayMerchantAccount;
@@ -333,46 +338,6 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     }
 
     /**
-     * Process the merchant order and notify client
-     *
-     * @throws Exception
-     */
-    public function processMerchantOrder()
-    {
-        try {
-            $this->module->validateOrder(
-                $this->merchantCartId,
-                Configuration::get('PS_OS_PAYMENT'),
-                $this->merchantCart->getOrderTotal(true, Cart::BOTH),
-                $this->productName,
-                'clearpayOrderId: ' . $this->clearpayOrder->token,
-                array('transaction_id' => $this->clearpayOrderId),
-                null,
-                false,
-                $this->config['secureKey']
-            );
-        } catch (\Exception $exception) {
-            throw new \Exception($exception->getMessage());
-        }
-        try {
-            Db::getInstance()->update(
-                self::ORDERS_TABLE,
-                array('ps_order_id' => $this->module->currentOrder),
-                'id = '. (int)$this->merchantCartId
-                    . ' and order_id = \'' . $this->clearpayOrderId . '\''
-                    . ' and token = \'' . $this->token . '\''
-            );
-        } catch (\Exception $exception) {
-            $this->saveLog($exception->getMessage(), 2);
-        }
-
-        $message = 'Clearpay Order CONFIRMED' .
-            '. Clearpay OrderId=' . $this->clearpayOrderId .
-            '. Prestashop OrderId=' . $this->module->currentOrder;
-        $this->saveLog($message, 1);
-    }
-
-    /**
      * Confirm the order in Clearpay
      *
      * @throws Exception
@@ -396,6 +361,47 @@ class ClearpayNotifyModuleFrontController extends AbstractController
                 $this->l('Clearpay capture payment error, the payment was not proccesed successfully')
             );
         }
+        $this->clearpayCapturedPaymentId = $immediatePaymentCaptureRequest->getResponse()->getParsedBody()->id;
+    }
+
+    /**
+     * Process the merchant order and notify client
+     *
+     * @throws Exception
+     */
+    public function processMerchantOrder()
+    {
+        try {
+            $this->module->validateOrder(
+                $this->merchantCartId,
+                Configuration::get('PS_OS_PAYMENT'),
+                $this->merchantCart->getOrderTotal(true, Cart::BOTH),
+                $this->productName,
+                'clearpayOrderId: ' . $this->clearpayOrder->token,
+                array('transaction_id' => $this->clearpayCapturedPaymentId),
+                null,
+                false,
+                $this->config['secureKey']
+            );
+        } catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
+        try {
+            Db::getInstance()->update(
+                self::ORDERS_TABLE,
+                array('ps_order_id' => $this->module->currentOrder),
+                'id = '. (int)$this->merchantCartId
+                . ' and order_id = \'' . $this->clearpayOrderId . '\''
+                . ' and token = \'' . $this->token . '\''
+            );
+        } catch (\Exception $exception) {
+            $this->saveLog($exception->getMessage(), 2);
+        }
+
+        $message = 'Clearpay Order CONFIRMED' .
+            '. Clearpay OrderId=' . $this->clearpayOrderId .
+            '. Prestashop OrderId=' . $this->module->currentOrder;
+        $this->saveLog($message, 1);
     }
 
     /**
