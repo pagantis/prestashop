@@ -376,24 +376,22 @@ class Clearpay extends PaymentModule
         );
         $inputs[] = array(
             'name' => 'CLEARPAY_REGION',
-            'type' => 'select',
-            'label' => $this->l('Geographic region'),
+            'type' => 'radio',
+            'label' => $this->l('API region'),
             'prefix' => '<i class="icon icon-key"></i>',
             'class' => 't',
             'required' => true,
-            'options' => array(
-                'query' => array(
-                    array(
-                        'CLEARPAY_REGION_id' => 'ES',
-                        'CLEARPAY_REGION_name' => $this->l('South Europe')
-                    ),
-                    array(
-                        'CLEARPAY_REGION_id' => 'GB',
-                        'CLEARPAY_REGION_name' => $this->l('United Kingdom')
-                    )
+            'values' => array(
+                array(
+                    'id' => 'CLEARPAY_REGION_ID',
+                    'value' => 'ES',
+                    'label' => $this->l('Europe')
                 ),
-                'id' => 'CLEARPAY_REGION_id',
-                'name' => 'CLEARPAY_REGION_name'
+                array(
+                    'id' => 'CLEARPAY_REGION_ID',
+                    'value' => 'GB',
+                    'label' => $this->l('United Kingdom')
+                )
             )
         );
         $inputs[] = array(
