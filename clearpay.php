@@ -309,15 +309,23 @@ class Clearpay extends PaymentModule
             }
             $checkoutText = $this->l('Or 4 interest-free payments of') . ' ' . $amountWithCurrency . ' ';
             $checkoutText .= $this->l('with');
-            $templateConfigs['TITLE'] = $checkoutText;
+            $templateConfigs['TITLE'] = (string) $checkoutText;
+            $language = Language::getLanguage($this->context->language->id);
+            if (isset($language['locale'])) {
+                $language = $language['locale'];
+            } else {
+                $language = $language['language_code'];
+            }
+            $templateConfigs['ISO_COUNTRY_CODE'] = str_replace('-', '_', $language);
+            $templateConfigs['CURRENCY'] = $this->currency;
             $templateConfigs['MOREINFO_HEADER'] = $this->l('Instant approval decision - 4 interest-free payments of')
                 . ' ' . $amountWithCurrency;
             $templateConfigs['TOTAL_AMOUNT'] = $totalAmount;
-            $templateConfigs['MOREINFO_ONE'] = $this->l(
-                'You will be redirected to Clearpay website to fill out your 
-                payment information. You will be redirected to our site to complete your order. Please note: Clearpay 
-                can only be used as a payment method for orders with a shipping and billing address within the UK.'
-            );
+            $moreInfo = $this->l('You will be redirected to Clearpay website to fill out your payment information.');
+            $moreInfo .= ' ' .$this->l('You will be redirected to our site to complete your order. Please note: ');
+            $moreInfo .= ' ' . $this->l('Clearpay can only be used as a payment method for orders with a shipping');
+            $moreInfo .= ' ' . $this->l('and billing address within the UK.');
+            $templateConfigs['MOREINFO_ONE'] = $moreInfo;
             $templateConfigs['TERMS_AND_CONDITIONS'] = $this->l('Terms and conditions');
             $templateConfigs['TERMS_AND_CONDITIONS_LINK'] = $this->l(
                 'https://www.clearpay.co.uk/en-GB/terms-of-service'
@@ -730,13 +738,13 @@ class Clearpay extends PaymentModule
             $amount = Clearpay::parseAmount($this->context->cart->getOrderTotal()/4);
             $templateConfigs['PRICE_TEXT'] = $this->l('4 interest-free payments of');
             $templateConfigs['MORE_INFO'] = $this->l('FIND OUT MORE');
-            $templateConfigs['DESCRIPTION_TEXT_ONE'] = $this->l(
-                'With Clearpay you can receive your order now and pay in 4 interest-free equal fortnightly payments. 
-                Available to customers in the United Kingdom with a debit or credit card.'
-            );
-            $templateConfigs['DESCRIPTION_TEXT_TWO'] = $this->l(
-                'When you click “Checkout with Clearpay” you will be redirected to Clearpay to complete your order.'
-            );
+            $desc1 = $this->l('With Clearpay you can receive your order now and pay in 4 interest-free');
+            $desc1 .= ' ' . $this->l('equal fortnightly payments.');
+            $desc1 .= ' ' . $this->l('Available to customers in the United Kingdom with a debit or credit card.');
+            $templateConfigs['DESCRIPTION_TEXT_ONE'] = $desc1;
+            $desc2 = $this->l('When you click ”Checkout with Clearpay”');
+            $desc2 .= ' ' . $this->l('you will be redirected to Clearpay to complete your order.');
+            $templateConfigs['DESCRIPTION_TEXT_TWO'] = $desc2;
             $categoryRestriction = $this->isCartRestricted($this->context->cart);
         } else {
             $productId = Tools::getValue('id_product');

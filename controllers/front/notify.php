@@ -358,7 +358,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
         }
         if ($immediatePaymentCaptureRequest->getResponse()->getParsedBody()->status !== 'APPROVED') {
             throw new \Exception(
-                $this->l('Clearpay capture payment error, the payment was not proccesed successfully')
+                $this->l('Clearpay capture payment error, the payment was not procesed successfully')
             );
         }
         $this->clearpayCapturedPaymentId = $immediatePaymentCaptureRequest->getResponse()->getParsedBody()->id;
