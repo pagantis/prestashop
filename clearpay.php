@@ -327,6 +327,8 @@ class Clearpay extends PaymentModule
             $moreInfo .= ' ' . $this->l('and billing address within the UK.');
             $templateConfigs['MOREINFO_ONE'] = $moreInfo;
             $templateConfigs['TERMS_AND_CONDITIONS'] = $this->l('Terms and conditions');
+            $termsLink = $this->l('https://www.clearpay.co.uk/en-GB/terms-of-service');
+            $templateConfigs['TERMS_AND_CONDITIONS_LINK'] = $termsLink;
             $templateConfigs['TERMS_AND_CONDITIONS_LINK'] = $this->l(
                 'https://www.clearpay.co.uk/en-GB/terms-of-service'
             );

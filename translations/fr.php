@@ -3,13 +3,13 @@
 global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{clearpay}prestashop>clearpay_e7e35f48cbce0859d908c6b61eafe05b'] = 'Clearpay Payment Gateway';
-$_MODULE['<{clearpay}prestashop>clearpay_e2b8db013b62748f28a8f19eaa1ddfbf'] = 'Achetez maintenant, payez plus tard - Profitez de paiements sans intérêt';
+$_MODULE['<{clearpay}prestashop>clearpay_e2b8db013b62748f28a8f19eaa1ddfbf'] = 'Achetez maintenant et payez plus tard en 4 versements, sans intérêts';
 $_MODULE['<{clearpay}prestashop>clearpay_92d4773a9f32fc3333cb8238471cf763'] = 'Il manque l\'extension php: curl';
 $_MODULE['<{clearpay}prestashop>clearpay_5984afe5af3bc7d4a01ba1d722c00a38'] = 'La version PHP ci-dessous 5.3.0 n\'est pas supportée';
 $_MODULE['<{clearpay}prestashop>clearpay_8a04b447fe7942b43631e4bfe52b9026'] = 'Ou 4 paiements sans intérêts de';
 $_MODULE['<{clearpay}prestashop>clearpay_23a58bf9274bedb19375e527a0744fa9'] = 'avec';
 $_MODULE['<{clearpay}prestashop>clearpay_d3076b71ec8d810de3424e4faa089933'] = 'Réponse immédiate - 4 paiements sans intérêts de';
-$_MODULE['<{clearpay}prestashop>clearpay_e104159863b26bfba1985c9560c37bff'] = 'vers le site de Clearpay pour renseigner vos informations de paiement.';
+$_MODULE['<{clearpay}prestashop>clearpay_e104159863b26bfba1985c9560c37bff'] = 'Vers le site de Clearpay pour renseigner vos informations de paiement.';
 $_MODULE['<{clearpay}prestashop>clearpay_f77a1168d9447933ed73d0444718fe7c'] = 'Vous serez ensuite redirigé vers notre site pour finaliser votre commande. Veuillez noter que';
 $_MODULE['<{clearpay}prestashop>clearpay_f7092887404b3d677e618d93f1af6d2a'] = 'Clearpay ne peut être utilisé comme méthode de paiement que pour les commandes dont l\'adresse de livraison';
 $_MODULE['<{clearpay}prestashop>clearpay_6d3b446036b038238a3bad3b78d9b778'] = ' et de facturation est située en France.';

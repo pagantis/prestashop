@@ -77,6 +77,43 @@
         margin-top: 10px;
         display: inline-block;
     }
+    @media only screen and (max-width: 1200px) {
+        .clearpay-header {
+            text-align: center;
+            padding-top: 30px;
+            display: block;
+            height: 65px !important;
+        }
+    }
+    @media only screen and (max-width: 1200px) and (min-width: 990px)  {
+        .clearpay-header img {
+            left:35%;
+        }
+    }
+    @media only screen and (max-width: 989px) and (min-width: 768px)  {
+        .clearpay-header img {
+            left:30%;
+        }
+        .clearpay-header {
+            height: 100px !important;
+        }
+    }
+    @media only screen and (max-width: 767px) and (min-width: 575px)  {
+        .clearpay-header img {
+            left:35%;
+        }
+        .clearpay-header {
+            height: 65px !important;
+        }
+    }
+    @media only screen and (max-width: 575px) {
+        .clearpay-header img {
+            left:28%;
+        }
+        .clearpay-header {
+            height: 100px !important;
+        }
+    }
 </style>
 {if $PS_VERSION !== '1-7'}
     <div class="row">
