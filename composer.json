@@ -9,15 +9,6 @@
             "email": "integrations@clearpay.com"
         }
     ],
-    "repositories": [
-        {
-            "type": "path",
-            "url": "/Users/rmarin/Projects/ei-sdk-php",
-            "options": {
-                "symlink": false
-            }
-        }
-    ],
     "require": {
         "afterpay-global/afterpay-sdk-php": "dev-downgrade-to-api-v1"
     },

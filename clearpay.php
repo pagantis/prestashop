@@ -118,6 +118,7 @@ class Clearpay extends PaymentModule
         $this->populateEnvVariables();
 
         Configuration::updateValue('CLEARPAY_IS_ENABLED', 0);
+        Configuration::updateValue('CLEARPAY_REGION', 0);
         Configuration::updateValue('CLEARPAY_SANDBOX_PUBLIC_KEY', '');
         Configuration::updateValue('CLEARPAY_SANDBOX_SECRET_KEY', '');
         Configuration::updateValue('CLEARPAY_PRODUCTION_PUBLIC_KEY', '');
@@ -133,6 +134,10 @@ class Clearpay extends PaymentModule
             && $this->registerHook('paymentOptions')
             && $this->registerHook('displayProductPriceBlock')
             && $this->registerHook('displayOrderConfirmation')
+            && $this->registerHook('displayExpressCheckout')
+            && $this->registerHook('actionOrderStatusUpdate')
+            && $this->registerHook('actionOrderSlipAdd')
+            && $this->registerHook('actionProductCancel')
             && $this->registerHook('displayExpressCheckout')
             && $this->registerHook('header')
         );
@@ -858,6 +863,148 @@ class Clearpay extends PaymentModule
         }
 
         return null;
+    }
+
+    /**
+     * Hook Action for Order Status Update (handles Refunds)
+     * @param array $params
+     * @return bool
+     * since 1.0.0
+     */
+    public function hookActionOrderStatusUpdate($params)
+    {
+        $newOrderStatus = null;
+        $order = null;
+        if (!empty($params) && !empty($params['id_order'])) {
+            $order = new Order((int)$params['id_order']);
+        }
+
+        if (!empty($params) && !empty($params['newOrderStatus'])) {
+            $newOrderStatus = $params['newOrderStatus'];
+        }
+        if ($newOrderStatus->id == _PS_OS_REFUND_) {
+            $clearpayRefund = $this->createRefundObject();
+            // ---- needed values ----
+            $payments = $order->getOrderPayments();
+            $transactionId = $payments[0]->transaction_id;
+            $cart = new Cart($order->id_cart);
+            $currency = new Currency($order->id_currency);
+            $currencyCode = $currency->iso_code;
+            // ------------------------
+            $clearpayRefund->setOrderId($transactionId);
+            $clearpayRefund->setRequestId(Tools::strtoupper(md5(uniqid(rand(), true))));
+            $clearpayRefund->setAmount(
+                Clearpay::parseAmount($order->total_paid_real),
+                $currencyCode
+            );
+            $clearpayRefund->setMerchantReference($order->id);
+
+
+            if ($clearpayRefund->send()) {
+                if ($clearpayRefund->getResponse()->isSuccessful()) {
+                    PrestaShopLogger::addLog(
+                        $this->l("Clearpay Full Refund done: ") . Clearpay::parseAmount($order->total_paid_real),
+                        1,
+                        null,
+                        "Clearpay",
+                        1
+                    );
+                    return true;
+                }
+                $parsedBody = $clearpayRefund->getResponse()->getParsedBody();
+                PrestaShopLogger::addLog(
+                    $this->l("Clearpay Full Refund Error: ") . $parsedBody->errorCode . '-> ' . $parsedBody->message,
+                    3,
+                    null,
+                    "Clearpay",
+                    1
+                );
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Hook Action for Partial Refunds
+     * @param array $params
+     * since 1.0.0
+     */
+    public function hookActionOrderSlipAdd($params)
+    {
+        if (!empty($params) && !empty($params["order"]->id)) {
+            $order = new Order((int)$params["order"]->id);
+        } else {
+            return false;
+        }
+        // ---- needed values ----
+        $payments = $order->getOrderPayments();
+        $transactionId = $payments[0]->transaction_id;
+        $currency = new Currency($order->id_currency);
+        $currencyCode = $currency->iso_code;
+        $clearpayRefund = $this->createRefundObject();
+
+        $refundProductsList = $params["productList"];
+        $refundTotalAmount = 0;
+        foreach ($refundProductsList as $key => $item) {
+            $refundTotalAmount +=  $item["amount"];
+        }
+        $refundTotalAmount = Clearpay::parseAmount($refundTotalAmount);
+
+        $clearpayRefund->setOrderId($transactionId);
+        $clearpayRefund->setRequestId(Tools::strtoupper(md5(uniqid(rand(), true))));
+        $clearpayRefund->setAmount($refundTotalAmount, $currencyCode);
+        $clearpayRefund->setMerchantReference($order->id);
+
+        if ($clearpayRefund->send()) {
+            if ($clearpayRefund->getResponse()->isSuccessful()) {
+                PrestaShopLogger::addLog(
+                    $this->l("Clearpay partial Refund done: ") . $refundTotalAmount,
+                    1,
+                    null,
+                    "Clearpay",
+                    1
+                );
+                return true;
+            }
+            $parsedBody = $clearpayRefund->getResponse()->getParsedBody();
+            PrestaShopLogger::addLog(
+                $this->l("Clearpay Partial Refund Error: ") . $parsedBody->errorCode . '-> ' . $parsedBody->message,
+                3,
+                null,
+                "Clearpay",
+                1
+            );
+        }
+        return false;
+    }
+
+    /**
+     * Construct the Refunds Object based on the configuration and Refunds type
+     * @return Afterpay\SDK\HTTP\Request\CreateRefund
+     */
+    private function createRefundObject()
+    {
+
+        $publicKey = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
+        $secretKey = Configuration::get('CLEARPAY_SANDBOX_SECRET_KEY');
+        $environment = Configuration::get('CLEARPAY_ENVIRONMENT');
+
+        if ($environment === 'production') {
+            $publicKey = Configuration::get('CLEARPAY_PRODUCTION_PUBLIC_KEY');
+            $secretKey = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
+        }
+        $merchantAccount = new Afterpay\SDK\MerchantAccount();
+        $merchantAccount
+            ->setMerchantId($publicKey)
+            ->setSecretKey($secretKey)
+            ->setApiEnvironment($environment)
+            ->setCountryCode(Configuration::get('CLEARPAY_REGION'))
+        ;
+
+        $clearpayRefund = new Afterpay\SDK\HTTP\Request\CreateRefund();
+        $clearpayRefund->setMerchantAccount($merchantAccount);
+
+        return $clearpayRefund;
     }
 
     /**

@@ -159,7 +159,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
         if (!empty($discountAmount)) {
             $createCheckoutRequest->setDiscounts(array(
                 array(
-                    'displayName' => 'Clearpay Discount coupon',
+                    'displayName' => 'Shop discount',
                     'amount' => array(Clearpay::parseAmount($discountAmount), $currency)
                 )
             ));
