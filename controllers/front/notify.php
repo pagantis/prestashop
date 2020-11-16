@@ -39,6 +39,11 @@ class PagantisNotifyModuleFrontController extends AbstractController
     const CONCURRENCY_TIMEOUT = 10;
 
     /**
+     * mismatch amount threshold in cents
+     */
+    const MISMATCH_AMOUNT_THRESHOLD = 5;
+
+    /**
      * @var string $token
      */
     protected $token;
@@ -412,7 +417,12 @@ class PagantisNotifyModuleFrontController extends AbstractController
                 'requestId' => $this->requestId,
                 'message' => $this->amountMismatchError
             ));
-            throw new AmountMismatchException($totalAmount, $merchantAmount);
+            $numberPagantisAmount = (integer) $this->pagantisOrder->getShoppingCart()->getTotalAmount();
+            $numberMerchantAmount = (integer) (100 * $this->merchantCart->getOrderTotal(true));
+            $amountDff =  $numberMerchantAmount - $numberPagantisAmount;
+            if (abs($amountDff) > self::MISMATCH_AMOUNT_THRESHOLD) {
+                throw new AmountMismatchException($totalAmount, $merchantAmount);
+            }
         }
     }
 
