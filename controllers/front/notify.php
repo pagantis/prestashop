@@ -171,14 +171,9 @@ class ClearpayNotifyModuleFrontController extends AbstractController
             'secureKey' => Tools::getValue('key'),
         );
 
-        $this->config['publicKey'] = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
-        $this->config['privateKey'] = Configuration::get('CLEARPAY_SANDBOX_SECRET_KEY');
+        $this->config['publicKey'] = Configuration::get('CLEARPAY_PUBLIC_KEY');
+        $this->config['privateKey'] = Configuration::get('CLEARPAY_SECRET_KEY');
         $this->config['environment'] = Configuration::get('CLEARPAY_ENVIRONMENT');
-
-        if ($this->config['environment'] === 'production') {
-            $this->config['publicKey'] = Configuration::get('CLEARPAY_PRODUCTION_PUBLIC_KEY');
-            $this->config['privateKey'] = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
-        }
 
         $this->merchantOrderId = $this->getMerchantOrderId();
 

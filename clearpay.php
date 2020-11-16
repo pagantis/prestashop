@@ -119,9 +119,8 @@ class Clearpay extends PaymentModule
 
         Configuration::updateValue('CLEARPAY_IS_ENABLED', 0);
         Configuration::updateValue('CLEARPAY_REGION', 0);
-        Configuration::updateValue('CLEARPAY_SANDBOX_PUBLIC_KEY', '');
-        Configuration::updateValue('CLEARPAY_SANDBOX_SECRET_KEY', '');
-        Configuration::updateValue('CLEARPAY_PRODUCTION_PUBLIC_KEY', '');
+        Configuration::updateValue('CLEARPAY_PUBLIC_KEY', '');
+        Configuration::updateValue('CLEARPAY_SECRET_KEY', '');
         Configuration::updateValue('CLEARPAY_PRODUCTION_SECRET_KEY', '');
         Configuration::updateValue('CLEARPAY_ENVIRONMENT', 1);
         Configuration::updateValue('CLEARPAY_REGION', 0);
@@ -157,9 +156,8 @@ class Clearpay extends PaymentModule
     public function uninstall()
     {
         Configuration::deleteByName('CLEARPAY_IS_ENABLED');
-        Configuration::deleteByName('CLEARPAY_SANDBOX_PUBLIC_KEY');
-        Configuration::deleteByName('CLEARPAY_SANDBOX_SECRET_KEY');
-        Configuration::deleteByName('CLEARPAY_PRODUCTION_PUBLIC_KEY');
+        Configuration::deleteByName('CLEARPAY_PUBLIC_KEY');
+        Configuration::deleteByName('CLEARPAY_SECRET_KEY');
         Configuration::deleteByName('CLEARPAY_PRODUCTION_SECRET_KEY');
         Configuration::deleteByName('CLEARPAY_ENVIRONMENT');
         Configuration::deleteByName('CLEARPAY_REGION');
@@ -232,20 +230,17 @@ class Clearpay extends PaymentModule
         $totalAmount = $cart->getOrderTotal(true, Cart::BOTH);
         $currency = new Currency($cart->id_currency);
         $availableCurrencies = explode(",", self::CLEARPAY_AVAILABLE_CURRENCIES);
+        $isEnabled = Configuration::get('CLEARPAY_IS_ENABLED');
         $displayMinAmount = Configuration::get('CLEARPAY_MIN_AMOUNT');
         $displayMaxAmount = Configuration::get('CLEARPAY_MAX_AMOUNT');
-        $publicKey = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
-        $secretKey = Configuration::get('CLEARPAY_SANDBOX_SECRET_KEY');
+        $publicKey = Configuration::get('CLEARPAY_PUBLIC_KEY');
+        $secretKey = Configuration::get('CLEARPAY_SECRET_KEY');
         $environment = Configuration::get('CLEARPAY_ENVIRONMENT');
-
-        if ($environment === 'production') {
-            $publicKey = Configuration::get('CLEARPAY_PRODUCTION_PUBLIC_KEY');
-            $secretKey = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
-        }
 
         $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
         $language = $this->getCurrentLanguage();
         return (
+            $isEnabled &&
             $totalAmount >= $displayMinAmount &&
             $totalAmount <= $displayMaxAmount &&
             in_array($currency->iso_code, $availableCurrencies) &&
@@ -410,39 +405,20 @@ class Clearpay extends PaymentModule
             )
         );
         $inputs[] = array(
-            'name' => 'CLEARPAY_SANDBOX_PUBLIC_KEY',
+            'name' => 'CLEARPAY_PUBLIC_KEY',
             'suffix' => $this->l('ex: 400101010'),
             'type' => 'text',
-            'label' => $this->l('Merchant id for Sandbox environment'),
+            'label' => $this->l('Merchant Id'),
             'prefix' => '<i class="icon icon-key"></i>',
             'col' => 6,
             'required' => true,
         );
         $inputs[] = array(
-            'name' => 'CLEARPAY_SANDBOX_SECRET_KEY',
+            'name' => 'CLEARPAY_SECRET_KEY',
             'suffix' => $this->l('128 alphanumeric code'),
             'type' => 'text',
             'size' => 128,
-            'label' => $this->l('Secret Key for Sandbox environment'),
-            'prefix' => '<i class="icon icon-key"></i>',
-            'col' => 6,
-            'required' => true,
-        );
-        $inputs[] = array(
-            'name' => 'CLEARPAY_PRODUCTION_PUBLIC_KEY',
-            'suffix' => $this->l('ex: 400101010'),
-            'type' => 'text',
-            'label' => $this->l('Merchant id for Production environment'),
-            'prefix' => '<i class="icon icon-key"></i>',
-            'col' => 6,
-            'required' => true,
-        );
-        $inputs[] = array(
-            'name' => 'CLEARPAY_PRODUCTION_SECRET_KEY',
-            'suffix' => $this->l('128 alphanumeric code'),
-            'type' => 'text',
-            'size' => 128,
-            'label' => $this->l('Secret Key for Production environment'),
+            'label' => $this->l('Secret Key'),
             'prefix' => '<i class="icon icon-key"></i>',
             'col' => 6,
             'required' => true,
@@ -552,10 +528,8 @@ class Clearpay extends PaymentModule
         $helper->default_form_language = $this->context->language->id;
         $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
 
-        $helper->fields_value['CLEARPAY_SANDBOX_PUBLIC_KEY'] = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
-        $helper->fields_value['CLEARPAY_SANDBOX_SECRET_KEY'] = Configuration::get('CLEARPAY_SANDBOX_SECRET_KEY');
-        $helper->fields_value['CLEARPAY_PRODUCTION_PUBLIC_KEY'] = Configuration::get('CLEARPAY_PRODUCTION_PUBLIC_KEY');
-        $helper->fields_value['CLEARPAY_PRODUCTION_SECRET_KEY'] = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
+        $helper->fields_value['CLEARPAY_PUBLIC_KEY'] = Configuration::get('CLEARPAY_PUBLIC_KEY');
+        $helper->fields_value['CLEARPAY_SECRET_KEY'] = Configuration::get('CLEARPAY_SECRET_KEY');
         $helper->fields_value['CLEARPAY_IS_ENABLED'] = Configuration::get('CLEARPAY_IS_ENABLED');
         $helper->fields_value['CLEARPAY_ENVIRONMENT'] = Configuration::get('CLEARPAY_ENVIRONMENT');
         $helper->fields_value['CLEARPAY_REGION'] = Configuration::get('CLEARPAY_REGION');
@@ -576,10 +550,8 @@ class Clearpay extends PaymentModule
         $message = '';
         $settingsKeys = array();
         $settingsKeys[] = 'CLEARPAY_IS_ENABLED';
-        $settingsKeys[] = 'CLEARPAY_SANDBOX_PUBLIC_KEY';
-        $settingsKeys[] = 'CLEARPAY_SANDBOX_SECRET_KEY';
-        $settingsKeys[] = 'CLEARPAY_PRODUCTION_PUBLIC_KEY';
-        $settingsKeys[] = 'CLEARPAY_PRODUCTION_SECRET_KEY';
+        $settingsKeys[] = 'CLEARPAY_PUBLIC_KEY';
+        $settingsKeys[] = 'CLEARPAY_SECRET_KEY';
         $settingsKeys[] = 'CLEARPAY_ENVIRONMENT';
         $settingsKeys[] = 'CLEARPAY_REGION';
         $settingsKeys[] = 'CLEARPAY_RESTRICTED_CATEGORIES';
@@ -596,15 +568,10 @@ class Clearpay extends PaymentModule
             $message = $this->displayConfirmation($this->l('All changes have been saved'));
         }
 
-        $publicKey = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
-        $secretKey = Configuration::get('CLEARPAY_SANDBOX_SECRET_KEY');
+        $publicKey = Configuration::get('CLEARPAY_PUBLIC_KEY');
+        $secretKey = Configuration::get('CLEARPAY_SECRET_KEY');
         $environment = Configuration::get('CLEARPAY_ENVIRONMENT');
         $isEnabled = Configuration::get('CLEARPAY_IS_ENABLED');
-
-        if ($environment === 'production') {
-            $publicKey = Configuration::get('CLEARPAY_PRODUCTION_PUBLIC_KEY');
-            $secretKey = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
-        }
 
         // auto update configuration price thresholds in background
         $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
@@ -784,7 +751,7 @@ class Clearpay extends PaymentModule
             !$categoryRestriction
         ) {
             $templateConfigs['PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
-            $templateConfigs['SDK_URL'] = 'https://js.afterpay.com/afterpay-1.x.js';
+            $templateConfigs['SDK_URL'] = 'https://js.sandbox.afterpay.com/afterpay-1.x.js';
             $templateConfigs['CLEARPAY_MIN_AMOUNT'] = Configuration::get('CLEARPAY_MIN_AMOUNT');
             $templateConfigs['CLEARPAY_MAX_AMOUNT'] = Configuration::get('CLEARPAY_MAX_AMOUNT');
             $templateConfigs['CURRENCY'] = $this->currency;
@@ -985,14 +952,10 @@ class Clearpay extends PaymentModule
     private function createRefundObject()
     {
 
-        $publicKey = Configuration::get('CLEARPAY_SANDBOX_PUBLIC_KEY');
-        $secretKey = Configuration::get('CLEARPAY_SANDBOX_SECRET_KEY');
+        $publicKey = Configuration::get('CLEARPAY_PUBLIC_KEY');
+        $secretKey = Configuration::get('CLEARPAY_SECRET_KEY');
         $environment = Configuration::get('CLEARPAY_ENVIRONMENT');
 
-        if ($environment === 'production') {
-            $publicKey = Configuration::get('CLEARPAY_PRODUCTION_PUBLIC_KEY');
-            $secretKey = Configuration::get('CLEARPAY_PRODUCTION_SECRET_KEY');
-        }
         $merchantAccount = new Afterpay\SDK\MerchantAccount();
         $merchantAccount
             ->setMerchantId($publicKey)
