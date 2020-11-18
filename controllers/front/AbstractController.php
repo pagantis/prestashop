@@ -31,7 +31,10 @@ abstract class AbstractController extends ModuleFrontController
     public function redirect($url = '', $parameters = array())
     {
         $parsedUrl = parse_url($url);
-        $separator = ($parsedUrl['query'] == null) ? '?' : '&';
+        $separator = '&';
+        if (!isset($parsedUrl['query']) || parsedUrl['query'] == null) {
+            $separator = '?';
+        }
         $redirectUrl = $url. $separator . http_build_query($parameters);
         Tools::redirect($redirectUrl);
     }

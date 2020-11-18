@@ -77,7 +77,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
         $cancelUrl = (Clearpay::getExtraConfig('URL_KO') !== '') ? Clearpay::getExtraConfig('URL_KO', null) : $koUrl;
 
         $publicKey = Configuration::get('CLEARPAY_PUBLIC_KEY');
-        $secretKey = Configuration::get('CLEARPAY_SANDBOX_SECRET_KEY');
+        $secretKey = Configuration::get('CLEARPAY_SECRET_KEY');
         $environment = Configuration::get('CLEARPAY_ENVIRONMENT');
 
         $okUrl = _PS_BASE_URL_SSL_.__PS_BASE_URI__
@@ -164,7 +164,7 @@ class ClearpayPaymentModuleFrontController extends AbstractController
         $products = array();
         foreach ($items as $item) {
             $products[] = array(
-                'name' => str_replace("'", "", $item['name']),
+                'name' => utf8_encode($item['name']),
                 'sku' => $item['reference'],
                 'quantity' => $item['quantity'],
                 'price' => array(

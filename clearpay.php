@@ -26,6 +26,11 @@ class Clearpay extends PaymentModule
     const CLEARPAY_AVAILABLE_CURRENCIES = 'EUR,GBP';
 
     /**
+     * JS CDN URL
+     */
+    const CLEARPAY_JS_CDN_URL = 'http://cdnintegrations-16f52.kxcdn.com/afterpay-1.5.0.js';
+
+    /**
      * @var string
      */
     public $url = 'https://clearpay.com';
@@ -118,12 +123,11 @@ class Clearpay extends PaymentModule
         $this->populateEnvVariables();
 
         Configuration::updateValue('CLEARPAY_IS_ENABLED', 0);
-        Configuration::updateValue('CLEARPAY_REGION', 0);
+        Configuration::updateValue('CLEARPAY_REGION', 'ES');
         Configuration::updateValue('CLEARPAY_PUBLIC_KEY', '');
         Configuration::updateValue('CLEARPAY_SECRET_KEY', '');
         Configuration::updateValue('CLEARPAY_PRODUCTION_SECRET_KEY', '');
         Configuration::updateValue('CLEARPAY_ENVIRONMENT', 1);
-        Configuration::updateValue('CLEARPAY_REGION', 0);
         Configuration::updateValue('CLEARPAY_MIN_AMOUNT', null);
         Configuration::updateValue('CLEARPAY_MAX_AMOUNT', null);
         Configuration::updateValue('CLEARPAY_RESTRICTED_CATEGORIES', '');
@@ -272,16 +276,14 @@ class Clearpay extends PaymentModule
      */
     public function hookHeader()
     {
-
-        $url = 'https://js.sandbox.afterpay.com/afterpay-1.x.js';
         if (_PS_VERSION_ >= "1.7") {
             $this->context->controller->registerJavascript(
                 sha1(mt_rand(1, 90000)),
-                $url,
+                self::CLEARPAY_JS_CDN_URL,
                 array('server' => 'remote')
             );
         } else {
-            $this->context->controller->addJS($url);
+            $this->context->controller->addJS(self::CLEARPAY_JS_CDN_URL);
         }
     }
 
@@ -592,10 +594,19 @@ class Clearpay extends PaymentModule
                     $getConfigurationRequest->send();
                     $configuration = $getConfigurationRequest->getResponse()->getParsedBody();
 
-                    if (isset($configuration->message)) {
+                    if (isset($configuration->message) || is_null($configuration)) {
+                        $response = isset($configuration->message) ? $configuration->message : "NULL";
                         $message = $this->displayError(
                             $this->l('Configuration request can not be done with the region and credentials provided.').
-                            ' ' . $this->l("Message received: ") . $configuration->message
+                            ' ' . $this->l("Message received: ") . $response
+                        );
+                        Configuration::updateValue(
+                            'CLEARPAY_MIN_AMOUNT',
+                            1
+                        );
+                        Configuration::updateValue(
+                            'CLEARPAY_MAX_AMOUNT',
+                            100
                         );
                     } else {
                         if (isset($configuration[0]->minimumAmount)) {
@@ -751,7 +762,7 @@ class Clearpay extends PaymentModule
             !$categoryRestriction
         ) {
             $templateConfigs['PS_VERSION'] = str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3));
-            $templateConfigs['SDK_URL'] = 'https://js.sandbox.afterpay.com/afterpay-1.x.js';
+            $templateConfigs['SDK_URL'] = self::CLEARPAY_JS_CDN_URL;
             $templateConfigs['CLEARPAY_MIN_AMOUNT'] = Configuration::get('CLEARPAY_MIN_AMOUNT');
             $templateConfigs['CLEARPAY_MAX_AMOUNT'] = Configuration::get('CLEARPAY_MAX_AMOUNT');
             $templateConfigs['CURRENCY'] = $this->currency;

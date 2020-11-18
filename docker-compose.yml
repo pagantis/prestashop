@@ -1,26 +1,5 @@
 version: "3.5"
 services:
-  prestashop15-test:
-    container_name: prestashop15-test
-    image: prestashop/prestashop:1.5-5.5-apache
-    depends_on:
-      - db15-test
-    environment:
-      - PS_DEV_MODE=0
-      - PS_COUNTRY=ES
-      - PS_DOMAIN=prestashop15-test.docker:8015
-      - PS_FOLDER_ADMIN=adminTest
-      - PS_FOLDER_INSTALL=installTest
-      - PS_HANDLE_DYNAMIC_DOMAIN=1
-      - PS_INSTALL_AUTO=1
-      - DB_SERVER=db15-test
-      - DB_NAME=db15-test
-      - DB_PREFIX=ps_
-      - DB_PASSWD=password
-    ports:
-      - "8015:80"
-    extra_hosts:
-      - "prestashop15-test.docker:127.0.0.1"
   prestashop16-test:
     container_name: prestashop16-test
     image: prestashop/prestashop:1.6.1.20
@@ -44,7 +23,7 @@ services:
       - "prestashop16-test.docker:127.0.0.1"
   prestashop17-test:
     container_name: prestashop17-test
-    image: prestashop/prestashop:1.7.3
+    image: prestashop/prestashop:1.7.6.9
     depends_on:
       - db17-test
     environment:
@@ -65,7 +44,7 @@ services:
       - "prestashop17-test.docker:127.0.0.1"
   prestashop17-dev:
     container_name: prestashop17-dev
-    image: prestashop/prestashop:1.7.3
+    image: prestashop/prestashop:1.7.6.9
     depends_on:
       - db17-dev
     environment:
@@ -109,29 +88,6 @@ services:
       - "8019:80"
     extra_hosts:
       - "prestashop16-dev.docker:127.0.0.1"
-  prestashop15-dev:
-    container_name: prestashop15-dev
-    image: prestashop/prestashop:1.5-5.5-apache
-    depends_on:
-      - db15-dev
-    environment:
-      - PS_DEV_MODE=1
-      - PS_COUNTRY=ES
-      - PS_DOMAIN=prestashop15-dev.docker:8020
-      - PS_FOLDER_ADMIN=adminTest
-      - PS_FOLDER_INSTALL=installTest
-      - PS_HANDLE_DYNAMIC_DOMAIN=1
-      - PS_INSTALL_AUTO=1
-      - DB_SERVER=db15-dev
-      - DB_NAME=db15-dev
-      - DB_PREFIX=ps_
-      - DB_PASSWD=password
-    volumes:
-      - ./:/var/www/html/modules/clearpay
-    ports:
-      - "8020:80"
-    extra_hosts:
-      - "prestashop15-dev.docker:127.0.0.1"
   db17-dev:
     container_name: db17-dev
     image: mysql:5.6
@@ -144,12 +100,6 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=db16-dev
-  db15-dev:
-    container_name: db15-dev
-    image: mysql:5.6
-    environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=db15-dev
   db17-test:
     container_name:  db17-test
     image: mysql:5.6
@@ -162,12 +112,6 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=db16-test
-  db15-test:
-    container_name: db15-test
-    image: mysql:5.6
-    environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=db15-test
   selenium:
     container_name: prestashopSelenium
     image: selenium/standalone-chrome:3.11.0

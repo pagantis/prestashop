@@ -30,6 +30,11 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     const CONCURRENCY_TIMEOUT = 10;
 
     /**
+     * mismatch amount threshold in cents
+     */
+    const MISMATCH_AMOUNT_THRESHOLD = 5;
+
+    /**
      * @var string $token
      */
     protected $token;
@@ -292,7 +297,12 @@ class ClearpayNotifyModuleFrontController extends AbstractController
                 '. The Cart in PrestaShop has an amount of ' . $merchantAmount . ' and in Clearpay ' . $totalAmount;
 
             $this->saveLog($amountMismatchError, 3);
-            throw new \Exception($amountMismatchError);
+            $numberPagantisAmount = (integer) $this->pagantisOrder->getShoppingCart()->getTotalAmount();
+            $numberMerchantAmount = (integer) (100 * $this->merchantCart->getOrderTotal(true));
+            $amountDff =  $numberMerchantAmount - $numberPagantisAmount;
+            if (abs($amountDff) > self::MISMATCH_AMOUNT_THRESHOLD) {
+                throw new \Exception($amountMismatchError);
+            }
         }
     }
 
@@ -372,7 +382,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
                 Configuration::get('PS_OS_PAYMENT'),
                 $this->merchantCart->getOrderTotal(true, Cart::BOTH),
                 $this->productName,
-                'clearpayOrderId: ' . $this->clearpayOrder->token,
+                'clearpayOrderId: ' .  $this->clearpayCapturedPaymentId,
                 array('transaction_id' => $this->clearpayCapturedPaymentId),
                 null,
                 false,
@@ -394,7 +404,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
         }
 
         $message = 'Clearpay Order CONFIRMED' .
-            '. Clearpay OrderId=' . $this->clearpayOrderId .
+            '. Clearpay OrderId=' .  $this->clearpayCapturedPaymentId .
             '. Prestashop OrderId=' . $this->module->currentOrder;
         $this->saveLog($message, 1);
     }
