@@ -32,7 +32,7 @@ abstract class AbstractController extends ModuleFrontController
     {
         $parsedUrl = parse_url($url);
         $separator = '&';
-        if (!isset($parsedUrl['query']) || parsedUrl['query'] == null) {
+        if (!isset($parsedUrl['query']) || $parsedUrl['query'] == null) {
             $separator = '?';
         }
         $redirectUrl = $url. $separator . http_build_query($parameters);

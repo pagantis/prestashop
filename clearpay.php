@@ -28,7 +28,7 @@ class Clearpay extends PaymentModule
     /**
      * JS CDN URL
      */
-    const CLEARPAY_JS_CDN_URL = 'http://cdnintegrations-16f52.kxcdn.com/afterpay-1.5.0.js';
+    const CLEARPAY_JS_CDN_URL = 'https://js.sandbox.afterpay.com/afterpay-1.x.js';
 
     /**
      * @var string
