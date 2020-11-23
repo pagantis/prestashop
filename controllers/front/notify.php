@@ -32,7 +32,18 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     /**
      * mismatch amount threshold in cents
      */
-    const MISMATCH_AMOUNT_THRESHOLD = 5;
+    const MISMATCH_AMOUNT_THRESHOLD = 1;
+
+    /**
+     * @var bool $mismatchError
+     */
+    protected $mismatchError = false;
+
+
+    /**
+     * @var bool $paymentDeclined
+     */
+    protected $paymentDeclined = false;
 
     /**
      * @var string $token
@@ -292,15 +303,16 @@ class ClearpayNotifyModuleFrontController extends AbstractController
         $totalAmount = (string) $this->clearpayOrder->totalAmount->amount;
         $merchantAmount = (string) ($this->merchantCart->getOrderTotal(true, Cart::BOTH));
         if ($totalAmount != $merchantAmount) {
-            $amountMismatchError = '. Amount mismatch in PrestaShop Cart #'. $this->merchantCartId .
-                ' compared with Clearpay Order: ' . $this->clearpayOrderId .
-                '. The Cart in PrestaShop has an amount of ' . $merchantAmount . ' and in Clearpay ' . $totalAmount;
-
-            $this->saveLog($amountMismatchError, 3);
-            $numberPagantisAmount = (integer) $this->pagantisOrder->getShoppingCart()->getTotalAmount();
-            $numberMerchantAmount = (integer) (100 * $this->merchantCart->getOrderTotal(true));
-            $amountDff =  $numberMerchantAmount - $numberPagantisAmount;
+            $numberClearpayAmount = (integer) (100 * $this->clearpayOrder->totalAmount->amount);
+            $numberMerchantAmount = (integer) (100 * $this->merchantCart->getOrderTotal(true, Cart::BOTH));
+            $amountDff =  $numberMerchantAmount - $numberClearpayAmount;
             if (abs($amountDff) > self::MISMATCH_AMOUNT_THRESHOLD) {
+                $this->mismatchError = true;
+                $amountMismatchError = 'Amount mismatch in PrestaShop Cart #'. $this->merchantCartId .
+                    ' compared with Clearpay Order: ' . $this->clearpayOrderId .
+                    '. The Cart in PrestaShop has an amount of ' . $merchantAmount . ' and in Clearpay ' . $totalAmount;
+
+                $this->saveLog($amountMismatchError, 3);
                 throw new \Exception($amountMismatchError);
             }
         }
@@ -356,17 +368,19 @@ class ClearpayNotifyModuleFrontController extends AbstractController
         $immediatePaymentCaptureRequest->setMerchantAccount($this->clearpayMerchantAccount);
         $immediatePaymentCaptureRequest->send();
         if ($immediatePaymentCaptureRequest->getResponse()->getHttpStatusCode() >= 400) {
+            $this->paymentDeclined = true;
             throw new \Exception(
                 $this->l('Clearpay capture payment error, order token: ') . $this->token . '. ' .
                 $immediatePaymentCaptureRequest->getResponse()->getParsedBody()->errorCode
             );
         }
+        $this->clearpayCapturedPaymentId = $immediatePaymentCaptureRequest->getResponse()->getParsedBody()->id;
         if (!$immediatePaymentCaptureRequest->getResponse()->isApproved()) {
+            $this->paymentDeclined = true;
             throw new \Exception(
                 $this->l('Clearpay capture payment error, the payment was not procesed successfully')
             );
         }
-        $this->clearpayCapturedPaymentId = $immediatePaymentCaptureRequest->getResponse()->getParsedBody()->id;
     }
 
     /**
@@ -498,6 +512,13 @@ class ClearpayNotifyModuleFrontController extends AbstractController
             'id_module' => $this->module->id,
             'id_order' => $this->module->currentOrder
         );
+        if ($this->mismatchError) {
+            $parameters["clearpay_mismatch"] = "true";
+        }
+        if ($this->paymentDeclined) {
+            $parameters["clearpay_declined"] = "true";
+            $parameters["clearpay_reference_id"] = $this->clearpayCapturedPaymentId;
+        }
         $url = ($error)? $this->config['urlKO'] : $this->config['urlOK'];
         return $this->redirect($url, $parameters);
     }

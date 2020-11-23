@@ -11,3 +11,11 @@
     <br/><br/>
 </div>
 </p>
+
+<dialog id="myDialog">This is a dialog window</dialog>
+
+<script>
+    function myFunction() {
+        document.getElementById("myDialog").showModal();
+    }
+</script>

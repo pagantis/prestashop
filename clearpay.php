@@ -137,6 +137,7 @@ class Clearpay extends PaymentModule
             && $this->registerHook('paymentOptions')
             && $this->registerHook('displayProductPriceBlock')
             && $this->registerHook('displayOrderConfirmation')
+            && $this->registerHook('displayPaymentTop')
             && $this->registerHook('displayExpressCheckout')
             && $this->registerHook('actionOrderStatusUpdate')
             && $this->registerHook('actionOrderSlipAdd')
@@ -739,16 +740,12 @@ class Clearpay extends PaymentModule
             $categoryRestriction = $this->isProductRestricted($productId);
             $amount = Product::getPriceStatic($productId);
         }
-
+        $return = '';
         $simulatorIsEnabled = Clearpay::getExtraConfig('SIMULATOR_IS_ENABLED');
         $isEnabled = Configuration::get('CLEARPAY_IS_ENABLED');
 
-        $return = '';
-
-
         $cart = $this->context->cart;
         $currency = new Currency($cart->id_currency);
-
         $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
         $availableCurrencies = explode(",", self::CLEARPAY_AVAILABLE_CURRENCIES);
         $language = $this->getCurrentLanguage();
@@ -773,8 +770,17 @@ class Clearpay extends PaymentModule
                 $language = $language['language_code'];
             }
             $templateConfigs['ISO_COUNTRY_CODE'] = str_replace('-', '_', $language);
+            // Hook to preserve Uppercase in locale
+            if (strlen($templateConfigs['ISO_COUNTRY_CODE']) == 5) {
+                $templateConfigs['ISO_COUNTRY_CODE'] = substr($templateConfigs['ISO_COUNTRY_CODE'], 0, 2) .
+                    Tools::strtoupper(substr($templateConfigs['ISO_COUNTRY_CODE'], 2, 4));
+            }
             $templateConfigs['AMOUNT'] = $amount;
             $templateConfigs['AMOUNT_WITH_CURRENCY'] = $amount . $this->currencySymbol;
+            $templateConfigs['PRICE_SELECTOR'] = '.current-price';
+            if (version_compare(_PS_VERSION_, '1.6')) {
+                $templateConfigs['PRICE_SELECTOR'] = '.our_price_display';
+            }
             if ($this->currency === 'GBP') {
                 $templateConfigs['AMOUNT_WITH_CURRENCY'] = $this->currencySymbol. $amount;
             }
@@ -838,6 +844,34 @@ class Clearpay extends PaymentModule
 
         if ($paymentMethod == $this->displayName) {
             return $this->display(__FILE__, 'views/templates/hook/payment-return.tpl');
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array $params
+     *
+     * @return string
+     */
+    public function hookDisplayPaymentTop($params)
+    {
+        $isDeclined = Tools::getValue('clearpay_declined');
+        $isMismatch = Tools::getValue('clearpay_mismatch');
+        $referenceId = Tools::getValue('clearpay_reference_id');
+        $this->context->smarty->assign(array(
+            'REFERENCE_ID' => $referenceId,
+            'PS_VERSION' => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3))
+        ));
+        if ($isDeclined == 'true') {
+            return $this->displayError(
+                $this->display(__FILE__, 'views/templates/hook/payment-declined.tpl')
+            );
+        }
+        if ($isMismatch == 'true') {
+            return $this->displayError(
+                $this->display(__FILE__, 'views/templates/hook/payment-error.tpl')
+            );
         }
 
         return null;
@@ -1008,7 +1042,7 @@ class Clearpay extends PaymentModule
     public function checkLogoExists()
     {
         $logoPg = _PS_MODULE_DIR_ . 'clearpay//onepagecheckoutps/views/img/payments/clearpay.png';
-        if (!file_exists($logoPg) && is_dir(_PS_MODULE_DIR_ . 'clearpay//onepagecheckoutps/views/img/payments')) {
+        if (!file_exists($logoPg) && is_dir(_PS_MODULE_DIR_ . 'clearpay/onepagecheckoutps/views/img/payments')) {
             copy(
                 _PS_CLEARPAY_DIR . '/logo.png',
                 $logoPg
