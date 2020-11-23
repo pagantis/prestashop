@@ -244,12 +244,14 @@ class Clearpay extends PaymentModule
 
         $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
         $language = $this->getCurrentLanguage();
+        $categoryRestriction = $this->isCartRestricted($this->context->cart);
         return (
             $isEnabled &&
             $totalAmount >= $displayMinAmount &&
             $totalAmount <= $displayMaxAmount &&
             in_array($currency->iso_code, $availableCurrencies) &&
             in_array(Tools::strtolower($language), $allowedCountries) &&
+            !$categoryRestriction &&
             $publicKey &&
             $secretKey
         );
