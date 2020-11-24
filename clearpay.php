@@ -241,7 +241,6 @@ class Clearpay extends PaymentModule
         $displayMaxAmount = Configuration::get('CLEARPAY_MAX_AMOUNT');
         $publicKey = Configuration::get('CLEARPAY_PUBLIC_KEY');
         $secretKey = Configuration::get('CLEARPAY_SECRET_KEY');
-        $environment = Configuration::get('CLEARPAY_ENVIRONMENT');
 
         $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
         $language = $this->getCurrentLanguage();
@@ -580,7 +579,6 @@ class Clearpay extends PaymentModule
         $isEnabled = Configuration::get('CLEARPAY_IS_ENABLED');
 
         // auto update configuration price thresholds in background
-        $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
         $language = $this->getCurrentLanguage();
         if ($isEnabled && !empty($publicKey) && !empty($secretKey) && !empty($environment) && !empty($language)) {
             try {
@@ -775,9 +773,9 @@ class Clearpay extends PaymentModule
             }
             $templateConfigs['ISO_COUNTRY_CODE'] = str_replace('-', '_', $language);
             // Preserve Uppercase in locale
-            if (strlen($templateConfigs['ISO_COUNTRY_CODE']) == 5) {
-                $templateConfigs['ISO_COUNTRY_CODE'] = substr($templateConfigs['ISO_COUNTRY_CODE'], 0, 2) .
-                    Tools::strtoupper(substr($templateConfigs['ISO_COUNTRY_CODE'], 2, 4));
+            if (Tools::strlen(($templateConfigs['ISO_COUNTRY_CODE']) == 5) {
+                $templateConfigs['ISO_COUNTRY_CODE'] = Tools::substr(($templateConfigs['ISO_COUNTRY_CODE'], 0, 2) .
+                    Tools::strtoupper(Tools::substr(($templateConfigs['ISO_COUNTRY_CODE'], 2, 4));
             }
             $templateConfigs['AMOUNT'] = $amount;
             $templateConfigs['AMOUNT_WITH_CURRENCY'] = $amount . $this->currencySymbol;
@@ -905,7 +903,6 @@ class Clearpay extends PaymentModule
             // ---- needed values ----
             $payments = $order->getOrderPayments();
             $transactionId = $payments[0]->transaction_id;
-            $cart = new Cart($order->id_cart);
             $currency = new Currency($order->id_currency);
             $currencyCode = $currency->iso_code;
             // ------------------------
@@ -963,7 +960,7 @@ class Clearpay extends PaymentModule
 
         $refundProductsList = $params["productList"];
         $refundTotalAmount = 0;
-        foreach ($refundProductsList as $key => $item) {
+        foreach ($refundProductsList as $item) {
             $refundTotalAmount +=  $item["amount"];
         }
         $refundTotalAmount = Clearpay::parseAmount($refundTotalAmount);
