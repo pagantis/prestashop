@@ -372,7 +372,7 @@ class Clearpay extends PaymentModule
         $inputs = array();
         $inputs[] = array(
             'name' => 'CLEARPAY_IS_ENABLED',
-            'type' =>  (version_compare(_PS_VERSION_, '1.6')<0) ?'radio' :'switch',
+            'type' =>  'switch',
             'label' => $this->l('Module is enabled'),
             'prefix' => '<i class="icon icon-key"></i>',
             'class' => 't',
@@ -784,14 +784,13 @@ class Clearpay extends PaymentModule
             $templateConfigs['PRICE_SELECTOR'] = Clearpay::getExtraConfig('SIMULATOR_CSS_SELECTOR');
             if ($templateConfigs['PRICE_SELECTOR'] === 'default') {
                 $templateConfigs['PRICE_SELECTOR'] = '.current-price';
-                if (version_compare(_PS_VERSION_, '1.6')) {
+                if (version_compare(_PS_VERSION_, '1.7', 'lt')) {
                     $templateConfigs['PRICE_SELECTOR'] = '.our_price_display';
                 }
                 if ($this->currency === 'GBP') {
                     $templateConfigs['AMOUNT_WITH_CURRENCY'] = $this->currencySymbol. $amount;
                 }
             }
-
 
             $this->context->smarty->assign($templateConfigs);
             $return .= $this->display(
@@ -816,12 +815,12 @@ class Clearpay extends PaymentModule
             isset($params['smarty']) && isset($params['smarty']->template_resource) &&
             (
                 (
-                    version_compare(_PS_VERSION_, '1.7') &&
+                    version_compare(_PS_VERSION_, '1.7', 'ge') &&
                     strpos($params['smarty']->template_resource, 'product-prices.tpl') !== false
                 )
                 ||
                 (
-                    version_compare(_PS_VERSION_, '1.6') &&
+                    version_compare(_PS_VERSION_, '1.7', 'lt') &&
                     strpos($params['smarty']->template_resource, 'product.tpl') !== false
                 )
             )
