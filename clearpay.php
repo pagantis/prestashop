@@ -773,9 +773,9 @@ class Clearpay extends PaymentModule
             }
             $templateConfigs['ISO_COUNTRY_CODE'] = str_replace('-', '_', $language);
             // Preserve Uppercase in locale
-            if (Tools::strlen(($templateConfigs['ISO_COUNTRY_CODE']) == 5) {
-                $templateConfigs['ISO_COUNTRY_CODE'] = Tools::substr(($templateConfigs['ISO_COUNTRY_CODE'], 0, 2) .
-                    Tools::strtoupper(Tools::substr(($templateConfigs['ISO_COUNTRY_CODE'], 2, 4));
+            if (Tools::strlen($templateConfigs['ISO_COUNTRY_CODE']) == 5) {
+                $templateConfigs['ISO_COUNTRY_CODE'] = Tools::substr($templateConfigs['ISO_COUNTRY_CODE'], 0, 2) .
+                    Tools::strtoupper(Tools::substr($templateConfigs['ISO_COUNTRY_CODE'], 2, 4));
             }
             $templateConfigs['AMOUNT'] = $amount;
             $templateConfigs['AMOUNT_WITH_CURRENCY'] = $amount . $this->currencySymbol;
