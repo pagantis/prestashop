@@ -53,6 +53,7 @@ class Clearpay extends PaymentModule
         'ALLOWED_COUNTRIES' => 'a:4:{i:1;s:2:"gb";i:2;s:2:"es";i:3;s:2:"fr";i:4;s:2:"it";}',
         'SIMULATOR_DISPLAY_TYPE' => 'clearpay',
         'SIMULATOR_IS_ENABLED' => true,
+        'SIMULATOR_CSS_SELECTOR' => 'default',
         'URL_OK' => '',
         'URL_KO' => ''
     );
@@ -734,6 +735,7 @@ class Clearpay extends PaymentModule
             $desc2 .= ' ' . $this->l('you will be redirected to Clearpay to complete your order.');
             $templateConfigs['DESCRIPTION_TEXT_TWO'] = $desc2;
             $categoryRestriction = $this->isCartRestricted($this->context->cart);
+            $simulatorIsEnabled = true;
         } else {
             $productId = Tools::getValue('id_product');
             if (!$productId) {
@@ -741,9 +743,9 @@ class Clearpay extends PaymentModule
             }
             $categoryRestriction = $this->isProductRestricted($productId);
             $amount = Product::getPriceStatic($productId);
+            $simulatorIsEnabled = Clearpay::getExtraConfig('SIMULATOR_IS_ENABLED');
         }
         $return = '';
-        $simulatorIsEnabled = Clearpay::getExtraConfig('SIMULATOR_IS_ENABLED');
         $isEnabled = Configuration::get('CLEARPAY_IS_ENABLED');
 
         $cart = $this->context->cart;
@@ -772,19 +774,22 @@ class Clearpay extends PaymentModule
                 $language = $language['language_code'];
             }
             $templateConfigs['ISO_COUNTRY_CODE'] = str_replace('-', '_', $language);
-            // Hook to preserve Uppercase in locale
+            // Preserve Uppercase in locale
             if (strlen($templateConfigs['ISO_COUNTRY_CODE']) == 5) {
                 $templateConfigs['ISO_COUNTRY_CODE'] = substr($templateConfigs['ISO_COUNTRY_CODE'], 0, 2) .
                     Tools::strtoupper(substr($templateConfigs['ISO_COUNTRY_CODE'], 2, 4));
             }
             $templateConfigs['AMOUNT'] = $amount;
             $templateConfigs['AMOUNT_WITH_CURRENCY'] = $amount . $this->currencySymbol;
-            $templateConfigs['PRICE_SELECTOR'] = '.current-price';
-            if (version_compare(_PS_VERSION_, '1.6')) {
-                $templateConfigs['PRICE_SELECTOR'] = '.our_price_display';
-            }
-            if ($this->currency === 'GBP') {
-                $templateConfigs['AMOUNT_WITH_CURRENCY'] = $this->currencySymbol. $amount;
+            $templateConfigs['PRICE_SELECTOR'] = Clearpay::getExtraConfig('SIMULATOR_CSS_SELECTOR');
+            if ($templateConfigs['PRICE_SELECTOR'] === 'default') {
+                $templateConfigs['PRICE_SELECTOR'] = '.current-price';
+                if (version_compare(_PS_VERSION_, '1.6')) {
+                    $templateConfigs['PRICE_SELECTOR'] = '.our_price_display';
+                }
+                if ($this->currency === 'GBP') {
+                    $templateConfigs['AMOUNT_WITH_CURRENCY'] = $this->currencySymbol. $amount;
+                }
             }
 
 
