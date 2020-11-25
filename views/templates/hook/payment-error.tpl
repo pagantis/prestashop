@@ -30,9 +30,9 @@
     {l s='PAYMENT ERROR' mod='clearpay'}
 </div>
 <div class="clearpay-more-info-text ps-version-{$PS_VERSION|escape:'htmlall':'UTF-8'}">
-    {l s='An error ocurred while processing your payment' mod='clearpay'}
+    {l s='We are sorry to inform you that an error ocurred while processing your payment.' mod='clearpay'}
     <br><br>
-    {l s='Thanks for confirming your payment but we can\'t use that confirmation any more because your cart has changed. please proceed to clearpay again' mod='clearpay'}
+    {l s='Thanks for confirming your payment, however as your cart has changed we need a new confirmation. Please proceed to Clearpay and retry again in a few minutes.' mod='clearpay'}
     <br><br>
     {l s='For more information, please contact the Clearpay Customer Service Team:' mod='clearpay'}
     <br>

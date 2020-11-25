@@ -30,7 +30,7 @@
     {l s='PAYMENT DECLINED' mod='clearpay'}
 </div>
 <div class="clearpay-more-info-text ps-version-{$PS_VERSION|escape:'htmlall':'UTF-8'}">
-    {l s='Your payment has been declined by Clearpay' mod='clearpay'}
+    {l s='We are sorry to inform you that your payment has been declined by Clearpay.' mod='clearpay'}
     <br><br>
     {l s='For more information, please contact the Clearpay Customer Service Team:' mod='clearpay'}
     <br>
