@@ -722,7 +722,7 @@ class Clearpay extends PaymentModule
     {
         $templateConfigs = array();
         if ($templateName === 'cart.tpl') {
-            $amount = Clearpay::parseAmount($this->context->cart->getOrderTotal()/4);
+            $amount = Clearpay::parseAmount($this->context->cart->getOrderTotal());
             $templateConfigs['PRICE_TEXT'] = $this->l('4 interest-free payments of');
             $templateConfigs['MORE_INFO'] = $this->l('FIND OUT MORE');
             $desc1 = $this->l('With Clearpay you can receive your order now and pay in 4 interest-free');
