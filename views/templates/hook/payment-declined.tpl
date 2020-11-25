@@ -18,6 +18,7 @@
         font-family: "FontAwesome";
         font-size: 16px;
         color: #777;
+        text-align: center;
     }
     .ps-version-1-6 {
         color: #b2fce4;

@@ -138,12 +138,11 @@ class Clearpay extends PaymentModule
             && $this->registerHook('paymentOptions')
             && $this->registerHook('displayProductPriceBlock')
             && $this->registerHook('displayOrderConfirmation')
-            && $this->registerHook('displayPaymentTop')
+            && $this->registerHook('displayWrapperTop')
             && $this->registerHook('displayExpressCheckout')
             && $this->registerHook('actionOrderStatusUpdate')
             && $this->registerHook('actionOrderSlipAdd')
             && $this->registerHook('actionProductCancel')
-            && $this->registerHook('displayExpressCheckout')
             && $this->registerHook('header')
         );
 
@@ -754,8 +753,8 @@ class Clearpay extends PaymentModule
         if ($isEnabled &&
             $simulatorIsEnabled &&
             $amount > 0 &&
-            $amount >= Configuration::get('CLEARPAY_MIN_AMOUNT') &&
-            $amount <= Configuration::get('CLEARPAY_MAX_AMOUNT') &&
+            ($amount >= Configuration::get('CLEARPAY_MIN_AMOUNT') || $templateName === 'product.tpl') &&
+            ($amount <= Configuration::get('CLEARPAY_MAX_AMOUNT')  || $templateName === 'product.tpl') &&
             in_array(Tools::strtolower($language), $allowedCountries) &&
             in_array($currency->iso_code, $availableCurrencies) &&
             !$categoryRestriction
@@ -854,11 +853,9 @@ class Clearpay extends PaymentModule
     }
 
     /**
-     * @param array $params
-     *
      * @return string
      */
-    public function hookDisplayPaymentTop($params)
+    public function hookDisplayWrapperTop()
     {
         $isDeclined = Tools::getValue('clearpay_declined');
         $isMismatch = Tools::getValue('clearpay_mismatch');
