@@ -21,7 +21,6 @@
             data-locale="{$ISO_COUNTRY_CODE|escape:'htmlall':'UTF-8'}"
             data-currency="{$CURRENCY|escape:'htmlall':'UTF-8'}"
             data-amount-selector="{$PRICE_SELECTOR|escape:'htmlall':'UTF-8'}"
-            data-size="sm"
-            data-show-lower-limit="false">
+            data-size="sm">
     </afterpay-placement>
 </div>
