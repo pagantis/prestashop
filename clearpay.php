@@ -722,6 +722,7 @@ class Clearpay extends PaymentModule
         $templateConfigs = array();
         if ($templateName === 'cart.tpl') {
             $amount = Clearpay::parseAmount($this->context->cart->getOrderTotal());
+            $templateConfigs['AMOUNT'] =  Clearpay::parseAmount($this->context->cart->getOrderTotal()/4);
             $templateConfigs['PRICE_TEXT'] = $this->l('4 interest-free payments of');
             $templateConfigs['MORE_INFO'] = $this->l('FIND OUT MORE');
             $desc1 = $this->l('With Clearpay you can receive your order now and pay in 4 interest-free');
@@ -740,6 +741,7 @@ class Clearpay extends PaymentModule
             }
             $categoryRestriction = $this->isProductRestricted($productId);
             $amount = Product::getPriceStatic($productId);
+            $templateConfigs['AMOUNT'] = $amount;
             $simulatorIsEnabled = Clearpay::getExtraConfig('SIMULATOR_IS_ENABLED');
         }
         $return = '';
@@ -776,7 +778,6 @@ class Clearpay extends PaymentModule
                 $templateConfigs['ISO_COUNTRY_CODE'] = Tools::substr($templateConfigs['ISO_COUNTRY_CODE'], 0, 2) .
                     Tools::strtoupper(Tools::substr($templateConfigs['ISO_COUNTRY_CODE'], 2, 4));
             }
-            $templateConfigs['AMOUNT'] = $amount;
             $templateConfigs['AMOUNT_WITH_CURRENCY'] = $amount . $this->currencySymbol;
             $templateConfigs['PRICE_SELECTOR'] = Clearpay::getExtraConfig('SIMULATOR_CSS_SELECTOR');
             if ($templateConfigs['PRICE_SELECTOR'] === 'default') {
