@@ -321,6 +321,11 @@ class Clearpay extends PaymentModule
                 $language = $language['language_code'];
             }
             $templateConfigs['ISO_COUNTRY_CODE'] = str_replace('-', '_', $language);
+            // Preserve Uppercase in locale
+            if (Tools::strlen($templateConfigs['ISO_COUNTRY_CODE']) == 5) {
+                $templateConfigs['ISO_COUNTRY_CODE'] = Tools::substr($templateConfigs['ISO_COUNTRY_CODE'], 0, 2) .
+                    Tools::strtoupper(Tools::substr($templateConfigs['ISO_COUNTRY_CODE'], 2, 4));
+            }
             $templateConfigs['CURRENCY'] = $this->currency;
             $templateConfigs['MOREINFO_HEADER'] = $this->l('Instant approval decision - 4 interest-free payments of')
                 . ' ' . $amountWithCurrency;
