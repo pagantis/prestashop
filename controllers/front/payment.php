@@ -144,9 +144,6 @@ class ClearpayPaymentModuleFrontController extends AbstractController
                 Clearpay::parseAmount($cart->getTotalShippingCost()),
                 $currency
             )
-            ->setmerchantReference(
-                $cart->id
-            )
             ->setCourier(array(
                 'shippedAt' => '',
                 'name' => $carrier->name,
