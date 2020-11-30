@@ -149,6 +149,9 @@ class Clearpay extends PaymentModule
         if ($return && _PS_VERSION_ < "1.7") {
             $this->registerHook('payment');
         }
+        if ($return && version_compare(_PS_VERSION_, '1.6.1', 'lt')) {
+            $this->registerHook('displayPaymentTop');
+        }
 
         return $return;
     }
@@ -878,16 +881,29 @@ class Clearpay extends PaymentModule
             'PS_VERSION' => str_replace('.', '-', Tools::substr(_PS_VERSION_, 0, 3))
         ));
         if ($isDeclined == 'true') {
-            return $this->displayError(
+            $return = $this->displayError(
                 $this->display(__FILE__, 'views/templates/hook/payment-declined.tpl')
             );
+            return $return;
         }
         if ($isMismatch == 'true') {
-            return $this->displayError(
+            $return = $this->displayError(
                 $this->display(__FILE__, 'views/templates/hook/payment-error.tpl')
             );
+            return $return;
         }
+        return null;
+    }
 
+    /**
+     * @param $params
+     * @return string|null
+     */
+    public function hookDisplayPaymentTop($params)
+    {
+        if (version_compare(_PS_VERSION_, '1.6.1', 'lt')) {
+            return $this->hookDisplayWrapperTop();
+        }
         return null;
     }
 
