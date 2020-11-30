@@ -105,6 +105,17 @@ class ClearpayNotifyModuleFrontController extends AbstractController
      */
     protected $jsonResponse;
 
+    /**
+     * @param $func
+     * @param $params
+     * @return string
+     */
+    protected function __call($func, $params)
+    {
+        if (in_array($func, array('l')) && !method_exists($this, $func)) {
+            return $params[0];
+        }
+    }
 
     /**
      * @throws Exception

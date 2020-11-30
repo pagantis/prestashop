@@ -830,6 +830,13 @@ class Clearpay extends PaymentModule
         ) {
             return $this->templateDisplay('product.tpl');
         }
+        if (isset($params['type'])
+            && $params['type'] === 'price'
+            && version_compare(_PS_VERSION_, '1.6.1', 'lt')
+            && strpos($params['smarty']->template_resource, 'product.tpl') !== false
+        ) {
+            return $this->templateDisplay('product.tpl');
+        }
         return '';
     }
 
