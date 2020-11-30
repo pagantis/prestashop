@@ -786,7 +786,7 @@ class Clearpay extends PaymentModule
                 $templateConfigs['ISO_COUNTRY_CODE'] = Tools::substr($templateConfigs['ISO_COUNTRY_CODE'], 0, 2) .
                     Tools::strtoupper(Tools::substr($templateConfigs['ISO_COUNTRY_CODE'], 2, 4));
             }
-            $templateConfigs['AMOUNT_WITH_CURRENCY'] = $amount . $this->currencySymbol;
+            $templateConfigs['AMOUNT_WITH_CURRENCY'] = $templateConfigs['AMOUNT'] . $this->currencySymbol;
             $templateConfigs['PRICE_SELECTOR'] = Clearpay::getExtraConfig('SIMULATOR_CSS_SELECTOR');
             if ($templateConfigs['PRICE_SELECTOR'] === 'default') {
                 $templateConfigs['PRICE_SELECTOR'] = '.current-price';
@@ -794,7 +794,7 @@ class Clearpay extends PaymentModule
                     $templateConfigs['PRICE_SELECTOR'] = '.our_price_display';
                 }
                 if ($this->currency === 'GBP') {
-                    $templateConfigs['AMOUNT_WITH_CURRENCY'] = $this->currencySymbol. $amount;
+                    $templateConfigs['AMOUNT_WITH_CURRENCY'] = $this->currencySymbol. $templateConfigs['AMOUNT'];
                 }
             }
 
