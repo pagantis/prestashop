@@ -5,9 +5,7 @@
  * @copyright 2020 Clearpay
  * @license   proprietary
 *}
-<style>
 
-</style>
 <!-- Afterpay.js  -->
 <script
         src="{$SDK_URL|escape:'javascript':'UTF-8'}"
@@ -17,6 +15,11 @@
 </script>
 <!-- Afterpay.js -->
 <div class="ClearpaySimulator ps-version-{$PS_VERSION|escape:'htmlall':'UTF-8'}">
+    <style>
+        afterpay-placement {
+            white-space: break-spaces;
+        }
+    </style>
     <afterpay-placement
             data-locale="{$ISO_COUNTRY_CODE|escape:'htmlall':'UTF-8'}"
             data-currency="{$CURRENCY|escape:'htmlall':'UTF-8'}"
