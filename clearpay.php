@@ -86,7 +86,7 @@ class Clearpay extends PaymentModule
         $this->author = 'Clearpay';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
-        $this->module_key = '2b9bc901b4d834bb7069e7ea6510438f';
+        $this->module_key = '1da91d21c9c3427efd7530c2be29182d';
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
         $this->displayName = $this->l('Clearpay Payment Gateway');
         $this->description = $this->l('Buy now, pay later - Enjoy interest-free payments');
