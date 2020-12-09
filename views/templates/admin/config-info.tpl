@@ -53,7 +53,7 @@
     <div class="panel clearpay-content-form">
         <h3><i class="icon icon-credit-card"></i> {l s='Clearpay Configuration Panel' mod='clearpay'}</h3>
         <div class="column-left">
-            <a target="_blank" href="https://portal.clearpay-eu.com" class="btn btn-default" title="Login Clearpay"><i class="icon-user"></i> {l s='Clearpay Backoffice Login' mod='clearpay'}</a>
+            <a target="_blank" href="{l s='https://portal.sandbox.clearpay.co.uk/uk/merchant' mod='clearpay'}" class="btn btn-default" title="Login Clearpay"><i class="icon-user"></i> {l s='Clearpay Backoffice Login' mod='clearpay'}</a>
         </div>
         <div class="column-center">
             <p>

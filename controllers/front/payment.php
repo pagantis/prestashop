@@ -230,7 +230,12 @@ class ClearpayPaymentModuleFrontController extends AbstractController
     {
         $context = Context::getContext();
         $cart = $context->cart;
-        $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
+
+        $allowedCountries = json_decode(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
+        if (Configuration::get('CLEARPAY_REGION') === 'GB') {
+            $allowedCountries = array('gb');
+        }
+
         $lang = Language::getLanguage($this->context->language->id);
         $langArray = explode("-", $lang['language_code']);
         if (count($langArray) != 2 && isset($lang['locale'])) {

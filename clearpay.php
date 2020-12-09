@@ -50,7 +50,7 @@ class Clearpay extends PaymentModule
      */
     public $defaultConfigs = array(
         'CODE' =>'clearpay',
-        'ALLOWED_COUNTRIES' => 'a:4:{i:1;s:2:"gb";i:2;s:2:"es";i:3;s:2:"fr";i:4;s:2:"it";}',
+        'ALLOWED_COUNTRIES' => '["es","fr","it"]',
         'SIMULATOR_DISPLAY_TYPE' => 'clearpay',
         'SIMULATOR_IS_ENABLED' => true,
         'SIMULATOR_CSS_SELECTOR' => 'default',
@@ -244,7 +244,10 @@ class Clearpay extends PaymentModule
         $publicKey = Configuration::get('CLEARPAY_PUBLIC_KEY');
         $secretKey = Configuration::get('CLEARPAY_SECRET_KEY');
 
-        $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
+        $allowedCountries = json_decode(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
+        if (Configuration::get('CLEARPAY_REGION') === 'GB') {
+            $allowedCountries = array('gb');
+        }
         $language = $this->getCurrentLanguage();
         $categoryRestriction = $this->isCartRestricted($this->context->cart);
         return (
@@ -568,7 +571,6 @@ class Clearpay extends PaymentModule
         $settingsKeys[] = 'CLEARPAY_REGION';
         $settingsKeys[] = 'CLEARPAY_RESTRICTED_CATEGORIES';
 
-        //Different Behavior depending on 1.6 or earlier
         if (Tools::isSubmit('submit'.$this->name)) {
             foreach ($settingsKeys as $key) {
                 $value = Tools::getValue($key);
@@ -577,13 +579,18 @@ class Clearpay extends PaymentModule
                 }
                 Configuration::updateValue($key, $value);
             }
-            $message = $this->displayConfirmation($this->l('All changes have been saved'));
         }
 
         $publicKey = Configuration::get('CLEARPAY_PUBLIC_KEY');
         $secretKey = Configuration::get('CLEARPAY_SECRET_KEY');
         $environment = Configuration::get('CLEARPAY_ENVIRONMENT');
         $isEnabled = Configuration::get('CLEARPAY_IS_ENABLED');
+
+        if (empty($publicKey) || empty($secretKey)) {
+            $message = $this->displayError($this->l('Merchant Id and Secret Key are mandatory fields'));
+        } else {
+            $message = $this->displayConfirmation($this->l('All changes have been saved'));
+        }
 
         // auto update configuration price thresholds in background
         $language = $this->getCurrentLanguage();
@@ -757,7 +764,10 @@ class Clearpay extends PaymentModule
 
         $cart = $this->context->cart;
         $currency = new Currency($cart->id_currency);
-        $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
+        $allowedCountries = json_decode(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
+        if (Configuration::get('CLEARPAY_REGION') === 'GB') {
+            $allowedCountries = array('gb');
+        }
         $availableCurrencies = explode(",", self::CLEARPAY_AVAILABLE_CURRENCIES);
         $language = $this->getCurrentLanguage();
         if ($isEnabled &&
@@ -1084,7 +1094,10 @@ class Clearpay extends PaymentModule
      */
     private function getCurrentLanguage()
     {
-        $allowedCountries = unserialize(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
+        $allowedCountries = json_decode(Clearpay::getExtraConfig('ALLOWED_COUNTRIES', null));
+        if (Configuration::get('CLEARPAY_REGION') === 'GB') {
+            $allowedCountries = array('gb');
+        }
         $lang = Language::getLanguage($this->context->language->id);
         $langArray = explode("-", $lang['language_code']);
         if (count($langArray) != 2 && isset($lang['locale'])) {
