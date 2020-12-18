@@ -203,8 +203,12 @@ class ClearpayPaymentModuleFrontController extends AbstractController
                     $url = $createCheckoutRequest->getResponse()->getParsedBody()->redirectCheckoutUrl;
                     $orderId = $createCheckoutRequest->getResponse()->getParsedBody()->token;
                     $countryCode = $this->getCountryCode();
+                    $cartId = pSQL($cart->id);
+                    $orderId = pSQL($orderId);
+                    $urlToken = pSQL($urlToken);
+                    $countryCode = pSQL($countryCode);
                     $sql = "INSERT INTO `" . _DB_PREFIX_ . "clearpay_order` (`id`, `order_id`, `token`, `country_code`) 
-                    VALUES ('$cart->id','$orderId', '$urlToken', '$countryCode')";
+                    VALUES ('$cartId','$orderId', '$urlToken', '$countryCode')";
                     $result = Db::getInstance()->execute($sql);
                     if (!$result) {
                         throw new \Exception('Unable to save clearpay-order-id in database: '. $sql);

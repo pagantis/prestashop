@@ -229,8 +229,9 @@ class ClearpayNotifyModuleFrontController extends AbstractController
     {
         $table = _DB_PREFIX_.self::ORDERS_TABLE;
         $merchantCartId = (int)$this->merchantCartId;
+        $token = pSQL($this->token);
         $sql = "select ps_order_id from `{$table}` where id = {$merchantCartId}
-         and token = '{$this->token}'";
+         and token = '{$token}'";
 
         return Db::getInstance()->getValue($sql);
     }
@@ -263,8 +264,9 @@ class ClearpayNotifyModuleFrontController extends AbstractController
      */
     private function getClearpayOrderId()
     {
+        $token = pSQL($this->token);
         $sql = "select order_id from `" . _DB_PREFIX_ . "clearpay_order` where id = "
-            .(int)$this->merchantCartId . " and token = '" . $this->token . "'";
+            .(int)$this->merchantCartId . " and token = '" . $token . "'";
         $this->clearpayOrderId = Db::getInstance()->getValue($sql);
 
         if (empty($this->clearpayOrderId)) {
@@ -279,8 +281,9 @@ class ClearpayNotifyModuleFrontController extends AbstractController
      */
     private function getClearpayOrderCountryCode()
     {
+        $token = pSQL($this->token);
         $sql = "select country_code from `" . _DB_PREFIX_ . "clearpay_order` where id = "
-            .(int)$this->merchantCartId . " and token = '" . $this->token . "'";
+            .(int)$this->merchantCartId . " and token = '" . $token . "'";
         return Db::getInstance()->getValue($sql);
     }
 
@@ -345,9 +348,11 @@ class ClearpayNotifyModuleFrontController extends AbstractController
             // Double check
             $tableName = _DB_PREFIX_ . self::ORDERS_TABLE;
             $fieldName = 'ps_order_id';
+            $token = pSQL($this->token);
+            $clearpayOrderId = pSQL($this->clearpayOrderId);
             $sql = ('select ' . $fieldName . ' from `' . $tableName . '` where `id` = ' . (int)$this->merchantCartId
-                . ' and `order_id` = \'' . $this->clearpayOrderId . '\''
-                . ' and `token` = \'' . $this->token . '\''
+                . ' and `order_id` = \'' . $clearpayOrderId . '\''
+                . ' and `token` = \'' . $token . '\''
                 . ' and `' . $fieldName . '` is not null');
             $results = Db::getInstance()->ExecuteS($sql);
             if (is_array($results) && count($results) === 1) {
@@ -405,7 +410,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
             $this->module->validateOrder(
                 $this->merchantCartId,
                 Configuration::get('PS_OS_PAYMENT'),
-                $this->merchantCart->getOrderTotal(true, Cart::BOTH),
+                $this->clearpayOrder->totalAmount->amount,
                 $this->productName,
                 'clearpayOrderId: ' .  $this->clearpayCapturedPaymentId,
                 array('transaction_id' => $this->clearpayCapturedPaymentId),
@@ -417,12 +422,14 @@ class ClearpayNotifyModuleFrontController extends AbstractController
             throw new \Exception($exception->getMessage());
         }
         try {
+            $token = pSQL($this->token);
+            $clearpayOrderId = pSQL($this->clearpayOrderId);
             Db::getInstance()->update(
                 self::ORDERS_TABLE,
                 array('ps_order_id' => $this->module->currentOrder),
                 'id = '. (int)$this->merchantCartId
-                . ' and order_id = \'' . $this->clearpayOrderId . '\''
-                . ' and token = \'' . $this->token . '\''
+                . ' and order_id = \'' . $clearpayOrderId . '\''
+                . ' and token = \'' . $token . '\''
             );
         } catch (\Exception $exception) {
             $this->saveLog($exception->getMessage(), 2);
