@@ -82,7 +82,7 @@ class Clearpay extends PaymentModule
     {
         $this->name = 'clearpay';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.0';
+        $this->version = '1.0.1';
         $this->author = 'Clearpay';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';

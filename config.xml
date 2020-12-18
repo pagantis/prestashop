@@ -2,7 +2,7 @@
 <module>
     <name>clearpay</name>
     <displayName><![CDATA[Clearpay Payment Gateway]]></displayName>
-    <version><![CDATA[1.0.0]]></version>
+    <version><![CDATA[1.0.1]]></version>
     <description><![CDATA[Buy now, pay later - Enjoy interest-free payments]]></description>
     <author><![CDATA[Clearpay]]></author>
     <tab><![CDATA[payments_gateways]]></tab>

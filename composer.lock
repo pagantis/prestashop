@@ -261,7 +261,7 @@
         },
         {
             "name": "nayjest/str-case-converter",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nayjest/StrCaseConverter.git",
