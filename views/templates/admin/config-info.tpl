@@ -48,16 +48,20 @@
             float: none;
             width: 150px;
         }
+        .second {
+            margin-top: 10px;
+        }
     </style>
     {$message|escape:'quotes':'UTF-8'}
     <div class="panel clearpay-content-form">
         <h3><i class="icon icon-credit-card"></i> {l s='Clearpay Configuration Panel' mod='clearpay'}</h3>
         <div class="column-left">
-            <a target="_blank" href="{l s='https://portal.sandbox.clearpay.co.uk/uk/merchant' mod='clearpay'}" class="btn btn-default" title="Login Clearpay"><i class="icon-user"></i> {l s='Clearpay Backoffice Login' mod='clearpay'}</a>
+            <a target="_blank" href="{l s='https://portal.sandbox.clearpay.co.uk/uk/merchant' mod='clearpay'}" class="btn btn-default" title="Login Clearpay"><i class="icon-user"></i> {l s='Clearpay Backoffice Login' mod='clearpay'}</a><br>
+            <a target="_blank" href="{l s='https://developers.clearpay.co.uk/clearpay-online/docs/platforms-quickstart' mod='clearpay'}" class="btn btn-default second" title="Getting Star"><i class="icon-user"></i> {l s='Getting Started' mod='clearpay'}</a>
         </div>
         <div class="column-center">
             <p>
-                {l s='Clearpay configuration panel, please take your time to configure the payment method behavior' mod='clearpay'}
+                {l s='Clearpay configuration panel, please take your time to configure the payment method behavior' mod='clearpay'}ted
             </p>
         </div>
         <div class="column-right">
