@@ -71,18 +71,6 @@ jobs:
       - install_dependencies
       - npm_grunt
       - run_tests
-  runTestPrestashop15:
-    environment:
-      PS_VERSION: shell:runTestPrestashop15
-    machine:
-      image: ubuntu-1604:201903-01
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - host_and_docker_compose
-      - install_dependencies
-      - npm_grunt
-      - run_tests
   pushRelease:
     docker:
       - image: circleci/php:7.1-node-browsers
@@ -119,10 +107,6 @@ workflows:
   version: 2
   build:
     jobs:
-      - runTestPrestashop15:
-          filters:
-            branches:
-              only: /.*/
       - runTestPrestashop16:
           filters:
             branches:

@@ -54,23 +54,6 @@ module.exports = function(grunt) {
                     'vendor/bin/phpunit --group prestashop16validate\n' +
                     'vendor/bin/phpunit --group prestashop16controller\n'
             },
-            runTestPrestashop15: {
-                command:
-                    'docker-compose down\n' +
-                    'docker-compose up -d selenium\n' +
-                    'docker-compose up -d prestashop15-test\n' +
-                    'echo "Creating the prestashop15-test"\n' +
-                    'sleep 90\n' +
-                    'date\n' +
-                    'docker-compose logs prestashop15-test\n' +
-                    'set -e\n' +
-                    'vendor/bin/phpunit --group prestashop15basic\n' +
-                    'vendor/bin/phpunit --group prestashop15install\n' +
-                    'vendor/bin/phpunit --group prestashop15register\n' +
-                    'vendor/bin/phpunit --group prestashop15buy\n' +
-                    'vendor/bin/phpunit --group prestashop15validate\n' +
-                    'vendor/bin/phpunit --group prestashop15controller\n'
-            }
         },
         compress: {
             main: {
@@ -92,11 +75,10 @@ module.exports = function(grunt) {
                     {src: ['lib/**'], dest: 'clearpay/', filter: 'isFile'},
                     {src: ['defaultoverride/**'], dest: 'clearpay/', filter: 'isFile'},
                     {src: ['views/**'], dest: 'clearpay/', filter: 'isFile'},
+                    {src: '.htaccess', dest: 'clearpay/'},
                     {src: 'index.php', dest: 'clearpay/'},
                     {src: 'clearpay.php', dest: 'clearpay/'},
                     {src: 'logo.png', dest: 'clearpay/'},
-                    {src: 'LICENSE.md', dest: 'clearpay/'},
-                    {src: 'CONTRIBUTORS.md', dest: 'clearpay/'},
                     {src: 'README.md', dest: 'clearpay/'}
                 ]
             }
