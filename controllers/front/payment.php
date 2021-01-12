@@ -247,21 +247,21 @@ class ClearpayPaymentModuleFrontController extends AbstractController
         }
         $language = Tools::strtoupper($langArray[count($langArray)-1]);
         // Prevent null language detection
-        if (in_array(Tools::strtolower($language), $allowedCountries)) {
+        if (in_array(Tools::strtoupper($language), $allowedCountries)) {
             return $language;
         }
 
         $shippingAddress = new Address($cart->id_address_delivery);
         if ($shippingAddress) {
             $language = Country::getIsoById($shippingAddress->id_country);
-            if (in_array(Tools::strtolower($language), $allowedCountries)) {
+            if (in_array(Tools::strtoupper($language), $allowedCountries)) {
                 return $language;
             }
         }
         $billingAddress = new Address($cart->id_address_invoice);
         if ($billingAddress) {
             $language = Country::getIsoById($billingAddress->id_country);
-            if (in_array(Tools::strtolower($language), $allowedCountries)) {
+            if (in_array(Tools::strtoupper($language), $allowedCountries)) {
                 return $language;
             }
         }
