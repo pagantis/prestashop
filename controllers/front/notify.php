@@ -110,7 +110,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
      * @param $params
      * @return string
      */
-    protected function __call($func, $params)
+    public function __call($func, $params)
     {
         if (in_array($func, array('l')) && !method_exists($this, $func)) {
             return $params[0];
@@ -457,7 +457,6 @@ class ClearpayNotifyModuleFrontController extends AbstractController
                     ->setHttpMethod('PUT')
                     ->setRequestBody(json_encode(array("merchantReference" => $this->module->currentOrder)));
                 $getOrderRequest->send();
-
                 if ($getOrderRequest->getResponse()->getHttpStatusCode() >= 400) {
                     throw new \Exception("Unable to retrieve order from Clearpay = $this->clearpayOrderId");
                 }
