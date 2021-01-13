@@ -50,13 +50,24 @@ class Clearpay extends PaymentModule
      */
     public $defaultConfigs = array(
         'CODE' =>'clearpay',
-        'ALLOWED_COUNTRIES' => '["es","fr","it"]',
+        'ALLOWED_COUNTRIES' => '["ES","FR","IT","GB"]',
         'SIMULATOR_DISPLAY_TYPE' => 'clearpay',
         'SIMULATOR_IS_ENABLED' => true,
         'SIMULATOR_CSS_SELECTOR' => 'default',
         'URL_OK' => '',
         'URL_KO' => ''
     );
+
+    /**
+     * Default available countries for the different operational regions
+     *
+     * @var array
+     */
+    public $defaultCountriesPerRegion = array(
+        'GB' => '["GB"]',
+        'US' => '["US"]'
+    );
+
     /**
      * @var null $shippingAddress
      */
@@ -82,7 +93,7 @@ class Clearpay extends PaymentModule
     {
         $this->name = 'clearpay';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.1';
+        $this->version = '1.0.2';
         $this->author = 'Clearpay';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -255,7 +266,7 @@ class Clearpay extends PaymentModule
             $totalAmount >= $displayMinAmount &&
             $totalAmount <= $displayMaxAmount &&
             in_array($currency->iso_code, $availableCurrencies) &&
-            in_array(Tools::strtolower($language), $allowedCountries) &&
+            in_array(Tools::strtoupper($language), $allowedCountries) &&
             !$categoryRestriction &&
             $publicKey &&
             $secretKey
@@ -592,7 +603,7 @@ class Clearpay extends PaymentModule
             $message = $this->displayConfirmation($this->l('All changes have been saved'));
         }
 
-        // auto update configuration price thresholds in background
+        // auto update configuration price thresholds and allowed countries in background
         $language = $this->getCurrentLanguage();
         if ($isEnabled && !empty($publicKey) && !empty($secretKey) && !empty($environment) && !empty($language)) {
             try {
@@ -607,6 +618,7 @@ class Clearpay extends PaymentModule
 
                     $getConfigurationRequest = new Afterpay\SDK\HTTP\Request\GetConfiguration();
                     $getConfigurationRequest->setMerchantAccount($merchantAccount);
+                    $getConfigurationRequest->setUri("/v1/configuration?include=activeCountries");
                     $getConfigurationRequest->send();
                     $configuration = $getConfigurationRequest->getResponse()->getParsedBody();
 
@@ -622,7 +634,7 @@ class Clearpay extends PaymentModule
                         );
                         Configuration::updateValue(
                             'CLEARPAY_MAX_AMOUNT',
-                            100
+                            1
                         );
                     } else {
                         if (isset($configuration[0]->minimumAmount)) {
@@ -636,6 +648,20 @@ class Clearpay extends PaymentModule
                                 'CLEARPAY_MAX_AMOUNT',
                                 $configuration[0]->maximumAmount->amount
                             );
+                        }
+                        if (isset($configuration[0]->activeCountries)) {
+                            self::setExtraConfig(
+                                'ALLOWED_COUNTRIES',
+                                json_encode($configuration[0]->activeCountries)
+                            );
+                        } else {
+                            $region = Configuration::get('CLEARPAY_REGION');
+                            if (!empty($region) and is_string($region)) {
+                                self::setExtraConfig(
+                                    'ALLOWED_COUNTRIES',
+                                    $this->getCountriesPerRegion($region)
+                                );
+                            }
                         }
                     }
                 }
@@ -775,7 +801,7 @@ class Clearpay extends PaymentModule
             $amount > 0 &&
             ($amount >= Configuration::get('CLEARPAY_MIN_AMOUNT') || $templateName === 'product.tpl') &&
             ($amount <= Configuration::get('CLEARPAY_MAX_AMOUNT')  || $templateName === 'product.tpl') &&
-            in_array(Tools::strtolower($language), $allowedCountries) &&
+            in_array(Tools::strtoupper($language), $allowedCountries) &&
             in_array($currency->iso_code, $availableCurrencies) &&
             !$categoryRestriction
         ) {
@@ -1076,6 +1102,25 @@ class Clearpay extends PaymentModule
     }
 
     /**
+     * @param null   $config
+     * @param string $value
+     * @return string
+     */
+    public static function setExtraConfig($config = null, $value = '')
+    {
+        if (is_null($config)) {
+            return $value;
+        }
+
+        Db::getInstance()->update(
+            'clearpay_config',
+            array('value' => pSQL($value)),
+            'config = \'' . pSQL($config) . '\''
+        );
+        return $value;
+    }
+
+    /**
      * Check logo exists in OPC module
      */
     public function checkLogoExists()
@@ -1106,22 +1151,34 @@ class Clearpay extends PaymentModule
         $language = Tools::strtoupper($langArray[count($langArray)-1]);
 
         // Prevent null language detection
-        if (in_array(Tools::strtolower($language), $allowedCountries)) {
+        if (in_array(Tools::strtoupper($language), $allowedCountries)) {
             return $language;
         }
         if ($this->shippingAddress) {
             $language = Country::getIsoById($this->shippingAddress->id_country);
-            if (in_array(Tools::strtolower($language), $allowedCountries)) {
+            if (in_array(Tools::strtoupper($language), $allowedCountries)) {
                 return $language;
             }
         }
         if ($this->billingAddress) {
             $language = Country::getIsoById($this->billingAddress->id_country);
-            if (in_array(Tools::strtolower($language), $allowedCountries)) {
+            if (in_array(Tools::strtoupper($language), $allowedCountries)) {
                 return $language;
             }
         }
         return $language;
+    }
+
+    /**
+     * @param null $region
+     * @return string
+     */
+    public function getCountriesPerRegion($region = '')
+    {
+        if (isset($this->defaultCountriesPerRegion[$region])) {
+            return $this->defaultCountriesPerRegion[$region];
+        }
+        return array();
     }
 
     /**

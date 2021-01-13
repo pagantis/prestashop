@@ -201,6 +201,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
         $this->config['publicKey'] = Configuration::get('CLEARPAY_PUBLIC_KEY');
         $this->config['privateKey'] = Configuration::get('CLEARPAY_SECRET_KEY');
         $this->config['environment'] = Configuration::get('CLEARPAY_ENVIRONMENT');
+        $this->config['region'] = Configuration::get('CLEARPAY_REGION');
 
         $this->merchantOrderId = $this->getMerchantOrderId();
 
@@ -418,6 +419,7 @@ class ClearpayNotifyModuleFrontController extends AbstractController
                 false,
                 $this->config['secureKey']
             );
+            $this->updateClearpayOrder();
         } catch (\Exception $exception) {
             throw new \Exception($exception->getMessage());
         }
@@ -439,6 +441,32 @@ class ClearpayNotifyModuleFrontController extends AbstractController
             '. Clearpay OrderId=' .  $this->clearpayCapturedPaymentId .
             '. Prestashop OrderId=' . $this->module->currentOrder;
         $this->saveLog($message, 1);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function updateClearpayOrder()
+    {
+        try {
+            if ($this->config['region'] === 'ES') { //ONLY AVAILABLE FOR EUROPE
+                $getOrderRequest = new ClearpayRequest();
+                $getOrderRequest
+                    ->setMerchantAccount($this->clearpayMerchantAccount)
+                    ->setUri("/v1/payments/".$this->clearpayCapturedPaymentId)
+                    ->setHttpMethod('PUT')
+                    ->setRequestBody(json_encode(array("merchantReference" => $this->module->currentOrder)));
+                $getOrderRequest->send();
+
+                if ($getOrderRequest->getResponse()->getHttpStatusCode() >= 400) {
+                    throw new \Exception("Unable to retrieve order from Clearpay = $this->clearpayOrderId");
+                }
+
+                $this->clearpayOrder = $getOrderRequest->getResponse()->getParsedBody();
+            }
+        } catch (\Exception $exception) {
+            $this->saveLog($exception->getMessage(), 2);
+        }
     }
 
     /**
